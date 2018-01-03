@@ -1,5 +1,6 @@
 package com.ding.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @EnableAutoConfiguration
 public class HelloController {
+    @Value("${URL.LOGIN}")
+    private String url;
 
     @RequestMapping("/hello")
     public String hello(){
-        return "hello world";
+        return "hello world"+url;
     }
 }
