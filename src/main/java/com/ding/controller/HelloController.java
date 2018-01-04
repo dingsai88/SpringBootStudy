@@ -1,7 +1,10 @@
 package com.ding.controller;
 
+import com.ding.bean.ConfigBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,12 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @EnableAutoConfiguration
+@EnableConfigurationProperties(ConfigBean.class)
+
 public class HelloController {
+    @Autowired
+    private ConfigBean config;
     @Value("${URL.LOGIN}")
     private String url;
 
     @RequestMapping("/hello")
     public String hello(){
-        return "hello world"+url;
+        return "hello world:"+url+":"+config.getName();
     }
 }
