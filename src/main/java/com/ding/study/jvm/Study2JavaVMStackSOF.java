@@ -14,11 +14,15 @@ public class Study2JavaVMStackSOF {
 
     public void statckLeak() {
         stackLength++;
+        statckLeak();
     }
 
     /**
-     * java.lang.OutOfMemoryError:java heap space
-     * 堆放对象溢出
+     * java.lang.StackOverflowError
+     * stack length:970
+     * hotspot不区分虚拟机栈和本地方法栈。-Xss参数。
+     * 线程请求栈深度大于虚拟机允许的最大深度抛出StackOverflowError异常
+     * 如果申请足够内存抛出OutOfMemoryError
      *
      * @param args
      */
