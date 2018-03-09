@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 public class Study6JavaMethodAreaOOM {
 
     /**
-     * 方法区内存溢出
+     * 方法区内存溢出-jdk7以后方法区也放到堆中
      * java.lang.OutOfMemoryError: PermGen space
      * @param args
      * @throws Throwable

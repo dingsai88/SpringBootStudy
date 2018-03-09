@@ -10,7 +10,7 @@ import java.util.List;
 public class Study4RuntimeConstantPoolOOM {
 
     /**
-     *java.lang.OutOfMemoryError: PermGen space
+     *java.lang.OutOfMemoryError: PermGen space 堆永久代溢出
      *intern 1.6如果常量池不存在则放入常量池，如果存在则复用
      * @param args
      * @throws Throwable

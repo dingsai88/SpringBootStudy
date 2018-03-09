@@ -2,6 +2,7 @@ package com.ding.study.jvm;
 
 /**
  * 方法区-运营时常量池-6和6以后有差别。intern更费时间更省内存
+ * 说明:intern如果存在则返回存在的以前内存地址，如果不存在就返回当前对象的地址;所以不存在的时候比较是true,已经存在的比较是false
  * @author daniel 2018-1-8 0008.
  */
 public class Study5RuntimeConstantPoolOOM {
@@ -17,11 +18,17 @@ public class Study5RuntimeConstantPoolOOM {
      * @throws Throwable
      */
     public static void main(String[] args) throws Throwable {
-        String str1=new StringBuilder("计算机").append("软件").toString();
+        String str1=  new StringBuilder("计算机").append("软件").toString();
+        //由于不存在，返回的是新的字符串的地址，新和新的对比true
         System.out.println(str1.intern()==str1);
 
-        String str2=new StringBuilder("c").toString();
+        //由于刚才已经存在了，返回的是老的内存地址，
+        String str3=  new StringBuilder("计算机").append("软件").toString();
+        System.out.println(str1.intern()==str3);
+
+        String str2=new StringBuilder("ja").append("va").toString();
         System.out.println(str2.intern()==str2);
+
 
 
     }

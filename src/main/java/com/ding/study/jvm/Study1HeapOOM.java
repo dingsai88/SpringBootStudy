@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * VM args:-Xms20m -Xmx20m -XX:HeapDumpOnOutOfMemoryError
+ * VM args:-Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError
  * Created by 老丁 on 2018-1-5 0005.
  * 说明:
  * 堆大小设置为20m 不可拓展(xms和xmx一样避免拓展)，设置heapDumpOnOutOfMemoryError让内存溢出时DUMP出当前内存堆转储快照
