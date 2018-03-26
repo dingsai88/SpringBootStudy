@@ -17,7 +17,7 @@ public class Study9FinalizeEscapeGC {
     protected void finalize() throws Throwable {
         super.finalize();
         System.out.println(" finalize method executed");
-
+        //自救
         Study9FinalizeEscapeGC.SAVE_HOOK = this;
     }
 
