@@ -19,6 +19,9 @@ public class Study10Console {
      * jstat -gc 25277  1000  30
      * 查看25277gc信息  一秒显示一次 显示30次
      *
+     * III.jinfo 查看jvm设置信息
+     * jinfo -flags 10898  查看全部jvm配置信息
+     *jinfo -sysprops 10898 查看System.getProperties();
      *
      */
 }
