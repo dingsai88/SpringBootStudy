@@ -21,7 +21,26 @@ public class Study10Console {
      *
      * III.jinfo 查看jvm设置信息
      * jinfo -flags 10898  查看全部jvm配置信息
-     *jinfo -sysprops 10898 查看System.getProperties();
+     * jinfo -sysprops 10898 查看System.getProperties();
+     *
+     *
+     *
+     * IV.jmap 内存映像工具
+     *  jmap -heap 222 查看堆信息 新生代老年代等
+     *
+     *   jmap -histo 10898 |less  显示各个类的占用大小
+     *   jmap -dump:live,format=b,file=heap.bin 10898   dump内存文件为heap.bin文件
+     *
+     * V.jhat  虚拟机堆转存快照分析工具
+     *  jmap -dump出来的  heap.bin文件 使用
+     *  jhat heap.bin 命令 访问localhost:7000查看dump分析
+     *
+     *VI.jvisualvm  内存分析工具和jhat类似 直接打开看 开源的有visulvm
+     *
+     *VII.jstack  栈
+     *    jstack -l 10898 | less   显示栈信息 分析线程问题
+     *
+     * VIII.jconsole
      *
      */
 }
