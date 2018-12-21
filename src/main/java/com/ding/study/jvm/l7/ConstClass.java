@@ -13,7 +13,7 @@ public class ConstClass {
     /**
      * 常量不引发初始化
      */
-    public static final String HELLOWORLD="hello world";
+    public  static  final String HELLOWORLD="hello world";
 
 
 }

@@ -25,9 +25,7 @@ public class NotInitialization {
        // SuperClass[] sca=new SuperClass[10];
 
 
-        /**
-         *
-         */
+
         System.out.println(ConstClass.HELLOWORLD);
     }
 
