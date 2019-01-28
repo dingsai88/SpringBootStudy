@@ -40,6 +40,6 @@ public class P228ClassLoaderTest {
         short c=1;
         int d=2;
         //异常incompatible type
-        c=c+d;
+       // c=c+d;
     }
 }
