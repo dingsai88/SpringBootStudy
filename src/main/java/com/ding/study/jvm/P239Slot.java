@@ -19,6 +19,7 @@ public class P239Slot {
     public static void main(String[] args) throws Throwable {
         byte[] placeholder = new byte[64 * 1024 * 1024];
         System.gc();
+
     }
 
 
