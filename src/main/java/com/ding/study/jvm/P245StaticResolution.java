@@ -112,6 +112,12 @@ public class P245StaticResolution {
 
     /**
      * 使用invokestatic 指令调用静态方法sayHello
+     * 1.invokestatic :调用静态方法
+     * 2.invokespecial（特殊）：调用实例构造器<init>方法、私有方法和父类方法
+     * 3.invokevirtual:调用所有的虚方法。
+     * 4.invokeinterface:调用接口方法，会在运行时再确定一个实现此接口的对象。
+     * 5.invokedynamic:是由用户所设定的引导方法决定。
+     *
      * @param args
      */
     public static void main(String [] args){
