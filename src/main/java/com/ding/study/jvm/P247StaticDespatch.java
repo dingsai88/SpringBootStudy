@@ -40,6 +40,13 @@ public class P247StaticDespatch {
         sr.sayHello(man);
         sr.sayHello(woman);
 
+        /**
+
+        man=new Woman();
+        sr.sayHello((Man) man);
+        sr.sayHello((Woman) man);
+         *
+         */
     }
 
 }
