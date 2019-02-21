@@ -4,7 +4,9 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
-/**
+/**MethodHandles.lookup().findSpecial
+ * MethodType.methodType
+ *
  * @author daniel 2019-2-20 0020.
  */
 public class P268Test {
