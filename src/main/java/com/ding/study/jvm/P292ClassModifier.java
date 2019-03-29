@@ -24,6 +24,34 @@ public class P292ClassModifier {
         this.classByte=classByte;
     }
 
+    public byte[] modifyUTF8Constant(String oldStr,String newStr){
+        int cpc=getConstantPollCount();
+        int offset=CONSTANT_POOL_COUNT_INDEX+u2;
+        for(int i=0;i<cpc;i++){
+            int tag=P294ByteUtils.bytes2Int(classByte,offset,u1);
+            if(tag==CONSTANT_UTF8_INFO){
+                int len=P294ByteUtils.bytes2Int(classByte,offset+u1,u2);
+                offset+=(u1+u2);
+                String str=P294ByteUtils.bytes2String(classByte,offset,len);
+                if(str.equalsIgnoreCase(oldStr)){
+                    byte[] strBytes=P294ByteUtils.string2Bytes(newStr);
+                    byte[] strLen=P294ByteUtils.int2Bytes(newStr.length(),u2);
+                    classByte=P294ByteUtils.bytesReplace(classByte,offset-u2,u2,strLen);
+                    return classByte;
+                }else {
+                    offset+=len;
+                }
+            }else {
+                offset+=CONSTANT_ITEM_LENGTH[tag];
+            }
+        }
 
+        return classByte;
+    }
+
+
+    public  int getConstantPollCount(){
+        return P294ByteUtils.bytes2Int(classByte,CONSTANT_POOL_COUNT_INDEX,u2);
+    }
 
 }
