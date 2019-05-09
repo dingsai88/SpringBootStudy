@@ -1,6 +1,8 @@
 package com.ding.study.jvm;
 
 /**
+ *定义了注解类型 javax.lang.model.element.ElementKind
+ *
  * @author daniel 2019-5-8 0008.
  */
 public class P318Sugar {
