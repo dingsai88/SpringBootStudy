@@ -7,9 +7,11 @@ package com.ding.study.jvm;
  *
  * -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly:输出反汇编信息
  *
- * -XX:+PrintCompilation:要求虚拟机在即时编译时打印出方法名
+ * -XX:+PrintCompilation:要求虚拟机在即时编译时打印出方法名 在控制台打印编译过程信息
  *
  *-XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining:打印方法内联信息
+ *
+ * -XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining -XX:+PrintCompilation :
  * @author daniel 2019-5-15 0015.
  */
 public class P340 {
@@ -41,6 +43,6 @@ public class P340 {
         for (int i = 0; i < NUM; i++) {
             calcSum();
         }
-        System.out.println("3");
+
     }
 }
