@@ -7,7 +7,7 @@ import com.sun.corba.se.impl.orbutil.StackImpl;
  * @author daniel 2018-8-17 0017.
  */
 public class TestMain {
-    public static void main(String[] args) {
+    public static void main1(String[] args) {
 
         String[] applyList = {"27784623",
                 "27796186",
@@ -121,6 +121,19 @@ public class TestMain {
         }
         return bean;
 
+    }
+    public static void main(String[] args) {
+        System.out.println("2222222222222-sss.pdf");
+        System.out.println(getContractName("2222222222222"));
+    }
+    public static String getContractName(String path) {
+        if (path == null || path.trim().equals(""))
+            return "";
+        else {
+            String[] splits = path.split("/");
+            String fileName = splits[splits.length - 1];
+            return fileName.substring(0, fileName.lastIndexOf("."));
+        }
     }
 
 
