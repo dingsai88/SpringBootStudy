@@ -404,8 +404,29 @@ ruby等语言都曾经使用过用户线程，最终又都放弃使用它。
 式中，用户线程与轻量级进程的数量比是不定的，及为N：m的关系，如图12-5所示，这种
 就是多对多的线程模型。
     许多unix系列的操作系统，如solarishpux等都提供了nm的线程模型实现。
+  4.java线程的实现
+  java线程在jdk1.2之前,是基于称为绿色线程greenthreads的用户线程实现
+的,而在jdk1.2中,线程模型替换为基于操作系统原生线程模型来实现.因此,在目前的
+jdk版本中,操作系统支持曾阳的线程模型,很大程度上决定了java虚拟机的线程是怎样
+映射的,这点在不同的平台上没有办法达成一致,虚拟机规范中也并未限定java线程需要使
+用那种线程模型来实现.线程模型只对线程的并发规模和操作成本产生影响,对java程序的
+编码和运行过程来说,这些差异都是透明的.
+对于sunjdk来说,他的windows版与liux版都是使用一对一的线程模型实现的,
+一条java线程就映射到一条轻量级线程之中,因为windows和inux系统提供的线程模型
+就是一对一的.
+而在solaris平台中,由于操作系统的线程特性可以同时支持一对一,通过bound
+threads或alternate libthread实现以及多对多通过lwpthreadbasedsynchfonization
+实现的线程模型,因此在solaris版的jdk中也对应提供了两个平台颛臾的虚拟机参数
+xxuselwpsynchronization和xx+useboundthreads来明确制定虚拟机
+使用那种线程模型.
 
 
+12.4.2 java线程调度
+    线程调度是指系统为线程分配处理器使用权的过程,主要调度方式有两种,分别是协
+同式线程调度cooperativethreadsscheduling和抢占式线程调度preemptive threads -schduling
+scheduling.
+   如果使用协同式调度的多线程系统,线程的执行时间由线程本身来控制,线程把自己的
+工作执行完了之后,
 
 
 
