@@ -1,5 +1,7 @@
 package com.ding.study.jvm;
 
+import java.util.Vector;
+
 /**
  * @author daniel 2018-2-2 0002.
  */
@@ -21,7 +23,9 @@ public class TestMain {
         System.out.println("34:"+(34|34));
         System.out.println("4:"+(false|true));
         System.out.println("344:"+(false|false));
+        Integer i=new Integer(1);
 
+        Vector v=new Vector();
     }
 }
 
