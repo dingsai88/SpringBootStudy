@@ -94,7 +94,7 @@ public class P367VolatileTest {
         }
 
 
-      //  System.out.println(race);
+    System.out.println(race);
     }
 
 }
