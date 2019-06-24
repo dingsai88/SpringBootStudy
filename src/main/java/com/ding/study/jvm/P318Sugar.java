@@ -95,11 +95,13 @@ public class P318Sugar {
      */
     public void getSwitch(String str){
 
+/*
         switch (str){
             case "123":System.out.println("123");break;
             case "321":System.out.println("321");break;
             default:System.out.println("999");
         }
+*/
 
     }
 

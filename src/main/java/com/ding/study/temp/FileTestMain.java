@@ -8,9 +8,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.lang.instrument.ClassFileTransformer;
+import java.lang.instrument.Instrumentation;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author daniel 2019-6-14 0014.
@@ -86,10 +89,13 @@ public class FileTestMain {
         fileStatusInfo.setState("100");
         fileStatusInfo.setCreateDte(new Date());
         fileStatusInfo.setUpdateDte(new Date());
-        //请求的ID
+        //请求的IDsychro
         fileStatusInfo.setRequestid(data.getTreatyId() + "");
         String str = "  insert into xxx values(xxxxx.nextval ,'" + fileStatusInfo.getRequestid() + "' ,'" + fileStatusInfo.getRequestEnum() + "'  ,'100'  ,'" + fileStatusInfo.getFileData() + "'  ,SYSDATE,SYSDATE) ; ";
         System.out.println(str);
+        AtomicInteger a=new AtomicInteger();
+
+        a.set(2);
          return str;
     }
 

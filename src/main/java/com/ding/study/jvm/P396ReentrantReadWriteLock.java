@@ -15,7 +15,7 @@ public class P396ReentrantReadWriteLock {
     private ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
     private Lock readLock = reentrantReadWriteLock.readLock();
     private Lock writeLock = reentrantReadWriteLock.writeLock();
-    private Map<String, String> map = new HashMap<>();
+    private Map<String, String> map = new HashMap<String, String>();
 
     public String set(String str) throws Exception{
         writeLock.lock();
