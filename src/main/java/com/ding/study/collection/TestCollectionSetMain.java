@@ -1,13 +1,14 @@
 package com.ding.study.collection;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * @author daniel 2019-6-21 0021.
  */
 public class TestCollectionSetMain {
 
-    public static void main(String[] args) {
+    private static void test(){
 
         //set 不重复的元素，只能有一个null
         //HashMap核心实现
@@ -57,12 +58,90 @@ public class TestCollectionSetMain {
         treeSet1.add(6);
         treeSet1.add(2);
         treeSet1.add(4);
-       // NavigableMap map1=new NavigableMap();
+        // NavigableMap map1=new NavigableMap();
 
         System.out.println("TreeSet自然排序:"+treeSet1);
+    }
+
+    public static void main(String[] args) {
+        test2();
+        linkedHashSet();
+        treeSet();
+        treeSetBean();
+        arrayBlockingQueue();
+    }
+
+
+
+    private static void arrayBlockingQueue(){
+        ArrayBlockingQueue arrayBlockingQueue=new ArrayBlockingQueue(1);
+        arrayBlockingQueue.add(3);
+        arrayBlockingQueue.peek();
 
     }
 
+
+
+
+    private static void treeSetBean(){
+        Student s1=new Student("1",1);
+        Student s4=new Student("4",4);
+        Student s2=new Student("2",2);
+        Student s6=new Student("6",6);
+        Student s3=new Student("3",3);
+        TreeSet<Student> set=new TreeSet<>( );
+        set.add(s1);
+        set.add(s2);
+        set.add(s3);
+        set.add(s6);
+        set.add(s4);
+
+        for(Student str:set){
+            System.out.println("treeSetBean:"+str);
+        }
+        System.out.println(" set.comparator():"+ set.comparator());
+
+    }
+    private static void treeSet(){
+        TreeSet<String> set=new TreeSet<>();
+        set.add("31");
+        set.add("1");
+        set.add("21");
+      ;
+        set.add("41");
+        for(String str:set){
+            System.out.println("treeSet:"+str);
+        }
+
+    }
+
+    private static void linkedHashSet(){
+        LinkedHashSet<String> set=new LinkedHashSet<>();
+        set.add("1");
+        set.add("21");
+        set.add("31");
+        set.add("41");
+        for(String str:set){
+            System.out.println("linkedHashSet:"+str);
+        }
+
+    }
+
+
+
+
+
+    private static void test2(){
+        HashSet<String> set=new HashSet<>();
+        set.add("1");
+        set.add("21");
+        set.add("31");
+        set.add("31");
+        for(String str:set){
+            System.out.println("str:"+str);
+        }
+
+    }
 
 
 }

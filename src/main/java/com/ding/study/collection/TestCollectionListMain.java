@@ -35,7 +35,9 @@ public class TestCollectionListMain {
         for (int i : arr1) {
             list1.add(i);
         }
-        System.out.println("a:"+list1);
+
+        Collections.sort(list1);
+
         //  Collections.
         ListIterator iterator = list1.listIterator();
         while (iterator.hasNext()) {
@@ -55,6 +57,7 @@ public class TestCollectionListMain {
         System.out.println( "test:"+listTemp.contains("1"));
         //当有多个相同对象时，只能删除其中的一个
         listTemp.remove("1");
+        listTemp.toString();
         System.out.println("2:" + listTemp);
         AtomicInteger a = new AtomicInteger(2);
         a.incrementAndGet();
@@ -93,6 +96,36 @@ public class TestCollectionListMain {
         System.out.println(".....2112:" + linkedList.poll());
         System.out.println(".....2112:" + linkedList.pop());
         System.out.println(".....2112:" + linkedList);
+        System.out.println(".....21122222222222:" + linkedList);
+        linkedListStack();
     }
 
+    private static void linkedListStack(){
+        LinkedList linkedList=new LinkedList();
+        linkedList.addFirst("1");
+        linkedList.addFirst("2");
+        linkedList.addFirst("3");
+
+        System.out.println( linkedList.pop());
+        System.out.println( linkedList.pop());
+        System.out.println( linkedList.pop());
+
+    }
+    private static void fanxing(){
+        LinkedList<String> linkedList=new LinkedList<String>();
+        linkedList.addFirst("1");
+        linkedList.addFirst("2");
+        linkedList.addFirst("3");
+
+        System.out.println( linkedList.pop());
+        System.out.println( linkedList.pop());
+        System.out.println( linkedList.pop());
+        LinkedList<? extends Collection> zilei=new LinkedList<ArrayList>();
+        LinkedList<? super ArrayList> zilei2=new LinkedList<AbstractList>();
+    }
+    private static void arrys(){
+
+        //private final E[] a;
+        Arrays.asList("","");
+    }
 }
