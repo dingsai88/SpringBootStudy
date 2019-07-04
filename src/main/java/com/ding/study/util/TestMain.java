@@ -13,7 +13,7 @@ import java.util.UUID;
 public class TestMain {
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main1(String[] args) throws Exception {
         String str="66_";
         SimpleDateFormat simdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -38,4 +38,15 @@ public class TestMain {
         return "66_"+sdf.format(Calendar.getInstance().getTime())+"_"+id;
     }
 
+    public static void main(String[] args) throws Exception {
+        String str="66_";
+        SimpleDateFormat simdf = new SimpleDateFormat("yyyyMMddHHmmss");
+
+        System.out.println("现在时间："+simdf.format(Calendar.getInstance().getTime()));
+        String str2="66_1906271056_123456789012345678";
+        System.out.println(str2.length());
+        System.out.println(UUID.randomUUID());
+        System.out.println(getRequestId("123456789012345678").length());
+        System.out.println(getRequestId("123456789012345678"));
+    }
 }
