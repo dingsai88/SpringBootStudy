@@ -4,13 +4,9 @@ package com.ding.study.datastructure;
  * @author daniel 2019-7-4 0004.
  */
 public class GreedyGiveMoney {
-
-
-
     public static void main(String[] args) {
         greedyGiveMoney(12);
     }
-
     public static void greedyGiveMoney(int money) {
         System.out.println("需要找零: " + money);
         int[] moneyLevel = {1, 5, 10, 20, 50, 100};
@@ -23,5 +19,4 @@ public class GreedyGiveMoney {
             }
         }
     }
-
 }
