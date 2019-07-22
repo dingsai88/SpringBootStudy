@@ -22,6 +22,10 @@ public class TestCollectionListMain {
         return list1.retainAll(list2);
 
     }
+    public static boolean lambdaTest(int i){
+        //return  i==1?true:false;
+        return true;
+    }
 
     public static void main(String[] args) {
         int[] arr1 = {1, 2, 3, 4, 6, 5};
@@ -32,23 +36,30 @@ public class TestCollectionListMain {
         ArrayList<Integer> list1 = new ArrayList<>();
         ArrayList<Integer> list2 = new ArrayList<>();
         list1.add(1);
+        list1.add(2);
+        list1.add(3);
         for (int i : arr1) {
             list1.add(i);
         }
 
         Collections.sort(list1);
-
+        System.out.println("b111:"+list1);
         //  Collections.
         ListIterator iterator = list1.listIterator();
-        while (iterator.hasNext()) {
+       /* while (iterator.hasNext()) {
             Integer integer = (Integer) iterator.next();
-            System.out.println(integer);
             if (integer == 1) {
                 iterator.remove();
             }
-        }
-        System.out.println("b:"+list1);
-        ArrayList<String> listTemp = new ArrayList<>();
+        }*/
+        iterator.forEachRemaining(obj -> System.out.println("迭代集合元素：" + obj));
+
+       // list1.removeIf(RemoveListElement::isNotValid);
+        list1.removeIf(e -> lambdaTest(e));
+        System.out.println("b111删1以后:"+list1);
+        System.out.println("b111删1以后1:"+(list1==null));
+        System.out.println("b111删1以后2:"+(list1.size()));
+      /*  ArrayList<String> listTemp = new ArrayList<>();
         listTemp.add("a");
         listTemp.add("b");
         listTemp.add("3");
@@ -97,7 +108,7 @@ public class TestCollectionListMain {
         System.out.println(".....2112:" + linkedList.pop());
         System.out.println(".....2112:" + linkedList);
         System.out.println(".....21122222222222:" + linkedList);
-        linkedListStack();
+        linkedListStack();*/
     }
 
     private static void linkedListStack(){

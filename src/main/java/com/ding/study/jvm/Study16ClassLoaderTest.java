@@ -1,3 +1,4 @@
+/*
 package com.ding.study.jvm;
 
 import sun.security.ec.NamedCurve;
@@ -6,6 +7,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+*/
 /**
  *
  * 通过一个类的全限定名字来获取描述此类的二进制字节流；虚拟机外部实现，让程序自己决定如何去获取所需要的类。
@@ -21,7 +23,8 @@ import java.net.URLClassLoader;
  所以instanceof 比对为false
  *
  * @author daniel 2018-5-23 0023.
- */
+ *//*
+
 public class Study16ClassLoaderTest {
 
 
@@ -94,3 +97,4 @@ public class Study16ClassLoaderTest {
 
 
 }
+*/

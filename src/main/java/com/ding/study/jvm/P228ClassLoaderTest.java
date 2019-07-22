@@ -1,3 +1,4 @@
+/*
 package com.ding.study.jvm;
 
 import com.sun.crypto.provider.AESCipher;
@@ -7,15 +8,19 @@ import com.sun.webpane.platform.Invoker;
 
 import java.io.InputStream;
 
+*/
 /**
  * @author daniel 2019-1-28 0028.
- */
+ *//*
+
 public class P228ClassLoaderTest {
-    /**
+    */
+/**
      * 相同的类不同的类加载器，instanceof不相同
      * @param args
      * @throws Throwable
-     */
+     *//*
+
     public static void main(String[] args) throws Throwable {
         final ClassLoader classLoader = new ClassLoader() {
             @Override
@@ -69,3 +74,4 @@ public class P228ClassLoaderTest {
 
      }
 }
+*/
