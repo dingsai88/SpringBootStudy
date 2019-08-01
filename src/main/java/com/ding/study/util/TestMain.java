@@ -19,10 +19,14 @@ public class TestMain {
 
         System.out.println("现在时间："+simdf.format(Calendar.getInstance().getTime()));
         String str2="66_1906271056_123456789012345678";
-        System.out.println(str2.length());
+
         System.out.println(UUID.randomUUID());
         System.out.println(getRequestId("123456789012345678").length());
         System.out.println(getRequestId("123456789012345678"));
+
+
+
+
     }
 
     /**
@@ -48,5 +52,11 @@ public class TestMain {
         System.out.println(UUID.randomUUID());
         System.out.println(getRequestId("123456789012345678").length());
         System.out.println(getRequestId("123456789012345678"));
+
+        for(int i=0;i<32;i++){
+
+            System.out.println("               sec.options["+i+"] = new Option(\""+(i+1)+"日\",\""+(i+1)+"\");");
+
+        }
     }
 }
