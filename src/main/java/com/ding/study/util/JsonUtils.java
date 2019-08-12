@@ -24,11 +24,7 @@ public class JsonUtils {
      */
     public static <T> T convertJsonStringToObj(String jsonString,
                                                Class<T> tClass) {
-        T re;
-
-        re = gson.fromJson(jsonString, tClass);
-
-        return re;
+        return gson.fromJson(jsonString, tClass);
     }
 
     /**
@@ -38,10 +34,6 @@ public class JsonUtils {
      * @return
      */
     public static String convertObjToJsonString(Object o) {
-        String re = null;
-
-        re = gson.toJson(o);
-
-        return re;
+        return gson.toJson(o);
     }
 }
