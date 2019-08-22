@@ -8,12 +8,7 @@ import com.ding.study.util.JsonUtils;
  * @author daniel 2019-8-12 0012.
  */
 public class HG62SelectionSort {
-    public static void main(String[] args) {
-        int[] arr = {6, 1, 2, 7, 9, 3, 4, 5, 10, 8};
-        System.out.println("直接选择排序：排序前:" + JsonUtils.convertObjToJsonString(arr));
-        selectionSort(arr);
-        System.out.println("直接选择排序：排序后:" + JsonUtils.convertObjToJsonString(arr));
-    }
+
 
     /**
      * 直接选择排序
