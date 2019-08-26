@@ -26,7 +26,6 @@ public class TestMain {
 
 
 
-
     }
 
     /**
@@ -58,5 +57,9 @@ public class TestMain {
             System.out.println("               sec.options["+i+"] = new Option(\""+(i+1)+"日\",\""+(i+1)+"\");");
 
         }
+
+
+        Integer i=22;
+        System.out.println("aaa:"+(i.toString()).equals("22"));
     }
 }
