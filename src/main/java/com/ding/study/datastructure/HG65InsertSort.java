@@ -3,6 +3,8 @@ package com.ding.study.datastructure;
 import com.ding.study.util.JsonUtils;
 
 /**
+ * 直接插入排序；从左往右插扑克牌
+ * @see <a href="https://www.jianshu.com/p/7cf0656e76dd">直接插入排序<a/>
  * @author daniel 2019-8-13 0013.
  */
 public class HG65InsertSort {

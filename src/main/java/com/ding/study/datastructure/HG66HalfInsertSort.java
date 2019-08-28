@@ -3,14 +3,16 @@ package com.ding.study.datastructure;
 import com.ding.study.util.JsonUtils;
 
 /**
+ * 看插入排序的例子，折半插入是，每次插入有序序列的时候不从第一个开始找，而是从有序中间开始搜索。
+ * @see <a href="https://blog.csdn.net/Adelaide_Guo/article/details/82149098">折半插入排序</a>
  * @author daniel 2019-8-13 0013.
  */
 public class HG66HalfInsertSort {
     public static void main(String[] args) {
         int[] arr = {3, 1, 5, 7, 2, 4, 9, 6};
-        System.out.println("直接插入排序算法：排序前:" + JsonUtils.convertObjToJsonString(arr));
+        System.out.println("折半插入排序算法：排序前:" + JsonUtils.convertObjToJsonString(arr));
         halfInsert(arr);
-        System.out.println("直接插入排序算法：排序后:" + JsonUtils.convertObjToJsonString(arr));
+        System.out.println("折半插入排序算法：排序后:" + JsonUtils.convertObjToJsonString(arr));
     }
 
     public static void halfInsert(int[] a) {

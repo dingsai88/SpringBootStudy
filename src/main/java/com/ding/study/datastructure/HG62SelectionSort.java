@@ -3,8 +3,9 @@ package com.ding.study.datastructure;
 import com.ding.study.util.JsonUtils;
 
 /**
- * 直接选择排序:
- *
+ * 直接选择排序:走一遍找到极致，到最后再交换位置
+ * @see <a href="https://blog.csdn.net/u011815404/article/details/79256237">直接选择排序</a>
+
  * @author daniel 2019-8-12 0012.
  */
 public class HG62SelectionSort {

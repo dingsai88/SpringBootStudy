@@ -61,5 +61,7 @@ public class TestMain {
 
         Integer i=22;
         System.out.println("aaa:"+(i.toString()).equals("22"));
+
+        System.out.println("位移:"+( 1 << 20));
     }
 }
