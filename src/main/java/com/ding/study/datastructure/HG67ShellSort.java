@@ -23,7 +23,7 @@ public class HG67ShellSort {
         while(true){
             //逐渐减小增量长度
             gap = (int)Math.ceil(gap/2);
-            //确定增量长度
+            //确定增量长度o
             dk = gap;
             for(int i=0;i<dk;i++){
                 //用增量将序列分割，分别进行直接插入排序。随着增量变小为1，最后整体进行直接插入排序

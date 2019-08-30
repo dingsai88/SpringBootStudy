@@ -2,8 +2,12 @@ package com.ding.study.datastructure;
 
 import com.ding.study.util.JsonUtils;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
- * 归并排序；二路归并排序
+ * 递归拆分成单独两个合并、四个合并到最后全部合并
+ * 归并排序；二路归并排序-从中间递归一直拆分-拆成两个一组，两个两个先排序然后四个四个排序-到最后全部排序
  * @see <a href="https://blog.csdn.net/qq_36442947/article/details/81612870">归并排序</a>
  *  @see <a href="https://www.cnblogs.com/wuyepeng/p/9819827.html">归并排序</a>
  * @author daniel 2019-8-14 0014.
@@ -15,6 +19,8 @@ public class HG68MergeSort {
         System.out.println("归并排序：排序前:" + JsonUtils.convertObjToJsonString(arr));
         sort(arr,0,arr.length-1);
         System.out.println("归并排序：排序后:" + JsonUtils.convertObjToJsonString(arr));
+        Arrays.sort(arr);
+        Collections.sort(null);
     }
 
     public static int[] sort(int[] a,int low,int high){
