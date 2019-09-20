@@ -15,6 +15,7 @@ public class ZMainTest {
 	public static void main(String[] args) {
 		Facade facade = new Facade();
 		facade.methodA();
+		System.out.println("\n\n");
 		facade.methodB();
 	}
 

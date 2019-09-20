@@ -1,5 +1,8 @@
 package designpatterns.composite;
 
+/**
+ * 8. Composite（组合）：将对象组合成树状层次结构，使用户对单个对象和组合对象具有一致的访问性。
+ */
 public class ZTestMain {
 
     /**

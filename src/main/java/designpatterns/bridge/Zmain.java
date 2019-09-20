@@ -10,10 +10,12 @@ public class Zmain {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
+        //创建IP5产品
 		PhoneBrandIphone5 i5 = new PhoneBrandIphone5();
+		//装入游戏软件
 		i5.setPhoneSoft(new PhoneSoftGame());
 		i5.run();
+		//装入通讯录
 		i5.setPhoneSoft(new PhoneSoftAddressList());
 		i5.run();
 		
