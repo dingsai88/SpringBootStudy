@@ -54,7 +54,7 @@ public class TestMain {
 
         for(int i=0;i<32;i++){
 
-            System.out.println("               sec.options["+i+"] = new Option(\""+(i+1)+"日\",\""+(i+1)+"\");");
+          //  System.out.println("               sec.options["+i+"] = new Option(\""+(i+1)+"日\",\""+(i+1)+"\");");
 
         }
 
