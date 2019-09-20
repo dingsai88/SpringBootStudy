@@ -12,6 +12,7 @@ public class AfternoonState extends State {
 		if (w.getHour() < 17) {
 			System.out.println("当前时间" + w.getHour() + "点,下午状态还不错，继续努力。");
 		} else {
+			System.out.println("\n下午已过完-走向下一个状态");
 			w.setCurrent(new EveningState());
 			w.writeProgram();
 		}

@@ -10,6 +10,6 @@ public class SystemOne {
   * 子系统方法
   */
  public void methodOne(){
-  System.out.println("子系统方法1");
+  System.out.println("SystemOne.methodOne");
  }
 }

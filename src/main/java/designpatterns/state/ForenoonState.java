@@ -15,6 +15,7 @@ public class ForenoonState extends State {
 		if (w.getHour() < 12) {
 			System.out.println("当前时间" + w.getHour() + "点,上午工作，精神不错");
 		} else {
+			System.out.println("\n上午已过完-走向下一个状态");
 			w.setCurrent(new NoonState());
 			w.writeProgram();
 		}

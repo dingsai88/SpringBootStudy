@@ -9,6 +9,6 @@ public class SystemTwo {
   * 子系统方法
   */
  public void methodTwo(){
-  System.out.println("子系统方法1");
+  System.out.println("SystemTwo.methodTwo");
  }
 }
