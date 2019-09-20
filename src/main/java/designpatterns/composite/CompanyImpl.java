@@ -35,7 +35,6 @@ public class CompanyImpl extends Company {
             sb.append("-");
         }
         System.out.println(sb.toString() + this.name);
-
         for (Company company : children) {
             company.display(i + 2);
         }

@@ -6,7 +6,9 @@ package designpatterns.composite;
  */
 public abstract class Company {
 
-	//公司名字
+	/**
+	 * 公司或部门名字
+	 */
 	 protected String name;
 	 public Company(String name){
 	  this.name=name;

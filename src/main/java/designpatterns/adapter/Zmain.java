@@ -1,4 +1,9 @@
 package designpatterns.adapter;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 希望复用一些现存的类，但是接口又与复用环境要求不一致。
 其实适配器模式有点无奈之举，在前期设计的时候，我们就不应该考虑适配器模式，而应该考虑通过重构统一接口。
@@ -27,6 +32,11 @@ public class Zmain {
 		Ps2ToUsb to=new Ps2ToUsb(ps2);
 		//执行适配转换
 		to.workWithUsb();
+
+
+		//应用
+		List list= Arrays.asList("2","1");
+		list.remove(1);
 		
 	}
 
