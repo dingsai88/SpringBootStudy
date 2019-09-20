@@ -6,7 +6,10 @@ package designpatterns.decorator;
  * @time 2016-5-18 ÉÏÎç10:25:38
  */
 public interface IPersonShow {
- 
+
+	/**
+	 * Ê±×°Ğã
+	 */
 	public void show() ;
 
 }

@@ -6,7 +6,9 @@ package designpatterns.decorator;
  * @time 2016-5-18 上午10:25:51
  */
 public class Finery implements IPersonShow {
-	// 组件
+	/**
+	 * 组件-装入衣物
+	 */
 	private IPersonShow compoment;
 
 	/**
@@ -19,6 +21,7 @@ public class Finery implements IPersonShow {
 		this.compoment = compoment;
 	}
 
+	@Override
 	public void show() {
 		System.out.println(" Finery:show");
 		if (compoment != null) {
