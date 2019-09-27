@@ -34,10 +34,7 @@ public class Zmain {
 		to.workWithUsb();
 
 
-		//”¶”√
-		List list= Arrays.asList("2","1");
-		list.remove(1);
-		
+
 	}
 
 }
