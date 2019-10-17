@@ -1,8 +1,7 @@
-package com.ding.study.concurrent.jkjuc.juc16;
+package com.ding.study.concurrent.jkjuc.juc16Semaphore;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
