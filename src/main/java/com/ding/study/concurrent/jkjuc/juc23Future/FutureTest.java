@@ -27,6 +27,8 @@ public class FutureTest {
         Future future = executorService.submit(task, testBean);
         System.out.println(future.get());
         System.out.println(testBean.getName() + "\n\n");
+
+
         ////////////////
         CallableDemo callableDemo = new CallableDemo();
         callableDemo.setBean(testBean);
@@ -47,9 +49,7 @@ public class FutureTest {
             }
         }, testBean);
 
-
         new Thread(futureTask).start();
-
         System.out.println("----:" + futureTask.get());
     }
 
