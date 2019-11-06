@@ -24,6 +24,7 @@ public class SupplierImpl implements Supplier {
     public Object get() {
         TestBean testBean = new TestBean();
         testBean.setName("SupplierImpl" + test);
+        System.out.println("SupplierImpl:print:" + Thread.currentThread().getName() + " testBean:" + testBean.getName());
         try {
             Thread.sleep((new Random()).nextInt(1002));
         } catch (InterruptedException e) {
@@ -32,10 +33,9 @@ public class SupplierImpl implements Supplier {
         System.out.println("SupplierImpl:print:" + Thread.currentThread().getName() + " testBean:" + testBean.getName());
 
         if((new Random()).nextInt(1002)%2==0){
-
-                throw new RuntimeException("222");
-
+              // throw new RuntimeException("222");
         }
+
 
         return testBean;
     }
