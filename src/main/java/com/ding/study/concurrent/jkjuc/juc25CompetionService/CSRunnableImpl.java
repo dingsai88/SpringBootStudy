@@ -19,7 +19,7 @@ public class CSRunnableImpl implements Runnable {
             System.out.println(test.getName()+"--"+Thread.currentThread().getName()+"-begin");
             Thread.sleep(1111);
             if(count%2==0){
-                Thread.sleep(new Random().nextInt(1000));
+                Thread.sleep(new Random().nextInt(5000));
             }
 
             test.setName(test.getName()+(count++));
