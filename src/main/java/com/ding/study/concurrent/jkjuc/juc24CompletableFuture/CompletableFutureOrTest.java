@@ -24,9 +24,12 @@ public class CompletableFutureOrTest {
         //两个回来一个
         CompletableFuture result = completableFuture1.applyToEither(completableFuture2, new FunctionImpl("1"));
 
-        System.out.println(Thread.currentThread().getName() + "-------:bean.join1:" + result.join());
-        System.out.println(Thread.currentThread().getName() + "--------:bean.get1:" + result.get());
-         try {
+      //  System.out.println(Thread.currentThread().getName() + "-------:bean.join1:" + result.join());
+        System.out.println(Thread.currentThread().getName() + "--------:bean.get1\n\n:" + result.get());
+        result.cancel(true);
+
+
+        try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -37,8 +40,7 @@ public class CompletableFutureOrTest {
 
 
 
-
-
+/*
 
 
         //开一个线程 做操作
@@ -83,6 +85,7 @@ public class CompletableFutureOrTest {
         System.out.println("\n\n\n\n--------------主线程 4  已经结束 \n\n\n\n\n");
 
 
+*/
 
 
 

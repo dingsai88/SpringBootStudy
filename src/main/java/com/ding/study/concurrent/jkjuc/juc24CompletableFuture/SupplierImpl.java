@@ -30,7 +30,7 @@ public class SupplierImpl implements Supplier {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("SupplierImpl:print:" + Thread.currentThread().getName() + " testBean:" + testBean.getName());
+        System.out.println("SupplierImpl:print:" + Thread.currentThread().getName() + " testBean:qqqqqq" + testBean.getName());
 
         if((new Random()).nextInt(1002)%2==0){
               // throw new RuntimeException("222");

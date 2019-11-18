@@ -45,7 +45,7 @@ public class CompletableFutureBingXingTest {
         });
         System.out.println(Thread.currentThread().getName() + ":bean11111111:");
         Thread.sleep((new Random()).nextInt(500));
-        System.out.println(Thread.currentThread().getName() + ":bean:" + completableFuture.join());
+     //   System.out.println(Thread.currentThread().getName() + ":bean:" + completableFuture.join());
 
     }
 
