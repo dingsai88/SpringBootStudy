@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
  */
 public class RateLimiterTest {
     private static   long  prev;
-    public static void main(String []args){
+    public static void main(String []args)throws Exception{
 
         // 限流器流速：2 个请求 / 秒
         RateLimiter limiter =
@@ -20,9 +20,10 @@ public class RateLimiterTest {
         ExecutorService es = Executors.newFixedThreadPool(1);
 // 记录上一次执行时间
         prev = System.nanoTime();
+        Thread.sleep(2000);
 // 测试执行 20 次
         for (int i=0; i<20; i++){
-
+            System.out.println("开始限流");
             // 限流器限流
             limiter.acquire();
 
