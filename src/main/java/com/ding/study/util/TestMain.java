@@ -12,6 +12,16 @@ import java.util.UUID;
  */
 public class TestMain {
 
+    public static void main(String[] args) throws Exception {
+
+        float j=1;
+
+        for(int i=1;i<44;i++) {
+            System.out.println("\t\t\t<option value=\""+j+"\">"+j+"%</option>");
+            j+=0.5;
+        }
+
+    }
 
     public static void main1(String[] args) throws Exception {
         String str="66_";
@@ -41,7 +51,7 @@ public class TestMain {
         return "66_"+sdf.format(Calendar.getInstance().getTime())+"_"+id;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main33(String[] args) throws Exception {
         String str="66_";
         SimpleDateFormat simdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
