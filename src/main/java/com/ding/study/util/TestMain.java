@@ -17,7 +17,7 @@ public class TestMain {
         float j=1;
 
         for(int i=1;i<44;i++) {
-            System.out.println("\t\t\t<option value=\""+j+"\">"+j+"%</option>");
+            System.out.println("\t\t\t<option value=\""+(j/100)+"\">"+j+"%</option>");
             j+=0.5;
         }
 
