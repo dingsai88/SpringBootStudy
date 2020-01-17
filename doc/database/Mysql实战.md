@@ -632,6 +632,433 @@ redolog是循环写的，空间固定会用完；binlog 是可以追加写入的
 
 
 
+CREATE TABLE `t` (
+  `id` int(11) NOT NULL,
+  `a` int(11) DEFAULT NULL,
+  `b` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `a` (`a`),
+  KEY `b` (`b`)
+) ENGINE=InnoDB;
+
+
+
+
+delimiter ;;
+create procedure idata()
+begin
+  declare i int;
+  set i=1;
+  while(i<=100000)do
+    insert into t values(i, i, i);
+    set i=i+1;
+  end while;
+end;;
+delimiter ;
+call idata();
+
+
+
+mysql> select * from t where a between 10000 and 20000;
+
+
+
+set long_query_time=0;
+select * from t where a between 10000 and 20000; /*Q1*/
+select * from t force index(a) where a between 10000 and 20000;/*Q2*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+XA协议包含
+两阶段提交（2PC）
+三阶段提交（3PC）两种实现
+
+
+
+
+
+I.
+
+
+
+查询日志:0723-PC.log
+
+
+拒绝访问的请求access denied
+未能正确执行的SQL
+
+
+
+
+select * from mysql.general_log;
+
+
+
+二进制日志binary log
+
+
+
+作用:
+恢复recovery:数据恢复需要，进行point-in-time恢复
+
+复制replication:一般master slave
+
+审计audit:判断是否有攻击或者异常操作
+
+0723-PC-bin.000001默认文件
+0723-PC-bin.000003
+0723-PC-bin.index索引文件
+
+
+
+
+max_binlog_size
+单个文件的最大值，超过新建文件，后缀+1，记录到.index文件
+
+
+binlog_cache_size默认32K:未提交的日志记录在缓冲区:每个会话有一个
+
+sync_binlog默认值0:是否同步写入磁盘
+
+binlog-do-db默认为空:需要写入那些到日志
+binlog-ignore-db默认为空:需要忽略那些到日志
+
+
+log-slave-update:slave时候不会记录master的binlog。打开就会本地也记录binlog
+
+
+
+
+show global status like 'binlog_cache%';查看缓冲次数和临时文件写入次数
+
+
+Binlog_cache_use使用缓冲次数
+Binlog_cache_disk_use使用临时文件写的次数
+
+
+
+set @@session.binlog_format='ROW'
+
+
+binlog_format:binlog记录格式
+
+statement、row、mixed
+
+statement:记录的是逻辑sql
+row:记录表更改的情况。建议隔离级别read commited
+mixed:记录的是逻辑SQL，有一些情况下会使用row格式。
+1.存储引擎为NDB
+2.使用了UUID()、user()、current_user()、fund_rows()、row_count()等不确定函数
+3.使用了insert delay语句 延迟插入.
+4.使用了用户定义函数UDF
+5.使用了临时表temporary table
+
+
+
+
+mysqlbinlog --start-position=203 C:\ProgramData\MySQL\MySQL Server 5.6\Data\0723-PC-bin.000003
+
+
+
+
+
+mysqlbinlog.exe --no-defaults --database=db   c:\zmysqltemp\0723-PC-bin.000003 | more
+
+
+
+--no-defaults --database=db  --base64-output=decode-rows -v --start-datetime='2019-04-11 00:00:00' --stop-datetime='2019-04-11 15:00:00'  mysql-bin.000007 >/tmp/binlog007.sql
+
+
+
+mysqlbinlog.exe --no-defaults --database=db  --base64-output=decode-rows -v   c:\zmysqltemp\0723-PC-bin.000003 >test.sql
+
+
+
+
+
+
+
+
+套接字文件socket:unix内核下用于连接(mysql.sock)
+
+
+pid文件:启动时进程ID写入文件中(0723-PC.pid)
+
+
+表结构定义文件:user.frm
+
+
+
+
+
+
+innodb存储引擎文件:
+
+
+
+表空间文件(ibdata1)ibdata1:12M:autoextend:
+
+ 可设置多个在不同磁盘
+
+show variables like '%innodb_data_file_path%';
+
+
+
+
+
+
+
+show variables like 'innodb_file_per_table';(ON的时候,独立表空间:表名.ibd)
+
+
+
+tb_tdc_user.ibd
+
+
+数据、索引、插入缓冲bitmap等信息;其余信息还在默认表空间
+
+
+
+
+
+重做日志文件:ib_logfile0、ib_logfile1
+
+
+至少一个重做日志文件组group,每组下至少两个重做日志.
+
+
+innodb_log_file_size(老版4G,新版512G):每个重做日志的大小:show variables like '%innodb_log_file_size%';
+
+innodb_log_files_in_group(默认2):重做日志个数
+
+innodb_mirrored_log_groups(默认1)：日志镜像文件组数量，1表示只有日志文件组，没有镜像。
+
+innodb_log_group_home_dir路径:
+
+
+
+
+
+
+体系架构
+
+后台线程:
+1.master thread
+缓冲池数据异步刷新到磁盘，保证数据一致性
+脏页刷新、合并插入缓冲、undo页回收。
+
+2.IO Thread
+innodb使用AIO asyncIO
+包含四个IO线程:
+write、read、insert buffer、log IO thread
+
+3.purge thread清除线程
+回收undolog
+
+4.page cleaner thread
+脏页刷新操作线程
+
+
+内存:
+1.缓冲池
+磁盘读到缓存池中:页FIX缓冲池中。
+读取页时判断是否在缓冲池，命中直接读取。
+修改数据也是修改缓冲池中的页，然后刷新到磁盘（checkpoint）
+
+
+show variables like 'innodb_buffer_pool_size';
+
+
+缓冲池-数据页类型:
+
+索引页
+数据页
+undo页
+插入缓冲insert buffer
+自适应哈希索引 adaptive hash index
+innodb锁信息lock info
+数据字典信息data dictionary
+
+
+设置多个缓冲池
+show variables like 'innodb_buffer_pool_instances';
+
+
+
+
+2.LRU list 、Free List 、Flush List
+
+缓冲池最少使用算法管理LRU。
+
+缓冲池页默认大小16K
+
+Free List空闲页列表Free buffers空闲数量
+
+缓冲池运行状态:
+select pool_id,hit_rate,pages_made_young,pages_not_made_young from information_schema.innodb_buffer_pool_stats;
+
+缓冲池LRU列表 space
+select * from information_schema.innodb_buffer_page_lru where space=1;
+
+
+LRU列表中的页被修改后，脏页dirty page（缓冲池和磁盘不一致）.
+通过checkpoint机制刷新脏页dirty page到磁盘。
+
+Flush列表中的页：脏页列表。
+
+脏页既存在LRU列表中也存在Flush列表。
+查看脏页:
+show engine innodb status ;
+select * from information_schema.innodb_buffer_page_lru where oldest_modification>1;
+
+
+
+
+
+
+
+3.重做日志缓冲(默认8mb)
+redo log buffer
+
+show variables like 'innodb_log_buffer_size';
+
+刷新到重做日志文件中:
+1.master thread每秒刷新到重做日志文件中;
+2.每个事务提交时刷新
+3.重做日志缓冲小于二分之一时。
+
+
+
+
+
+4.额外的内存池
+内存堆heap
+
+
+
+
+
+
+
+2.4 checkpoint 技术(脏页刷盘:缓冲页和磁盘不一致)
+
+checkpoint检查点解决问题
+1.缩短数据库的恢复时间
+2.缓冲池不够用时，将脏页刷新到磁盘
+3.重做日志不可用时，刷新脏页
+
+
+
+
+
+最高优先级
+
+多个循环组成loop:
+主循环loop(每秒和10秒)
+后台循环backgroup loop
+刷新循环flush loop(脏页到磁盘)
+暂停循环suspend loop
+
+Master thread根据库运行状态在loop、backgroup 、flush、suspend切换
+
+主循环loop每秒
+重做日志缓冲刷新到磁盘，即使没有提交(总是)
+合并插入缓冲(可能)
+至多刷新100个innodb的缓冲池中的脏页到磁盘(可能)
+没有活动切换到backgroundLoop(可能)
+
+主循环loop10秒
+刷新100个innodb的缓冲池中的脏页到磁盘(可能)
+合并至多5个插入缓冲(总是)
+将日志缓冲刷新到磁盘（总是）
+删除无用的undo页(总是)
+刷新100个或者10个脏页到磁盘(总是??)
+
+
+关键特性：
+插入缓冲 insert buffer
+两次写 double write
+自适应哈希索引adaptive hash index
+异步IO asyncIO
+刷新邻接页FlushNeighborPage
+
+
+
+purge
+
+
+
+当前没有用户活动，或者关闭数据库
+
+删除无用的undo页(总是)
+合并20个插入缓冲(总是)
+跳回到主循环(总是)
+不断刷新100个页直到符合条件>>跳转到flush loop完成
+
+
+
+
+插入缓冲
+1.insert buffer提高插入效率(是个B树)
+同时满足两个条件:
+索引是辅助索引
+索引不是唯一
+
+
+
+
+2.change buffer(插入缓存升级版B树) 
+
+
+3.Insert buffer内部实现
+
+4.merge insert buffer
+
+
+
+两次写:可靠性
+
+
+
+doublewrite
+
+流程：
+1.从page复制数据到 内存中的doublewrite buffer
+2.从doublewrite buffer顺序写入到共享表空间
+3.从doublewrite buffer写入到数据文件.ibd
+
+
+
+自适应哈希(adaptive hash index)AHI数据库自优化self tuning(默认开启)
+
+以该模式访问了100次
+页通过该模式访问了N次，
+
+show engine innodb status;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
