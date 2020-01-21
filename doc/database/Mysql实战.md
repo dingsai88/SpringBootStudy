@@ -250,6 +250,10 @@ set session transaction isolatin level repeatable read;
 4.设置系统当前隔离级别
 set global transaction isolation level repeatable read;
 
+set global transaction isolation level SERIALIZABLE;
+set global transaction isolation level  READ   UNCOMMITTED;
+set global transaction isolation level READ   COMMITTED;
+
 5.命令行，开始事务时
 set autocommit=off 或者 
 start transaction|start transaction with consistent snapshot;
@@ -1046,6 +1050,576 @@ doublewrite
 页通过该模式访问了N次，
 
 show engine innodb status;
+
+
+
+
+
+show engine innodb mutex;
+
+
+show engine innodb status;
+
+
+fsync
+
+
+
+
+内存中重做日志缓冲redo log buffer
+重做日志文件redo log file
+
+
+
+fsync
+
+
+
+
+2.log block
+
+重做日志都是以512字节进行存储的.
+
+日志缓存和日志文件都是块block每个512字节
+
+重做日志头header 12字节
+重做日志内容body 492字节存储内存
+重做日志尾tailer 8字节
+
+
+1比特bit 1个0、1；
+1字节byte 8bit(ascii一个字节、utf8中3英1、unicode2字节)
+1024字节=1KB
+
+
+log buffer 类似数组，
+
+
+log_block_hdr_no4字节:标记这个数组中的位置。标记数组最大2G
+
+log_block_hdr_data_len2字节:表示log block占用大小。全部占用（0x200十六进制的200等于512字节）
+
+log_block_first_rec_group2字节：第一个日志所在的偏移量；两个事务并存时存第二个事务的地址
+
+log_block_checkpoint_no4字节:最后被写入的检查点的值
+
+
+
+
+log_block_trl_no4字节：值和log_block_hdr_no相同
+
+
+
+
+
+
+
+
+
+3.
+log group：多个redolog
+
+roud-robin:redo log file被写满，接着写下一个。
+
+
+
+4.redo log日志格式
+
+
+
+
+
+
+7.2.2 undo
+
+存放在segment内undo segment(共享表空间内)
+
+undolog需要持久性保护，所以也会产生redolog
+
+记录更改的相反语句
+
+
+
+purge
+
+
+
+
+type_cmpl:更新有三种状态:non-delete-mark、将delete记录标记为not delete、将记录标记为delete
+
+undo no:记录事务的ID
+
+table_id:记录undo log对应的对象
+
+所有的主键的列和值
+
+start:2字节，记录undo log开始位置
+
+
+select * from  INNODB_TRX_rollback_segment
+
+
+1个或多个资源管理器resource managers:提供访问事务资源的方法。通常一个数据库就是一个资源管理器
+一个事务管理器transaction manager：协调全局事务中的各个事务。参与全局事务的所有资源管理器进行通信
+一个应用程序application program：定义事务边界，指定全局事务操作。
+
+1.程序调用各个数据库进行事务操作
+2.都执行没问题了
+3.程序>各个资源管理器(库)要执行的命令>告诉事务管理器已经prpare
+4.事务管理器>告诉各个资源管理器执行rollback还是commit;
+
+
+
+1.程序>各个资源管理器(库)要执行的命令>告诉事务管理器已经prpare
+2.事务管理器>告诉各个资源管理器执行rollback还是commit;
+
+
+
+mysql --help|grep my.cnf
+
+
+
+
+
+错误日志error log
+show variables like 'log_error';
+
+慢查询日志slow query log
+
+show variables like 'long_query_time';
+
+show variables like 'log_slow_queries';
+
+查询日志log
+
+二进制日志binlog
+
+
+log_queries_not_using_indexes
+
+
+select @@version ;
+
+
+select @@tx_isolation;
+
+
+
+
+select @@global.tx_isolation;
+
+
+
+
+
+show global variables like "%datadir%";
+
+
+show variables;
+
+show global variables like "%datadir%";
+show variables like 'log_error';
+
+show variables like 'long_query_time';
+
+
+
+show variables like 'slow_query_log';
+
+
+show variables like 'slow_query_log_file';
+
+
+show variables like 'log_queries_not_using_indexes';
+
+
+
+
+mysqldumpslow 0723-PC-slow.log
+
+
+
+执行时间最长的10条SQL:mysqldumpslow.pl -s al -n 10   > C:\0723-PC-slow.log
+
+
+
+set global|session   
+set @@global @@session
+
+
+
+set
+
+alter table mysql.slow_log engine=Innodb;
+
+
+
+
+第四章 表
+
+
+
+索引组织(index organized)：索引即数据
+索引组织表(index organized table)每张表有primary key没有默认建立
+1.非空唯一索引(第一个)
+2.自动创建6字节大小的指针
+
+
+
+innodb逻辑存储结构
+
+
+
+
+表空间tablespace:
+段segment
+区extent
+页page
+
+
+
+表空间tablespace:
+共享表空间ibddata1(undo信息、插入缓冲索引页、系统事务信息、二次写缓冲double write buffer)
+独立表空间.ibd(数据、索引、插入缓冲bitmap)
+
+
+
+
+段segment:
+数据段
+索引段
+回滚段
+
+索引组织(index organized)：索引即数据
+
+
+
+
+区extent:连续的页组成的空间(固定1MB):64个连续page
+默认情况下页page(16KB)
+
+页大小可以调整,区extent大小不变
+
+
+
+页page(16k)也叫块
+数据页B-tree node
+undo页undo Log Page
+系统页system page
+事务数据页transaction system page
+插入缓冲位图页insert buffer bitmap
+插入换从空闲列表页insert buffer free list
+未压缩的二进制大对象页 uncompressed blob page
+压缩的二进制大对象页 compressed blob page
+
+
+
+
+行:innodb面向列的row-oriented
+最多允许存放16K/2-200行记录，即7992行.
+
+
+
+
+
+Innodb行记录格式
+
+
+
+4.3.1 compact 行记录格式
+
+一页存放的行数越多性能越高。
+
+
+
+
+
+latinl
+
+
+
+
+BLOB、LOB大对象存放在数据页外:也可以不存在溢出页面
+
+varchar也可能存放为行溢出数据(65535指所有列的长度总和)
+
+
+
+
+File Header 文件头(38字节):(页在表空间中的偏移值、上页、下页、LSN日志序列、)
+Page Header 页头(56字节):(索引ID、可重用空间首指针、已删除记录字节数、最后插入位置、最后插入方向、页中记录数量、修改页的最大事务ID)
+Infimun和Supremun Records:(虚拟行记录，infimun比该页任何主键都小的值、supremun主键都大的值)
+User Records用户记录，行记录:实际存储记录的内容(B+树)
+Free Space空闲空间:空闲空间(Link链表结构)
+Page Directory 页目录:存放了记录的相对位置（不是偏移量）
+File trailer文件结尾信息(8字节):检测页是否完整地写入磁盘，校验用
+
+
+
+
+
+
+6.锁(数据完整性和一致性)
+
+latch门闩锁(轻量级锁)锁定时间必须非常短:
+mutex互斥量
+rwlock读写锁
+
+show engine innodb mutex;
+
+
+lock对象是事务
+锁表、页、行。
+在commit或rollback才释放
+
+
+
+
+show engine innodb status;
+--当前运行的所有事务
+select * from information_schema.innodb_trx;
+--当前出现的锁
+select * from information_schema.innodb_locks;
+--锁等待的对应关系
+select * from information_schema.innodb_lock_waits;
+
+
+
+
+
+6.3 Inodb存储引擎中的锁
+
+两种表中的行级锁(行级别):
+共享锁 Slock 允许事务读一行数据
+排他锁 Xlock 允许事务删除或更新一行数据
+
+
+
+多粒度锁定granular锁定:允许事务在行级表级锁同时存在。
+
+为了支持不同粒度加锁操作，新增意向锁 Intention lock
+
+意向锁(IX)：将锁定对象分为多个层次，事务希望在更细粒度fine granularity加锁。
+
+
+
+两种意向锁(表级别):表锁和行锁共存而使用了意向锁(只会和表级的X，S发生冲突)
+1.意向共享锁IS lock，事务要获得一张表中某几行的共享锁
+2.意向排他锁IX lock，事务要获得一张表中某几行的排他锁
+
+申请行排他锁的时候自动申请表意向排他锁。
+申请共享锁的时候自动申请表意向共享锁。
+
+ IX，IS是表级锁，不会和行级的X，S锁发生冲突。只会和表级的X，S发生冲突
+
+show engine innodb status;
+
+
+
+6.3.2一致性非锁定读(consistent nonlocking read)
+MVCC多版本并发控制，别人锁定也能读
+
+6.3.3一致性锁定读
+select for update;加排他锁读
+select  lock in share mode;加共享锁读
+
+
+6.3.4 自增长与锁
+自增长计数器auto-increment counter
+获得最新值:select max(id) from t for update;
+在事务里立刻释放锁:增加并发性能
+
+
+自增长插入分类:
+insert-like :like语句
+simple inserts :知道插入行数
+bulk inserts:不能确定插入语句 insert select
+mixed-mode inserts:一部分是自增长，一部分是确定行数。
+
+
+
+
+show variables like 'innodb_autoinc_lock_mode';
+
+
+
+
+
+innodb_autoinc_lock_mode：
+
+0：老版本方式，通过表锁auto-inclocking
+1:默认值,simple inserts用互斥量mutex;bulk inserts表锁auto-inc locking
+2.都是互斥量mutex性能高，并发时自增长不是连续的。
+
+
+
+
+ 6.3.5外键和锁(完整性约束检查)
+外键自动加索引(oracle外键不会自动加索引)
+ 
+读主表的时候一定要用一致性锁定读或者写
+ 
+ 
+ 
+ 6.4 锁的算法
+ 
+ 行锁的3种算法
+ Record lock:当个行记录上的锁:只有唯一索引的情况下才生效，辅助索引不生效。
+ Gap lock:间隙锁，锁定一个范围，但是不包含记录本身。
+ next-key lock:Gap lock+record lock，锁定一个范围，并且锁定记录本身。
+ 
+ 
+ record lock总是会锁住索引记录。
+ Next-key lock解决幻读问题
+ 
+ 
+ previous key locking
+ 
+ 
+
+ create table z(a int ,b int , key(a),key(b));
+
+
+ create table z(a int ,b int ,primary key(a),key(b));
+ insert into z select 1,1;
+ insert into z select 3,1;
+ insert into z select 5,3;
+ insert into z select 7,6;
+ insert into z select 10,8;
+ 
+ 
+insert into z select 1,1;
+ insert into z select 3,3;
+
+ insert into z select 6,6;
+ 
+ insert into z select 10,10;
+ 
+ 
+ start transaction;
+  SELECT * from z where b=3 for update;-- 锁定 a=5和[b(1-3)(3)(3-6),不含3和6]
+ select * from z;
+ 
+ 被锁住
+   SELECT * from z where a=5 lock in share mode;
+    insert into z select 4,2;
+	insert into z select 4,3;
+	insert into z select 4,4;
+    insert into z select 6,5;
+ 
+ 没被锁
+  insert into z select 2,1;
+  insert into z select 4,6;
+  insert into z select 8,6;
+ 
+ 
+ 关闭gap lock：锁这个值前后已存在的值。
+ 隔离级别改成提交读。
+ 设置:innodb_locks_unsale_for_binlog:1
+ 
+ 
+show variables like 'innodb_locks_unsafe_for_binlog';
+ 
+ 
+I.
+（2、3）没锁  推论1.辅助临界值没锁定
+(4、3)  锁了  推论2.主键也锁了
+(4、1) 没锁
+ (2、4)锁了 辅助区间内 锁了
+ 
+1.主键区间内会锁定 (错误)
+2.附件索引只会锁定区间内不会锁定临界值
+ 
+   insert into z select 2,4;
+ 
+ 
+ 
+ 
+ 
+ 6.5锁问题
+ 
+ 脏读:本事务读取到其他事务未提交的数据。
+ 
+ 不可重复读:提交读隔离级别下，本事务两次读取不一致。
+ 
+ 
+ 
+ 丢失更新:第二个事务覆盖第一个事务的更新（任何隔离级别都不会有问题）
+ 
+ 
+ 
+ 
+ 6.6阻塞：不同锁之间兼容性问题，等待另外一个事务释放占用资源。
+ 
+ 
+ 设置阻塞时间(默认50秒)
+ set @@innodb_lock_wait_timeout=60;
+ set @@innodb_rollback_on_timeout=on;不能修改
+ 
+ 超时后抛出异常，但是没有回滚或者提交（需要小心注意）
+ 
+ 
+ 
+ 6.7死锁:两个或以上事务，互相等待资源。
+
+ 
+ 
+ 解决死锁
+ 1. 锁超时时间
+  set @@innodb_lock_wait_timeout=60;
+ 更新较多行的时候不适用undo log比较大。
+ 
+ 2.等待图wait for graph死锁检测(innodb采用的方式)
+ wait for graph(深度优先算法)保存以下两种信息:
+ 锁的信息链表
+ 事务等待链表
+ 
+ 
+ 选择回滚undo量最小的事务
+ 
+ 
+ 死锁的概率：
+ 1.事务数量越多概率越大
+ 2.每个事务操作的数量越多概率越大
+ 3.操作数据的集合越小则概率越大
+ 
+ 
+数据库会 回滚死锁的事务rollback
+
+
+
+
+6.8 锁升级Lock escalation
+
+innodb不存在锁升级的问题，sqlserver会锁升级.
+
+
+6  44
+
+2 3 55 99
+
+
+
+
+ 
+
+select @@global.tx_isolation;
+
+
+set global transaction isolation level repeatable read;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
