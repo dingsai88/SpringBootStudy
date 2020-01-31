@@ -1361,15 +1361,15 @@ File trailer文件结尾信息(8字节):检测页是否完整地写入磁盘，�
 
 6.锁(数据完整性和一致性)
 
-latch门闩锁(轻量级锁)锁定时间必须非常短:
+latch门闩锁(轻量级锁)时间非常短(锁线程):
 mutex互斥量
 rwlock读写锁
 
 show engine innodb mutex;
 
 
-lock对象是事务
-锁表、页、行。
+lock(锁事务)
+行锁、表锁、意向锁()。
 在commit或rollback才释放
 
 
@@ -1393,9 +1393,10 @@ select * from information_schema.innodb_lock_waits;
 共享锁 Slock 允许事务读一行数据
 排他锁 Xlock 允许事务删除或更新一行数据
 
+特性: 多粒度锁定:允许事务在行级表级锁同时存在。
 
+多粒度锁定(granular)
 
-多粒度锁定granular锁定:允许事务在行级表级锁同时存在。
 
 为了支持不同粒度加锁操作，新增意向锁 Intention lock
 
@@ -1407,8 +1408,8 @@ select * from information_schema.innodb_lock_waits;
 1.意向共享锁IS lock，事务要获得一张表中某几行的共享锁
 2.意向排他锁IX lock，事务要获得一张表中某几行的排他锁
 
-申请行排他锁的时候自动申请表意向排他锁。
-申请共享锁的时候自动申请表意向共享锁。
+申请行排他锁Xlock的时候自动申请表意向排他锁IXlock。
+申请共享锁Slock的时候自动申请表意向共享锁IXlock。
 
  IX，IS是表级锁，不会和行级的X，S锁发生冲突。只会和表级的X，S发生冲突
 
@@ -1417,7 +1418,11 @@ show engine innodb status;
 
 
 6.3.2一致性非锁定读(consistent nonlocking read)
-MVCC多版本并发控制，别人锁定也能读
+MVCC多版本并发控制，别人锁定也能读.通过undo日志实现
+RC和RR级别下可用
+RC提交读:读取最新版本的snapshot数据
+RR可重复读:读取事务开始版本的数据
+
 
 6.3.3一致性锁定读
 select for update;加排他锁读
@@ -1528,23 +1533,26 @@ I.
  (2、4)锁了 辅助区间内 锁了
  
 1.主键区间内会锁定 (错误)
-2.附件索引只会锁定区间内不会锁定临界值
+2.辅助索引只会锁定区间内不会锁定临界值
  
    insert into z select 2,4;
  
+ 
+ Phantom problem:在同一事务里,连续两次相同的SQL导致不同的结果,第二次返回之前不存在的行.
  
  
  
  
  6.5锁问题
  
- 脏读:本事务读取到其他事务未提交的数据。
+ 脏读(读未提交级别):本事务读取到其他事务未提交的数据。
  
  不可重复读:提交读隔离级别下，本事务两次读取不一致。
+ Mysql官方定义不可重复读为幻读问题,phantom problem.
+ 使用nextkeylock锁定住区间来解决不可重复读问题.
  
  
- 
- 丢失更新:第二个事务覆盖第一个事务的更新（任何隔离级别都不会有问题）
+ 丢失更新:第二个事务覆盖第一个事务的更新（任何隔离级别都不会有问题）有锁保证
  
  
  
@@ -1584,7 +1592,7 @@ I.
  3.操作数据的集合越小则概率越大
  
  
-数据库会 回滚死锁的事务rollback
+数据库会回滚死锁的事务rollback
 
 
 
@@ -1592,7 +1600,7 @@ I.
 6.8 锁升级Lock escalation
 
 innodb不存在锁升级的问题，sqlserver会锁升级.
-
+行锁升级页锁升级表锁
 
 6  44
 
