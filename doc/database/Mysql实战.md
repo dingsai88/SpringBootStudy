@@ -1646,6 +1646,243 @@ set global transaction isolation level repeatable read;
 
 
 
+锁实现隔离性
+
+
+
+
+
+
+
+认识事物acid
+
+原子性(atomicity):不可分割,成功都成功
+一致性(consistency):从一种状态转变为下一种一致的状态
+隔离性(isolation):其他称呼并发控制,锁,串行化,事物提交前其他事物不可见.
+持久性(durability):事物一旦提交,结果是永久性.
+
+
+
+
+
+
+
+事务理论分类:
+扁平事务flat transactions
+带有保存点的扁平事务 flat tansactions with savepoints
+链事务chained transactions
+嵌套事务nested transactions
+分布式事务distributed transactions
+ 
+
+
+
+扁平事物flat transactions(普通事务)
+三种结果
+成功commit96%
+失败rollback3%
+外部异常回滚超时等1%
+
+
+带有保存点的扁平事物 flat tansactions with savepoints
+多个saveponit保存点
+
+
+链事务chained transactions
+保存点事务的变种.
+一个事务在提交的时候自动将上下文传给下一个事务
+
+completion_type=0:默认NO_CHAIN.没有任何操作
+
+completion_type=1:chain;commit work后自动开启一个链事务,
+
+completion_type=2:release;commit work后自动断开连接,不能继续.
+
+
+保存点的扁平事务可以回滚到任意正确的保存点。而链事务中回滚仅限于当前事务，即只能恢复到最近一个保存点。
+
+
+
+
+嵌套事务nested transactions
+
+子事务可以提交或回滚,但提交操作不会马上生效.顶层事务提交后才真正提交.
+
+
+
+
+
+
+
+
+事务的实现:
+redolog重做日志保证A原子性和D持久性
+
+undolog保证事务的C一致性
+
+锁来保证事务的I隔离性
+
+
+redo
+
+
+重做日志缓存(内存中)redo log buffer易失
+重做日志文件redologfile 持久的
+
+
+每次写入重做日志后都fsync一次
+
+(fsync函数同步内存中数据到储存设备)
+
+事务提交时调用fsync
+master thread每秒调用一次
+
+
+和磁盘扇区一样大
+
+
+
+重做日志格式(有多种格式头部通用)
+
+头部格式
+redo_log_type重做日志类型51种+
+
+
+space表空间ID
+
+page_no页的偏移量
+
+
+redo log body
+
+
+
+LSN日志序号Log Sequence number 占8字节
+
+重做日志写入总量
+checkpoint位置
+页版本
+
+show engine innodb status;
+Log Sequence number当前LSN
+Log flushed up to刷新到重做日志文件的LSN
+Last checkpoint at 表示刷新到磁盘的lsn
+
+
+
+6.恢复
+
+
+checkpoint表示已经刷新到磁盘的LSN
+
+insert into t select 1,2;
+page(2,3),offset 32,value 1,2 聚集索引
+page(2,4),offset 64, value2  辅助索引
+
+
+
+undo
+undo存在共享表空间里
+作用:
+1.回滚操作需要undo(记录相反的语句insert和delete)
+2.MVCC通过undo读取之前版本的信息(实现非锁定读)
+
+
+
+存储管理:
+rollback segment有1024个undol aog segment(老版本只支持1024并发)
+
+rollback segment设置:
+innodb_undo_directory:存放路径,可以是非共享表空间(默认.当前存储引擎目录)undo003
+
+
+innodb_undo_logs:总个数rollback segment(默认128个)
+
+innodb_undo_tablespaces:构成rollback segment的文件个数
+
+
+
+undo log也需要持久性,所以也会写入redolog
+
+
+
+事务提交undolog操作:
+1.将undo log放入列表 purge清理线程后续会操作
+2.判断undo log是否可以重用,可以就分配给其他事务
+
+
+undo log重用
+1.页使用小于四分之三
+2.purge操作是离散的所以很慢
+
+
+
+查看undolog数量show engine innodb status;
+history list length:undolog数量
+
+
+
+
+
+
+insert undo log 由于隔离性所以其他事务不可见.
+事务提交直接删除.不需要puerge操作.
+
+
+update undolog :delete和update操作产生的undolog日志
+事务提交时放入purge列表.由该线程操作删除
+
+
+
+desc innodb_trx_rollback_segment;
+
+select segment_id,space,page_no from innodb_trx_rollback_segment;
+
+
+from infomation_schema.INNODB_TRX_UNDO;
+
+
+
+
+
+
+
+
+purge线程清除：最终完成update、delete操作
+
+事务提交后并未真正删除数据
+history list按照事务提交的顺序组织undolog
+
+
+purge操作从history list找到第一个需要被清理的trx1
+如果有复用
+
+innodb_purge_batch_size:默认每次清理undo page的数量300
+
+
+
+innodb_max_purge_lag:控制history list长度,默认0不限制.
+
+
+innodb_max_purge_lag_delay:最大毫秒数,防止purege操作无限等待
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
