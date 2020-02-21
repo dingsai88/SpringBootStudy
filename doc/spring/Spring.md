@@ -37,6 +37,46 @@ V.Spring Cloud相关
 
 
 
+02 - 一起认识Spring家族的主要成员:
+Spring Boot用最少的精力快速构建基于Spring的应用程序
+Spring cloud 服务化类似dubbo
+Spring cloud Data Flow 类似ETL 数据处理
+
+
+03 - 跟着Spring了解技术趋势:
+从Spring矿建的 release note了解技术框架发展
+
+Spring 5.X仅支持java8
+Kotlin 语言
+webFlux 异步编程
+portlet 不维护了
+velocity 不维护了
+jasperReport 报表不维护了
+
+
+
+04 - 编写你的第一个Spring程序:
+1.@RestController
+2.@RequestMapping("/hello")
+3.run Spring2020StudyApplication
+4.curl localhost:8080/hello
+5.Spring Boot Actuator:健康检查审计统计用(致动（促动，激励，调节）器)
+curl localhost:8080/actuator/health；返回{"status":"UP"}
+6.maven 父类依赖<groupId>org.springframework.boot</groupId>
+		
+7.plugin 生成可执行jar包
+spring-boot-maven-plugin
+7.1生成JAR包mvn clean package -Dmaven.test.skip=true
+7.2原始包spring-2020-study-0.0.1-SNAPSHOT.jar.original
+实际运行包spring-2020-study-0.0.1-SNAPSHOT.jar
+7.3Jar包运行:C:\spring-2020-study\target\  java -jar spring-2020-study-0.0.1-SNAPSHOT.jar
+
+8.dependenciesmanager修改不继承spring-boot-starter-parent
+
+
+
+
+
 
 
 
