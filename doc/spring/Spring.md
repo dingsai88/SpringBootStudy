@@ -75,6 +75,33 @@ spring-boot-maven-plugin
 
 
 
+06 - 如何配置多数据源
+
+1.不同数据源的配置分开
+
+2.使用注意事项
+2.1使用的是那个数据源
+2.2使用的设施事务、orm使用的是那个数据源
+
+
+
+3.多数据源配置方法1.
+排除springboot依赖纯手工datasource以及相关内容
+
+4.Springboot协同工作
+4.1 在datasource上配置@primary类型的bean
+
+
+4.2排除springboot的自动配置exclude
+exclude={a.class,b.class}
+DataSourceAutoConfiguration
+DataSourceTransactionManagerAutoConfiguration
+JdbcTemplateAutoConfiguration
+
+使用
+@Bean
+@ConfigurationProperties
+
 
 
 
