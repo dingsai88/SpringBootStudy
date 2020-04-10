@@ -14,5 +14,6 @@ public class TestConcurrentMain {
         concurrentHashMap.put("","");
         concurrentHashMap.get("");
         System.out.println(40>>>1);
+        System.out.println(InterfaceTest.str2);
     }
 }
