@@ -5,6 +5,7 @@ import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class TestMain {
 
     public static void main(String[] args) throws Exception {
-
+        Objects.requireNonNull(null);
         float j=1;
 
         for(int i=1;i<44;i++) {
