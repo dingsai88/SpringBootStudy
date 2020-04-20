@@ -40,7 +40,7 @@ public class SimpleLambdaTest {
         list.add(red);
 
         SimpleLambdaTest test=new SimpleLambdaTest();
-        System.out.println(JsonUtils.convertObjToJsonString(test.getAppleByColor("red")));
+        System.out.println("获取苹果颜色"+JsonUtils.convertObjToJsonString(test.getAppleByColor("red")));
 
         //4 lambda Prodicate实例
         List<LambdaApple> r=  test.getAppleProdicate(a->a.getColor().equals("red"));
