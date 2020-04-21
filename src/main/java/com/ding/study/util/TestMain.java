@@ -12,8 +12,14 @@ import java.util.UUID;
  * @author daniel 2019-6-27 0027.
  */
 public class TestMain {
-
     public static void main(String[] args) throws Exception {
+        String App_biz_id="0123456789";
+        String appBizId = App_biz_id.substring(2, App_biz_id.length());
+
+            System.out.println(appBizId);
+
+    }
+    public static void main222(String[] args) throws Exception {
         Objects.requireNonNull(null);
         float j=1;
 
