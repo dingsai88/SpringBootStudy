@@ -290,10 +290,6 @@ II.垃圾收集
 老年代：存活较多，用标记清除算法；或者标记清除整理算法
 
 
-
-Eden区，两个Survivor(色外ver)区的内存空间比例为：8:1:1
-
-
 垃圾收集默认版本
 client模式win32  Seiral GC+Seiral Old
 
@@ -302,6 +298,10 @@ jdk6之前 Parallel Scavenge + Serial Old
 jdk6、7、8 Parallel Scavenge + Parallel Old
 jdk9 G1(Garbage First) 整理上看基于标记整理，局部Region之间基于复制算法实现；没有空间碎片
 
+
+
+
+Eden区，两个Survivor(色外ver)区的内存空间比例为：8:1:1
 
 
 II.新生代young收集器
@@ -322,7 +322,8 @@ II.老年代old收集器
 缺点:CPU核数少不适用、不能处理浮动垃圾（ConcurrentModeFailure出现时进行一次FullGC启用Serial Old收集器）、基于标记清除算法，每次整理后有很多空间碎片产生每次FullGC整理一次
 
 
-
+CMS:始标(STW)>并发标(并发)>重标(STW)>并发清除
+G1:初始标(需要STW)>并发标>最终标记》筛选回收
 
 II.G1（面向服务端的收集器）新老都用（低停顿）jdk7时开始提供：
 
