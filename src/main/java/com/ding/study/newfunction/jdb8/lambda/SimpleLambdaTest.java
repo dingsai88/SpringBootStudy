@@ -1,4 +1,5 @@
-package com.ding.study.util.lambda;
+package com.ding.study.newfunction.jdb8.lambda;
+
 
 import com.ding.study.LambdaApple;
 import com.ding.study.util.JsonUtils;
