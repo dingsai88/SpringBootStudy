@@ -51,7 +51,8 @@ II.SortedSet有序不重复集合zset
  zlend
  
  
- 
+ http://www.redis.cn/topics/distlock.html
+ Redis分布式锁
  
  --------------------------------------------------------------------------
  

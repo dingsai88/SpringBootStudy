@@ -1,5 +1,7 @@
 package com.ding.study.collection;
 
+import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -7,13 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TestConcurrentMain {
 
-
-
     public static void main(String[] args) throws Exception {
-        ConcurrentHashMap concurrentHashMap=new ConcurrentHashMap();
-        concurrentHashMap.put("","");
-        concurrentHashMap.get("");
-        System.out.println(40>>>1);
+        ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap(1, 1);
+        //HashMap concurrentHashMap=new HashMap(1,1);
+        System.out.println(40 >>> 1);
         System.out.println(InterfaceTest.str2);
+        for (int i = 0; i < 50; i++) {
+            concurrentHashMap.put("a" + i, "a" + i);
+        }
+        System.out.println(concurrentHashMap);
     }
 }
