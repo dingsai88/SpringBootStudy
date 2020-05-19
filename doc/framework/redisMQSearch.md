@@ -42,7 +42,7 @@ II.SortedSet有序不重复集合zset
 
 
 
- ziplist压缩双向链表（数组形式存储内存连续）：
+ I.ziplist压缩双向链表（数组形式存储内存连续）：
  总字节数+最后一位偏移数(直接定位尾)+数据总个数+(数据+数据)+zlend(最后一位固定255)
  zlbytes
  zltail
@@ -53,6 +53,11 @@ II.SortedSet有序不重复集合zset
  
  http://www.redis.cn/topics/distlock.html
  Redis分布式锁
+ 
+ I.持久化:RDB快照fork。AOF追加慢
+ 
+ I.主从：replication ID(复制ID):(记录发送数据的多少)
+ I.哨兵：高可用自动选主。分片：高性能 三倍
  
  --------------------------------------------------------------------------
  

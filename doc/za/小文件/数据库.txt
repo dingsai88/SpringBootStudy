@@ -1,0 +1,11 @@
+原子redolog、一致(同转undolog)、隔离锁、持久redu
+未提交脏、提交（不可重）、可重复、串
+幻同时务两次
+非锁定读》锁定度
+
+提交purge盆儿只清除线程：history list顺序undo后删
+frm结构、ibdata1表空、idb独表、重做ib_logfile、bin
+
+行>页16K默可改>区固1M>段>表空间
+行锁算法:id锁当条、gap锁范围、nextkey幻读
+表锁  意向锁解决行锁和表锁兼容问题
