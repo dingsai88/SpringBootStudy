@@ -205,7 +205,7 @@ II.线程安全
 
 
 
-
+-------------------线程状态结束---------------垃圾收集开始------------------------------------------------
 
 II.垃圾收集
 
@@ -246,11 +246,7 @@ jdk6之前 Parallel Scavenge + Serial Old
 jdk6、7、8 Parallel Scavenge + Parallel Old
 jdk9 G1(Garbage First) 整理上看基于标记整理，局部Region之间基于复制算法实现；没有空间碎片
 
-
-
-
 Eden区，两个Survivor(色外ver)区的内存空间比例为：8:1:1
-
 
 II.新生代young收集器
 1.Serial连续的（单个CPU效率最高，client模式下）：复制算法；STW(StopTheWorld)后单线程收集

@@ -159,33 +159,6 @@ CountDownLatch主要解决一个线程等待多个线程(不能循环利用)
 CyclicBarrier主要解决一组线程之间互相等待(自动重置循环利用)
 
 
-------------------------------------------------------同步容器 并发容器--------------------------------------------------------------
-I.同步容器：外边加synchronized
-Collections.synchronizedSet各种基础容器包装
-Vector、Stack 和 Hashtable
-
-I.并发容器：性能高
-II.List：CopyOnWriteArrayList内存中两个队列写一个读另外一个：
-1.写操作非常少的场景 
-2.能够容忍读写的短暂不一致
-
-II.Map：
-ConcurrentHashMap  key 是无序的
-ConcurrentSkipListMap  key 是有序的 性能更高(跳表其实就是一种可以进行二分查找的有序链表)
-
-II.Set：
-CopyOnWriteArraySet 内存中两个队列写一个读另外一个
-1.写操作非常少的场景
-2.能够容忍读写的短暂不一致
-ConcurrentSkipListSet：是有序的 性能更高(跳表其实就是一种可以进行二分查找的有序链表)
-
-
-II.Queue（阻塞与非阻塞||单端与双端）
-1.单端阻塞队列 ArrayBlockingQueue LinkedBlockingQueue SynchronousQueue LinkedTransferQueue PriorityBlockingQueue DelayQueue
-2.双端阻塞队列：LinkedBlockingDeque
-3.单端非阻塞队列：ConcurrentLinkedQueue
-4.双端非阻塞队列：ConcurrentLinkedDeque（弟克）
-
 --------------------------------------------------------------------------------------------------------
 
 I.无锁方案（最大的好处就是性能）:CAS
@@ -216,7 +189,6 @@ final
 享元模式 每个频道只创建一个
 
 
-
 II. Copy-on-Write模式：不是延时策略的COW（通用的技术方案）
 CopyOnWriteArrayList
 CopyOnWriteArraySet
@@ -224,4 +196,4 @@ CopyOnWriteArraySet
 
 II.线程本地存储模式:ThreadLocal每个线程一个对象
 
-
+II.CAS无锁
