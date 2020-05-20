@@ -98,16 +98,12 @@ JMM:
 原子性：把一个或者多个操作在CPU执行的过程中不被终端的特性。(线程切换) synchronized
 有序性:编译优化带来的有序性  synchronized、volatile
 
-
-
- 
 先行发生原则(happens before):
 程序次序规则program order rule写在前面的先执行
 管程锁定规则monitor lock rule(监视器锁规则) 
 volatile变量规则volatile variable rule：对一个volatile变量的写操作先行发生于后面对这个变量的读操作，这里的后面同样是指时间上的先后顺序。
 线程启动规则thread start rule：thread对象的start方法先行发生于此线程的每一个动作。
 线程终止规则 thread termination rule线程中的所有操作都先行发生于对此线程的终止检测，我们可以通过thread。join方法结束、thread.isalive的返回值等后端检测到线程已经终止执行。
-
 
 
 
