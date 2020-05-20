@@ -13,38 +13,9 @@
 CPU密集型计算线程数:理论上=CPU核数。实际上会设置CPU核数+1
 IO密集:1+(IO耗时/CPU耗时)
 
-并发容器
-util(JDK 1.0):Vector、Stack、Hashtable
-concurrent(5+):ConcurrentHashMap、CopyOnWriteArraySet
-
-
-Semaphore信号量(操作系统PV)限流器并发池等
-
-Lock和Condition管程
-synchronized再造管程的理由:死锁问题-破坏不可抢占条件
-Lock解决互斥问题、Condition解决同步问题
-
+----------------------------------------------------------------------------------------------------------------------
 
  
-
-II.Java内存模型:保证解决三种特性的问题(JMM来屏蔽各种硬件和操作系统的内存访问差异)
-volatile易变（特性）禁用缓存(CPU缓存)、禁止优化(指令排序)
-final告诉编译器：生儿不变，使劲优化。
-
-
-
-三特性
-原子性：一个多多个操作只能等一个线程完成以后另外一个线程才能进行  synchronized
-可见性：一个线程修改了共享变量的值其他线程可以立刻知道这个修改  synchronized(monitorenter、monitorexit)、volatile、final
-有序性:本线程观察都是有序的（线程内串行语义），其他线程观察都是无序的（指令重排序、工作内存和主内存同步延迟） synchronized、volatile
-
-
-先行发生原则(happens before):
-程序次序规则program order rule写在前面的先执行
-管程锁定规则monitor lock rule(监视器锁规则) 
-volatile变量规则volatile variable rule：对一个volatile变量的写操作先行发生于后面对这个变量的读操作，这里的后面同样是指时间上的先后顺序。
-线程启动规则thread start rule：thread对象的start方法先行发生于此线程的每一个动作。
-线程终止规则 thread termination rule线程中的所有操作都先行发生于对此线程的终止检测，我们可以通过thread。join方法结束、thread.isalive的返回值等后端检测到线程已经终止执行。
 
 
 
@@ -71,7 +42,7 @@ II.线程安全方案:
 
 非阻塞同步:CAS(CompareAndSwap)
 
-无同步方案:线程本地存储（一个数据被一个线程独享）
+无同步方案:线程本地存储（一个数据被一个线程独享）、copyonwirt、final不变
 
 
 
@@ -90,7 +61,7 @@ II.线程安全方案:
 3.epoll（注册—监听事件—处理—再注册） 对比：select和poll每次都全部轮训；epoll只有触发监听才访问
 
 
-
+----------------------------------------------------------------------------------------------------
 
 
 
@@ -110,24 +81,33 @@ II.管程模型：
 
 
 
-
-
-
-
-
-
-
-1.原子性、可见性、有序性：并发bug的源头
-
-可见性：一个线程对共享变量的修改,另外一个线程能够立刻看到。(CPU高速缓存和内存)
-原子性：把一个或者多个操作在CPU执行的过程中不被终端的特性。(线程切换)
-有序性:编译优化带来的有序性
-
-
+II.Java内存模型JMM:保证解决三种特性的问题(JMM来屏蔽各种硬件和操作系统的内存访问差异)
+                     volatile易变（特性）禁用缓存(CPU缓存)、禁止优化(指令排序)
+                     final告诉编译器：生儿不变，使劲优化。
 
 JMM:
 可见性和有序性:(禁用CPU缓存和编译优化) volatile、synchronized、final、8项happens-before规则（start、join）
 原子性:（互斥锁）synchronized
+  
+  
+  
+
+1.原子性、可见性、有序性：并发bug的源头
+
+可见性：一个线程对共享变量的修改,另外一个线程能够立刻看到。(CPU高速缓存和内存)  synchronized(monitorenter、monitorexit)、volatile、final
+原子性：把一个或者多个操作在CPU执行的过程中不被终端的特性。(线程切换) synchronized
+有序性:编译优化带来的有序性  synchronized、volatile
+
+
+
+ 
+先行发生原则(happens before):
+程序次序规则program order rule写在前面的先执行
+管程锁定规则monitor lock rule(监视器锁规则) 
+volatile变量规则volatile variable rule：对一个volatile变量的写操作先行发生于后面对这个变量的读操作，这里的后面同样是指时间上的先后顺序。
+线程启动规则thread start rule：thread对象的start方法先行发生于此线程的每一个动作。
+线程终止规则 thread termination rule线程中的所有操作都先行发生于对此线程的终止检测，我们可以通过thread。join方法结束、thread.isalive的返回值等后端检测到线程已经终止执行。
+
 
 
 
@@ -179,33 +159,34 @@ CountDownLatch主要解决一个线程等待多个线程(不能循环利用)
 CyclicBarrier主要解决一组线程之间互相等待(自动重置循环利用)
 
 
-
+------------------------------------------------------同步容器 并发容器--------------------------------------------------------------
 I.同步容器：外边加synchronized
 Collections.synchronizedSet各种基础容器包装
 Vector、Stack 和 Hashtable
 
 I.并发容器：性能高
-List：CopyOnWriteArrayList内存中两个队列写一个读另外一个：
+II.List：CopyOnWriteArrayList内存中两个队列写一个读另外一个：
 1.写操作非常少的场景 
 2.能够容忍读写的短暂不一致
 
-Map：
+II.Map：
 ConcurrentHashMap  key 是无序的
 ConcurrentSkipListMap  key 是有序的 性能更高(跳表其实就是一种可以进行二分查找的有序链表)
 
-Set：
+II.Set：
 CopyOnWriteArraySet 内存中两个队列写一个读另外一个
 1.写操作非常少的场景
 2.能够容忍读写的短暂不一致
 ConcurrentSkipListSet：是有序的 性能更高(跳表其实就是一种可以进行二分查找的有序链表)
 
 
-Queue（阻塞与非阻塞||单端与双端）
+II.Queue（阻塞与非阻塞||单端与双端）
 1.单端阻塞队列 ArrayBlockingQueue LinkedBlockingQueue SynchronousQueue LinkedTransferQueue PriorityBlockingQueue DelayQueue
 2.双端阻塞队列：LinkedBlockingDeque
 3.单端非阻塞队列：ConcurrentLinkedQueue
 4.双端非阻塞队列：ConcurrentLinkedDeque（弟克）
 
+--------------------------------------------------------------------------------------------------------
 
 I.无锁方案（最大的好处就是性能）:CAS
 ABA问题：增加版本号
@@ -225,6 +206,8 @@ II.CompletableFuture（康姆铺莱特爆-飞偶车）:异步编程8才提供
 
 II.CompetionService(康姆铺莱特身)批量执行异步任务(Future+阻塞队列)
 批量的future提交
+
+
 
 
 I.避免共享
