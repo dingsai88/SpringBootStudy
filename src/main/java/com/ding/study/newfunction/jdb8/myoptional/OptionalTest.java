@@ -2,7 +2,10 @@ package com.ding.study.newfunction.jdb8.myoptional;
 
 import java.util.Optional;
 
-/**
+/**         当result.getSettleErrorMsg()等于null的时候赋默认值"a"
+ *         updateErrorMessage.setSettleErrorMsg(Optional.ofNullable(result.getSettleErrorMsg()).orElse("a"));
+ *
+ *
  * @author daniel 2020-5-12 0012.
  */
 public class OptionalTest {
