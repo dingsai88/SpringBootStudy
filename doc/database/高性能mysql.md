@@ -1478,7 +1478,168 @@ f(vadim)=2458
 
 
 slot  value
+注意每个槽的编号是顺序的，但是数据行不是。现在，来看如下查询
 
+
+
+5.3.7 使用索引扫描来做排序
+
+mysql有两种方式可以生成有序的结果：通过排序操作；或者按照索引顺序扫描；如果
+explain出来的type列的值为index，则说明mysql使用了索引扫描来做排序
+
+扫描索引本身是很快的，因为只需要从一条索引记录移动到紧接着的吓一跳记录。但如果
+索引不能覆盖查询所需的全部列，那就不得不每扫描一条索引记录就都回表查询一次
+对应的行。这基本上都是随机IO，因此按索引顺序读取数据的速度通常要比顺序地全表
+扫描慢，尤其是在IO秘籍型的工作负载时。
+
+mysql可以使用同一个索引既满足排序，有用于查找行。因此，如果可能，设计索引
+时应该尽可能地同事满足这两种任务，这样是最好的。
+
+只有当所以你的列顺序和orderby子句的顺序完全一致，并且所有列的排序方向
+都一样时，mysql才能够使用索引来对结果做排序。如果查询需要关联多张表。
+则只有当orderby子句引用的字段全部为第一个表时，才能使用索引做排序。
+order by 子句和查找性查询的限制是一样的：需要满足索引的最左前缀的要求；否则，
+mysql都需要执行排序操作，而无法利用索引排序。
+
+有一种情况下orderby子句可以不满足索引的最左前缀的要求，就是前导列为常量的时候
+。如果where子句或者join子句中对这些列指定了常量。就可以弥补索引的不足。
+
+
+即使orderby子句不满足索引的最左前缀的要求，也可以用于查询排序，这是因为索引
+的第一列被指定一个常数。
+
+还有更多可以使用索引做排序的查询示例。下面这个查询可以利用索引排序，是因为查询
+为索引的第一列提供了常量条件，而使用第二列进行排序，将两列组合在一起，就形成
+了索引的最左前缀：
+
+下面这个查询也没问题，因为orderby使用的两列就是索引的最左前缀；
+
+使用了两种不同的排序方向，但是索引列都是正序排列的
+
+where a='' order by b desc ,c asc;
+
+查询这个orderby子句中引用了一个不再索引中的列
+
+where and order by 中的列无法组成索引的最左前缀。
+
+这个查询在索引列的第一列上是范围条件，所以mysql 无法使用索引的其余列。
+
+
+这个查询在inventory_id列上有多个等于条件。对于排序来说，这也是一种方位查询
+
+下面这个例子理论上是可以使用索引进行关联排序的，但由于优化器在优化时将file_actor表当作关联
+的第二章表，所以实际上无法使用索引。
+
+
+
+
+
+
+I.id:SELECT识别符。这是SELECT的查询序列号。
+
+I.select_type:SELECT类型
+
+SIMPLE:简单SELECT(不使用UNION或子查询) 
+
+PRIMARY最外面的SELECT
+
+UNION中的第二个或后面的SELECT语句
+
+
+DEPENDENT UNION: UNION中的第二个或后面的SELECT语句，取决于外面的查询
+
+
+UNION RESULT:UNION的结果
+
+
+SUBQUERY:子查询中的第一个SELECT
+
+DEPENDENT SUBQUERY:子查询中的第一个SELECT，取决于外面的查询
+
+DERIVED:导出表的SELECT(FROM子句的子查询)
+
+I.table:输出的行所引用的表。
+
+I.type:联接类型。下面给出各种联接类型，按照从最佳类型到最坏类型进行排序：
+
+system:表仅有一行(=系统表)。这是const联接类型的一个特例。
+
+const:
+表最多有一个匹配行，它将在查询开始时被读取。因为仅有一行，在这行的列值可被优化器剩余部分认为是常数。const表很快，因为它们只读取一次！
+const用于用常数值比较PRIMARY KEY或UNIQUE索引的所有部分时。在下面的查询中，tbl_name可以用于const表：
+SELECT * from tbl_name WHERE primary_key=1；
+SELECT * from tbl_name
+WHERE primary_key_part1=1和 primary_key_part2=2；
+
+eq_ref:
+对于每个来自于前面的表的行组合，从该表中读取一行。这可能是最好的联接类型，除了const类型。它用在一个索引的所有部分被联接使用并且索引是UNIQUE或PRIMARY KEY。
+eq_ref可以用于使用= 操作符比较的带索引的列。比较值可以为常量或一个使用在该表前面所读取的表的列的表达式。
+在下面的例子中，MySQL可以使用eq_ref联接来处理ref_tables：
+SELECT * FROM ref_table,other_table
+  WHERE ref_table.key_column=other_table.column;
+SELECT * FROM ref_table,other_table
+  WHERE ref_table.key_column_part1=other_table.column
+    AND ref_table.key_column_part2=1;
+
+
+ref:
+对于每个来自于前面的表的行组合，所有有匹配索引值的行将从这张表中读取。如果联接只使用键的最左边的前缀，或如果键不是UNIQUE或PRIMARY KEY（换句话说，如果联接不能基于关键字选择单个行的话），则使用ref。如果使用的键仅仅匹配少量行，该联接类型是不错的。
+ref可以用于使用=或<=>操作符的带索引的列。
+在下面的例子中，MySQL可以使用ref联接来处理ref_tables：
+
+ref_or_null:
+该联接类型如同ref，但是添加了MySQL可以专门搜索包含NULL值的行。在解决子查询中经常使用该联接类型的优化。
+在下面的例子中，MySQL可以使用ref_or_null联接来处理ref_tables：
+
+
+
+index_merge:
+该联接类型表示使用了索引合并优化方法。在这种情况下，key列包含了使用的索引的清单，key_len包含了使用的索引的最长的关键元素。详细信息参见
+
+unique_subquery:
+该类型替换了下面形式的IN子查询的ref：
+value IN (SELECT primary_key FROM single_table WHERE some_expr)
+unique_subquery是一个索引查找函数，可以完全替换子查询，效率更高。
+
+
+index_subquery:
+该联接类型类似于unique_subquery。可以替换IN子查询，但只适合下列形式的子查询中的非唯一索引：
+value IN (SELECT key_column FROM single_table WHERE some_expr)
+
+range:
+只检索给定范围的行，使用一个索引来选择行。key列显示使用了哪个索引。key_len包含所使用索引的最长关键元素。在该类型中ref列为NULL。
+当使用=、<>、>、>=、<、<=、IS NULL、<=>、BETWEEN或者IN操作符，用常量比较关键字列时，可以使用range：
+
+
+index:
+该联接类型与ALL相同，除了只有索引树被扫描。这通常比ALL快，因为索引文件通常比数据文件小。
+当查询只使用作为单索引一部分的列时，MySQL可以使用该联接类型。
+
+ALL:
+对于每个来自于先前的表的行组合，进行完整的表扫描。如果表是第一个没标记const的表，这通常不好，并且通常在它情况下很差。通常可以增加更多的索引而不要使用ALL，使得行能基于前面的表中的常数值或列值被检索出。
+
+
+I.possible_keys:能使用哪个索引在该表中找到行。
+
+
+I.key:实际决定使用的键（索引）。
+
+
+I.key_len:决定使用的键长度
+
+
+
+I.ref:显示使用哪个列或常数与key一起从表中选择行
+
+
+I.rows:扫描行数
+
+
+I.Extra
+
+Distinct:发现第1个匹配行后，停止为当前的行组合搜索更多的行。
+
+Not exists:发现1个匹配LEFT JOIN标准的行后，不再为前面的的行组合在该表内检查更多的行。
 
 
 
