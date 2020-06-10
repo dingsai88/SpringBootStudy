@@ -9,6 +9,24 @@ import java.util.LinkedList;
  * 图Graph的存储：邻接矩阵(数组)Adjecency Matrix ;邻接表(链表)Adjecency List
  * 图Graph的搜索:DFS 深度优先 Depth first seach
  * 图Graph的搜索:BFS 广度优先 Breadth first seach
+ *
+ * 邻接表法
+ BFS:ABDECFGHIJK
+ DFS:ABCGEHFDIJK---分割线----
+ A  B  C  D  E  F  G  H  I  J  K
+ A  0  1  0  1  1  0  0  0  0  0  0
+ B  1  0  1  0  0  1  0  0  0  0  0
+ C  0  1  0  0  0  0  1  1  0  0  0
+ D  1  0  0  0  0  1  0  0  0  0  0
+ E  1  0  0  0  0  0  1  0  0  0  0
+ F  0  1  0  1  0  0  0  0  0  0  0
+ G  0  0  1  0  1  0  0  0  0  0  0
+ H  0  0  1  0  0  0  0  0  0  0  0
+ I  0  0  0  0  0  0  0  0  0  1  0
+ J  0  0  0  0  0  0  0  0  1  0  0
+ K  0  0  0  0  0  0  0  0  0  0  0
+ ---分割线----
+
  */
 public class GraphAdjecencyMatrixListDFSBFSTestMain {
     /**
