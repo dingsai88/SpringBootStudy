@@ -1593,8 +1593,8 @@ ref_or_null:
 
 
 
-index_merge:
-该联接类型表示使用了索引合并优化方法。在这种情况下，key列包含了使用的索引的清单，key_len包含了使用的索引的最长的关键元素。详细信息参见
+index_merge:该联接类型表示使用了索引合并优化方法
+。在这种情况下，key列包含了使用的索引的清单，key_len包含了使用的索引的最长的关键元素。详细信息参见
 
 unique_subquery:
 该类型替换了下面形式的IN子查询的ref：
@@ -1602,11 +1602,11 @@ value IN (SELECT primary_key FROM single_table WHERE some_expr)
 unique_subquery是一个索引查找函数，可以完全替换子查询，效率更高。
 
 
-index_subquery:
+index_subquery:类似于unique_subquery子查询中的非唯一索引
 该联接类型类似于unique_subquery。可以替换IN子查询，但只适合下列形式的子查询中的非唯一索引：
 value IN (SELECT key_column FROM single_table WHERE some_expr)
 
-range:
+range:只检索给定范围的行=、<>、>、>=、<、<=、IS NULL、<=>、BETWEEN或者IN操
 只检索给定范围的行，使用一个索引来选择行。key列显示使用了哪个索引。key_len包含所使用索引的最长关键元素。在该类型中ref列为NULL。
 当使用=、<>、>、>=、<、<=、IS NULL、<=>、BETWEEN或者IN操作符，用常量比较关键字列时，可以使用range：
 
