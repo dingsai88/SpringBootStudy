@@ -1,14 +1,15 @@
 package designpatterns.observer;
 
+
 /**
- * 订阅者抽象类
- * 
+ * 璁㈤槄鑰呮娊璞＄被
+ *
  * @author daniel
- * 
+ *
  */
 public abstract class Observer {
 	/**
-	 * 订阅者更新发布者发布的内容
+	 * 璁㈤槄鑰呮洿鏂板彂甯冭�呭彂甯冪殑鍐呭
 	 */
 	public abstract void update();
 }

@@ -1,13 +1,12 @@
 package designpatterns.observer;
-
 /**
- * ·¢²¼Õß×ÓÀà ¼ÓÈë·¢²¼µÄ¾ßÌåÄÚÈİ °×Òø¼Û¸ñ
- * 
+ * å‘å¸ƒè€…å­ç±» åŠ å…¥å‘å¸ƒçš„å…·ä½“å†…å®¹ ç™½é“¶ä»·æ ¼
+ *
  * @author daniel
- * 
+ *
  */
 public class SubjectConcrete extends Subject {
-	// °×Òø¼Û¸ñ
+	// ç™½é“¶ä»·æ ¼
 	private double agPrice;
 
 	/**

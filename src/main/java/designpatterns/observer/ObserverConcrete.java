@@ -1,19 +1,18 @@
 package designpatterns.observer;
-
 /**
- * ¶©ÔÄÕßÊµÏÖÀà
- * 
+ * è®¢é˜…è€…å®ç°ç±»
+ *
  * @author daniel
- * 
+ *
  */
 public class ObserverConcrete extends Observer {
 	private double agPrice;
 	private String name;
-	private SubjectConcrete subjectConcrete;// ·¢²¼ÕßÊµÏÖÀà
+	private SubjectConcrete subjectConcrete;// å‘å¸ƒè€…å®ç°ç±»
 
 	/**
-	 * ³öÈë ·¢²¼Õß ºÍ ×Ô¼ºµÄË½ÓĞĞÅÏ¢
-	 * 
+	 * å‡ºå…¥ å‘å¸ƒè€… å’Œ è‡ªå·±çš„ç§æœ‰ä¿¡æ¯
+	 *
 	 * @param subjectConcrete
 	 * @param name
 	 */
@@ -23,12 +22,12 @@ public class ObserverConcrete extends Observer {
 	}
 
 	/**
-	 * »ñµÃ·¢²¼Õß µÄ×îĞÂÊı¾İ
+	 * è·å¾—å‘å¸ƒè€… çš„æœ€æ–°æ•°æ®
 	 */
 	@Override
 	public void update() {
 		agPrice = subjectConcrete.getAgPrice();
-		System.out.println("¹Û²ìÕß" + name + " ¹Û²ìµ½ ×îĞÂ¼Û¸ñÊÇ " + agPrice);
+		System.out.println("è§‚å¯Ÿè€…" + name + " è§‚å¯Ÿåˆ° æœ€æ–°ä»·æ ¼æ˜¯ " + agPrice);
 	}
 
 }

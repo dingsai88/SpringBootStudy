@@ -12,9 +12,11 @@ public class AgObserver implements Observer {
 
 	public void update(Observable arg0, Object arg1) {
 		if (arg1 instanceof Double) {
-			System.out.println(this.name + "观察到的价格更改为\n" + ((Double) arg1).toString());
+			System.out.println(this.name + "瑙傚療鍒扮殑浠锋牸鏇存敼涓篭n" + ((Double) arg1).toString());
 		}
 
 	}
 
 }
+
+

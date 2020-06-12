@@ -2,40 +2,42 @@ package designpatterns.observer;
 
 import java.util.Scanner;
 
+import java.util.Scanner;
 /**
- * ¹Û²ìÕßÄ£Ê½(·¢²¼-¶©ÔÄ):¶¨ÒåÁËÒ»ÖÖÒ»¶Ô¶àµÄÒÀÀµ¹ØÏµ£¬ÈÃ¶à¸ö¹Û²ìÕß¶ÔÏóÍ¬Ê±¼àÌıÄ³Ò»¸öÖ÷Ìâ¶ÔÏó¡£Õâ¸öÖ÷Ìâ¶ÔÏóÔÚ×´Ì¬·¢Éú±ä»¯Ê±£¬»áÍ¨ÖªËùÓĞ¹Û²ìÕß¶ÔÏó£¬Ê¹ËüÃÇÄÜ¹»×Ô¶¯¸üĞÂ×Ô¼º¡£
- * 
- * 
+ * è§‚å¯Ÿè€…æ¨¡å¼(å‘å¸ƒ-è®¢é˜…):å®šä¹‰äº†ä¸€ç§ä¸€å¯¹å¤šçš„ä¾èµ–å…³ç³»ï¼Œè®©å¤šä¸ªè§‚å¯Ÿè€…å¯¹è±¡åŒæ—¶ç›‘å¬æŸä¸€ä¸ªä¸»é¢˜å¯¹è±¡ã€‚è¿™ä¸ªä¸»é¢˜å¯¹è±¡åœ¨çŠ¶æ€å‘ç”Ÿå˜åŒ–æ—¶ï¼Œä¼šé€šçŸ¥æ‰€æœ‰è§‚å¯Ÿè€…å¯¹è±¡ï¼Œä½¿å®ƒä»¬èƒ½å¤Ÿè‡ªåŠ¨æ›´æ–°è‡ªå·±ã€‚
+ *
+ *
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç4:01:40
+ * @time 2016-6-18 ä¸‹åˆ4:01:40
  */
 public class Zmain {
 
 	/**
 	 * @author daniel
-	 * @time 2016-6-18 ÏÂÎç3:57:10
+	 * @time 2016-6-18 ä¸‹åˆ3:57:10
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// ´´½¨·¢²¼Õß
+
+		// åˆ›å»ºå‘å¸ƒè€…
 		SubjectConcrete subjectConcrete = new SubjectConcrete();
-		// ¼ÓÈë ¶©ÔÄÕß
-		subjectConcrete.addObserver(new ObserverConcrete(subjectConcrete, "ÀÇ"));
-		subjectConcrete.addObserver(new ObserverConcrete(subjectConcrete, "ÁÖ"));
+		// åŠ å…¥ è®¢é˜…è€…
+		subjectConcrete.addObserver(new ObserverConcrete(subjectConcrete, "ç‹¼"));
+		subjectConcrete.addObserver(new ObserverConcrete(subjectConcrete, "æ—"));
 		subjectConcrete.addObserver(new ObserverConcrete(subjectConcrete, "rod johnson"));
-		// ·¢²¼Õß¸üĞÂ·¢²¼ĞÅÏ¢ ²¢ÇÒ·¢¸ø¶©ÔÄÕß
+		// å‘å¸ƒè€…æ›´æ–°å‘å¸ƒä¿¡æ¯ å¹¶ä¸”å‘ç»™è®¢é˜…è€…
 		subjectConcrete.setAgPrice(10);
 		// subjectConcrete.Notify();
 		while (true) {
-			System.out.println("\n\nÇëÊäÈë¾Í×îĞÂ¼Û¸ñ£º");
+			System.out.println("\n\nè¯·è¾“å…¥å°±æœ€æ–°ä»·æ ¼ï¼š");
 			Scanner scanner = new Scanner(System.in);
 			String str = scanner.nextLine();
 			if (str.equals("exit")) {
-				System.out.println("½áÊø");
+				System.out.println("ç»“æŸ");
 				break;
 			}
-			System.out.println("ÄúÊäÈëµÄ¼Û¸ñÎª:" + str);
+			System.out.println("æ‚¨è¾“å…¥çš„ä»·æ ¼ä¸º:" + str);
 			subjectConcrete.setAgPrice(Double.valueOf(str));
 		}
 

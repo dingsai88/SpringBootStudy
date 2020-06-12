@@ -1,35 +1,34 @@
 package designpatterns.observer;
 import java.util.ArrayList;
 import java.util.List;
-
 /**
- * ·¢²¼Õß³éÏóÀà
+ * å‘å¸ƒè€…æŠ½è±¡ç±»
  * @author daniel
  *
  */
 abstract class Subject {
-      //¶©ÔÄÕßÁĞ±í
+ //è®¢é˜…è€…åˆ—è¡¨
  private List<Observer> observers=new ArrayList<Observer>();
  /**
-  * Ìí¼Ó¶©ÔÄÕß
+  * æ·»åŠ è®¢é˜…è€…
   * @param observer
   */
  public void addObserver(Observer observer){
   observers.add(observer);
  }
  /**
-  * É¾³ı¶©ÔÄÕß
+  * åˆ é™¤è®¢é˜…è€…
   * @param observer
   */
  public void deleteObserver(Observer observer){
   observers.remove(observer);
  }
  /**
-  * ·¢²¼¸øËùÓĞ¶©ÔÄÕß
+  * å‘å¸ƒç»™æ‰€æœ‰è®¢é˜…è€…
   */
  public void Notify(){
   for(Observer observer : observers){
    observer.update();
-  }  
- } 
+  }
+ }
 }

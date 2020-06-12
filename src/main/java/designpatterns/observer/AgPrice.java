@@ -3,24 +3,24 @@ package designpatterns.observer;
 import java.util.Observable;
 
 /**
- * °×Òø¼Û¸ñÀà
+ * ç™½é“¶ä»·æ ¼ç±»
  * @author daniel
  *
  */
 public class AgPrice extends Observable {
-  
-   private double price;
-   public AgPrice(double price){
-    this.price=price;    
-   }
-   
-   public void setPrice(double price){
-       super.setChanged();
+
+    private double price;
+    public AgPrice(double price){
+        this.price=price;
+    }
+
+    public void setPrice(double price){
+        super.setChanged();
         super.notifyObservers(price);
-    this.price=price;
-   }   
-   
-   public String showPrice(){
-    return "°×Òø¼Û¸ñÎª:"+this.price;
-   }
+        this.price=price;
+    }
+
+    public String showPrice(){
+        return "ç™½é“¶ä»·æ ¼ä¸º:"+this.price;
+    }
 }
