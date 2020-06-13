@@ -8,17 +8,21 @@
    3.3.epoll（注册—监听事件—处理—再注册） 对比：select和poll每次都全部轮训；epoll只有触发监听才访问
 4.信号驱动 I/O（ signal driven IO）
 5.异步 I/O（asynchronous IO）
+epoll_create, epoll_ctl和epoll_wait。
+
+   Java 1.4引NIO框架（java.nio 包）
+提供了Channel(socket)、Selector(单线程管理多个)、Buffer（容器）可以构建多路复用的、
+同步非阻塞 IO 程序。
+
+   Java 7NIO有改进NIO2异步非阻塞AIO（Asynchronous IO）
+异步 IO 操作基于事件和回调机制；操作直接返回，不阻塞。后台处理完成会通知
+
 
 
 CPU密集型计算线程数:理论上=CPU核数。实际上会设置CPU核数+1
 IO密集:1+(IO耗时/CPU耗时)
 
 ----------------------------------------------------------------------------------------------------------------------
-
- 
-
-
-
  I.线程状态
 通用线程状态:
 1.初始状态:编程语言的状态，操作系统还不知道
@@ -163,6 +167,20 @@ ABA问题：增加版本号
 
 
 I.Executor与线程池
+corePoolSize ：核心线程数量
+maximumPoolSize ：线程最大线程数
+workQueue ：阻塞队列，存储等待执行的任务 很重要 会对线程池运行产生重大影响
+keepAliveTime ：线程没有任务时最多保持多久时间终止
+unit ：keepAliveTime的时间单位
+threadFactory ：线程工厂，用来创建线程
+rejectHandler ：当拒绝处理任务时的策略
+
+Executors 一克在key特死
+newCachedThreadPool() 可灵活回收空闲线程，若无可回收，则新建线程
+newFixedThreadPool 无界的工作队列 固定的 可控制线程最大并发数，超出的线程会在队列中等待
+newSingleThreadExecutor()  单独的 指定顺序(FIFO, LIFO, 优先级)
+newScheduledThreadPoo 支持定时及周期性任务执行 定时延迟三秒执行
+newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理顺序
 
 
 I.Future(飞偶车)接口和FutureTask实现类获得线程返回值
