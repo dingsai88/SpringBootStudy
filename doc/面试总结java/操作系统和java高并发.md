@@ -17,6 +17,11 @@ epoll_create, epoll_ctl和epoll_wait。
    Java 7NIO有改进NIO2异步非阻塞AIO（Asynchronous IO）
 异步 IO 操作基于事件和回调机制；操作直接返回，不阻塞。后台处理完成会通知
 
+java文件拷贝
+FileInputStream
+Files.copy
+NIO transferTo/From 的方式可能更快 磁盘>内核态空间>用户空间
+ 
 
 
 CPU密集型计算线程数:理论上=CPU核数。实际上会设置CPU核数+1
@@ -212,3 +217,8 @@ CopyOnWriteArraySet
 II.线程本地存储模式:ThreadLocal每个线程一个对象
 
 II.CAS无锁
+
+
+
+
+
