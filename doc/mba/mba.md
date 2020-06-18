@@ -119,6 +119,245 @@ II.数据学习法
 
 
 
+I.第二课
+
+sth something 某些事
+sb somebody 某些人
+
+act =to do 做= to drive 驱使
+来源:agere的分词actum的词干部分
+
+act=to do做 ；
+1.行动，做某事V（to do sth.for a particular特定的 purpose目标）有目的的去做某个目标。
+We must act at once 我们必须立刻行动。
+The girls life was saved because the doctors acted so promptly.
+女孩的生命被拯救了，因为医生们行动迅速。
+
+2.起作用v
+Alcohol acts quickly on the brain
+酒精对大脑迅速产生影响
+quickly行动敏捷 promptly及时的 rapidly快速增长
+
+
+3.演出 扮演
+The play was well acted.
+这出戏演得不错
+
+4.行为 n(sth .that sb.does)
+an act of kindness善行
+No act of kindness is ever wasted 没有一种善行会被浪费的。
+
+in the act(of doing sth)正在(做某事);
+当场(while you are doing sth)
+The thief was caught in the act 那小偷是当场被捉的
+
+He was caught in the act of stealing acar
+他偷汽车时被当场逮个正着（steal偷）
+
+5.一幕演出n;(会议通过的)法令;
+
+
+actor[act-or人]n男演员；行动者
+actress[act -ress女性]n 女演员
+overact[over- act]V.表演的过于夸张
+
+
+
+
+I.action
+act做 -ion (名词后缀)
+
+1.行动the process of doing sth
+She began to explain her plan of action to the group
+她开始向小组讲解她的行动计划
+
+2.作用effect(一种物质对另一种所起的)
+the action of sunlight on the skin 阳光对皮肤的作用
+
+3.诉讼n legal process
+He is considering taking legal action against the hospital.
+他考虑走法律诉讼程序起诉这家医院
+
+actionable[action -able]a.可提起诉讼的
+
+I.active  act -ive(形容词后缀)
+1.adj 积极的、活跃的
+I needed to change my lifestyle and become more active
+我需要改变我的生活方式，活动的更多些
+
+Although he is over 70 ,he is still active
+他虽然年过70，但依然很活跃
+
+I.activate[active  -ate]vt.使活动；激活
+
+I.activity[active -ity]n 活跃;[复]活动
+The streets were noisy and full of activity
+街上熙熙攘攘，车水马龙
+
+outdoor/clasroom activities 户外/课堂活动
+
+I.activist[active -ist]n活动分子，积极分子
+
+a.adj形容词
+ad. adw副词
+
+
+I.actual [act  -u  -al形容词词尾]
+
+1.实际的，现实的；a.adj形容词
+What were his actual words?
+他的原话是什么？
+
+James looks younger than his wife but in actual fact(=really) he is five years older.
+james看起来比他老婆年轻，但实际上他还大五岁
+
+
+I.actualize[actual ize]vt.实现；使发生
+He finally actualized his dream
+他最终实现了自己的梦想
+
+I.actually[actual -ly]adv.事实上
+I.actuality[actual -ity]n.事实
+
+
+I.react [re- 返回back]+act做
+1.v.反应(do or act in reply)
+She was slow to react.她反应迟钝
+
+react against sb/sth 反对；反抗
+
+The villagers reacted against oppression by un upriging
+村民们举行暴动反抗压迫
+
+I.reaction[react  -ion]n 反应
+I.reactor [react -or]n 核反应堆
+
+I.interact :inter-  (between 在``之间`)+act做
+1.v 互相影响，互相作用
+Econnomists also study how people interact with one another
+经济学家也研究人与人之间如何互相影响
+
+2.交流互动
+Teachers have a limited amount of time to interact with each child
+教师和每个孩子沟通的时间有限
+
+I.interaction[interact -ion]n 互相作用
+I.interactive[interact -ive]a.互相作用的
+
+I.exact  [ex- 出out] +act[驱使 to dirve]
+1.vt 强求，索取 (to demand and get sth.from sb.)
+
+She was determined to exact a promise from him
+她决意要他做出许诺
+
+
+I.exact  [ex- 出out] +act [驱使 to drive]
+1.a 准确的；精确的 correct in every detail
+
+What were his exact words?
+他的原话是什么?
+
+I.exactly[exact -ly] adv.准确的；精确的
+
+I.transact [trans-穿过通过 across or throught] +act(驱使to drive)
+1.v [与人或组织]做业务，做交易(to do business with a person or an organization)
+
+He transacted some business at bank
+他在银行处理一些事物
+
+
+I.transaction [transact  -ion]n.交易，业务，处理
+
+act
+actor
+actress
+overact
+
+
+action
+actionable
+
+active
+activate
+activity
+activist
+
+
+actual
+actually
+actuality
+
+react
+reaction
+reactor
+
+interact
+interaction
+interactive
+
+
+exact
+exactly
+
+transact
+transaction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
