@@ -117,7 +117,7 @@ II.数据学习法
 艾宾浩斯 记忆曲线
 5分钟 30分钟 12小时
 
-
+------------------------------------------------------------------------------------
 
 I.第二课
 
@@ -145,7 +145,7 @@ The play was well acted.
 
 4.行为 n(sth .that sb.does)
 an act of kindness善行
-No act of kindness is ever wasted 没有一种善行会被浪费的。
+No act of kindness is ever wasted 没有一种善行会被浪费的。善有善报
 
 in the act(of doing sth)正在(做某事);
 当场(while you are doing sth)
@@ -162,7 +162,7 @@ actress[act -ress女性]n 女演员
 overact[over- act]V.表演的过于夸张
 
 
-
+----------------------------act开头------------------------
 
 I.action
 act做 -ion (名词后缀)
@@ -219,7 +219,7 @@ He finally actualized his dream
 I.actually[actual -ly]adv.事实上
 I.actuality[actual -ity]n.事实
 
-
+------------------------------------act结尾--------------------------
 I.react [re- 返回back]+act做
 1.v.反应(do or act in reply)
 She was slow to react.她反应迟钝
@@ -257,7 +257,11 @@ I.exact  [ex- 出out] +act [驱使 to drive]
 What were his exact words?
 他的原话是什么?
 
+
 I.exactly[exact -ly] adv.准确的；精确的
+
+---------------------------act中间-----------------------------
+
 
 I.transact [trans-穿过通过 across or throught] +act(驱使to drive)
 1.v [与人或组织]做业务，做交易(to do business with a person or an organization)
@@ -302,66 +306,71 @@ exactly
 transact
 transaction
 
+--------ag--------------------------------------------------
+ag=to do做 || drive 驱使 （和act同一个出处）
+
+来源:拉丁语agere的分词actum的词干部分 
+
+
+agent(代理人)[ag做 -ent名词后缀，表人]
+
+1.n 代理人、代理商
+Our agent in New York deals with all US sales
+我们在纽约的代理商经办在整个美国的销售。
+
+
+agency(n代理处；机构)[ag做 -ency名词后缀表性质或状态]
+1.n 代理处；机构
+
+You can book at your local travel(旅行) agency
+你可以在当离的旅行社订票
+
+
+agenda(议事日程)[ag做 -enda]
+1.n. 议事日程(a list of items to be discussed)
+
+This is sure to be an item on the agenda next week.
+这一定会成为下星期议事日程上的一项议题。
+
+agitate(v.鼓动)[ag驱使 -it无意义变漂亮 -ate动词词缀]
+
+1.v.鼓动 to argue strongly for sth you want ,especially
+
+The women who worked in these mills had begun to agitate for better conditions.
+在这些工厂里做工的妇女们开始抗议要求改善工作条件
+
+2.agitattion[agitate -ion]n.鼓动；不安
+
+3.agitator[agitate -or]n.鼓动者
+
+agent 代理人
+agency 代理商
+agenda 议事日程
+agitate 鼓动
 
 
 
+-------------ann---------------------------------
+ann(年year)
+来自拉丁词 annus
+ann在构词中常跟着连接字母-i-或-u-
 
 
+anniversary[ann年 -i- -vers-(转to turn) -ary名词后缀]
+n.周年纪念日
 
+That couple always holds a little celebration every year on their wedding annivesary
+他们夫妇每年到他们结婚的日子都要稍微庆祝下。
 
+annual[ann年 -u-  -al形容词后缀]
 
+a.一年的，每年的
 
+An annual report will be delivered.
+将要发表一份年度报告
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+anniversary
+annual
 
 
 
