@@ -373,15 +373,134 @@ anniversary
 annual
 
 
+------------aud---audit-------------------------------------------
+aud、audit(听);aug auct auth(增加成长)
+aud(it)=to hear 听
+aud和audit分别来源于拉丁动词aduire的现状词干和分词词干
+
+audience[aud(听 to hear) -i - ence名词表行为或状态]
+
+n.观众、听众
+The audience was/were clapping for 10 minutes
+很多观众鼓掌10分钟
+
+n.会见；接见(a formal meeting with an important person)
+The prime minister will seek an audience with the Queen later this morning
+今天上午晚些时候首相将会觐见女王陛下
 
 
+audio[audi听 -o 形容词后缀]
+
+a.声音的sound
+audio and video cassettes
+盒式录音带和录像带
 
 
+audit(听)
+
+v.审计 查账 officially examine（故事听人报账）
+
+Each year they audit our accounts and certify them as being true and fair
+他们每年对我们进行账务审核，以确保其真实无误。
 
 
+(在大学)旁听(to attend a course at college or university but without taking any exams credit) 
+
+He is auditing a history course at college
+他在大学里旁听历史课
+
+auditor[audit -or]
+n 查账员 审计员；（大学）旁听生
 
 
+auditorium[audit听 -orium场所]
+
+n.礼堂 会堂 (a large building or room for public meetings)
+
+There is a report in the auditorium tonight
+今晚礼堂有个报告
+
+n.听众席(the part of a theatre or concert hall where the audier)
+
+The author was found sitting in the auditoriunm
+有人发现坐着正坐在观众席中。
+
+audience
+audio
+audit
+auditor
+auditorium
 
 
+-------aug auct  auth---------------------------------
+aug、auct、auth=to increase 、to cause to grow 增加成长。
+
+拉丁动词aguere以及过分auctus 及其变体auth
+
+august[aug(使增大to increase) -ust最the most]
+
+adj.威严的(impressive ,making you feel respect)
+
+Once曾经 in the august palaces lived a king
+从前在威严的王宫里住着一个国王
+
+
+n.(大写) 八月
+
+
+augment[aug(使增大to increase) -ment(使。。) ]
+
+v.增加 扩大(make greater or enlarge)
+
+The king augmented his power
+国王扩大了自己的权力
+
+auction[auct(使增加 to increase)  -ion]
+
+n.拍卖(sale in which goods are sold toi the person offering the highest price)
+
+The house is up for auction(will be sold at an auction)
+这所房子将被拍卖
+
+v.拍卖 sell by auction
+
+When the artist died his family auctioned his paintings.
+画家去世后，家人把他的画作拍卖掉了
+
+author[auth(使成长to cause to grow) -or 人]
+
+n.作家 writer
+Who is your favourite author?
+你最喜欢哪位作家
+
+n.发起人，创始者(people who begins or create anything)
+The young man is the author of the project
+这个年轻人是该项目的倡议者。
+
+
+authority[author创始者 -ity表特征n]
+
+n.权力权威 the power or right to control or make decisions
+
+She now has authority over the people who used to be her bosses
+他现在管辖着过去是她上司的那些人
+
+n.当权者、当局(the people or an organization who have the power to make decisions)
+I have to report this to the authorities
+我得向官方报告此事
+
+
+authorize/authorise[author创始者 -ize权力]
+v.批准授权give power to 
+
+We are willing to authorize the president to use force if necessary
+我们愿意授权总统在必要的时候使用武力
+
+august August
+augment
+auction
+author
+authority
+authorize/authorise
 
 
