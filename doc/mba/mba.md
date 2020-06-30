@@ -504,3 +504,390 @@ authority
 authorize/authorise
 
 
+---------back---------------------------------------
+
+back后面turn back /behind
+1.日耳曼语系bah
+2.古英文bac
+
+background[back(后面behind)  ground底]
+
+n.背景(the details of sth;infomation)
+a person's family/social/cultural/educational/class background
+一个人的出身社会文化教育阶级背景
+
+Can you give me more background on the company？
+你能多提供一些这家公司的背景资料吗
+
+
+backward[back后  ward方向direction]
+a.向后的；落后的
+directed or moving towards the back;developing slowly
+
+He looked backward over his shoulder
+他回头向后看
+
+a backward part of the country,with no paved roads and no electricity电
+该国的一个落后地区，没有铺设马路也没有电力
+
+
+drawback[draw(拉pull)  back后面]
+
+n.缺点；不利条件 disadvantage or problem
+
+This is he one major drawback of the new system
+这是新系统的一大弊端
+
+feedback[feed(喂养give/eat food)  back后面]
+n.返回的意见（或信息）
+advice,criticism or information about how good or useful sth.or sb's work is
+
+The teacher will give you feedback on the test.
+老师会对你的测验信息进行一些反馈
+
+paperback[paper(纸for writing)  back后面]
+
+平装本；简装本
+
+a cheap paperback
+一本链家的简装本
+
+
+setback[set(安置put) back后面behind]
+
+n.挫折 a difficulty or problem
+
+
+We should take warning from this setback.
+我们应当把这次挫折引以为借鉴
+
+back
+background
+backward
+drowback
+feedback
+paperback
+setback
+
+
+
+--------------ball----------------------------
+
+5.ball跳舞、ball球、bol球
+
+ball=to dance跳舞
+
+n.舞会 alarge formal正式 party with dancing
+
+have a ball(informal)狂欢；玩得痛快
+
+Outside the boys were sitting on the ground,they were having a ball
+男孩们在户外席地而坐，他们玩得很开心
+
+
+
+
+
+ballet[ball(跳舞dance) -et名词后缀]
+n.芭蕾舞 astyle of dancing
+
+She wants to be a ballet dancer
+她想当芭蕾舞演员
+
+ball
+ballet
+
+
+ball、bol
+=to throw 投掷
+来源希腊次元ballein
+
+n.球，球状的 a round object
+
+a golf ball
+高尔夫球
+
+balloon[ball -oon名词后缀，表尺寸比较大]
+
+n. 气球
+
+hot-air balloon
+热气球
+
+
+ballot[ball球 -ot表尺寸较小的物品]
+
+n/v不记名投票 voting
+
+The chairperson is chosen by secret秘密 ballot.
+主席是通过无记名投票选举产生的
+
+
+blackball
+v.投票反对(加入团体)
+
+
+bald[ball球  -d]
+
+a.秃的 having little or no hair on the head
+
+He started going bald in his twenties
+他二十几岁便开始谢顶。
+
+ball
+balloon
+ballot不记名投票  小球
+bald 秃的 球上没有东西
+
+------------------bas(s)---------------------------
+
+bas、bass=低的low、基础的
+
+来源于拉丁语bassus
+
+
+base[bas(低的low) -e]
+
+n.底部 lowet part
+the base of a glass
+玻璃杯的底部
+
+n.基础 thing  can be developed or achieved
+
+These policies(政策) have a broad广泛 base of support
+这些政策受到广泛支持
+
+
+v.以xx为基础
+base sth. on/upon sth
+
+What are you basing this theory on?
+你这种理论的根据是什么？
+
+
+
+basement[base(lowest part底部)  -ment]
+n.地下室 a room
+a basement flat/apartment
+地下室的一套房间
+
+baseball[base底部 ball球]
+
+n.棒球 a game 
+a baseboll team
+棒球队
+
+basic [bas低的low  -ic]
+adj.基本的，基础的base
+
+basic information/facts/ideas
+基本信息、事实、思想
+
+basis[bas低的low -is]
+n.基础 重要的基础
+the important facts,ideas or events that support sth .and that is can develop成长研发 from
+
+This article will form the basis for our discussion
+这篇文章讲作为我们讨论的基点。
+
+basin[bas低的low  -in]
+n.盆;大碗=washbasin 
+
+Place the eggs and sugar in a large basin
+把鸡蛋和糖放在大碗里面
+
+base 基础底部
+basement
+baseball棒球
+basic基础
+basis重要基础
+basin盆 底部
+
+
+----------------bat(t)-------------------------------------
+
+bat、batt[=打击to beat]
+
+来源拉丁词源battere
+
+bat
+
+n.球拍 球棒 to hit or beat
+
+a baseball bat
+棒球球棒
+
+n.蝙蝠
+
+batman 蝙蝠侠
+
+
+combat[com bat打击]
+
+n.战斗、打仗
+fighting or a fight ,especially during a time of war
+He was killed in combat
+他在战斗中阵亡
+
+v.战斗  斗争
+We combat with them for our rights权利.
+为争取我们的权利，我们和他们做斗争。
+
+debate[de bat打击to beat]
+
+n.辩论 an argument or discussion
+
+There had bean much debate on the issue of childcase儿童保育
+人们对儿童保育问题议论纷纷。
+
+v.辩论 to discuss sth,especially formally,
+before making a decision or finding a solution
+
+The question of the origin of the universe is still hotly debasted
+(=strongly argued about)by scientists
+关于宇宙起源问题，科学家仍然进行着激烈辩论。
+
+
+
+battle[batt打击 -le]
+n.斗争，战斗 a fight between armies,ships or planes
+especial during a war
+
+to be killed in battle
+阵亡
+
+v.斗争
+Both teams battled hard
+两队拼的很厉害
+
+bat 打击 蝙蝠
+combat  战斗
+debate 辩论
+battle 战斗
+
+（bell、beau漂亮）、（bench、bank长凳银行）、(bi、 bio生命生物)
+---------bell、beau-------------------
+bell、beau=handsome 、beauty漂亮美丽
+
+拉丁词源bellus 古法语beau
+
+belle[bell美丽 -e]
+
+n.美女，最美丽的女人(a beautiful woman)
+
+She was the belle of her Sunday School class
+在主日学校她是他们班的班花。
+
+beauty[beau美丽  -ty]
+n.美丽 漂亮 the state or quality of beinig beautiful
+
+the beauty of the sunset
+落日之美
+
+beautiful[beaut美丽 -i-  -ful]a.美丽的
+
+beautify[beaut -i- fy]v.美化
+
+belle 美女
+beauty美丽
+beautiful  adj.a
+beautify v.
+
+
+
+
+-------bench、bank-------------------
+
+bench 长凳 条凳 long seat
+古英语benc 古意大利语banca
+衍生次元 bank-
+
+
+bank
+n.银行 an organization 条凳
+堆放货币的条凳=货币交易所=银行
+
+I need to go to the bank(the local office of a bank)
+我的去趟银行
+
+bankrupt[bank银行  rupt(破 to break)]
+
+a.破产的
+
+They went bankrupt in 1933
+他们与1993年破产
+
+bench 长凳
+bank 银行 长凳
+bankrupt破产
+
+
+
+-------------bi 、bio---------------------
+
+bi、 bio 生命、生物life
+古希腊bios 
+
+biology[bio (生命生物life)  logy表学科]
+
+n.生物学 the science of life
+a degree in biology
+生物学学位
+
+biologistics[biology  -ist学者]
+n.生物学者
+
+biography[bio（生命life）  -graphy著作]
+
+n.传记 written account about a person's life
+
+He was the author of a biography of Darwin.
+他写过一本达尔文传记
+
+biology生物学
+biography 传记
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
