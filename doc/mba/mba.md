@@ -117,7 +117,7 @@ II.数据学习法
 艾宾浩斯 记忆曲线
 5分钟 30分钟 12小时
 
-
+------------------------------------------------------------------------------------
 
 I.第二课
 
@@ -145,7 +145,7 @@ The play was well acted.
 
 4.行为 n(sth .that sb.does)
 an act of kindness善行
-No act of kindness is ever wasted 没有一种善行会被浪费的。
+No act of kindness is ever wasted 没有一种善行会被浪费的。善有善报
 
 in the act(of doing sth)正在(做某事);
 当场(while you are doing sth)
@@ -162,7 +162,7 @@ actress[act -ress女性]n 女演员
 overact[over- act]V.表演的过于夸张
 
 
-
+----------------------------act开头------------------------
 
 I.action
 act做 -ion (名词后缀)
@@ -219,7 +219,7 @@ He finally actualized his dream
 I.actually[actual -ly]adv.事实上
 I.actuality[actual -ity]n.事实
 
-
+------------------------------------act结尾--------------------------
 I.react [re- 返回back]+act做
 1.v.反应(do or act in reply)
 She was slow to react.她反应迟钝
@@ -257,7 +257,11 @@ I.exact  [ex- 出out] +act [驱使 to drive]
 What were his exact words?
 他的原话是什么?
 
+
 I.exactly[exact -ly] adv.准确的；精确的
+
+---------------------------act中间-----------------------------
+
 
 I.transact [trans-穿过通过 across or throught] +act(驱使to drive)
 1.v [与人或组织]做业务，做交易(to do business with a person or an organization)
@@ -302,35 +306,546 @@ exactly
 transact
 transaction
 
+--------ag--------------------------------------------------
+ag=to do做 || drive 驱使 （和act同一个出处）
+
+来源:拉丁语agere的分词actum的词干部分 
+
+
+agent(代理人)[ag做 -ent名词后缀，表人]
+
+1.n 代理人、代理商
+Our agent in New York deals with all US sales
+我们在纽约的代理商经办在整个美国的销售。
+
+
+agency(n代理处；机构)[ag做 -ency名词后缀表性质或状态]
+1.n 代理处；机构
+
+You can book at your local travel(旅行) agency
+你可以在当离的旅行社订票
+
+
+agenda(议事日程)[ag做 -enda]
+1.n. 议事日程(a list of items to be discussed)
+
+This is sure to be an item on the agenda next week.
+这一定会成为下星期议事日程上的一项议题。
+
+agitate(v.鼓动)[ag驱使 -it无意义变漂亮 -ate动词词缀]
+
+1.v.鼓动 to argue strongly for sth you want ,especially
+
+The women who worked in these mills had begun to agitate for better conditions.
+在这些工厂里做工的妇女们开始抗议要求改善工作条件
+
+2.agitattion[agitate -ion]n.鼓动；不安
+
+3.agitator[agitate -or]n.鼓动者
+
+agent 代理人
+agency 代理商
+agenda 议事日程
+agitate 鼓动
+
+
+
+-------------ann---------------------------------
+ann(年year)
+来自拉丁词 annus
+ann在构词中常跟着连接字母-i-或-u-
+
+
+anniversary[ann年 -i- -vers-(转to turn) -ary名词后缀]
+n.周年纪念日
+
+That couple always holds a little celebration every year on their wedding annivesary
+他们夫妇每年到他们结婚的日子都要稍微庆祝下。
+
+annual[ann年 -u-  -al形容词后缀]
+
+a.一年的，每年的
+
+An annual report will be delivered.
+将要发表一份年度报告
+
+anniversary
+annual
+
+
+------------aud---audit-------------------------------------------
+aud、audit(听);aug auct auth(增加成长)
+aud(it)=to hear 听
+aud和audit分别来源于拉丁动词aduire的现状词干和分词词干
+
+audience[aud(听 to hear) -i - ence名词表行为或状态]
+
+n.观众、听众
+The audience was/were clapping for 10 minutes
+很多观众鼓掌10分钟
+
+n.会见；接见(a formal meeting with an important person)
+The prime minister will seek an audience with the Queen later this morning
+今天上午晚些时候首相将会觐见女王陛下
+
+
+audio[audi听 -o 形容词后缀]
+
+a.声音的sound
+audio and video cassettes
+盒式录音带和录像带
+
+
+audit(听)
+
+v.审计 查账 officially examine（故事听人报账）
+
+Each year they audit our accounts and certify them as being true and fair
+他们每年对我们进行账务审核，以确保其真实无误。
+
+
+(在大学)旁听(to attend a course at college or university but without taking any exams credit) 
+
+He is auditing a history course at college
+他在大学里旁听历史课
+
+auditor[audit -or]
+n 查账员 审计员；（大学）旁听生
+
+
+auditorium[audit听 -orium场所]
+
+n.礼堂 会堂 (a large building or room for public meetings)
+
+There is a report in the auditorium tonight
+今晚礼堂有个报告
+
+n.听众席(the part of a theatre or concert hall where the audier)
+
+The author was found sitting in the auditoriunm
+有人发现坐着正坐在观众席中。
+
+audience
+audio
+audit
+auditor
+auditorium
+
+
+-------aug auct  auth---------------------------------
+aug、auct、auth=to increase 、to cause to grow 增加成长。
+
+拉丁动词aguere以及过分auctus 及其变体auth
+
+august[aug(使增大to increase) -ust最the most]
+
+adj.威严的(impressive ,making you feel respect)
+
+Once曾经 in the august palaces lived a king
+从前在威严的王宫里住着一个国王
+
+
+n.(大写) 八月
+
+
+augment[aug(使增大to increase) -ment(使。。) ]
+
+v.增加 扩大(make greater or enlarge)
+
+The king augmented his power
+国王扩大了自己的权力
+
+auction[auct(使增加 to increase)  -ion]
+
+n.拍卖(sale in which goods are sold toi the person offering the highest price)
+
+The house is up for auction(will be sold at an auction)
+这所房子将被拍卖
+
+v.拍卖 sell by auction
+
+When the artist died his family auctioned his paintings.
+画家去世后，家人把他的画作拍卖掉了
+
+author[auth(使成长to cause to grow) -or 人]
+
+n.作家 writer
+Who is your favourite author?
+你最喜欢哪位作家
+
+n.发起人，创始者(people who begins or create anything)
+The young man is the author of the project
+这个年轻人是该项目的倡议者。
+
+
+authority[author创始者 -ity表特征n]
+
+n.权力权威 the power or right to control or make decisions
+
+She now has authority over the people who used to be her bosses
+他现在管辖着过去是她上司的那些人
+
+n.当权者、当局(the people or an organization who have the power to make decisions)
+I have to report this to the authorities
+我得向官方报告此事
+
+
+authorize/authorise[author创始者 -ize权力]
+v.批准授权give power to 
+
+We are willing to authorize the president to use force if necessary
+我们愿意授权总统在必要的时候使用武力
+
+august August
+augment
+auction
+author
+authority
+authorize/authorise
+
+
+---------back---------------------------------------
+
+back后面turn back /behind
+1.日耳曼语系bah
+2.古英文bac
+
+background[back(后面behind)  ground底]
+
+n.背景(the details of sth;infomation)
+a person's family/social/cultural/educational/class background
+一个人的出身社会文化教育阶级背景
+
+Can you give me more background on the company？
+你能多提供一些这家公司的背景资料吗
+
+
+backward[back后  ward方向direction]
+a.向后的；落后的
+directed or moving towards the back;developing slowly
+
+He looked backward over his shoulder
+他回头向后看
+
+a backward part of the country,with no paved roads and no electricity电
+该国的一个落后地区，没有铺设马路也没有电力
+
+
+drawback[draw(拉pull)  back后面]
+
+n.缺点；不利条件 disadvantage or problem
+
+This is he one major drawback of the new system
+这是新系统的一大弊端
+
+feedback[feed(喂养give/eat food)  back后面]
+n.返回的意见（或信息）
+advice,criticism or information about how good or useful sth.or sb's work is
+
+The teacher will give you feedback on the test.
+老师会对你的测验信息进行一些反馈
+
+paperback[paper(纸for writing)  back后面]
+
+平装本；简装本
+
+a cheap paperback
+一本链家的简装本
+
+
+setback[set(安置put) back后面behind]
+
+n.挫折 a difficulty or problem
+
+
+We should take warning from this setback.
+我们应当把这次挫折引以为借鉴
+
+back
+background
+backward
+drowback
+feedback
+paperback
+setback
+
+
+
+--------------ball----------------------------
+
+5.ball跳舞、ball球、bol球
+
+ball=to dance跳舞
+
+n.舞会 alarge formal正式 party with dancing
+
+have a ball(informal)狂欢；玩得痛快
+
+Outside the boys were sitting on the ground,they were having a ball
+男孩们在户外席地而坐，他们玩得很开心
 
 
 
 
 
+ballet[ball(跳舞dance) -et名词后缀]
+n.芭蕾舞 astyle of dancing
+
+She wants to be a ballet dancer
+她想当芭蕾舞演员
+
+ball
+ballet
+
+
+ball、bol
+=to throw 投掷
+来源希腊次元ballein
+
+n.球，球状的 a round object
+
+a golf ball
+高尔夫球
+
+balloon[ball -oon名词后缀，表尺寸比较大]
+
+n. 气球
+
+hot-air balloon
+热气球
+
+
+ballot[ball球 -ot表尺寸较小的物品]
+
+n/v不记名投票 voting
+
+The chairperson is chosen by secret秘密 ballot.
+主席是通过无记名投票选举产生的
+
+
+blackball
+v.投票反对(加入团体)
+
+
+bald[ball球  -d]
+
+a.秃的 having little or no hair on the head
+
+He started going bald in his twenties
+他二十几岁便开始谢顶。
+
+ball
+balloon
+ballot不记名投票  小球
+bald 秃的 球上没有东西
+
+------------------bas(s)---------------------------
+
+bas、bass=低的low、基础的
+
+来源于拉丁语bassus
+
+
+base[bas(低的low) -e]
+
+n.底部 lowet part
+the base of a glass
+玻璃杯的底部
+
+n.基础 thing  can be developed or achieved
+
+These policies(政策) have a broad广泛 base of support
+这些政策受到广泛支持
+
+
+v.以xx为基础
+base sth. on/upon sth
+
+What are you basing this theory on?
+你这种理论的根据是什么？
+
+
+
+basement[base(lowest part底部)  -ment]
+n.地下室 a room
+a basement flat/apartment
+地下室的一套房间
+
+baseball[base底部 ball球]
+
+n.棒球 a game 
+a baseboll team
+棒球队
+
+basic [bas低的low  -ic]
+adj.基本的，基础的base
+
+basic information/facts/ideas
+基本信息、事实、思想
+
+basis[bas低的low -is]
+n.基础 重要的基础
+the important facts,ideas or events that support sth .and that is can develop成长研发 from
+
+This article will form the basis for our discussion
+这篇文章讲作为我们讨论的基点。
+
+basin[bas低的low  -in]
+n.盆;大碗=washbasin 
+
+Place the eggs and sugar in a large basin
+把鸡蛋和糖放在大碗里面
+
+base 基础底部
+basement
+baseball棒球
+basic基础
+basis重要基础
+basin盆 底部
+
+
+----------------bat(t)-------------------------------------
+
+bat、batt[=打击to beat]
+
+来源拉丁词源battere
+
+bat
+
+n.球拍 球棒 to hit or beat
+
+a baseball bat
+棒球球棒
+
+n.蝙蝠
+
+batman 蝙蝠侠
+
+
+combat[com bat打击]
+
+n.战斗、打仗
+fighting or a fight ,especially during a time of war
+He was killed in combat
+他在战斗中阵亡
+
+v.战斗  斗争
+We combat with them for our rights权利.
+为争取我们的权利，我们和他们做斗争。
+
+debate[de bat打击to beat]
+
+n.辩论 an argument or discussion
+
+There had bean much debate on the issue of childcase儿童保育
+人们对儿童保育问题议论纷纷。
+
+v.辩论 to discuss sth,especially formally,
+before making a decision or finding a solution
+
+The question of the origin of the universe is still hotly debasted
+(=strongly argued about)by scientists
+关于宇宙起源问题，科学家仍然进行着激烈辩论。
+
+
+
+battle[batt打击 -le]
+n.斗争，战斗 a fight between armies,ships or planes
+especial during a war
+
+to be killed in battle
+阵亡
+
+v.斗争
+Both teams battled hard
+两队拼的很厉害
+
+bat 打击 蝙蝠
+combat  战斗
+debate 辩论
+battle 战斗
+
+（bell、beau漂亮）、（bench、bank长凳银行）、(bi、 bio生命生物)
+---------bell、beau-------------------
+bell、beau=handsome 、beauty漂亮美丽
+
+拉丁词源bellus 古法语beau
+
+belle[bell美丽 -e]
+
+n.美女，最美丽的女人(a beautiful woman)
+
+She was the belle of her Sunday School class
+在主日学校她是他们班的班花。
+
+beauty[beau美丽  -ty]
+n.美丽 漂亮 the state or quality of beinig beautiful
+
+the beauty of the sunset
+落日之美
+
+beautiful[beaut美丽 -i-  -ful]a.美丽的
+
+beautify[beaut -i- fy]v.美化
+
+belle 美女
+beauty美丽
+beautiful  adj.a
+beautify v.
 
 
 
 
+-------bench、bank-------------------
+
+bench 长凳 条凳 long seat
+古英语benc 古意大利语banca
+衍生次元 bank-
+
+
+bank
+n.银行 an organization 条凳
+堆放货币的条凳=货币交易所=银行
+
+I need to go to the bank(the local office of a bank)
+我的去趟银行
+
+bankrupt[bank银行  rupt(破 to break)]
+
+a.破产的
+
+They went bankrupt in 1933
+他们与1993年破产
+
+bench 长凳
+bank 银行 长凳
+bankrupt破产
 
 
 
+-------------bi 、bio---------------------
 
+bi、 bio 生命、生物life
+古希腊bios 
 
+biology[bio (生命生物life)  logy表学科]
 
+n.生物学 the science of life
+a degree in biology
+生物学学位
 
+biologistics[biology  -ist学者]
+n.生物学者
 
+biography[bio（生命life）  -graphy著作]
 
+n.传记 written account about a person's life
 
+He was the author of a biography of Darwin.
+他写过一本达尔文传记
 
-
-
-
-
- 
-
- 
-
-
+biology生物学
+biography 传记
 
 
 
