@@ -9,7 +9,7 @@ public class ExecutorTest {
 
     public static void main(String[] args) throws Exception {
         //超过就报错-2
-         Executor executor = new ThreadPoolExecutor(2, 2, 0L,
+        Executor executor = new ThreadPoolExecutor(2, 2, 0L,
                 TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
@@ -28,6 +28,12 @@ public class ExecutorTest {
                 TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2),
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.CallerRunsPolicy ());*/
+    /*    Executors.newCachedThreadPool（无界线程池，自动线程回收）
+        Executors.newFixedThreadPool（固定大小的线程池）；
+        Executors.newSingleThreadExecutor（单一后台线程）；*/
+
+
+        Executors.newScheduledThreadPool(2);
 
         System.out.println("开始");
           for(int i=0;i<22;i++){
@@ -37,7 +43,7 @@ public class ExecutorTest {
                   public void run() {
                       try {
                           System.out.println(Thread.currentThread().getName()+"线程启动");
-                          Thread.sleep(1111);
+                          Thread.sleep(9111);
                       }catch (Exception e){
                           e.printStackTrace();
                       }
