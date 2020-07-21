@@ -849,8 +849,7 @@ biography 传记
 
 
 ---------cad cas cid--------------------------------------
-cad cas cid
-=降落、降临、发生 to fall or befall
+cad cas cid=降落、降临、发生 to fall or befall
 
 均来源拉丁词源cadere,cad
 cad、cay 是现在词干
@@ -865,7 +864,7 @@ a.堕落的；颓败的having or showing low standards
 a decadent lifestyle/society
 堕落的生活方式；腐朽的社会
 
-decadence[de(down下) cat(to fall 降) ence名词后缀]
+decadence[de(down下) cad(to fall 降) ence名词后缀]
 
 n.衰落颓废
 
