@@ -63,8 +63,12 @@ I.字节码指令
 1.没有byte、char、short、boolean 转换成INT
 2.对象创建和访问指令:new 数组 new array anewarray;访问getfield;putfield;getstatic;putstatic ;baload;bastore;arraylength;instanceof、checkcase
 3.方法调用和返回指令
-invokevirtual:最常用，调用对象的实例方法 invokeinterface:调用接口方法 invokespecial:特殊处理的实例方法,初始化方法、私有方法、父类方法
-invokestatic:调用类静态方法   invokedynamic:动态解析出调用点限定符引用方法
+invokevirtual:最常用，调用对象的实例方法 
+invokeinterface:调用接口方法 
+invokespecial:特殊处理的实例方法,初始化方法、私有方法、父类方法
+invokestatic:调用类静态方法   
+invokedynamic:动态解析出调用点限定符引用方法
+
 4.同步指令 synchronized关键字需要管程（monitor）monitorenter、monitorexit支持；同步方法内部出现异常也会执行monitorexit释放同步
 
 
