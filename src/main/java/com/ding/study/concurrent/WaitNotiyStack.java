@@ -23,7 +23,7 @@ public class WaitNotiyStack {
         synchronized (list) {
             System.out.println("工具类pop进入synchronized:");
             if (list.size() <= 0) {
-                this.wait();
+                wait();
             }
             return list.removeLast();
         }
