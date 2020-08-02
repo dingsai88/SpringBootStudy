@@ -123,8 +123,9 @@ I.第二课
 
 sth something 某些事
 sb somebody 某些人
-
+----------------------------act------------------------
 act =to do 做= to drive 驱使
+
 来源:agere的分词actum的词干部分
 
 act=to do做 ；
@@ -220,7 +221,7 @@ I.actually[actual -ly]adv.事实上
 I.actuality[actual -ity]n.事实
 
 ------------------------------------act结尾--------------------------
-I.react [re- 返回back]+act做
+I.react [re- 返回back+act做]
 1.v.反应(do or act in reply)
 She was slow to react.她反应迟钝
 
@@ -378,6 +379,8 @@ aud、audit(听);aug auct auth(增加成长)
 aud(it)=to hear 听
 aud和audit分别来源于拉丁动词aduire的现状词干和分词词干
 
+
+
 audience[aud(听 to hear) -i - ence名词表行为或状态]
 
 n.观众、听众
@@ -505,7 +508,6 @@ authorize/authorise
 
 
 ---------back---------------------------------------
-
 back后面turn back /behind
 1.日耳曼语系bah
 2.古英文bac
@@ -572,8 +574,7 @@ setback
 
 
 --------------ball----------------------------
-
-5.ball跳舞、ball球、bol球
+ball跳舞、ball球、bol球
 
 ball=to dance跳舞
 
@@ -640,7 +641,6 @@ ballot不记名投票  小球
 bald 秃的 球上没有东西
 
 ------------------bas(s)---------------------------
-
 bas、bass=低的low、基础的
 
 来源于拉丁语bassus
@@ -704,12 +704,9 @@ basis重要基础
 basin盆 底部
 
 
-----------------bat(t)-------------------------------------
-
+----------------bat(t)----------------------------------------------------------------------------------
 bat、batt[=打击to beat]
-
 来源拉丁词源battere
-
 bat
 
 n.球拍 球棒 to hit or beat
@@ -766,7 +763,10 @@ debate 辩论
 battle 战斗
 
 （bell、beau漂亮）、（bench、bank长凳银行）、(bi、 bio生命生物)
----------bell、beau-------------------
+
+
+
+---------bell、beau-----------------------------------------------
 bell、beau=handsome 、beauty漂亮美丽
 
 拉丁词源bellus 古法语beau
@@ -796,8 +796,7 @@ beautify v.
 
 
 
--------bench、bank-------------------
-
+-------bench、bank----------------------------------------------------------------
 bench 长凳 条凳 long seat
 古英语benc 古意大利语banca
 衍生次元 bank-
@@ -823,8 +822,7 @@ bankrupt破产
 
 
 
--------------bi 、bio---------------------
-
+-------------bi 、bio------------------------------------------------------------------
 bi、 bio 生命、生物life
 古希腊bios 
 
