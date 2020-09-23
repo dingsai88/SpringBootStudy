@@ -2,11 +2,11 @@ package designpatterns.iterator;
 
 /**
  * 
- µü´úÆ÷Ä£Ê½£¨Iterator£©
+ è¿­ä»£å™¨æ¨¡å¼ï¼ˆIteratorï¼‰
  * 
- * Ìá¹©Ò»ÖÖ·½·¨Ë³Ğò·ÃÎÊÒ»¸ö¾ÛºÏ¶ÔÏóÖĞ¸÷¸öÔªËØ£¬¶øÓÖ²»±©Â¶¸Ã¶ÔÏóµÄÄÚ²¿±íÊ¾¡£ Êä³ö:
+ * æä¾›ä¸€ç§æ–¹æ³•é¡ºåºè®¿é—®ä¸€ä¸ªèšåˆå¯¹è±¡ä¸­å„ä¸ªå…ƒç´ ï¼Œè€Œåˆä¸æš´éœ²è¯¥å¯¹è±¡çš„å†…éƒ¨è¡¨ç¤ºã€‚ è¾“å‡º:
  * 
- * Êı¾İ1 ×î¿¿Ç° Êı¾İ1 Êä³ö ¹ş¹ş12 Êä³ö ¹ş¹ş13 Êä³ö ¹ş¹ş14 Êä³ö ¹ş¹ş15 Êä³ö
+ * æ•°æ®1 æœ€é å‰ æ•°æ®1 è¾“å‡º å“ˆå“ˆ12 è¾“å‡º å“ˆå“ˆ13 è¾“å‡º å“ˆå“ˆ14 è¾“å‡º å“ˆå“ˆ15 è¾“å‡º
  * 
  * 
  * 
@@ -14,7 +14,7 @@ package designpatterns.iterator;
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-11 ÏÂÎç6:58:11
+ * @time 2016-6-11 ä¸‹åˆ6:58:11
  */
 public class Zmain {
 	/**
@@ -22,16 +22,16 @@ public class Zmain {
 	 */
 	public static void main(String[] args) {
 		ConcreteAggregate a = new ConcreteAggregate();
-		a.set(0, "Êı¾İ1");
-		a.set(1, "¹ş¹ş12");
-		a.set(2, "¹ş¹ş13");
-		a.set(3, "¹ş¹ş14");
-		a.set(4, "¹ş¹ş15");
+		a.set(0, "æ•°æ®1");
+		a.set(1, "å“ˆå“ˆ12");
+		a.set(2, "å“ˆå“ˆ13");
+		a.set(3, "å“ˆå“ˆ14");
+		a.set(4, "å“ˆå“ˆ15");
 		Iterator i = new ConcreteIterator(a);
 		Object item = i.first();
-		System.out.println(item + "  ×î¿¿Ç°");
+		System.out.println(item + "  æœ€é å‰");
 		while (!i.isDone()) {
-			System.out.println(i.currentItem() + "   Êä³ö");
+			System.out.println(i.currentItem() + "   è¾“å‡º");
 			i.next();
 		}
 

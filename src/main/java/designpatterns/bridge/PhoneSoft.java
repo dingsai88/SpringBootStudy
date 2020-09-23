@@ -1,11 +1,11 @@
 package designpatterns.bridge;
 
 /**
- * 手机软件接口
+ * 鎵嬫満杞欢鎺ュ彛
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-26 上午11:45:16
+ * @time 2016-5-26 涓婂崍11:45:16
  */
 public interface PhoneSoft {
 	public void run();

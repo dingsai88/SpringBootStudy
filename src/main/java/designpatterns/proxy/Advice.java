@@ -4,21 +4,21 @@ import java.lang.reflect.Method;
 
 /**
  * 
- * ÇĞÃæ½Ó¿Ú
- * ´úÀíÀàµÄÇĞÃæ·½·¨£¬
- * ÔÚ´úÀí·½·¨Ö´ĞĞÇ°ºÍÖ´ĞĞºóÖ´ĞĞµÄÀà
- * advice½¨Òé
+ * åˆ‡é¢æ¥å£
+ * ä»£ç†ç±»çš„åˆ‡é¢æ–¹æ³•ï¼Œ
+ * åœ¨ä»£ç†æ–¹æ³•æ‰§è¡Œå‰å’Œæ‰§è¡Œåæ‰§è¡Œçš„ç±»
+ * adviceå»ºè®®
  * @author hpo
  *
  */
 public interface Advice {
 /**
- * ÔÚ´úÀí·½·¨Ö´ĞĞÇ°Ö´ĞĞµÄ·½·¨
+ * åœ¨ä»£ç†æ–¹æ³•æ‰§è¡Œå‰æ‰§è¡Œçš„æ–¹æ³•
  * @param method
  */
  public void beforMethod(Method method);
  /**
-  * ÔÚ´úÀí·½·¨Ö´ĞĞºóÖ´ĞĞµÄ·½·¨
+  * åœ¨ä»£ç†æ–¹æ³•æ‰§è¡Œåæ‰§è¡Œçš„æ–¹æ³•
   * @param method
   */
  public void afterMethod(Method method);

@@ -1,22 +1,22 @@
 package designpatterns.abstratfactory;
 /**
- * ÓÃ»§½Ó¿ÚÀà
+ * ç”¨æˆ·æ¥å£ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-17 ÉÏÎç10:12:45
+ * @time 2016-6-17 ä¸Šåˆ10:12:45
  */
 public interface UserService {
 	/**
-	 * ĞÂÔöÓÃ»§
+	 * æ–°å¢ç”¨æˆ·
 	 * @author daniel
-	 * @time 2016-6-17 ÉÏÎç10:13:01
+	 * @time 2016-6-17 ä¸Šåˆ10:13:01
 	 * @param user
 	 */
 	public void insertUser(User user);
 	/**
-	 * »ñµÃÓÃ»§·½·¨
+	 * è·å¾—ç”¨æˆ·æ–¹æ³•
 	 * @author daniel
-	 * @time 2016-6-17 ÉÏÎç10:13:51
+	 * @time 2016-6-17 ä¸Šåˆ10:13:51
 	 * @param id
 	 * @return
 	 */

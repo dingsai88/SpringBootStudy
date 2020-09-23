@@ -1,16 +1,16 @@
 package designpatterns.factory;
 /**
- * ¹¤³§Ä£Ê½ÊÇÎÒÃÇ×î³£ÓÃµÄÊµÀı»¯¶ÔÏóÄ£Ê½ÁË£¬ÊÇÓÃ¹¤³§·½·¨´úÌænew²Ù×÷µÄÒ»ÖÖÄ£Ê½¡£
+ * å·¥å‚æ¨¡å¼æ˜¯æˆ‘ä»¬æœ€å¸¸ç”¨çš„å®ä¾‹åŒ–å¯¹è±¡æ¨¡å¼äº†ï¼Œæ˜¯ç”¨å·¥å‚æ–¹æ³•ä»£æ›¿newæ“ä½œçš„ä¸€ç§æ¨¡å¼ã€‚
  * 
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç4:54:37
+ * @time 2016-6-18 ä¸‹åˆ4:54:37
  */
 public class ZTestMain {
 
 	/**
-	 * ²âÊÔÓÃ
+	 * æµ‹è¯•ç”¨
 	 * 
 	 * @param args
 	 */
@@ -21,13 +21,13 @@ public class ZTestMain {
 		oper.setNumberB(2);
 		System.out.println(oper.getResult());
 
-		// ²âÊÔ¼õ
+		// æµ‹è¯•å‡
 		oper = OperationFactory.createOperate('-');
 		oper.setNumberA(4);
 		oper.setNumberB(2);
 		System.out.println(oper.getResult());
 
-		// ²âÊÔ³Ë
+		// æµ‹è¯•ä¹˜
 		oper = OperationFactory.createOperate('*');
 		oper.setNumberA(4);
 		oper.setNumberB(2);

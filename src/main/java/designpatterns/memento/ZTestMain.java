@@ -1,48 +1,48 @@
 package designpatterns.memento;
 /**
- * ±¸ÍüÂ¼Ä£Ê½£¨memento£©£ºÔÚ²»ÆÆ»µ·â×°ĞÔµÄÇ°ÌáÏÂ£¬²¶»ñÒ»¸ö¶ÔÏóµÄÄÚ²¿×´Ì¬£¬²¢ÔÚ¸Ã¶ÔÏóÖ®Íâ±£´æÕâ¸ö×´Ì¬¡£ÕâÑùÒÔºó¾Í¿É½«¸Ã¶ÔÏó»Ö¸´µ½Ô­ÏÈ±£´æµÄ×´Ì¬¡£
+ * å¤‡å¿˜å½•æ¨¡å¼ï¼ˆmementoï¼‰ï¼šåœ¨ä¸ç ´åå°è£…æ€§çš„å‰æä¸‹ï¼Œæ•è·ä¸€ä¸ªå¯¹è±¡çš„å†…éƒ¨çŠ¶æ€ï¼Œå¹¶åœ¨è¯¥å¯¹è±¡ä¹‹å¤–ä¿å­˜è¿™ä¸ªçŠ¶æ€ã€‚è¿™æ ·ä»¥åå°±å¯å°†è¯¥å¯¹è±¡æ¢å¤åˆ°åŸå…ˆä¿å­˜çš„çŠ¶æ€ã€‚
  * 
- * Êä³ö
+ * è¾“å‡º
  * 
- * Õ½Éñ¿ªÊ¼
-¿üÒ¯ÉúÃü100
-¿üÒ¯¹¥»÷10
-¿üÒ¯·ÀÓù10
-¿üÒ¯¹ÒÁË
-¿üÒ¯ÉúÃü0
-¿üÒ¯¹¥»÷10
-¿üÒ¯·ÀÓù10
-Õ½Éñ»Ö¸´
-¿üÒ¯ÉúÃü100
-¿üÒ¯¹¥»÷10
-¿üÒ¯·ÀÓù10
+ * æˆ˜ç¥å¼€å§‹
+å¥çˆ·ç”Ÿå‘½100
+å¥çˆ·æ”»å‡»10
+å¥çˆ·é˜²å¾¡10
+å¥çˆ·æŒ‚äº†
+å¥çˆ·ç”Ÿå‘½0
+å¥çˆ·æ”»å‡»10
+å¥çˆ·é˜²å¾¡10
+æˆ˜ç¥æ¢å¤
+å¥çˆ·ç”Ÿå‘½100
+å¥çˆ·æ”»å‡»10
+å¥çˆ·é˜²å¾¡10
 
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç3:40:06
+ * @time 2016-6-18 ä¸‹åˆ3:40:06
  */
 public class ZTestMain {
 
 	/**
 	 * @author daniel
-	 * @time 2016-6-18 ÏÂÎç3:39:21
+	 * @time 2016-6-18 ä¸‹åˆ3:39:21
 	 * @param args
 	 */
 	public static void main(String[] args) { // TODO Auto-generated method stub
 		  KuiYe zhanshen=new KuiYe();
-		  System.out.println("Õ½Éñ¿ªÊ¼");
+		  System.out.println("æˆ˜ç¥å¼€å§‹");
 		  zhanshen.showKuiYe();
-		  //½ø¶È¹ÜÀíÀà
+		  //è¿›åº¦ç®¡ç†ç±»
 		  RoleStateCaretaker log=new RoleStateCaretaker();
-		  //±£´æÕ½Éñ×´Ì¬
+		  //ä¿å­˜æˆ˜ç¥çŠ¶æ€
 		  log.setMemento(zhanshen.saveState());
-		        //Õ½ÉñËÀÁË
-		  System.out.println("¿üÒ¯¹ÒÁË");
+		        //æˆ˜ç¥æ­»äº†
+		  System.out.println("å¥çˆ·æŒ‚äº†");
 		  zhanshen.setVit(0);
 		  zhanshen.showKuiYe();
-		  System.out.println("Õ½Éñ»Ö¸´");
-		  //»Ö¸´Õ½Éñ
+		  System.out.println("æˆ˜ç¥æ¢å¤");
+		  //æ¢å¤æˆ˜ç¥
 		  zhanshen.recoveryState(log.getMemento());
 		  zhanshen.showKuiYe();
 		  }

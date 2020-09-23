@@ -1,8 +1,8 @@
 package designpatterns.interpreter;
 /**
- * ÖÕ¶Ë½âÊÍÆ÷
- * - ÊµÏÖºÍÓï·¨ÖĞÄ©¶Ë·ûºÅÏà¹ØµÄInterpret·½·¨¡£
-- ÔÚÃ¿¸ö¾ä×ÓµÄÄ©¶Ë·ûºÅÖĞ¾ùĞèÒªÒ»¸öTerminalExpressionÊµÀı¡£
+ * ç»ˆç«¯è§£é‡Šå™¨
+ * - å®ç°å’Œè¯­æ³•ä¸­æœ«ç«¯ç¬¦å·ç›¸å…³çš„Interpretæ–¹æ³•ã€‚
+- åœ¨æ¯ä¸ªå¥å­çš„æœ«ç«¯ç¬¦å·ä¸­å‡éœ€è¦ä¸€ä¸ªTerminalExpressionå®ä¾‹ã€‚
  * @author daniel
  *
  */
@@ -10,7 +10,7 @@ public class TerminalExpression extends AbstractExpression {
 
  @Override
  public void interpret(Context context) {
-   System.out.println("ÖÕ¶Ë½âÊÍÆ÷");
+   System.out.println("ç»ˆç«¯è§£é‡Šå™¨");
   
  }
 

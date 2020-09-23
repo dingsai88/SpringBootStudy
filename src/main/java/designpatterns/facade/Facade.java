@@ -1,7 +1,7 @@
 package designpatterns.facade;
 
 /**
- * Íâ¹ÛÀà
+ * å¤–è§‚ç±»
  *
  * @author daniel
  */
@@ -12,7 +12,7 @@ public class Facade {
     private SystemFour four;
 
     /**
-     * ¹¹Ôìº¯Êı³õÊ¼»¯ÊôĞÔ
+     * æ„é€ å‡½æ•°åˆå§‹åŒ–å±æ€§
      */
     public Facade() {
         one = new SystemOne();
@@ -22,7 +22,7 @@ public class Facade {
     }
 
     /**
-     * 1 2 4ÀàµÄ·½·¨µ÷ÓÃ
+     * 1 2 4ç±»çš„æ–¹æ³•è°ƒç”¨
      */
     public void methodA() {
         one.methodOne();
@@ -31,7 +31,7 @@ public class Facade {
     }
 
     /**
-     * 123ÀàµÄ·½·¨µ÷ÓÃ
+     * 123ç±»çš„æ–¹æ³•è°ƒç”¨
      */
     public void methodB() {
         one.methodOne();

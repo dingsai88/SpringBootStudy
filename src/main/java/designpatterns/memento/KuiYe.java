@@ -1,22 +1,22 @@
 package designpatterns.memento;
 
 /**
- * ¿üÒ¯Àà
+ * å¥çˆ·ç±»
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç3:27:20
+ * @time 2016-6-18 ä¸‹åˆ3:27:20
  */
 public class KuiYe {
-	// ÉúÃü
+	// ç”Ÿå‘½
 	private Integer vit;
-	// ¹¥»÷Á¦
+	// æ”»å‡»åŠ›
 	private Integer atk;
-	// ·ÀÓùÁ¦
+	// é˜²å¾¡åŠ›
 	private Integer def;
 
 	/**
-	 * ÈËÎï³õÊ¼Öµ
+	 * äººç‰©åˆå§‹å€¼
 	 */
 	public KuiYe() {
 		this.vit = 100;
@@ -25,19 +25,19 @@ public class KuiYe {
 	}
 
 	/**
-	 * Õ¹Ê¾¶ÔÏóÊôĞÔ
+	 * å±•ç¤ºå¯¹è±¡å±æ€§
 	 * @author daniel
-	 * @time 2016-6-18 ÏÂÎç3:35:47
+	 * @time 2016-6-18 ä¸‹åˆ3:35:47
 	 */
 	public void showKuiYe() {
-		System.out.println("¿üÒ¯ÉúÃü" + this.vit);
-		System.out.println("¿üÒ¯¹¥»÷" + this.atk);
-		System.out.println("¿üÒ¯·ÀÓù" + this.def);
+		System.out.println("å¥çˆ·ç”Ÿå‘½" + this.vit);
+		System.out.println("å¥çˆ·æ”»å‡»" + this.atk);
+		System.out.println("å¥çˆ·é˜²å¾¡" + this.def);
 	}
 	
 	
 	 /**
-	  * ±£´æÕ½Éñ½ø¶È
+	  * ä¿å­˜æˆ˜ç¥è¿›åº¦
 	  * @return
 	  */
 	 public RoleStateMemento saveState(){
@@ -45,7 +45,7 @@ public class KuiYe {
 	  return new RoleStateMemento(this.getVit(),this.getAtk(),this.getDef());
 	 }
 	 /**
-	  * »Ö¸´¿üÒ¯×´Ì¬
+	  * æ¢å¤å¥çˆ·çŠ¶æ€
 	  * @param memento
 	  */
 	 public void recoveryState(RoleStateMemento memento){

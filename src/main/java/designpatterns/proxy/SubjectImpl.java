@@ -1,15 +1,15 @@
 package designpatterns.proxy;
 /**
- * ÇëÇóÊµÏÖÀà
+ * è¯·æ±‚å®ç°ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-19 ÉÏÎç10:42:42
+ * @time 2016-5-19 ä¸Šåˆ10:42:42
  */
 public class SubjectImpl implements Subject {
 
 	@Override
 	public void request() {
-		System.out.println("·¢³öÇëÇó");
+		System.out.println("å‘å‡ºè¯·æ±‚");
 	}
 
 }

@@ -2,12 +2,12 @@ package designpatterns.factory;
 
 /**
  * 
- * @author daniel ÔËËãÀà ¼Ì³Ğ³éÏó
+ * @author daniel è¿ç®—ç±» ç»§æ‰¿æŠ½è±¡
  */
 class OperationAdd extends Operation {
 
 	/*
-	 * ÖØĞ´¸¸ÀàÔËËã·½·¨ (non-Javadoc)
+	 * é‡å†™çˆ¶ç±»è¿ç®—æ–¹æ³• (non-Javadoc)
 	 * 
 	 * @see ding.study.designpatterns.factory.Operation#getResult()
 	 */
@@ -21,7 +21,7 @@ class OperationAdd extends Operation {
 
 class OperationSub extends Operation {
 	/*
-	 * ÖØĞ´¸¸ÀàÔËËã·½·¨ (non-Javadoc)
+	 * é‡å†™çˆ¶ç±»è¿ç®—æ–¹æ³• (non-Javadoc)
 	 * 
 	 * @see ding.study.designpatterns.factory.Operation#getResult()
 	 */
@@ -35,7 +35,7 @@ class OperationSub extends Operation {
 
 class OperationMul extends Operation {
 	/*
-	 * ÖØĞ´¸¸ÀàÔËËã·½·¨ (non-Javadoc)
+	 * é‡å†™çˆ¶ç±»è¿ç®—æ–¹æ³• (non-Javadoc)
 	 * 
 	 * @see ding.study.designpatterns.factory.Operation#getResult()
 	 */
@@ -49,7 +49,7 @@ class OperationMul extends Operation {
 
 class OperationDiv extends Operation {
 	/*
-	 * ÖØĞ´¸¸ÀàÔËËã·½·¨ (non-Javadoc)
+	 * é‡å†™çˆ¶ç±»è¿ç®—æ–¹æ³• (non-Javadoc)
 	 * 
 	 * @see ding.study.designpatterns.factory.Operation#getResult()
 	 */

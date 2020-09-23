@@ -1,31 +1,31 @@
 package designpatterns.mediator;
 /**
- * ÒÁÀ­¿Ë ¹ú¼Ò
+ * ä¼Šæ‹‰å…‹ å›½å®¶
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-12 ÉÏÎç10:03:28
+ * @time 2016-6-12 ä¸Šåˆ10:03:28
  */
 public class Iraq extends Country {
 	 /**
-	  * ¹¹Ôìº¯Êı
+	  * æ„é€ å‡½æ•°
 	  * @param mediator
 	  */
 	 public Iraq(UnitedNations mediator){
-	  //µ÷ÓÃ¸¸Àà¹¹Ôìº¯Êı
+	  //è°ƒç”¨çˆ¶ç±»æ„é€ å‡½æ•°
 	  super(mediator);
 	 }
 	 /**
-	  * ÉùÃ÷
+	  * å£°æ˜
 	  * @param message
 	  */
 	 public void declare(String message){
 	  mediator.declare(message, this);
 	 }
 	 /**
-	  * »ñµÃÏûÏ¢
+	  * è·å¾—æ¶ˆæ¯
 	  * @param message
 	  */
 	 public void getMessage(String message){
-	  System.out.println("ÃÀ¹ú»ñµÃ¶Ô·½ĞÅÏ¢:"+message);
+	  System.out.println("ç¾å›½è·å¾—å¯¹æ–¹ä¿¡æ¯:"+message);
 	 }
 	}

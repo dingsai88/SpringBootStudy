@@ -1,16 +1,16 @@
 package designpatterns.builder;
 /**
- * ½¨ÔìÕß
+ * å»ºé€ è€…
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-23 ÉÏÎç10:20:21
+ * @time 2016-5-23 ä¸Šåˆ10:20:21
  */
 public class PersonDirector {
 
 	/**
-	 * °ïÖúµ÷ÓÃÁ÷³Ì
+	 * å¸®åŠ©è°ƒç”¨æµç¨‹
 	 * @author daniel
-	 * @time 2016-5-23 ÉÏÎç10:20:28
+	 * @time 2016-5-23 ä¸Šåˆ10:20:28
 	 * @param personBuilder
 	 * @return
 	 */

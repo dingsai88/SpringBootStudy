@@ -1,11 +1,11 @@
 package designpatterns.proxy;
 
 /**
- * ´úÀíÀà
+ * ä»£ç†ç±»
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-19 ÉÏÎç10:42:33
+ * @time 2016-5-19 ä¸Šåˆ10:42:33
  */
 public class Proxy implements Subject {
 	private Subject subject;

@@ -1,9 +1,9 @@
 package designpatterns.builder;
 /**
- * ÔìÈËÊµÏÖÀà
+ * é€ äººå®ç°ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-23 ÉÏÎç10:23:28
+ * @time 2016-5-23 ä¸Šåˆ10:23:28
  */
 public class PersonBuilderManImpl implements PersonBuilder{
 	 private Person person;
@@ -13,18 +13,18 @@ public class PersonBuilderManImpl implements PersonBuilder{
 
 	@Override
 	public void buildHead() {
-		person.setHead("ÄĞÈË±¬Õ¨Í·");
+		person.setHead("ç”·äººçˆ†ç‚¸å¤´");
 	}
 
 	@Override
 	public void buildBody() {
-		person.setBody("ÄĞÈË´óĞØ¼¡");
+		person.setBody("ç”·äººå¤§èƒ¸è‚Œ");
 		
 	}
 
 	@Override
 	public void buildFoot() {
-		person.setFoot("ÄĞÈË´ó½Å°å");
+		person.setFoot("ç”·äººå¤§è„šæ¿");
 		
 	}
 

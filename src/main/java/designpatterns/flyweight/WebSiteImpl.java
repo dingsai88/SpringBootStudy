@@ -1,18 +1,18 @@
 package designpatterns.flyweight;
 
 /**
- * ÍøÕ¾ÊµÏÖÀà
+ * ç½‘ç«™å®ç°ç±»
  *
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-30 ÉÏÎç10:51:35
+ * @time 2016-5-30 ä¸Šåˆ10:51:35
  */
 public class WebSiteImpl extends WebSite {
-    //ÍøÕ¾·ÖÀàÃû³Æ
+    //ç½‘ç«™åˆ†ç±»åç§°
     private String name = "";
 
     /**
-     * ¹¹Ôìº¯Êı
+     * æ„é€ å‡½æ•°
      *
      * @param name
      */
@@ -21,10 +21,10 @@ public class WebSiteImpl extends WebSite {
     }
 
     /**
-     * ÏÔÊ¾Ãû³Æ
+     * æ˜¾ç¤ºåç§°
      */
     @Override
     public void use() {
-        System.out.println("ÍøÕ¾·ÖÀà:" + this.name);
+        System.out.println("ç½‘ç«™åˆ†ç±»:" + this.name);
     }
 }

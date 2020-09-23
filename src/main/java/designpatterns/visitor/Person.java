@@ -1,9 +1,9 @@
 package designpatterns.visitor;
 /**
- * 定义人对象的接口
+ * 瀹氫箟浜哄璞＄殑鎺ュ彛
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 下午2:28:05
+ * @time 2016-5-11 涓嬪崍2:28:05
  */
 public interface Person {
 

@@ -1,48 +1,48 @@
 package designpatterns.flyweight;
 
 /**
- * ÏíÔªÄ£Ê½£¨Flyweight£©:ÔËÓÃ¹²Ïí¼¼ÊõÓĞĞ§µØÖ§³Ö´óÁ¿Ï¸Á£¶ÈµÄ¶ÔÏó¡£
+ * äº«å…ƒæ¨¡å¼ï¼ˆFlyweightï¼‰:è¿ç”¨å…±äº«æŠ€æœ¯æœ‰æ•ˆåœ°æ”¯æŒå¤§é‡ç»†ç²’åº¦çš„å¯¹è±¡ã€‚
  * <p>
- * ±ÜÃâ´óÁ¿ÓµÓĞÏàÍ¬ÄÚÈİµÄĞ¡ÀàµÄ¿ªÏú(ÈçºÄ·ÑÄÚ´æ),Ê¹´ó¼Ò¹²ÏíÒ»¸öÀà(ÔªÀà).
- * Í¬ÀàĞÍÖ»ÓĞÒ»¸ö¶ÔÏó
+ * é¿å…å¤§é‡æ‹¥æœ‰ç›¸åŒå†…å®¹çš„å°ç±»çš„å¼€é”€(å¦‚è€—è´¹å†…å­˜),ä½¿å¤§å®¶å…±äº«ä¸€ä¸ªç±»(å…ƒç±»).
+ * åŒç±»å‹åªæœ‰ä¸€ä¸ªå¯¹è±¡
  * <p>
- * Êä³ö½á¹û
+ * è¾“å‡ºç»“æœ
  *
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-30 ÉÏÎç10:53:34
+ * @time 2016-5-30 ä¸Šåˆ10:53:34
  */
 public class ZTestMain {
 
     /**
      * @param args
      * @author daniel
-     * @time 2016-5-30 ÉÏÎç10:53:24
+     * @time 2016-5-30 ä¸Šåˆ10:53:24
      */
     public static void main(String[] args) {
         WebSiteFactory f = new WebSiteFactory();
 
-        WebSite fx = f.getWebSiteCategory("¿Æ¼¼Àà");
+        WebSite fx = f.getWebSiteCategory("ç§‘æŠ€ç±»");
         fx.use();
-        WebSite fx1 = f.getWebSiteCategory("ĞÂÎÅÀà");
+        WebSite fx1 = f.getWebSiteCategory("æ–°é—»ç±»");
         fx1.use();
-        WebSite fx2 = f.getWebSiteCategory("ÓéÀÖÀà");
+        WebSite fx2 = f.getWebSiteCategory("å¨±ä¹ç±»");
         fx2.use();
-        WebSite fy = f.getWebSiteCategory("²©¿Í");
+        WebSite fy = f.getWebSiteCategory("åšå®¢");
         fy.use();
-        WebSite fz = f.getWebSiteCategory("²©¿Í");
+        WebSite fz = f.getWebSiteCategory("åšå®¢");
         fz.use();
 /*
-        WebSite fxaa = f.getWebSiteCategory("¿Æ¼¼Àà");
+        WebSite fxaa = f.getWebSiteCategory("ç§‘æŠ€ç±»");
         fxaa.use();
-        WebSite fxbb = f.getWebSiteCategory("¿Æ¼¼Àà");
+        WebSite fxbb = f.getWebSiteCategory("ç§‘æŠ€ç±»");
         fxbb.use();
-        WebSite fxcc = f.getWebSiteCategory("¿Æ¼¼Àà");
+        WebSite fxcc = f.getWebSiteCategory("ç§‘æŠ€ç±»");
         fxcc.use();*/
 
 
 
-        System.out.println("ÍøÕ¾·ÖÀà×ÜÊıÎª:" + f.getWebSiteCount());
+        System.out.println("ç½‘ç«™åˆ†ç±»æ€»æ•°ä¸º:" + f.getWebSiteCount());
     }
 
 }

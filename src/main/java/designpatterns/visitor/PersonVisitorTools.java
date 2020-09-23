@@ -4,33 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ¹Û²ìpersonµÄ¼¯ºÏÀà
+ * è§‚å¯Ÿpersonçš„é›†åˆç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 ÏÂÎç2:27:03
+ * @time 2016-5-11 ä¸‹åˆ2:27:03
  */
 public class PersonVisitorTools {
 
 	 /**
-	  * PerSon¼¯ºÏ
+	  * PerSoné›†åˆ
 	  */
 	 private List<Person> elements=new ArrayList<Person>();
 	 /**
-	  * Ìí¼ÓÈË¶ÔÏó
+	  * æ·»åŠ äººå¯¹è±¡
 	  * @param element
 	  */
 	 public void add(Person element){
 	  elements.add(element);
 	 }
 	 /**
-	  * É±ÈË
+	  * æ€äºº
 	  * @param element
 	  */
 	 public void delete(Person element){
 	  elements.remove(element);
 	 }
 	 /**
-	  * ÅÅ¶Ó±¨Êı  ·ÃÎÊ×´Ì¬ÏÂ ÈËµÄ·´Ó¦
+	  * æ’é˜ŸæŠ¥æ•°  è®¿é—®çŠ¶æ€ä¸‹ äººçš„ååº”
 	  * @param visitor
 	  */
 	public void show(Visitor visitor) {

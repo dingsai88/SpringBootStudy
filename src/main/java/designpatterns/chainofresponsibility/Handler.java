@@ -2,7 +2,7 @@ package designpatterns.chainofresponsibility;
 
 public abstract class Handler {
 	/**
-	 * ÔğÈÎÁ´ÏÂÒ»¸ö¼Ì³ĞÕß
+	 * è´£ä»»é“¾ä¸‹ä¸€ä¸ªç»§æ‰¿è€…
 	 */
 	protected Handler successor;
 	public void setHandler(Handler successor){
@@ -10,9 +10,9 @@ public abstract class Handler {
 	}
 	
 	/**
-	 * µ÷ÓÃÇëÇó
+	 * è°ƒç”¨è¯·æ±‚
 	 * @author daniel
-	 * @time 2016-6-2 ÉÏÎç9:53:43
+	 * @time 2016-6-2 ä¸Šåˆ9:53:43
 	 * @param request
 	 */
 	public abstract void handlerRequest(int request);

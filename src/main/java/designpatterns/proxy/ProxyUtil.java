@@ -5,19 +5,19 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
- * Éú³É´úÀí¶ÔÏóµÄÀà
+ * ç”Ÿæˆä»£ç†å¯¹è±¡çš„ç±»
  * 
  * @author hpo
  * 
  */
 public class ProxyUtil {
 	/**
-	 * »ñµÃ¶ÔÏóµÄ´úÀí
+	 * è·å¾—å¯¹è±¡çš„ä»£ç†
 	 * 
 	 * @param target
-	 *            ĞèÒª±»´úÀíµÄ¶ÔÏó
+	 *            éœ€è¦è¢«ä»£ç†çš„å¯¹è±¡
 	 * @param advice
-	 *            ±»´úÀí¶ÔÏóÖ´ĞĞ·½·¨µÄÇĞÃæ½Ó¿Ú
+	 *            è¢«ä»£ç†å¯¹è±¡æ‰§è¡Œæ–¹æ³•çš„åˆ‡é¢æ¥å£
 	 * @return
 	 */
 	public static Object newProxyInstance(final Object target,

@@ -1,9 +1,9 @@
 package designpatterns.builder;
 /**
- * 人类
+ * 浜虹被
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-23 上午10:23:16
+ * @time 2016-5-23 涓婂崍10:23:16
  */
 public class Person {
 	private String head;

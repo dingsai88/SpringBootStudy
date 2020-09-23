@@ -1,16 +1,16 @@
 package designpatterns.memento;
 /**
- * ÓÎÏ·ÊôĞÔ×´Ì¬ ±£´æÀà
+ * æ¸¸æˆå±æ€§çŠ¶æ€ ä¿å­˜ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç3:37:02
+ * @time 2016-6-18 ä¸‹åˆ3:37:02
  */
 public class RoleStateMemento {
-	// ÉúÃü
+	// ç”Ÿå‘½
 	private Integer vit;
-	// ¹¥»÷Á¦
+	// æ”»å‡»åŠ›
 	private Integer atk;
-	// ·ÀÓùÁ¦
+	// é˜²å¾¡åŠ›
 	private Integer def;
 
 	 public RoleStateMemento(int vit,int atk,int def){

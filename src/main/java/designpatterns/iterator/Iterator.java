@@ -1,18 +1,18 @@
 package designpatterns.iterator;
 
 /**
- * µü´úÆ÷ ³éÏóÀà
+ * è¿­ä»£å™¨ æŠ½è±¡ç±»
  * @author daniel
  *
  */
 public abstract class Iterator {
- //·µ»ØµÚÒ»ÌõÊı¾İ
+ //è¿”å›ç¬¬ä¸€æ¡æ•°æ®
  public abstract Object first();
- //ÏÂÒ»ÌõÊı¾İ
+ //ä¸‹ä¸€æ¡æ•°æ®
  public abstract Object next();
- //ÊÇ·ñÓĞÏÂÒ»Ìõ
+ //æ˜¯å¦æœ‰ä¸‹ä¸€æ¡
  public abstract boolean isDone();
- //µ±Ç°ÌõÊı
+ //å½“å‰æ¡æ•°
  public abstract Object currentItem();
 
 }

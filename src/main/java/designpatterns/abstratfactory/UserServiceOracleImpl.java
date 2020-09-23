@@ -1,9 +1,9 @@
 package designpatterns.abstratfactory;
 /**
- * oracle用户接口的实现类
+ * oracle鐢ㄦ埛鎺ュ彛鐨勫疄鐜扮被
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-17 上午10:16:09
+ * @time 2016-6-17 涓婂崍10:16:09
  */
 public class UserServiceOracleImpl implements UserService {
 

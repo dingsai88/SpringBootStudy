@@ -1,12 +1,12 @@
 package designpatterns.iterator;
 
 /**
- * ¾Û¼¯³éÏóÀà
+ * èšé›†æŠ½è±¡ç±»
  * @author daniel
  *
  */
 public abstract class Aggregate {
- //´´½¨µü´úÆ÷
+ //åˆ›å»ºè¿­ä»£å™¨
  public abstract Iterator createIterator();
 }
 

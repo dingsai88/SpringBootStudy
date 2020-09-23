@@ -1,11 +1,11 @@
 package designpatterns.memento;
 /**
- * ÓÎÏ·ÊôĞÔ×´Ì¬¹ÜÀíÀà
+ * æ¸¸æˆå±æ€§çŠ¶æ€ç®¡ç†ç±»
  * @author daniel
  *
  */
 public class RoleStateCaretaker {
-	 //ÓÎÏ·ÊôĞÔ×´Ì¬
+	 //æ¸¸æˆå±æ€§çŠ¶æ€
 	 private RoleStateMemento memento;
 
 	 /**

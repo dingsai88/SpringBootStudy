@@ -1,7 +1,7 @@
 package designpatterns.factory;
 
 /**
- * ¹¤³§Àà
+ * å·¥å‚ç±»
  * 
  * @author daniel
  * 
@@ -9,7 +9,7 @@ package designpatterns.factory;
 public class OperationFactory {
 
 	/**
-	 * ¹¤³§·½·¨
+	 * å·¥å‚æ–¹æ³•
 	 * 
 	 * @param operate
 	 * @return

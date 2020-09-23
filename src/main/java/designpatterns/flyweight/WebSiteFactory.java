@@ -3,18 +3,18 @@ package designpatterns.flyweight;
 import java.util.Hashtable;
 
 /**
- * 网站工厂
+ * 缃戠珯宸ュ巶
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-30 上午10:52:25
+ * @time 2016-5-30 涓婂崍10:52:25
  */
 public class WebSiteFactory {
 	private Hashtable<String, WebSite> flyweights = new Hashtable<String, WebSite>();
 
 	/**
-	 * 获得网站分类
-	 * 这里可以有多个网站实现类
+	 * 鑾峰緱缃戠珯鍒嗙被
+	 * 杩欓噷鍙互鏈夊涓綉绔欏疄鐜扮被
 	 * @param key
 	 * @return
 	 */
@@ -26,7 +26,7 @@ public class WebSiteFactory {
 	}
 
 	/**
-	 * 获得网站分类总数
+	 * 鑾峰緱缃戠珯鍒嗙被鎬绘暟
 	 * 
 	 * @return
 	 */

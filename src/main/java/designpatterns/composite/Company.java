@@ -1,13 +1,13 @@
 package designpatterns.composite;
 /**
- * ¹«Ë¾Àà³éÏó°¡
+ * å…¬å¸ç±»æŠ½è±¡å•Š
  * @author daniel
  *
  */
 public abstract class Company {
 
 	/**
-	 * ¹«Ë¾»ò²¿ÃÅÃû×Ö
+	 * å…¬å¸æˆ–éƒ¨é—¨åå­—
 	 */
 	 protected String name;
 	 public Company(String name){
@@ -15,25 +15,25 @@ public abstract class Company {
 	 }
 
 	/**
-	 * Ìí¼Ó¹«Ë¾»òÕß²¿ÃÅ
+	 * æ·»åŠ å…¬å¸æˆ–è€…éƒ¨é—¨
 	 * @param c
      */
 	 public abstract void add(Company c);
 
 	/**
-	 * É¾³ı¹«Ë¾»òÕß²¿ÃÅ
+	 * åˆ é™¤å…¬å¸æˆ–è€…éƒ¨é—¨
 	 * @param c
      */
 	 public abstract void remove(Company c);
 
 	/**
-	 * Õ¹Ê¾¹«Ë¾ »ò²¿ÃÅÃû³Æ  ²ã¼¶
+	 * å±•ç¤ºå…¬å¸ æˆ–éƒ¨é—¨åç§°  å±‚çº§
 	 * @param i
      */
 	 public abstract void display(int i);
 
 	/**
-	 * Õ¹Ê¾²¿ÃÅÖ°ÄÜ
+	 * å±•ç¤ºéƒ¨é—¨èŒèƒ½
 	 */
 	 public abstract void lineOfDuty();
 	}

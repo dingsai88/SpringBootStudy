@@ -1,18 +1,18 @@
 package designpatterns.singleton;
 /**
- * Æô¶¯¾Ínew  Ê¡µÄÅĞ¶ÏÁË
+ * å¯åŠ¨å°±new  çœçš„åˆ¤æ–­äº†
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-24 ÉÏÎç10:54:21
+ * @time 2016-5-24 ä¸Šåˆ10:54:21
  */
 public class Singleton {
 	private static Singleton singleton = new Singleton();
-    //Ë½ÓĞ»¯¹¹Ôìº¯Êı
+    //ç§æœ‰åŒ–æ„é€ å‡½æ•°
 	private Singleton() {
 
 	}
 
-	//»ñµÃ¶ÔÏó
+	//è·å¾—å¯¹è±¡
 	public static Singleton getInstance() {
 		return singleton;
 	}

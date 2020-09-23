@@ -2,13 +2,13 @@ package designpatterns.strategy;
 
 /**
  * 
- * @author daniel Î¬»¤Strategy¶ÔÏóµÄÒıÓÃ
+ * @author daniel ç»´æŠ¤Strategyå¯¹è±¡çš„å¼•ç”¨
  */
 class Context {
 	Strategy strategy;
 
 	/**
-	 * ³õÊ¼»¯³éÏóÀà
+	 * åˆå§‹åŒ–æŠ½è±¡ç±»
 	 * 
 	 * @param strategy
 	 */
@@ -17,7 +17,7 @@ class Context {
 	}
 
 	/**
-	 * µ÷ÓÃËã·¨ ÊµÏÖ·½·¨
+	 * è°ƒç”¨ç®—æ³• å®ç°æ–¹æ³•
 	 */
 	public void ContextInterface() {
 		strategy.AlgorithmInterface();

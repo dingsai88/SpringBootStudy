@@ -1,9 +1,9 @@
 package designpatterns.command;
 /**
- * ÃüÁî·¢ÆğÕß
+ * å‘½ä»¤å‘èµ·è€…
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-8 ÉÏÎç11:12:33
+ * @time 2016-6-8 ä¸Šåˆ11:12:33
  */
 public class Invoker {
 	private Command command;
@@ -17,7 +17,7 @@ public class Invoker {
 	}
 
 	/**
-	 * µ÷ÓÃÃüÁîÀàÖ´ĞĞ·½·¨
+	 * è°ƒç”¨å‘½ä»¤ç±»æ‰§è¡Œæ–¹æ³•
 	 */
 	public void executeCommand() {
 		command.execute();

@@ -1,14 +1,14 @@
 package designpatterns.state;
 /**
- * ĞİÏ¢µÄ×´Ì¬
+ * ä¼‘æ¯çš„çŠ¶æ€
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class RestState extends State {
 
  @Override
  public void writeProgram(Work w) {
-  System.out.println("µ±Ç°Ê±¼ä"+w.getHour()+",ÏÂ°à»Ø¼Ò¡£");
+  System.out.println("å½“å‰æ—¶é—´"+w.getHour()+",ä¸‹ç­å›å®¶ã€‚");
 
  }
 

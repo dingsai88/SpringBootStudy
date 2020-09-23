@@ -3,7 +3,7 @@ package designpatterns.factory;
 /**
  * 
  * @author daniel
- * @version Éè¼ÆÄ£Ê½¼òµ¥¹¤³§
+ * @version è®¾è®¡æ¨¡å¼ç®€å•å·¥å‚
  */
 public class Operation {
 
@@ -41,9 +41,9 @@ public class Operation {
 	}
 
 	/**
-	 * ÔËËã·½·¨
+	 * è¿ç®—æ–¹æ³•
 	 * 
-	 * @return ÔËËã½á¹û
+	 * @return è¿ç®—ç»“æœ
 	 */
 	public double getResult() {
 		double result = 0;

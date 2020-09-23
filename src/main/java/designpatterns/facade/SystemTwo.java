@@ -2,11 +2,11 @@ package designpatterns.facade;
 /**
  * 
  * @author daniel
- * ×ÓÏµÍ³1
+ * å­ç³»ç»Ÿ1
  */
 public class SystemTwo {
  /**
-  * ×ÓÏµÍ³·½·¨
+  * å­ç³»ç»Ÿæ–¹æ³•
   */
  public void methodTwo(){
   System.out.println("SystemTwo.methodTwo");

@@ -1,14 +1,14 @@
 package designpatterns.command;
 
 /**
- * ¾ßÌåÖ´ĞĞÀà
+ * å…·ä½“æ‰§è¡Œç±»
  * 
  * @author daniel
  * 
  */
 public class Receiver {
 	public void action() {
-		System.out.println("Ö´ĞĞÇëÇó");
+		System.out.println("æ‰§è¡Œè¯·æ±‚");
 	}
 
 }

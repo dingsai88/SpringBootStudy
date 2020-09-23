@@ -4,7 +4,7 @@ public class Zmain {
 
 	/**
 	 * @author daniel
-	 * @time 2016-5-20 ÉÏÎç11:19:39
+	 * @time 2016-5-20 ä¸Šåˆ11:19:39
 	 * @param args
 	 */
 	public static void main(String[] args) {

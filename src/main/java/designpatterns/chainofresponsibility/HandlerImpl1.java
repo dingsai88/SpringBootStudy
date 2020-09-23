@@ -1,20 +1,20 @@
 package designpatterns.chainofresponsibility;
 
 /**
- * ÔðÈÎÁ´Ð¡ÓÚ10´¦ÀíÀà
+ * è´£ä»»é“¾å°äºŽ10å¤„ç†ç±»
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-2 ÉÏÎç9:55:12
+ * @time 2016-6-2 ä¸Šåˆ9:55:12
  */
 public class HandlerImpl1 extends Handler {
 
 	@Override
 	public void handlerRequest(int request) {
 		if (request >= 0 && request < 10) {
-			System.out.println("ÔðÈÎÁ´Ð¡ÓÚ10´¦ÀíÀà´¦Àí");
+			System.out.println("è´£ä»»é“¾å°äºŽ10å¤„ç†ç±»å¤„ç†");
 		} else if (this.successor != null) {
-			//½»ÓÚÏÂÒ»¸öÔðÈÎÁ´Ö´ÐÐ
+			//äº¤äºŽä¸‹ä¸€ä¸ªè´£ä»»é“¾æ‰§è¡Œ
 			this.successor.handlerRequest(request);
 
 		}

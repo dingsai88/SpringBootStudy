@@ -1,15 +1,15 @@
 package designpatterns.bridge;
 /**
- * ÊÖ»úÈí¼ş-Í¨Ñ¶Â¼
+ * æ‰‹æœºè½¯ä»¶-é€šè®¯å½•
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-26 ÉÏÎç11:47:12
+ * @time 2016-5-26 ä¸Šåˆ11:47:12
  */
 public class PhoneSoftAddressList implements PhoneSoft {
 
 	@Override
 	public void run() {
-		  System.out.println(" ÔËĞĞÊÖ»úÍ¨Ñ¶Â¼Èí¼ş");
+		  System.out.println(" è¿è¡Œæ‰‹æœºé€šè®¯å½•è½¯ä»¶");
 
 	}
 

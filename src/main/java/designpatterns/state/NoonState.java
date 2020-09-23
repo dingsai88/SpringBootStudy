@@ -1,18 +1,18 @@
 package designpatterns.state;
 
 /**
- * ÖĞÎçµÄ×´Ì¬
+ * ä¸­åˆçš„çŠ¶æ€
  * 
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class NoonState extends State {
 	@Override
 	public void writeProgram(Work w) {
 		if (w.getHour() < 13) {
-			System.out.println("µ±Ç°Ê±¼ä" + w.getHour() + "µã,¶öÁË£º·¸À§¡£");
+			System.out.println("å½“å‰æ—¶é—´" + w.getHour() + "ç‚¹,é¥¿äº†ï¼šçŠ¯å›°ã€‚");
 		} else {
-			System.out.println("\nÖĞÎçÒÑ¹ıÍê-×ßÏòÏÂÒ»¸ö×´Ì¬");
+			System.out.println("\nä¸­åˆå·²è¿‡å®Œ-èµ°å‘ä¸‹ä¸€ä¸ªçŠ¶æ€");
 			w.setCurrent(new AfternoonState());
 			w.writeProgram();
 		}

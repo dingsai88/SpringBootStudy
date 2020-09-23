@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ÊµÏÖ¾Û¼¯Àà
+ * å®ç°èšé›†ç±»
  * 
  * @author daniel
  * 
@@ -18,7 +18,7 @@ public class ConcreteAggregate extends Aggregate {
 	}
 
 	/**
-	 * ·µ»Ø×ÜÌõÊı
+	 * è¿”å›æ€»æ¡æ•°
 	 * 
 	 * @return
 	 */
@@ -27,7 +27,7 @@ public class ConcreteAggregate extends Aggregate {
 	}
 
 	/**
-	 * »ñµÃË÷Òı ¶ÔÓ¦µÄÖµ
+	 * è·å¾—ç´¢å¼• å¯¹åº”çš„å€¼
 	 * 
 	 * @param index
 	 * @return
@@ -37,7 +37,7 @@ public class ConcreteAggregate extends Aggregate {
 	}
 
 	/**
-	 * ÉèÖÃĞÂÊı¾İ
+	 * è®¾ç½®æ–°æ•°æ®
 	 * 
 	 * @param index
 	 * @param value

@@ -13,9 +13,9 @@ public class WanInvocationImpl implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		System.out.println("跑前准备");
+		System.out.println("璺戝墠鍑嗗");
 		Object resultObj = method.invoke(obj, args);
-		System.out.println("跑完休息");
+		System.out.println("璺戝畬浼戞伅");
 		return resultObj;
 	}
 

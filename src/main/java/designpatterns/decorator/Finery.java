@@ -1,20 +1,20 @@
 package designpatterns.decorator;
 /**
- * 装饰模式核心
+ * 瑁呴グ妯″紡鏍稿績
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-18 上午10:25:51
+ * @time 2016-5-18 涓婂崍10:25:51
  */
 public class Finery implements IPersonShow {
 	/**
-	 * 组件-装入衣物
+	 * 缁勪欢-瑁呭叆琛ｇ墿
 	 */
 	private IPersonShow compoment;
 
 	/**
-	 * 装饰人类
+	 * 瑁呴グ浜虹被
 	 * @author daniel
-	 * @time 2016-5-18 上午9:54:46
+	 * @time 2016-5-18 涓婂崍9:54:46
 	 * @param compoment
 	 */
 	public void decorate(IPersonShow compoment) {

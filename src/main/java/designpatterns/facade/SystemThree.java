@@ -2,7 +2,7 @@ package designpatterns.facade;
 
 public class SystemThree {
  /**
-  * ×ÓÏµÍ³·½·¨
+  * å­ç³»ç»Ÿæ–¹æ³•
   */
  public void methodThree(){
   System.out.println("SystemThree.methodThree");

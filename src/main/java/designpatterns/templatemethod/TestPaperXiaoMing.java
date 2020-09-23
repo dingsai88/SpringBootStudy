@@ -1,15 +1,15 @@
 package designpatterns.templatemethod;
 
 /**
- * Ğ¡ÃûµÄ¾í×Ó´ğ¾í
+ * å°åçš„å·å­ç­”å·
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-1 ÉÏÎç10:17:02
+ * @time 2016-6-1 ä¸Šåˆ10:17:02
  */
 public class TestPaperXiaoMing extends TestPaper {
 	/**
-	 * ÖØĞ´¸¸Àà·½·¨
+	 * é‡å†™çˆ¶ç±»æ–¹æ³•
 	 */
 	public String getAnswer1() {
 		return "a";

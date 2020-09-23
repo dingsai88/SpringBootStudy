@@ -1,10 +1,10 @@
 package designpatterns.adapter;
 
 /**
- * ps2½Ó¿Ú
+ * ps2æ¥å£
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-25 ÉÏÎç11:25:59
+ * @time 2016-5-25 ä¸Šåˆ11:25:59
  */
 public interface Ps2Port {
 

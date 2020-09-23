@@ -1,7 +1,7 @@
 package designpatterns.composite;
 
 /**
- * HR²¿ÃÅÀà
+ * HRéƒ¨é—¨ç±»
  * @author daniel
  *
  */
@@ -28,7 +28,7 @@ public class HRDepartment extends Company {
  @Override
  public void lineOfDuty() {
   // TODO Auto-generated method stub
-  System.out.println(this.name+"   Ô±¹¤¹ÜÀíÅàÑµ");
+  System.out.println(this.name+"   å‘˜å·¥ç®¡ç†åŸ¹è®­");
  }
 
  @Override

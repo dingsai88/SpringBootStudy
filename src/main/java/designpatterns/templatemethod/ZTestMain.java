@@ -1,26 +1,26 @@
 package designpatterns.templatemethod;
 /**
-Ä£°å·½·¨Ä£Ê½£º¶¨ÒåÒ»¸ö²Ù×÷ÖĞµÄËã·¨µÄ¹Ç¼Ü£¬¶ø½«Ò»Ğ©²½ÖèÑÓ³Ùµ½×ÓÀàÖĞ¡£Ä£°å·½·¨Ê¹µÃ×ÓÀà¿ÉÒÔ²»¸Ä±äÒ»¸öËã·¨µÄ½á¹¹¼´¿ÉÖØ¶¨Òå¸ÃËã·¨µÄÄ³Ğ©ÌØ¶¨²½Öè¡£
-ÓÅµã
+æ¨¡æ¿æ–¹æ³•æ¨¡å¼ï¼šå®šä¹‰ä¸€ä¸ªæ“ä½œä¸­çš„ç®—æ³•çš„éª¨æ¶ï¼Œè€Œå°†ä¸€äº›æ­¥éª¤å»¶è¿Ÿåˆ°å­ç±»ä¸­ã€‚æ¨¡æ¿æ–¹æ³•ä½¿å¾—å­ç±»å¯ä»¥ä¸æ”¹å˜ä¸€ä¸ªç®—æ³•çš„ç»“æ„å³å¯é‡å®šä¹‰è¯¥ç®—æ³•çš„æŸäº›ç‰¹å®šæ­¥éª¤ã€‚
+ä¼˜ç‚¹
 
-Í¨¹ı°É²»±äµÄĞĞÎª°áÒÆµ½¸¸Àà£¬È¥µô×ÓÀàÖØ¸´´úÂë¡£
+é€šè¿‡å§ä¸å˜çš„è¡Œä¸ºæ¬ç§»åˆ°çˆ¶ç±»ï¼Œå»æ‰å­ç±»é‡å¤ä»£ç ã€‚
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-1 ÉÏÎç10:18:55
+ * @time 2016-6-1 ä¸Šåˆ10:18:55
  */
 public class ZTestMain {
 	/**
 	 * @author daniel
-	 * @time 2016-6-1 ÉÏÎç10:18:00
+	 * @time 2016-6-1 ä¸Šåˆ10:18:00
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		   System.out.println("Ğ¡ÃûÎÊ¾í´ğ°¸:");
+		   System.out.println("å°åé—®å·ç­”æ¡ˆ:");
 		   TestPaper studentA=new TestPaperXiaoMing();
 		   studentA.testQuestion1();
 		   studentA.testQuestion2();
-		   System.out.println("ÏşºìÎÊ¾í´ğ°¸:");
+		   System.out.println("æ™“çº¢é—®å·ç­”æ¡ˆ:");
 		   TestPaper studentB=new TestPaperXiaoHong();
 		   studentB.testQuestion1();
 		   studentB.testQuestion2();

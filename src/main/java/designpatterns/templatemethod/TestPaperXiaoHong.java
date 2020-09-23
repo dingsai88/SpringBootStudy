@@ -1,13 +1,13 @@
 package designpatterns.templatemethod;
 /**
- * ÏşºìµÄ´ğ¾í
+ * æ™“çº¢çš„ç­”å·
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-1 ÉÏÎç10:17:37
+ * @time 2016-6-1 ä¸Šåˆ10:17:37
  */
 public class TestPaperXiaoHong  extends TestPaper {
 	/**
-	 * ÖØĞ´¸¸Àà·½·¨
+	 * é‡å†™çˆ¶ç±»æ–¹æ³•
 	 */
 	public String getAnswer1() {
 		return "c";

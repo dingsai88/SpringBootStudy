@@ -1,7 +1,7 @@
 package designpatterns.strategy;
 
 /**
- * 策略模式定义方法的抽象类
+ * 绛栫暐妯″紡瀹氫箟鏂规硶鐨勬娊璞＄被
  * 
  * @author daniel
  * 

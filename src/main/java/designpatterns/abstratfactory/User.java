@@ -1,9 +1,9 @@
 package designpatterns.abstratfactory;
 /**
- * ÓÃ»§Àà
+ * ç”¨æˆ·ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-17 ÉÏÎç10:12:34
+ * @time 2016-6-17 ä¸Šåˆ10:12:34
  */
 public class User {
 

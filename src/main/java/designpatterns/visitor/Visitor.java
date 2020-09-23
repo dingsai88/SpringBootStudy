@@ -1,9 +1,9 @@
 package designpatterns.visitor;
 /**
- * ¹Û²ìÕß
+ * è§‚å¯Ÿè€…
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 ÏÂÎç2:28:38
+ * @time 2016-5-11 ä¸‹åˆ2:28:38
  */
 public interface Visitor {
 

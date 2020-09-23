@@ -1,24 +1,24 @@
 package designpatterns.state;
 
 /**
- * °øÍíµÄ×´Ì¬
+ * å‚æ™šçš„çŠ¶æ€
  *
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class EveningState extends State {
 
     @Override
     public void writeProgram(Work w) {
-        // ÅĞ¶Ï¹¤×÷ÊÇ·ñÍê³É
+        // åˆ¤æ–­å·¥ä½œæ˜¯å¦å®Œæˆ
         if (w.isFinish()) {
             w.setCurrent(new RestState());
             w.writeProgram();
         } else {
             if (w.getHour() < 21) {
-                System.out.println("µ±Ç°Ê±¼ä" + w.getHour() + "µã,¼Ó°àÅ¶ Æ£±¹ÖÁ¼«¡£");
+                System.out.println("å½“å‰æ—¶é—´" + w.getHour() + "ç‚¹,åŠ ç­å“¦ ç–²æƒ«è‡³æã€‚");
             } else {
-                System.out.println("\n°øÍíÒÑ¹ıÍê-×ßÏòÏÂÒ»¸ö×´Ì¬");
+                System.out.println("\nå‚æ™šå·²è¿‡å®Œ-èµ°å‘ä¸‹ä¸€ä¸ªçŠ¶æ€");
                 w.setCurrent(new SleepingState());
                 w.writeProgram();
             }

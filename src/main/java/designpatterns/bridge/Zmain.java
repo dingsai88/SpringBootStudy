@@ -3,19 +3,19 @@ package designpatterns.bridge;
 public class Zmain {
 
 	/**
-	 * ��GOF95�����������ģʽ��ʱ��ָ��������ģʽ��������"������(Abstraction)��ʵ�ֻ�(Implementation)���ʹ�ö��߿��Զ����ر仯"����仰�������ؼ��ʣ�Ҳ���ǳ��󻯡�ʵ�ֻ������
-	 * �Ž�ģʽ��Bridge���������󲿷�������ʵ�ֲ��ַ��룬ʹ���Ƕ����Զ����ر仯��
+	 * 【GOF95】在提出桥梁模式的时候指出，桥梁模式的用意是"将抽象化(Abstraction)与实现化(Implementation)脱耦，使得二者可以独立地变化"。这句话有三个关键词，也就是抽象化、实现化和脱耦。
+	 * 桥接模式（Bridge）：将抽象部分与它的实现部分分离，使它们都可以独立地变化。
 	 * @author daniel
-	 * @time 2016-5-26 ����12:42:52
+	 * @time 2016-5-26 下午12:42:52
 	 * @param args
 	 */
 	public static void main(String[] args) {
-        //����IP5��Ʒ
+        //创建IP5产品
 		PhoneBrandIphone5 i5 = new PhoneBrandIphone5();
-		//װ����Ϸ����
+		//装入游戏软件
 		i5.setPhoneSoft(new PhoneSoftGame());
 		i5.run();
-		//װ��ͨѶ¼
+		//装入通讯录
 		i5.setPhoneSoft(new PhoneSoftAddressList());
 		i5.run();
 		

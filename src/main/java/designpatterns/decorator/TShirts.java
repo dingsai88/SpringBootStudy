@@ -4,10 +4,10 @@ public class TShirts extends Finery {
 
 	@Override
 	/**
-	 * ÖØĞ´¸¸Ààshow·½·¨
+	 * é‡å†™çˆ¶ç±»showæ–¹æ³•
 	 */
 	public void show() {
-		System.out.println("´©TĞô");
+		System.out.println("ç©¿Tæ¤");
 		super.show();
 	}
 

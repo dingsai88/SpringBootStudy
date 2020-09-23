@@ -11,7 +11,7 @@ public class ZTestMain {
      * @param args
      */
     public static void main(String[] args) {
-        // new ÈË¹¤×÷Àà ÉèÖÃÊ±¼ä Êä³ö×´Ì¬;Ä¬ÈÏÊÇÉÏÎç-³õÊ¼»¯ÊÇÉÏÎç
+        // new äººå·¥ä½œç±» è®¾ç½®æ—¶é—´ è¾“å‡ºçŠ¶æ€;é»˜è®¤æ˜¯ä¸Šåˆ-åˆå§‹åŒ–æ˜¯ä¸Šåˆ
         Work w = new Work();
         w.setHour(9);
         w.writeProgram();

@@ -1,9 +1,9 @@
 package designpatterns.builder;
 /**
- * ÔìÈËµÄ½Ó¿Ú
+ * é€ äººçš„æ¥å£
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-23 ÉÏÎç10:23:01
+ * @time 2016-5-23 ä¸Šåˆ10:23:01
  */
 public interface PersonBuilder {
 

@@ -1,32 +1,32 @@
 package designpatterns.state;
 
 /**
- * ¹¤×÷×´Ì¬Àà
+ * å·¥ä½œçŠ¶æ€ç±»
  *
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class Work {
-    private State current;//×´Ì¬
-    private double hour;//Ê±¼ä
-    private boolean finish = false;//ÊÇ·ñÍê³É
+    private State current;//çŠ¶æ€
+    private double hour;//æ—¶é—´
+    private boolean finish = false;//æ˜¯å¦å®Œæˆ
 
     /**
-     * ³õÊ¼»¯ÉÏÎç
+     * åˆå§‹åŒ–ä¸Šåˆ
      */
     public Work() {
         current = new ForenoonState();
     }
 
     /**
-     * Êä³öµ±Ç°Ô±¹¤×´Ì¬
+     * è¾“å‡ºå½“å‰å‘˜å·¥çŠ¶æ€
      */
     public void writeProgram() {
         current.writeProgram(this);
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄget·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„getæ–¹æ³•
      *
      * @return the current
      */
@@ -35,7 +35,7 @@ public class Work {
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄset·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„setæ–¹æ³•
      *
      * @param current the current to set
      */
@@ -44,7 +44,7 @@ public class Work {
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄget·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„getæ–¹æ³•
      *
      * @return the hour
      */
@@ -53,7 +53,7 @@ public class Work {
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄset·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„setæ–¹æ³•
      *
      * @param hour the hour to set
      */
@@ -62,7 +62,7 @@ public class Work {
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄget·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„getæ–¹æ³•
      *
      * @return the finish
      */
@@ -71,7 +71,7 @@ public class Work {
     }
 
     /**
-     * daniel_×Ô¶¯Éú³ÉµÄset·½·¨
+     * daniel_è‡ªåŠ¨ç”Ÿæˆçš„setæ–¹æ³•
      *
      * @param finish the finish to set
      */

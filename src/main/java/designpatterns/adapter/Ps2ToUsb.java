@@ -1,16 +1,16 @@
 package designpatterns.adapter;
 /**
- * ÊÊÅäÆ÷Àà ÔÚ´ËÊÊÅä
+ * é€‚é…å™¨ç±» åœ¨æ­¤é€‚é…
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-25 ÉÏÎç11:34:21
+ * @time 2016-5-25 ä¸Šåˆ11:34:21
  */
 public class Ps2ToUsb implements UsbPort {
-	// ps2Àà
+	// ps2ç±»
 	private Ps2Port ps2;
 
 	/**
-	 * Ë½ÓĞ»¯¹¹Ôìº¯Êı£¬±ØĞë×¢Èëps2
+	 * ç§æœ‰åŒ–æ„é€ å‡½æ•°ï¼Œå¿…é¡»æ³¨å…¥ps2
 	 */
 	private Ps2ToUsb() {
 	}
@@ -20,13 +20,13 @@ public class Ps2ToUsb implements UsbPort {
 	}
 
 	/**
-	 * Ô­ÓĞUSBÊµÏÖ·½·¨£¬ÔÚ´Ë½øĞĞ×ª»»
+	 * åŸæœ‰USBå®ç°æ–¹æ³•ï¼Œåœ¨æ­¤è¿›è¡Œè½¬æ¢
 	 */
 	@Override
 	public void workWithUsb() {
 		ps2.workWithPs2();
-		System.out.println("×ª»»ÁË");
-		System.out.println("USB¹¤×÷");
+		System.out.println("è½¬æ¢äº†");
+		System.out.println("USBå·¥ä½œ");
 	}
 
 }

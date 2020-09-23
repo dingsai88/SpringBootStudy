@@ -1,22 +1,22 @@
 package designpatterns.bridge;
 /**
- * ÊÖ»úÆ·ÅÆ³éÏóÀà
+ * æ‰‹æœºå“ç‰ŒæŠ½è±¡ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-26 ÉÏÎç11:52:09
+ * @time 2016-5-26 ä¸Šåˆ11:52:09
  */
 public abstract class PhoneBrand {
 /**
- * ÊÖ»úÈí¼ş
+ * æ‰‹æœºè½¯ä»¶
  */
 	protected PhoneSoft phoneSoft ;
 	public void setPhoneSoft(PhoneSoft phoneSoft){
 		this.phoneSoft=phoneSoft;
 	}
 	/**
-	 * ÔËĞĞÈí¼ş
+	 * è¿è¡Œè½¯ä»¶
 	 * @author daniel
-	 * @time 2016-5-26 ÉÏÎç11:52:03
+	 * @time 2016-5-26 ä¸Šåˆ11:52:03
 	 */
 	public abstract void run(); 
 	

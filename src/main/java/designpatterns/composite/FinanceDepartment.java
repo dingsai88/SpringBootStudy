@@ -1,7 +1,7 @@
 package designpatterns.composite;
 
 /**
- * ²ÆÎñ ²¿ÃÅÀà
+ * è´¢åŠ¡ éƒ¨é—¨ç±»
  * @author daniel
  *
  */
@@ -28,7 +28,7 @@ public class FinanceDepartment extends Company {
  @Override
  public void lineOfDuty() {
   // TODO Auto-generated method stub
-  System.out.println(this.name+"    ¹«Ë¾²ÆÎñÊÕÖ§¹ÜÀí");
+  System.out.println(this.name+"    å…¬å¸è´¢åŠ¡æ”¶æ”¯ç®¡ç†");
  }
 
  @Override

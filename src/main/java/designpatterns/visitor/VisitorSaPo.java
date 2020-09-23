@@ -1,19 +1,19 @@
 package designpatterns.visitor;
 /**
- * ¹Û²ìÈËÈöÆÃ
+ * è§‚å¯Ÿäººæ’’æ³¼
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 ÏÂÎç2:28:58
+ * @time 2016-5-11 ä¸‹åˆ2:28:58
  */
 public class VisitorSaPo implements Visitor {
 
 	@Override
 	public void getVersion(Person person) {
 		 if(person instanceof PersonNan){
-				System.out.println( person.getMessage()+"ÈöÆÃ  -´òÈË");
+				System.out.println( person.getMessage()+"æ’’æ³¼  -æ‰“äºº");
 			 }
 			 if(person instanceof PersonNv){
-					System.out.println( person.getMessage()+"ÈöÆÃ-¿Ş");
+					System.out.println( person.getMessage()+"æ’’æ³¼-å“­");
 				 }
 
 			}

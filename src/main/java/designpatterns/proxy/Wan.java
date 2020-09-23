@@ -4,7 +4,7 @@ public class Wan {
 
 	public void run()
 	{
-		System.out.println("¿ªÅÜà¶");
+		System.out.println("å¼€è·‘å–½");
 	}
 	
 }

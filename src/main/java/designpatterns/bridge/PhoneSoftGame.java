@@ -1,15 +1,15 @@
 package designpatterns.bridge;
 /**
- * ÊÖ»úÈí¼şÊµÏÖÀà-´òÓÎÏ·
+ * æ‰‹æœºè½¯ä»¶å®ç°ç±»-æ‰“æ¸¸æˆ
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-26 ÉÏÎç11:46:17
+ * @time 2016-5-26 ä¸Šåˆ11:46:17
  */
 public class PhoneSoftGame implements PhoneSoft {
 
 	@Override
 	public void run() {
-		 System.out.println(" ÔËĞĞÊÖ»úÓÎÏ·Èí¼ş");
+		 System.out.println(" è¿è¡Œæ‰‹æœºæ¸¸æˆè½¯ä»¶");
 	}
 
 }

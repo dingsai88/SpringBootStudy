@@ -1,21 +1,21 @@
 package designpatterns.abstratfactory;
 
 /**
- * ²¿ÃÅÀà²Ù×÷½Ó¿Ú
+ * éƒ¨é—¨ç±»æ“ä½œæ¥å£
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-17 ÉÏÎç10:20:32
+ * @time 2016-6-17 ä¸Šåˆ10:20:32
  */
 public interface DepartmentService {
 
 	/*
-	 * ±£´æ²¿ÃÅĞÅÏ¢
+	 * ä¿å­˜éƒ¨é—¨ä¿¡æ¯
 	 */
 	public void insertDepartment(Department department);
 
 	/*
-	 * »ñµÃ²¿ÃÅĞÅÏ¢
+	 * è·å¾—éƒ¨é—¨ä¿¡æ¯
 	 */
 	public Department getDepartment(Integer i);
 }

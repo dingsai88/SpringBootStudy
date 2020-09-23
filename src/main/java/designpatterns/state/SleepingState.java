@@ -1,17 +1,17 @@
 package designpatterns.state;
 
 /**
- * ¼Ó°à¼Óµ½ Ë¯¾õ×´Ì¬
+ * åŠ ç­åŠ åˆ° ç¡è§‰çŠ¶æ€
  *
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class SleepingState extends State {
 
     @Override
     public void writeProgram(Work w) {
-        System.out.println("\nÖÕÌ¬²»»á±ä");
-        System.out.println("µ±Ç°Ê±¼ä" + w.getHour() + ",²»ĞĞÁËÆ£±¹ÖÁ¼«¡£");
+        System.out.println("\nç»ˆæ€ä¸ä¼šå˜");
+        System.out.println("å½“å‰æ—¶é—´" + w.getHour() + ",ä¸è¡Œäº†ç–²æƒ«è‡³æã€‚");
     }
 
 }

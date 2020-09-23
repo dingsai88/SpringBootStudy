@@ -1,30 +1,30 @@
 package designpatterns.templatemethod;
 
 /**
- * ÎÊ¾íÄ£°æ ºÍ´ğÌâÄ£°å
+ * é—®å·æ¨¡ç‰ˆ å’Œç­”é¢˜æ¨¡æ¿
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-1 ÉÏÎç10:15:08
+ * @time 2016-6-1 ä¸Šåˆ10:15:08
  */
 public abstract class TestPaper {
 
 	/**
-	 * ÌâÄ¿Ò»
+	 * é¢˜ç›®ä¸€
 	 * 
 	 * @author daniel
-	 * @time 2016-6-1 ÉÏÎç10:15:25
+	 * @time 2016-6-1 ä¸Šåˆ10:15:25
 	 */
 	public void testQuestion1() {
-		System.out.println("ÌâÄ¿Ò»");
-		System.out.println("´ğ°¸£º" + getAnswer1());
+		System.out.println("é¢˜ç›®ä¸€");
+		System.out.println("ç­”æ¡ˆï¼š" + getAnswer1());
 	}
 
 	/**
-	 * ´ğ°¸Ò»
+	 * ç­”æ¡ˆä¸€
 	 * 
 	 * @author daniel
-	 * @time 2016-6-1 ÉÏÎç10:15:31
+	 * @time 2016-6-1 ä¸Šåˆ10:15:31
 	 * @return
 	 */
 	protected String getAnswer1() {
@@ -33,21 +33,21 @@ public abstract class TestPaper {
 	}
 
 	/**
-	 * ÌâÄ¿¶ş
+	 * é¢˜ç›®äºŒ
 	 * 
 	 * @author daniel
-	 * @time 2016-6-1 ÉÏÎç10:15:44
+	 * @time 2016-6-1 ä¸Šåˆ10:15:44
 	 */
 	public void testQuestion2() {
-		System.out.println("ÌâÄ¿¶ş");
-		System.out.println("´ğ°¸£º" + getAnswer2());
+		System.out.println("é¢˜ç›®äºŒ");
+		System.out.println("ç­”æ¡ˆï¼š" + getAnswer2());
 	}
 
 	/**
-	 * ´ğ°¸¶ş
+	 * ç­”æ¡ˆäºŒ
 	 * 
 	 * @author daniel
-	 * @time 2016-6-1 ÉÏÎç10:15:51
+	 * @time 2016-6-1 ä¸Šåˆ10:15:51
 	 * @return
 	 */
 	protected String getAnswer2() {

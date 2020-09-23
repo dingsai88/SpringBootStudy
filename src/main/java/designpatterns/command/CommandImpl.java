@@ -1,13 +1,13 @@
 package designpatterns.command;
 /**
- * ¾ßÌåÃüÁîÊµÏÖÀà
+ * å…·ä½“å‘½ä»¤å®ç°ç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-8 ÉÏÎç11:11:32
+ * @time 2016-6-8 ä¸Šåˆ11:11:32
  */
 public class CommandImpl extends Command {
 	/**
-	 * µ÷ÓÃ¸¸Àà¹¹Ôì·½·¨
+	 * è°ƒç”¨çˆ¶ç±»æ„é€ æ–¹æ³•
 	 * 
 	 * @param receiver
 	 */
@@ -16,7 +16,7 @@ public class CommandImpl extends Command {
 	}
 
 	/**
-	 * Ö´ĞĞ¾ßÌå·½·¨
+	 * æ‰§è¡Œå…·ä½“æ–¹æ³•
 	 */
 	@Override
 	public void execute() {

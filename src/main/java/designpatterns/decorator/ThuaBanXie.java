@@ -3,7 +3,7 @@ package designpatterns.decorator;
 public class ThuaBanXie extends Finery {
     @Override
     public void show() {
-        System.out.println("´©»¬°åĞ¬");
+        System.out.println("ç©¿æ»‘æ¿é‹");
         super.show();
     }
 

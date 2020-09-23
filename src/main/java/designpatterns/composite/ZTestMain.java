@@ -1,34 +1,34 @@
 package designpatterns.composite;
 
 /**
- * 8. Composite£¨×éºÏ£©£º½«¶ÔÏó×éºÏ³ÉÊ÷×´²ã´Î½á¹¹£¬Ê¹ÓÃ»§¶Ôµ¥¸ö¶ÔÏóºÍ×éºÏ¶ÔÏó¾ßÓĞÒ»ÖÂµÄ·ÃÎÊĞÔ¡£
+ * 8. Compositeï¼ˆç»„åˆï¼‰ï¼šå°†å¯¹è±¡ç»„åˆæˆæ ‘çŠ¶å±‚æ¬¡ç»“æ„ï¼Œä½¿ç”¨æˆ·å¯¹å•ä¸ªå¯¹è±¡å’Œç»„åˆå¯¹è±¡å…·æœ‰ä¸€è‡´çš„è®¿é—®æ€§ã€‚
  */
 public class ZTestMain {
 
     /**
      * @param args
      * @author daniel
-     * @time 2016-5-27 ÏÂÎç12:41:27
+     * @time 2016-5-27 ä¸‹åˆ12:41:27
      */
     public static void main(String[] args) {
-        CompanyImpl zong = new CompanyImpl("×Ü¹«Ë¾");
-        zong.add(new HRDepartment("×Ü¹«Ë¾HR"));
-        zong.add(new FinanceDepartment("×Ü¹«Ë¾²ÆÎñ"));
+        CompanyImpl zong = new CompanyImpl("æ€»å…¬å¸");
+        zong.add(new HRDepartment("æ€»å…¬å¸HR"));
+        zong.add(new FinanceDepartment("æ€»å…¬å¸è´¢åŠ¡"));
 
-        CompanyImpl bj = new CompanyImpl("bj¹«Ë¾");
-        bj.add(new HRDepartment("bj¹«Ë¾HR"));
-        bj.add(new FinanceDepartment("bj¹«Ë¾²ÆÎñ"));
+        CompanyImpl bj = new CompanyImpl("bjå…¬å¸");
+        bj.add(new HRDepartment("bjå…¬å¸HR"));
+        bj.add(new FinanceDepartment("bjå…¬å¸è´¢åŠ¡"));
 
 
-        CompanyImpl sh = new CompanyImpl("sh¹«Ë¾");
-        sh.add(new HRDepartment("sh¹«Ë¾HR"));
-        sh.add(new FinanceDepartment("sh¹«Ë¾²ÆÎñ"));
+        CompanyImpl sh = new CompanyImpl("shå…¬å¸");
+        sh.add(new HRDepartment("shå…¬å¸HR"));
+        sh.add(new FinanceDepartment("shå…¬å¸è´¢åŠ¡"));
 
         zong.add(bj);
         zong.add(sh);
-        System.out.println("-----------¹«Ë¾½á¹¹-------------");
+        System.out.println("-----------å…¬å¸ç»“æ„-------------");
         zong.display(1);
-        System.out.println("-----------²¿ÃÅÖ°ÄÜ-------------");
+        System.out.println("-----------éƒ¨é—¨èŒèƒ½-------------");
         zong.lineOfDuty();
     }
 

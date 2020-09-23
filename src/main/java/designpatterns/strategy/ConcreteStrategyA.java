@@ -1,26 +1,26 @@
 package designpatterns.strategy;
 
 /**
- * ¼Ì³Ğ³éÏóÀà ÊµÏÖ³éÏó·½·¨
+ * ç»§æ‰¿æŠ½è±¡ç±» å®ç°æŠ½è±¡æ–¹æ³•
  * 
  * @author daniel
  * 
  */
 class ConcreteStrategyA extends Strategy {
 	public void AlgorithmInterface() {
-		System.out.println("Ëã·¨AÊµÏÖ");
+		System.out.println("ç®—æ³•Aå®ç°");
 	}
 
 }
 
 class ConcreteStrategyB extends Strategy {
 	public void AlgorithmInterface() {
-		System.out.println("Ëã·¨BÊµÏÖ");
+		System.out.println("ç®—æ³•Bå®ç°");
 	}
 }
 
 class ConcreteStrategyC extends Strategy {
 	public void AlgorithmInterface() {
-		System.out.println("Ëã·¨CÊµÏÖ");
+		System.out.println("ç®—æ³•Cå®ç°");
 	}
 }

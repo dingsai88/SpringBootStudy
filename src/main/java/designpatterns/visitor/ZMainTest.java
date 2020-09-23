@@ -1,33 +1,33 @@
 package designpatterns.visitor;
 /**
- * ·ÃÎÊÕßÄ£Ê½£º£¨Visitor£©,±íÊ¾Ò»¸ö×÷ÓÃÓÚÄ³¸ö¶ÔÏó½á¹¹µÄ¸÷ÔªËØµÄ²Ù×÷¡£ËüÊ¹Äã¿ÉÒÔÔÚ²»¸Ä±äÔªËØµÄÀàµÄÇ°ÌáÏÂ¶¨Òå×÷ÓÃÓÚÕâĞ©ÔªËØµÄĞÂ²Ù×÷¡£
+ * è®¿é—®è€…æ¨¡å¼ï¼šï¼ˆVisitorï¼‰,è¡¨ç¤ºä¸€ä¸ªä½œç”¨äºæŸä¸ªå¯¹è±¡ç»“æ„çš„å„å…ƒç´ çš„æ“ä½œã€‚å®ƒä½¿ä½ å¯ä»¥åœ¨ä¸æ”¹å˜å…ƒç´ çš„ç±»çš„å‰æä¸‹å®šä¹‰ä½œç”¨äºè¿™äº›å…ƒç´ çš„æ–°æ“ä½œã€‚
  * 
  * 
  * 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-18 ÏÂÎç4:37:01
+ * @time 2016-6-18 ä¸‹åˆ4:37:01
  */
 public class ZMainTest {
 
 	/**
 	 * @author daniel
-	 * @time 2016-5-11 ÏÂÎç2:30:19
+	 * @time 2016-5-11 ä¸‹åˆ2:30:19
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		/**
-		 * ¹Û²ìÕß¼¯ºÏ
+		 * è§‚å¯Ÿè€…é›†åˆ
 		 */
 		PersonVisitorTools tools = new PersonVisitorTools();
 		tools.add(new PersonNan());
 		tools.add(new PersonNv());
 
-		// ¹Û²ìÈËÈ¥Ï´ÊÖ¼ä
+		// è§‚å¯Ÿäººå»æ´—æ‰‹é—´
 		Visitor visitor = new VisitorSaNiao();
 		tools.show(visitor);
 
-		// ¹Û²ìÈË·¢ì­
+		// è§‚å¯Ÿäººå‘é£™
 		visitor = new VisitorSaPo();
 		tools.show(visitor);
 	}

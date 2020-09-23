@@ -1,9 +1,9 @@
 package designpatterns.visitor;
 /**
- * ÄĞÈËÀà
+ * ç”·äººç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 ÏÂÎç2:28:16
+ * @time 2016-5-11 ä¸‹åˆ2:28:16
  */
 public class PersonNan implements Person {
 
@@ -17,7 +17,7 @@ public class PersonNan implements Person {
 	@Override
 	public String getMessage() {
 		 
-		return "ÄĞÈË";
+		return "ç”·äºº";
 	}
 
 }

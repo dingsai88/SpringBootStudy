@@ -1,10 +1,10 @@
 package designpatterns.abstratfactory;
 /**
- * I.¶¨Òå:
-Ìá¹©Ò»¸ö´´½¨Ò»ÏµÁĞÏà¹Ø»òÏà»¥ÒÀÀµµÄ½Ó¿Ú£¬¶øÎŞĞèÖ¸¶¨ËüÃÇ¾ßÌåµÄÀà¡£
-Îª´´½¨Ò»×éÏà¹Ø»òÏà»¥ÒÀÀµµÄ¶ÔÏóÌá¹©Ò»¸ö½Ó¿Ú£¬¶øÇÒÎŞĞèÖ¸¶¨ËûÃÇµÄ¾ßÌåÀà¡£
+ * I.å®šä¹‰:
+æä¾›ä¸€ä¸ªåˆ›å»ºä¸€ç³»åˆ—ç›¸å…³æˆ–ç›¸äº’ä¾èµ–çš„æ¥å£ï¼Œè€Œæ— éœ€æŒ‡å®šå®ƒä»¬å…·ä½“çš„ç±»ã€‚
+ä¸ºåˆ›å»ºä¸€ç»„ç›¸å…³æˆ–ç›¸äº’ä¾èµ–çš„å¯¹è±¡æä¾›ä¸€ä¸ªæ¥å£ï¼Œè€Œä¸”æ— éœ€æŒ‡å®šä»–ä»¬çš„å…·ä½“ç±»ã€‚
 
-Êä³ö½á¹û
+è¾“å‡ºç»“æœ
 Oracle insert User
 Oracle get User
 Oracle insert Department
@@ -17,39 +17,39 @@ Mysql get Department
 
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-17 ÉÏÎç10:35:58
+ * @time 2016-6-17 ä¸Šåˆ10:35:58
  */
 public class Zmain {
 
 	/**
 	 * @author daniel
-	 * @time 2016-6-17 ÉÏÎç10:29:44
+	 * @time 2016-6-17 ä¸Šåˆ10:29:44
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// ×¼±¸ÊµÌå¶ÔÏó
+		// å‡†å¤‡å®ä½“å¯¹è±¡
 		User user = new User();
 		Department department = new Department();
 
-		// Oracle°æ±¾µÄ¹¤³§
+		// Oracleç‰ˆæœ¬çš„å·¥å‚
 		FactoryService factory = new FactoryServiceOracleImpl();
-		// Oracle°æ±¾µÄ½Ó¿Ú
+		// Oracleç‰ˆæœ¬çš„æ¥å£
 		UserService userService = factory.getUserService();
 		DepartmentService departmentService = factory.getDepartmentService();
 
-		// Oracle°æ±¾µÄÖ´ĞĞ
+		// Oracleç‰ˆæœ¬çš„æ‰§è¡Œ
 		userService.insertUser(user);
 		userService.getUser(1);
 		departmentService.insertDepartment(department);
 		departmentService.getDepartment(1);
 
-		// Mysql°æ±¾µÄ¹¤³§
+		// Mysqlç‰ˆæœ¬çš„å·¥å‚
 		factory = new FactoryServiceMysqlImpl();
-		// Mysql°æ±¾µÄ½Ó¿Ú
+		// Mysqlç‰ˆæœ¬çš„æ¥å£
 		userService = factory.getUserService();
 		departmentService = factory.getDepartmentService();
 
-		// Mysql°æ±¾µÄÖ´ĞĞ
+		// Mysqlç‰ˆæœ¬çš„æ‰§è¡Œ
 		userService.insertUser(user);
 		userService.getUser(1);
 		departmentService.insertDepartment(department);

@@ -1,14 +1,14 @@
 package designpatterns.mediator;
 /**
- * °²Àí»á
+ * å®‰ç†ä¼š
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-6-12 ÉÏÎç10:07:14
+ * @time 2016-6-12 ä¸Šåˆ10:07:14
  */
 public class UnitedNationsSecurityCouncil extends UnitedNations {
-	// ÃÀ¹ú
+	// ç¾å›½
 	private USA colleague1;
-	// ÒÁÀ­¿Ë
+	// ä¼Šæ‹‰å…‹
 	private Iraq colleague2;
 
 	/**

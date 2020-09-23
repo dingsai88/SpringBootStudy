@@ -1,21 +1,21 @@
 package designpatterns.state;
 
 /**
- * ÉÏÎç×´Ì¬Àà
+ * ä¸ŠåˆçŠ¶æ€ç±»
  * 
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public class ForenoonState extends State {
 	/**
-	 * Ğ´×´Ì¬
+	 * å†™çŠ¶æ€
 	 */
 	@Override
 	public void writeProgram(Work w) {
 		if (w.getHour() < 12) {
-			System.out.println("µ±Ç°Ê±¼ä" + w.getHour() + "µã,ÉÏÎç¹¤×÷£¬¾«Éñ²»´í");
+			System.out.println("å½“å‰æ—¶é—´" + w.getHour() + "ç‚¹,ä¸Šåˆå·¥ä½œï¼Œç²¾ç¥ä¸é”™");
 		} else {
-			System.out.println("\nÉÏÎçÒÑ¹ıÍê-×ßÏòÏÂÒ»¸ö×´Ì¬");
+			System.out.println("\nä¸Šåˆå·²è¿‡å®Œ-èµ°å‘ä¸‹ä¸€ä¸ªçŠ¶æ€");
 			w.setCurrent(new NoonState());
 			w.writeProgram();
 		}

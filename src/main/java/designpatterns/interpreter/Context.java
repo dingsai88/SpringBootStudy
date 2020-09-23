@@ -1,9 +1,9 @@
 package designpatterns.interpreter;
 
 /**
- * ½âÊÍÆ÷Ö®ÍâµÄÒ»Ğ©È«¾ÖĞÅÏ¢
- * Interpreter·½·¨ËùĞèÒªµÄĞÅÏ¢µÄÈİÆ÷£¬¸ÃĞÅÏ¢¶ÔInterpreter¶øÑÔÈ«¾Ö¿É¼û¡£³äµ±¼¸¸öAbstractExpresssion
- * ÊµÀıÖ®¼äµÄÍ¨Ñ¶ÆµµÀ¡£
+ * è§£é‡Šå™¨ä¹‹å¤–çš„ä¸€äº›å…¨å±€ä¿¡æ¯
+ * Interpreteræ–¹æ³•æ‰€éœ€è¦çš„ä¿¡æ¯çš„å®¹å™¨ï¼Œè¯¥ä¿¡æ¯å¯¹Interpreterè€Œè¨€å…¨å±€å¯è§ã€‚å……å½“å‡ ä¸ªAbstractExpresssion
+ * å®ä¾‹ä¹‹é—´çš„é€šè®¯é¢‘é“ã€‚
  * 
  * @author daniel
  * 

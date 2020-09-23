@@ -1,8 +1,8 @@
 package designpatterns.interpreter;
 
 /**
- * ·ÇÖÕ¶Ë½âÊÍÆ÷ ÁíÍâÒ»¸öÊµÏÖÁËAbstractExpression
- * ½Ó¿ÚµÄÀà£¬ÓÃÀ´´¦ÀíÓï·¨Ê÷ÖĞ·ÇÄ©¶Ë½ÚµãµÄÓï·¨¡£Ëüº¬ÓĞÏÂÒ»¸öAbstractExpression(s)µÄÒıÓÃ£¬µ÷ÓÃËüÃ¿¸ö×Ó½ÚµãµÄInterpret·½·¨¡£
+ * éç»ˆç«¯è§£é‡Šå™¨ å¦å¤–ä¸€ä¸ªå®ç°äº†AbstractExpression
+ * æ¥å£çš„ç±»ï¼Œç”¨æ¥å¤„ç†è¯­æ³•æ ‘ä¸­éæœ«ç«¯èŠ‚ç‚¹çš„è¯­æ³•ã€‚å®ƒå«æœ‰ä¸‹ä¸€ä¸ªAbstractExpression(s)çš„å¼•ç”¨ï¼Œè°ƒç”¨å®ƒæ¯ä¸ªå­èŠ‚ç‚¹çš„Interpretæ–¹æ³•ã€‚
  * 
  * @author daniel
  * 
@@ -11,7 +11,7 @@ public class NonterminalExpression extends AbstractExpression {
 
 	@Override
 	public void interpret(Context context) {
- 		System.out.println("·ÇÖÕ¶Ë½âÊÍÆ÷");
+ 		System.out.println("éç»ˆç«¯è§£é‡Šå™¨");
 	}
 
 }

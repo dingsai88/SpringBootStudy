@@ -1,65 +1,55 @@
 package com.ding.study.util;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 /**
  * @author daniel 2020-9-23 0023.
  */
 public class TestFileGBKToUtf8Main {
+    //要转换的目录--目标资源URL
+    public final static String targetFileUrl = "E:\\DingSai\\DingProjectAs_new\\SpringBootStudy\\src\\main\\java\\designpatterns";
 
-    public static void main(String[] args) throws Exception {
-        Scanner scan = new Scanner(System.in);
-        System.out.println("请输入需要改变编码格式的文件位置");
-        String str = scan.nextLine();
-        File file = new File(str);
-        System.out.println("文件的初始编码");
-        String bm1 = scan.nextLine();
-        System.out.println("文件需要转换成的编码");
-        String bm2 = scan.nextLine();
-        getAllFiles(file, bm1, bm2);
-    }
-
-    /**
-     *
-     * @param file 要编译的文件
-     * @param bm1 文件的初始编码
-     * @param bm2 文件需要转换成的编码
-
-     */
-    public static void getAllFiles(File file, String bm1, String bm2) throws Exception {
-        if (file.isDirectory()) {
-            File[] test = file.listFiles();
-            for (File test1 : test) {
-                //类的名字
-                String str = test1.getPath();
-                if (str.endsWith("java") & test1.isFile()) {
-                    String[] s = str.split("\\.");
-                    String filecope = s[0] + "cope." + s[1];
-                    System.out.println(filecope);
-                    File fil = new File(filecope);
-                    //转格式
-                    InputStreamReader isr = new InputStreamReader(new FileInputStream(test1), bm1);
-                    OutputStreamWriter osr = new OutputStreamWriter(new FileOutputStream(fil), bm2);
-                    int re = -1;
-                    while ((re = isr.read()) != -1) {
-                        osr.write(re);
-                    }
-                    isr.close();
-                    osr.close();
-                    InputStreamReader isrr = new InputStreamReader(new FileInputStream(fil), bm2);
-                    OutputStreamWriter osrw = new OutputStreamWriter(new FileOutputStream(test1), bm2);
-                    int r = -1;
-                    while ((r = isrr.read()) != -1) {
-                        osrw.write(r);
-                    }
-                    isrr.close();
-                    osrw.close();
-                    boolean d = fil.delete();
-                    System.out.println(str + "文件转换utf-8成功:" + d);
+    //遍历目录，将文件从GBK转换成UTF-8
+    public static void fileList(File file) {
+        File rootFile = file;
+        File[] files = rootFile.listFiles();
+        if (files != null) {
+            for (File f : files) {
+                if (!f.isDirectory()) {
+                    codeConvert(f);
                 }
-                getAllFiles(test1, bm1, bm2);
+                System.out.println(f.getPath());
+                fileList(f);//递归调用子文件夹下的文件
             }
         }
     }
+
+    public static void main(String[] args) {
+         File file = new File(targetFileUrl);
+         TestFileGBKToUtf8Main.fileList(file);
+        System.out.println("aa");
+    }
+
+    public static void codeConvert(File file) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader
+                    (new FileInputStream(file), Charset.forName("GBK")));
+            StringBuilder sb = new StringBuilder();
+            String str;
+            while ((str = br.readLine()) != null) {
+                sb.append(str);
+                sb.append("\n");
+            }
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charset.forName("UTF-8")));
+            bw.write(sb.toString());
+            bw.flush();
+            bw.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

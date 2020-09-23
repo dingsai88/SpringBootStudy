@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ¹«Ë¾ÊµÏÖÀà
+ * å…¬å¸å®ç°ç±»
  *
  * @author daniel
  */
 public class CompanyImpl extends Company {
     /**
-     * ¹«Ë¾»òÕß²¿ÃÅ³éÏó
+     * å…¬å¸æˆ–è€…éƒ¨é—¨æŠ½è±¡
      */
     private List<Company> children = new ArrayList<Company>();
 
@@ -25,7 +25,7 @@ public class CompanyImpl extends Company {
     }
 
     /**
-     * Õ¹Ê¾¹«Ë¾ »ò²¿ÃÅÃû³Æ  ²ã¼¶
+     * å±•ç¤ºå…¬å¸ æˆ–éƒ¨é—¨åç§°  å±‚çº§
      * @param i
      */
     @Override

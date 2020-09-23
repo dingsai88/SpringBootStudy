@@ -1,9 +1,9 @@
 package designpatterns.visitor;
 /**
- * Å®ÈËÀà
+ * å¥³äººç±»
  * @author daniel
  * @email 576699909@qq.com
- * @time 2016-5-11 ÏÂÎç2:28:27
+ * @time 2016-5-11 ä¸‹åˆ2:28:27
  */
 public class PersonNv implements Person {
 
@@ -15,7 +15,7 @@ public class PersonNv implements Person {
 	 
 	@Override
 	public String getMessage() {
-		//System.out.println("Å®ÈËÈöÄò");
-		return "Å®ÈË";
+		//System.out.println("å¥³äººæ’’å°¿");
+		return "å¥³äºº";
 	}
 }

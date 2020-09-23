@@ -1,18 +1,18 @@
 package designpatterns.iterator;
 
 /**
- * µü´úÆ÷ÊµÏÖÀà
+ * è¿­ä»£å™¨å®ç°ç±»
  * 
  * @author daniel
  * 
  */
 public class ConcreteIterator extends Iterator {
-	// ¾Û¼¯Àà
+	// èšé›†ç±»
 	private ConcreteAggregate aggregate;
 	private int current = 0;
 
 	/**
-	 * ³õÊ¼»¯´«Èë¾Û¼¯Àà
+	 * åˆå§‹åŒ–ä¼ å…¥èšé›†ç±»
 	 * 
 	 * @param aggregate
 	 */
@@ -21,7 +21,7 @@ public class ConcreteIterator extends Iterator {
 	}
 
 	/**
-	 * »ñµÃµ±Ç°ÊıÖµ
+	 * è·å¾—å½“å‰æ•°å€¼
 	 */
 	@Override
 	public Object currentItem() {
@@ -29,7 +29,7 @@ public class ConcreteIterator extends Iterator {
 	}
 
 	/**
-	 * ·µ»ØµÚÒ»ÌõÖµ
+	 * è¿”å›ç¬¬ä¸€æ¡å€¼
 	 */
 	@Override
 	public Object first() {
@@ -37,7 +37,7 @@ public class ConcreteIterator extends Iterator {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÓĞÏÂÒ»Ìõ false ÊÇÓĞÏÂÒ»Ìõ
+	 * åˆ¤æ–­æ˜¯å¦æœ‰ä¸‹ä¸€æ¡ false æ˜¯æœ‰ä¸‹ä¸€æ¡
 	 */
 	@Override
 	public boolean isDone() {
@@ -46,7 +46,7 @@ public class ConcreteIterator extends Iterator {
 	}
 
 	/**
-	 * ÏÂÒ»Ìõ·µ»Ø
+	 * ä¸‹ä¸€æ¡è¿”å›
 	 */
 	@Override
 	public Object next() {

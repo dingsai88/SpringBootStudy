@@ -2,15 +2,15 @@ package designpatterns.proxy;
 
 import java.lang.reflect.Method;
 /*
- * ÇĞÃæ½Ó¿ÚµÄÊµÏÖÀà
+ * åˆ‡é¢æ¥å£çš„å®ç°ç±»
  */
 public class MyAdvice implements Advice { 
  public void beforMethod(Method method) {
-  System.out.println("·½·¨¿ªÊ¼:ÂíÉÏÖ´ĞĞµÄ·½·¨½Ğ:"+method.getName());
+  System.out.println("æ–¹æ³•å¼€å§‹:é©¬ä¸Šæ‰§è¡Œçš„æ–¹æ³•å«:"+method.getName());
  }
 
  public void afterMethod(Method method) {
-  System.out.println("·½·¨½áÊø:ÂíÉÏÖ´ĞĞµÄ·½·¨½Ğ:"+method.getName());
+  System.out.println("æ–¹æ³•ç»“æŸ:é©¬ä¸Šæ‰§è¡Œçš„æ–¹æ³•å«:"+method.getName());
  }
 
 }

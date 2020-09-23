@@ -1,12 +1,12 @@
 package designpatterns.interpreter;
 /**
- * ½âÊÍÆ÷Ä£Ê½³éÏóÀà
- * - ÉùÃ÷Ò»¸ö³éÏóµÄInterpret·½·¨£¬³éÏóÓï·¨Ê÷ÖĞËùÓĞµÄ½Úµã¶¼±ØĞëÊµÏÖ¸Ã³éÏó·½·¨¡£
+ * è§£é‡Šå™¨æ¨¡å¼æŠ½è±¡ç±»
+ * - å£°æ˜ä¸€ä¸ªæŠ½è±¡çš„Interpretæ–¹æ³•ï¼ŒæŠ½è±¡è¯­æ³•æ ‘ä¸­æ‰€æœ‰çš„èŠ‚ç‚¹éƒ½å¿…é¡»å®ç°è¯¥æŠ½è±¡æ–¹æ³•ã€‚
  * @author daniel
  *
  */
 abstract class AbstractExpression {
-//½âÊÍ·½·¨
+//è§£é‡Šæ–¹æ³•
  public abstract void interpret(Context context);
  
 }

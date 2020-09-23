@@ -1,12 +1,12 @@
 package designpatterns.state;
 /**
- * ³éÏó×´Ì¬Àà
+ * æŠ½è±¡çŠ¶æ€ç±»
  * @author daniel
- * @version ÕıÊ½°æ
+ * @version æ­£å¼ç‰ˆ
  */
 public abstract class State {
  /**
-  * ÏÔÊ¾µ±Ç°×´Ì¬
+  * æ˜¾ç¤ºå½“å‰çŠ¶æ€
   * @param w
   */
  public abstract void writeProgram(Work w);

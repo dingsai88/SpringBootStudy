@@ -1,19 +1,19 @@
 package designpatterns.command;
 
 /**
- * ÃüÁîÀà³éÏó
+ * å‘½ä»¤ç±»æŠ½è±¡
  * 
  * @author daniel
  * 
  */
 abstract class Command {
-	// Ö´ĞĞÀàÊôĞÔ
+	// æ‰§è¡Œç±»å±æ€§
 	protected Receiver receiver;
 
 	public Command(Receiver receiver) {
 		this.receiver = receiver;
 	}
 
-	// µ÷ÓÃÖ´ĞĞÀàµÄÖ´ĞĞ·½·¨
+	// è°ƒç”¨æ‰§è¡Œç±»çš„æ‰§è¡Œæ–¹æ³•
 	abstract public void execute();
 }

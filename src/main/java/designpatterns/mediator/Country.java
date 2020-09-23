@@ -1,13 +1,13 @@
 package designpatterns.mediator;
 
 /**
- * ¹ú¼Ò³éÏóÀà
+ * å›½å®¶æŠ½è±¡ç±»
  * 
  * @author daniel
  * 
  */
 abstract class Country {
-    //ÁªºÏ»ú¹¹
+    //è”åˆæœºæ„
  protected UnitedNations mediator;
 
  public Country(UnitedNations mediator) {
