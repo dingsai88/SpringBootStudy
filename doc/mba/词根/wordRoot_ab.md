@@ -124,6 +124,7 @@ I.第二课
 sth something 某些事
 sb somebody 某些人
 ----------------------------act------------------------
+**act**
 act =to do 做= to drive 驱使
 
 来源:agere的分词actum的词干部分
