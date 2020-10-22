@@ -48,24 +48,39 @@ I am from HeBei.
 
 院校+专业
 
-I am form WuHan University majoring in Accounting.
+I am form BeiHang University majoring in  Department of computer .
+我来自北航大学计算机系
 
-After graduating from WuHan University two years age,I 
-majoring in International Trade, came to work at a foreign trade 
-company/corporation in ShangHai.
+ 
 
-I graduated from WuHan University , majoring in Accounting / and my major is Accounting.
+I graduated from BeiHang University , majoring in Department of computer .
+我毕业于北航大学计算机系
 
-I graduated from School of Economics and Management ,Tsinghua University.
-
-In 2008 , I entered Chang' an university ,majoring in Chinese Language.
-
-
+I graduated from School of Department of computer,BeiHang University.
+我毕业于北京航空航天大学计算机系
+ 
 
 
 
+考研动机
+
+the reason for my choice 我选择的原因
+why i choose your university  我为什么选择你的大学
+college is that 
 
 
+I am deeply impressed by learning management for this University.
+ I plan to concentrate on study and research in my professional field . 
+ And I think the study can help me integrate theory with practice.
+ 我对这所大学的学习管理印象深刻。 
+ 我打算集中精力在我的专业领域学习和研究。 
+ 我认为这项研究可以帮助我将理论与实践相结合。
+ 
+ 
+With ten years' work experience in public management,but I
+found that I still lacked of advanced theoretical knowledge .
+So  I wanna make a progress in my study.
+有十年公共管理工作经验，但我发现我仍然缺乏先进的理论知识。所以我想在学习上有所进步。
 
 
 
