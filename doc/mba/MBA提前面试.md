@@ -84,7 +84,15 @@ So  I wanna make a progress in my study.
 
 
 
+结束语 +感谢
 
+Thanks again for giving me this chance!
+再次感谢你给我这个机会！
+
+That's all for my self-introduction .Thanks again for your time.
+我的自我介绍到此为止。再次感谢您的时间。
+
+Thank you very much!
 
 
 
