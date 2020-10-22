@@ -25,7 +25,7 @@
 
 
 
-**个人介绍**
+**I.个人介绍**
 
 Good morning  ,my dear  professors!
 
@@ -33,7 +33,7 @@ Dear professors, I am so glad to be here for this interview.亲爱的教授们�
 It's my great honor to be here for this interview .我很荣幸能来参加这次面试。
 I feel so pleased to meet all of you here.很高兴在这里见到你们大家。
 
-基本信息:姓名+年龄+籍贯
+**II.基本信息:姓名+年龄+籍贯**
 
 I am 丁赛 .  I am 32 years old this year.
 
@@ -46,7 +46,7 @@ I come from XX, XX Province ,/ the capital of XX Province
 I am from HeBei.
 
 
-院校+专业
+**II.院校+专业**
 
 I am form BeiHang University majoring in  Department of computer .
 我来自北航大学计算机系
@@ -62,7 +62,7 @@ I graduated from School of Department of computer,BeiHang University.
 
 
 
-考研动机
+**II.考研动机**
 
 the reason for my choice 我选择的原因
 why i choose your university  我为什么选择你的大学
@@ -84,7 +84,7 @@ So  I wanna make a progress in my study.
 
 
 
-结束语 +感谢
+**II.结束语 +感谢**
 
 Thanks again for giving me this chance!
 再次感谢你给我这个机会！
@@ -94,6 +94,32 @@ That's all for my self-introduction .Thanks again for your time.
 
 Thank you very much!
 
+
+
+
+
+
+**模板**
+Good morning, dear professors. I 'm very glad to be here for this interview
+My name is XXX. I am XX years old. I graduated from BeiHang 
+University, majoring in Department of computer.
+Since I entered my University, I have been studying hard.
+ I was granted scholarship every semester. I have laid a solid foundation for
+professional knowledge. Moreover, Ihave passed CET-4 and CET-6 with excellent scores,
+and I am capable of reading English newspapers and magazines.
+
+During the four years of my college life. I took part positively in various campus
+activities, including XXXX,xxx and so on. You know...I attended some contests that were
+closely relevant to my profession ,for example ____.All of those valuable
+experiences enabled me to apply what I' ve learned to practice and made me realize my
+weak point. So that' s the reason for my choice in further study.
+
+Well about myself, you know.... I am open-minded, quick-learning and have strong
+power on implement: I am fond of reading and in my spare time, I like reading many kind
+of books, including history, novel and so on.
+  
+  Finally, that' s all for my self-introduction. I do believe that I can go further under the
+guidance of the leaned professors here. Thank you again for giving me this opportunity!
 
 
 
