@@ -77,8 +77,8 @@ I am deeply impressed by learning management for this University.
  我认为这项研究可以帮助我将理论与实践相结合。
  
  
-With ten years' work experience in public management,but I
-found that I still lacked of advanced theoretical knowledge .
+With ten years' work experience in public management,
+but I found that I still lacked of advanced theoretical knowledge .
 So  I wanna make a progress in my study.
 有十年公共管理工作经验，但我发现我仍然缺乏先进的理论知识。所以我想在学习上有所进步。
 
