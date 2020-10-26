@@ -49,15 +49,15 @@ public class HelloController {
 
 
     /**
-     * 发放宜人币接口
+     * 发放接口
      *
-     * @param yrbSendRecordReq
+     * @param RecordReq
      * @return
      */
     @RequestMapping(value = "send", method = RequestMethod.POST)
-    public String send(@Valid SendReq yrbSendRecordReq, BindingResult bindingResult) {
+    public String send(@Valid SendReq RecordReq, BindingResult bindingResult) {
 
-        System.out.println("YrbSendRecordController.send.req:{}"+ yrbSendRecordReq);
+        System.out.println("YrbSendRecordController.send.req:{}"+ RecordReq);
         if (null != bindingResult && bindingResult.hasErrors()) {
             List<FieldError> fieldErrorsList = bindingResult.getFieldErrors();
 
