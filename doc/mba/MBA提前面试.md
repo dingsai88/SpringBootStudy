@@ -129,6 +129,22 @@ guidance of the leaned professors here. Thank you again for giving me this oppor
 
 
 
+I.口语逻辑框架
+
+
+can you say that again?
+
+Sorry,do you mean....?
+
+Pardon?
+
+Could you please rephrase that again?
+
+Could you repeat the question ,please?
+
+can you say that again?
+
+Sorry,I don't get it.
 
 
 
