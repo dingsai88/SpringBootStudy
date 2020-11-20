@@ -3,6 +3,7 @@ package com.ding.study.util;
 import java.util.function.Function;
 
 /**
+ * @see com.ding.study.newfunction.jdb8.lambda.SimpleLambdaTest
  * @author daniel 2020-4-14 0014.
  */
 public class LambdaTest {

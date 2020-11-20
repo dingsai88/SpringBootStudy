@@ -139,8 +139,16 @@ public class SimpleLambdaTest {
         System.out.println("Lambda.分组后返回 :" + JsonUtils.convertObjToJsonString(map));
 
         //17 lambda 遍历1  2
+        //https://blog.csdn.net/imi00/article/details/80951366
+        /**
+         * 性能顺序：lambda parallelStream().forEach()>lambda stream().forEach()≈lambda forEach()>classical iterator≈classical forEach>classical for
+         * 注意：lambda parallelStream().forEach()会不保证顺序
+         */
         list.stream().forEach(System.out::println);
-        list.stream().forEach(fz->System.out.println(fz));
+        list.stream().forEach(fz->System.out.println("\n\nstream().forEach:"+fz));
+        list.forEach(fz->System.out.println("forEach:"+fz));
+        //注意：lambda parallelStream().forEach()会不保证顺序
+        list.parallelStream().forEach(fz->System.out.println("parallelStream().forEach:"+fz));
 
 
         //18 lambda 空指针 异常 Optional
