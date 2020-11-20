@@ -145,10 +145,14 @@ public class SimpleLambdaTest {
          * 注意：lambda parallelStream().forEach()会不保证顺序
          */
         list.stream().forEach(System.out::println);
-        list.stream().forEach(fz->System.out.println("\n\nstream().forEach:"+fz));
-        list.forEach(fz->System.out.println("forEach:"+fz));
+        list.stream().forEach(fz -> System.out.println("\n\nstream().forEach:" + fz));
+        list.stream().forEach(fz -> {
+            System.out.println("stream().forEach:" + fz);
+            System.out.println("stream().forEach2:" + fz);
+        });
+        list.forEach(fz -> System.out.println("forEach:" + fz));
         //注意：lambda parallelStream().forEach()会不保证顺序
-        list.parallelStream().forEach(fz->System.out.println("parallelStream().forEach:"+fz));
+        list.parallelStream().forEach(fz -> System.out.println("parallelStream().forEach:" + fz));
 
 
         //18 lambda 空指针 异常 Optional
