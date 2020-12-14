@@ -18,7 +18,28 @@ public class TestMain {
 
             System.out.println(appBizId);
 
+
+        System.out.println("开始");
+
+
+        System.out.println("结束:"+test());
+
     }
+
+    public static  boolean test(){
+        Boolean needUpload;
+        String aa="a";
+        String bb="b";
+
+
+        needUpload = (aa == null || false);
+        System.out.println("1:"+needUpload);
+        needUpload |= (bb == null || false);
+        System.out.println("2:"+needUpload);
+        return needUpload;
+
+    }
+
     public static void main222(String[] args) throws Exception {
         Objects.requireNonNull(null);
         float j=1;
