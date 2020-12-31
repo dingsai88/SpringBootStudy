@@ -4,11 +4,26 @@ import org.codehaus.groovy.util.StringUtil;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
+ * 数据结构:逻辑关系
+ * 无关系
+ * 1对1的关系
+ * 1对多的关系
+ * 多对多的关系
+ *
+ *
+ * 物理关系:
+ * 顺序存储
+ * 链表存储
+ * 散列存储
+ * 索引存储
+ *
+ *
+ *
  * @author daniel 2019-6-27 0027.
  */
 public class TestMain {
@@ -18,11 +33,13 @@ public class TestMain {
 
             System.out.println(appBizId);
 
+        LocalDate now = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        System.out.println("开始");
+        System.out.println("开始："+JsonUtils.convertObjToJsonString(now));
 
 
-        System.out.println("结束:"+test());
+        System.out.println("结束:"+now.minusDays(88).format(formatter));
 
     }
 
