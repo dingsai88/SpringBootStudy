@@ -40,6 +40,38 @@ public class TestMain {
 
 
         System.out.println("结束:"+now.minusDays(88).format(formatter));
+        System.out.println("结束:------------");
+        int [] input=new int[] {8,5,6,8,9,4,3,2,5,1};
+        System.out.println("结束:------------1:"+input);
+        System.out.println("结束:------------2:"+GetLeastNumbers_Solution(input,3));
+
+    }
+
+    public static ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+        ArrayList<Integer> result=new ArrayList<Integer>();
+        if(input==null||input.length==0||k==0||k>input.length){
+            return result;
+        }
+        //冒泡
+        for(int i=0;i<input.length;i++){
+            for( int j=i+1;j<input.length;j++){
+                if(input[i]>input[j]){
+                    int temp=input[i];
+                    input[i]=input[j];
+                    input[j]=temp;
+                }
+            }
+        }
+
+
+
+        for(int i = 0; i < k; i++){
+            result.add(input[i]);
+        }
+        return result;
+
+
+
 
     }
 
