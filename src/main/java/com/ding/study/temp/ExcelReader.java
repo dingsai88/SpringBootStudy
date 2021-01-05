@@ -138,6 +138,18 @@ public class ExcelReader {
     }
 
     /**
+     * 数字抹零
+     * @param str
+     * @return
+     */
+    public static String getStringZhengShu(String str){
+               Double doubleValue=Double.parseDouble(str);
+
+        DecimalFormat df = new DecimalFormat("0");
+         return df.format(doubleValue);
+    }
+
+    /**
      * 将单元格内容转换为字符串
      *
      * @param cell
@@ -153,8 +165,9 @@ public class ExcelReader {
                 Double doubleValue = cell.getNumericCellValue();
 
                 // 格式化科学计数法，取一位整数
-                DecimalFormat df = new DecimalFormat("0");
-                returnValue = df.format(doubleValue);
+             //   DecimalFormat df = new DecimalFormat("0");
+               // returnValue = df.format(doubleValue);
+                returnValue=cell.getNumericCellValue()+"";
                 break;
             case STRING:    //字符串
                 returnValue = cell.getStringCellValue();
