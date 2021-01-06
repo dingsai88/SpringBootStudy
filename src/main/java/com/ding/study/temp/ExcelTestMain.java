@@ -1,3 +1,4 @@
+/*
 package com.ding.study.temp;
 
 import com.ding.study.util.JsonUtils;
@@ -9,9 +10,7 @@ import java.util.Map;
 
 import static com.ding.study.temp.ExcelReader.getStringZhengShu;
 
-/**
- * @author daniel 2020-10-16 0016.
- */
+
 public class ExcelTestMain {
 
 
@@ -98,3 +97,4 @@ public class ExcelTestMain {
         return BigDecimal.ZERO;
     }
 }
+*/

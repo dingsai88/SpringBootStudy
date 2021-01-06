@@ -1,4 +1,6 @@
 package com.ding.study.temp;
+/**
+
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -17,23 +19,14 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author daniel 2020-10-16 0016.
- */
+
 public class ExcelReader {
     private static Logger logger = Logger.getLogger(ExcelReader.class.getName()); // 日志打印类
 
     private static final String XLS = "xls";
     private static final String XLSX = "xlsx";
 
-    /**
-     * 根据文件后缀名类型获取对应的工作簿对象
-     *
-     * @param inputStream 读取文件的输入流
-     * @param fileType    文件后缀名类型（xls或xlsx）
-     * @return 包含文件数据的工作簿对象
-     * @throws IOException
-     */
+
     public static Workbook getWorkbook(InputStream inputStream, String fileType) throws IOException {
         Workbook workbook = null;
         if (fileType.equalsIgnoreCase(XLS)) {
@@ -44,12 +37,7 @@ public class ExcelReader {
         return workbook;
     }
 
-    /**
-     * 读取Excel文件内容
-     *
-     * @param fileName 要读取的Excel文件所在路径
-     * @return 读取结果列表，读取失败时返回null
-     */
+
     public static List<ExcelDataVO> readExcel(String fileName) {
 
         Workbook workbook = null;
@@ -91,12 +79,7 @@ public class ExcelReader {
         }
     }
 
-    /**
-     * 解析Excel数据
-     *
-     * @param workbook Excel工作簿对象
-     * @return 解析结果
-     */
+
     private static List<ExcelDataVO> parseExcel(Workbook workbook) {
         List<ExcelDataVO> resultDataList = new ArrayList<>();
         // 解析sheet
@@ -137,24 +120,16 @@ public class ExcelReader {
         return resultDataList;
     }
 
-    /**
-     * 数字抹零
-     * @param str
-     * @return
-     */
-    public static String getStringZhengShu(String str){
-               Double doubleValue=Double.parseDouble(str);
+
+    //数字抹零
+    public static String getStringZhengShu(String str) {
+        Double doubleValue = Double.parseDouble(str);
 
         DecimalFormat df = new DecimalFormat("0");
-         return df.format(doubleValue);
+        return df.format(doubleValue);
     }
 
-    /**
-     * 将单元格内容转换为字符串
-     *
-     * @param cell
-     * @return
-     */
+
     private static String convertCellValueToString(Cell cell) {
         if (cell == null) {
             return null;
@@ -165,9 +140,9 @@ public class ExcelReader {
                 Double doubleValue = cell.getNumericCellValue();
 
                 // 格式化科学计数法，取一位整数
-             //   DecimalFormat df = new DecimalFormat("0");
-               // returnValue = df.format(doubleValue);
-                returnValue=cell.getNumericCellValue()+"";
+                //   DecimalFormat df = new DecimalFormat("0");
+                // returnValue = df.format(doubleValue);
+                returnValue = cell.getNumericCellValue() + "";
                 break;
             case STRING:    //字符串
                 returnValue = cell.getStringCellValue();
@@ -189,40 +164,17 @@ public class ExcelReader {
         return returnValue;
     }
 
-    /**
-     * 提取每一行中需要的数据，构造成为一个结果数据对象
-     * <p>
-     * 当该行中有单元格的数据为空或不合法时，忽略该行的数据
-     *
-     * @param row 行数据
-     * @return 解析后的行数据对象，行数据错误时返回null
-     */
+
     private static ExcelDataVO convertRowToData(Row row) {
         ExcelDataVO resultData = new ExcelDataVO();
 
         Cell cell;
 
-/*
-        Cell cell = row.getCell(cellNum++);
-        String name = convertCellValueToString(cell);
-        resultData.setData1(name);
-        cell = row.getCell(cellNum++);
-        String ageStr = convertCellValueToString(cell);
-        resultData.setData2(name);
-
-        cell = row.getCell(cellNum++);
-        String location = convertCellValueToString(cell);
-        resultData.setData3(location);
-
-        cell = row.getCell(cellNum++);
-        String job = convertCellValueToString(cell);
-        resultData.setData4(location);*/
-
 
         for (int i = 0; i < 10; i++) {
             try {
                 cell = row.getCell(i);
-                Method method = resultData.getClass().getMethod("setData" + (i+1), String.class);
+                Method method = resultData.getClass().getMethod("setData" + (i + 1), String.class);
                 method.invoke(resultData, convertCellValueToString(cell));
 
             } catch (Exception e) {
@@ -235,3 +187,5 @@ public class ExcelReader {
         return resultData;
     }
 }
+ *
+ */
