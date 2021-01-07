@@ -34,7 +34,7 @@ public class GetLeastNumbersSolutionTest {
 
         for (int i = 0; i < input.length; i++) {
             for (int j = i + 1; j < input.length; j++) {
-                if (input[i] > input[j]) {
+                 if (input[i] > input[j]) {
                     int t = input[j];
                     input[j] = input[i];
                     input[i] = t;
