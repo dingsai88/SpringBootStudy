@@ -54,18 +54,13 @@ public class SolutionSelf {
         linkedHashMap.put(5, 5);
         linkedHashMap.put(7, 7);
         linkedHashMap.put(9, 9);
-
-
         System.out.println("输出:map:" +linkedHashMap);
-
         linkedHashMap.get(2);
         linkedHashMap.get(5);
         System.out.println("输出:map2:" +linkedHashMap);
        for (Map.Entry<Integer, Integer> map : linkedHashMap.entrySet()) {
             System.out.println("输出:map:" + map.getKey() + ":" + map.getValue());
         }
-
-
 
     }
 
