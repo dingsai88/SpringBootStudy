@@ -15,9 +15,9 @@ import java.util.HashMap;
  *
  * https://www.nowcoder.com/practice/20ef0972485e41019e39543e8e895b7f?tpId=190&&tqId=35361&rp=1&ru=/ta/job-code-high-rd&qru=/ta/job-code-high-rd/question-ranking
  */
-public class Solution {
+public class SolutionTwoSum {
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        SolutionTwoSum solution = new SolutionTwoSum();
         int[] a=new int[]{3,2,4};
         System.out.println(JsonUtils.convertObjToJsonString(solution.twoSum(a,6)));
         System.out.println(JsonUtils.convertObjToJsonString(solution.twoSum2(a,6)));

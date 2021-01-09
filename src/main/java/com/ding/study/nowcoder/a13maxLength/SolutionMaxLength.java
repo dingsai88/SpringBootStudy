@@ -5,7 +5,7 @@ import com.ding.study.util.JsonUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Solution {
+public class SolutionMaxLength {
 
     public int maxLength(int[] arr) {
         int max = 0;
@@ -28,7 +28,7 @@ public class Solution {
     }
 
     public static void main(String[] args) {
-        Solution solution = new Solution();
+        SolutionMaxLength solution = new SolutionMaxLength();
         int[] a = new int[]{3, 2, 4};
         System.out.println(JsonUtils.convertObjToJsonString(solution.maxLength(a)));
     }
