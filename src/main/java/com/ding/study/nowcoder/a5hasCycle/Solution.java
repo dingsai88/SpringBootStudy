@@ -29,10 +29,11 @@ public class Solution {
         head2.next=head3;
         head3.next=head4;
         head4.next=head5;
-       System.out.println(new Solution().hasCycle(head0));
+         System.out.println(JsonUtils.convertObjToJsonString(new Solution().hasCycle(head0)));
+
         head5.next=head0;
 
-        System.out.println(new Solution().hasCycle(head0));
+        System.out.println(JsonUtils.convertObjToJsonString(new Solution().hasCycle(head0)));
     }
 
 }
