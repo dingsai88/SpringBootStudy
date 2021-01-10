@@ -2,6 +2,15 @@ package com.ding.study.nowcoder.a17removeNthFromEnd;
 
 import com.ding.study.util.JsonUtils;
 
+/**
+ * https://www.nowcoder.com/practice/f95dcdafbde44b22a6d741baf71653f6?tpId=190&&tqId=35195&rp=1&ru=/ta/job-code-high-rd&qru=/ta/job-code-high-rd/question-ranking
+ *
+ *删除链表的倒数第n个节点
+ * 首先，我们要清楚链表的长度length，这样的话，要删除倒数第n个节点的话，就是删除正数的第（length - n）个节点（从 0 开始遍历链表）（当删除倒数第length的节点时例外，因为我们遍历链表的时候从 0 开始，所以这个时候我们需要单独将条件提出）。
+ * 其次，当我们遍历到了要删除的节点的前一位的时候，我们只需要让其的 next 指向其 next.next，这样的话就可以删除该节点。
+ * 最后，当我们遍历链表的时候，需要有一个指针指向该链表的首部，这样就不会丢失链表遍历位置之前的元素。
+ *
+ */
 public class SolutionRemoveNthFromEnd {
 
 
