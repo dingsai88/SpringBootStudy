@@ -117,9 +117,6 @@ II.SortedSet有序不重复集合zset
  
  
  
- 
- 
- 
 重置消费位点(删除不需要信息)、死信队列（三天内处理多次重试异常的消息）、全球消息路由（不同地区同步数据）
  
  
@@ -137,7 +134,7 @@ II.SortedSet有序不重复集合zset
  
  
  
- 不适用场景
+ 不适用场景:
  不能存大量数据
  
  zookeeper 数据模型：层次模型、文件系统模型
@@ -172,14 +169,7 @@ master worker架构
 2.多个 backup master . active master 失败了，一个backup master 升级
 3. master 监控worker状态
 
-
- 
  
  zookeeper 服务发现
- 
- 
- 
- 
- 
  
  

@@ -106,6 +106,79 @@ JdbcTemplateAutoConfiguration
 
 
 
+---------------------------三太子------------------------------------------
+
+
+
+
+**I.一分钟带你玩转 Spring IoC**
+
+Ioc ( Inversion of Control控制反转)
+
+控制反转就是把创建和管理 bean 的过程转移给了第三方。而这个第三方，就是 Spring IoC Container，对于 IoC 来说，最重要的就是容器。
+
+
+
+IoC 容器
+
+
+何为控制，控制的是什么？
+答：是 bean 的创建、管理的权利，控制 bean 的整个生命周期。
+
+
+
+何为反转，反转了什么？
+
+答：把这个权利交给了 Spring 容器，而不是自己去控制，就是反转。由之前的自己主动创建对象，变成现在被动接收别人给我们的对象的过程，这就是反转。
+
+
+
+**I.Spring事务传播行为**
+
+PROPAGATION_REQUIRED:如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+PROPAGATION_SUPPORTS:支持当前事务，如果当前没有事务，就以非事务方式执行。
+PROPAGATION_MANDATORY:使用当前的事务，如果当前没有事务，就抛出异常。
+PROPAGATION_REQUIRES_NEW:新建事务，如果当前存在事务，把当前事务挂起。
+PROPAGATION_NOT_SUPPORTED:以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+PROPAGATION_NEVER:以非事务方式执行，如果当前存在事务，则抛出异常。
+PROPAGATION_NESTED:如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。
+                   
+
+
+**I.Spring 循环依赖**
+
+当前bean不能创建
+
+
+
+**I.分布式**
+
+**II.集群特点:**
+高性能:通过多台计算机完成同一个工作，达到更高的效率。
+高可用:两机或多机内容、工作过程等完全一样。如果一台死机，另一台可以起作用。
+    
+**II.分布式:**
+一个业务分拆多个子业务，部署在不同的服务器上(不同的服务器，运行不同的代码，为了同一个目的)。
+
+
+分布式/微服务/SOA:
+
+CAP:
+C数据一致性
+A可用性
+P分区容错性
+
+
+**I.SpringCloud**
+
+服务治理：Spring  Cloud Eureka  类似ZK
+客户端负载均衡：Spring Cloud Ribbon  类似客户端负载均衡
+服务容错保护：Spring  Cloud Hystrix  解决雪崩-资源隔离、降级机制、融断、缓存
+声明式服务调用：Spring  Cloud Feign  (Ribbon+Feign)  代理的方式都加入 防止雪崩的功能
+API网关服务：Spring Cloud Zuul  网关 （负载均衡+雪崩）
+分布式配置中心：Spring Cloud Config  配置类似ZK
+
+
 
 
 
