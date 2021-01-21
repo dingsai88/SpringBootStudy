@@ -74,7 +74,6 @@ II.线程安全方案:
 
 
 
-
 I.信号量semaphore：信号量s是非负整数的全局变量。只能由两个操作来处理
 
 I.管程(Monitor):描述:比信号量更高的抽象，没有这种实体存在于系统或编程语言中(一种机制、一种解决方法)。编程语言和操作系统都提供了实现管程的重要部件(条件变量)
@@ -169,6 +168,8 @@ CyclicBarrier主要解决一组线程之间互相等待(自动重置循环利用
 
 I.无锁方案（最大的好处就是性能）:CAS
 ABA问题：增加版本号
+I.多线程的方法 Thread Runnable Callable(带返回值) 三种方式实现多线程。
+start 开启多线程 执行run方法
 
 
 I.Executor与线程池
@@ -186,6 +187,23 @@ newFixedThreadPool 无界的工作队列 固定的 可控制线程最大并发�
 newSingleThreadExecutor()  单独的 指定顺序(FIFO, LIFO, 优先级)
 newScheduledThreadPoo 支持定时及周期性任务执行 定时延迟三秒执行
 newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理顺序
+
+I.线程池放入顺序
+1.new核心线程
+2.放入队列
+3.核心线程、队列都满了，创建新的线程到最大线程数。
+4.最大线程和队列都满了：执行异常策略。
+
+II.线程池执行顺序
+1.核心线程
+2.队列满了以后创建的最大线程。
+3.队列的数据。
+
+
+
+
+
+
 
 
 I.Future(飞偶车)接口和FutureTask实现类获得线程返回值
@@ -217,4 +235,16 @@ CopyOnWriteArraySet
 II.线程本地存储模式:ThreadLocal每个线程一个对象
 
 II.CAS无锁
+CompareAndSwap
+-最终hostsport 调用汇编指令 : lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg)
+-------------------------------------------------------------------------
+
+Oject obj=new Object占用多少字节
+
+
+
+
+
+
+
 

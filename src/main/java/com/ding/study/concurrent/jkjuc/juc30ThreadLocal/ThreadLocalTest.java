@@ -11,6 +11,7 @@ public class ThreadLocalTest {
         ThreadLocal threadLocal=new ThreadLocal();
         threadLocal.set(null);
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat();
+        threadLocal.get();
         simpleDateFormat.format(null);
 
     }

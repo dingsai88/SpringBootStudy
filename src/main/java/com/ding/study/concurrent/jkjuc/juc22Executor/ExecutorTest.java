@@ -32,8 +32,12 @@ public class ExecutorTest {
         Executors.newFixedThreadPool（固定大小的线程池）；
         Executors.newSingleThreadExecutor（单一后台线程）；*/
 
+        Executor   executorSingle=   Executors.newSingleThreadExecutor();
+        Executor   executorCached=   Executors.newCachedThreadPool();
+        Executor   executorFixed=   Executors.newFixedThreadPool(1);
+        Executor   executorScheduled=   Executors.newScheduledThreadPool(2);
+        Executor   executorWork=   Executors.newWorkStealingPool();
 
-        Executors.newScheduledThreadPool(2);
 
         System.out.println("开始");
           for(int i=0;i<22;i++){

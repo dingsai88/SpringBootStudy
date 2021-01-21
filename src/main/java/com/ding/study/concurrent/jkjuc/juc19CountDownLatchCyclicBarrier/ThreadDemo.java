@@ -3,8 +3,11 @@ package com.ding.study.concurrent.jkjuc.juc19CountDownLatchCyclicBarrier;
 /**
  * @author daniel 2019-10-17 0017.
  */
-public class ThreadDemo {
+public class ThreadDemo extends  Thread{
+    @Override
+    public void run() {
 
+    }
     public static String getOrder1(String t) {
         try {
             Thread.sleep(new java.util.Random().nextInt(100));
