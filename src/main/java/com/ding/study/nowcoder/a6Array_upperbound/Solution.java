@@ -14,7 +14,7 @@ public class Solution {
 
     public static void main(String[] args) {
         int[] i = {1, 2, 4, 4, 5};
-        System.out.println(new Solution().upper_bound_(5, 4, i));
+        System.out.println(new Solution().upper_bound_(5, 5, i));
 
     }
 
