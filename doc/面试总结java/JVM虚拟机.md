@@ -262,21 +262,24 @@ II.新生代young收集器
 II.老年代old收集器
 1.Serial Old(MSC)全搭配(单线程标记清除整理算法)
 2.Parallel Old（多线程标记清除整理算法）JDK6才开始提供
-3.CMS（多线程标记清除无整理）并发收集低停顿
+3.CMS（多线程标记清除无整理-可设置停顿时间）并发收集低停顿
 初始标记(需要STW)>并发标记>重新标记(需要STW)>并发清除
 
 缺点:CPU核数少不适用、不能处理浮动垃圾（ConcurrentModeFailure出现时进行一次FullGC启用Serial Old收集器）、基于标记清除算法，每次整理后有很多空间碎片产生每次FullGC整理一次
 
-https://mp.weixin.qq.com/s/vmnBlrM7pTtVuyQU-GTcPw
 CMS:始标(STW)>并发标(并发)>重标(STW)>并发清除
-CMS:
-
-G1:初始标(STW)>并发标>最终标记(STW)>筛选回收(STW)
+ 
 
 II.G1（面向服务端的收集器）新老都用（低停顿）jdk7时开始提供：
-整体-标记整理，局部Region之间-复制算法；没有空间碎片
+Region分类:Eden、Survivor、Old、Humongous
 
-初始标记(需要STW)>并发标记>最终标记(需要STW)>筛选回收(需要STW)
+跨代问题:CardTable  跨Region: RememberedSet
+
+1.⽆需回收整个堆，⽽是选择⼀个Collection Set (CS)
+2.两种GC： Fully young GC(只回收年轻代)、 Mixed GC(全部都回收)
+3.估计每个Region中的垃圾⽐例，优先回收垃圾多的Region
+
+G1:初始标记(需要STW)>并发标记（三色标记法）>重新标记(STW)>cleanup(STW)⽴刻回收全空的区 (半空区域进行拷贝)
 
 ----------------------------------------------------------JVM结束------------------------------------------------------------------------------------------
 
