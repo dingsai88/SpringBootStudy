@@ -50,6 +50,71 @@ II.SortedSet有序不重复集合zset
  
  I.主从：replication ID(复制ID):(记录发送数据的多少)
  I.哨兵：高可用自动选主。分片：高性能 三倍
+
+
+
+
+
+redis
+II.string   {缓存、计数器(加一)、session共享} -二进制安全的字节数组 
+II.list,双向链表 : 压缩列表（ziplist）、双向循环链表  {消息队列}
+II.hash, 哈希表 : 压缩列表（ziplist）、散列表：自动扩容  
+II.set 不可重复(底层哈希表)交集并集 : 有序数组、基于散列表 {黑名单}
+II.zset(sorted set)有序集合 : 压缩列表（ziplist）、跳表（Skip list）： 索引+原始链表  {排行榜}
+II. Bitmaps  {签到记录、布隆过滤器（第几位改成1）}  底层是String
+> setbit key 0 1
+(integer) 0
+> setbit key 100 1
+(integer) 0
+> bitcount key
+(integer) 2
+
+
+II. 海盆儿HyperLogLog  {UV去重显示KEY count}
+II.Pub/Sub   消息的广播
+II.Geo 地理空间、计算距离等
+
+传输用字节流       （字节1byte=8bit1） > 编码UTF-8等 >(字符char = 2* byte)
+
+
+I.ziplist压缩双向链表（数组形式存储内存连续）：总字节数+最后一位偏移数(直接定位尾)+数据总个数+(数据+数据)+zlend(最后一位固定255)
+
+I.持久化:RDB快照 开分支 copyOnwrit 和  AOF追加慢
+I.主从：replication ID(复制ID):(记录发送数据的多少)
+I.redis4.0新增混合模式 快照+AOF追加
+I.哨兵：高可用自动选主。
+I.集群Cluster 分片：高性能 三倍；高性能
+I.Pipeline 批量执行脚本 减少请求
+
+I.过期策略：  定期删除100毫秒随机删+惰性删除(调用了删)
+I.内存淘汰机制:报错、最少使用key(过期的)、随机删key(过期的)、删除快死的key
+
+
+
+I.分布式锁:
+setnx  redis-setkey+超时时间-判断存在：缺点：只在一台生效。主从切换无效；setnx+失效时间，不原子
+红锁redlock:SET直接设置key和失效时间： 本地生成时间、挨个机器获取锁、异常了也都能释放。
+
+I.UV HyperLogLog
+pfadd key value4 value5 value6 value7  //新增多个元素
+pfcount key //统计该key去重后的元素个数
+
+布隆过滤器 判断这个值是否存在，功能存在误差 hyperloglog不带布隆过滤器功能
+
+
+II.缓存雪崩:key同时过期--设置随机值; 或者预热数据--熔断直接返回错误。
+II.缓存穿透:缓存和数据库中都没有的数据。
+增加业务校验:数据不合法直接return.增加IP等并发规则、布隆过滤器
+
+
+
+活跃用户数量、第一天登录、第二天登录:
+setbit 20200101  1 1
+setbit 20200102  1 1
+setbit 20200102  2 1
+BITOP  or res 20200101 20200102
+bitcount res 0 -1
+返回:2 个人
  
  --------------------------------------------------------------------------
  
