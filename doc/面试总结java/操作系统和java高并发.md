@@ -5,7 +5,7 @@
 3.I/O 多路复用（ IO multiplexing）非阻塞
    3.1.select只支持1024个(每次都遍历)
    3.2.poll和select没有区别于链表来存储的.没有个数限制(每次都遍历)：
-   3.3.epoll（注册—监听事件—处理—再注册） 对比：select和poll每次都全部轮训；epoll只有触发监听才访问
+   3.3.epoll（注册—监听事件—处理—再注册） epoll只有触发监听才访问 ：（等待队列--有值时--就绪队列---调用方法）
 4.信号驱动 I/O（ signal driven IO）
 5.异步 I/O（asynchronous IO）
 epoll_create, epoll_ctl和epoll_wait。
@@ -20,12 +20,20 @@ epoll_create, epoll_ctl和epoll_wait。
 java文件拷贝
 FileInputStream
 Files.copy
-NIO transferTo/From 的方式可能更快 磁盘>内核态空间>用户空间
+NIO transferTo/From 的方式可能更快
+
+**零拷贝**
+(磁盘>内核态空间>用户空间>内核空间>网卡  )
+(磁盘>内核态>网卡) 使用 DMA硬件控制
  
 
 
 CPU密集型计算线程数:理论上=CPU核数。实际上会设置CPU核数+1
 IO密集:1+(IO耗时/CPU耗时)
+
+I.kernel内核
+II.最终线程调用
+strace -ff -o out /usr/bin/java SocetBIO
 
 ----------------------------------------------------------------------------------------------------------------------
  I.线程状态
