@@ -1,4 +1,4 @@
-package com.ding.study.concurrent.jkjuc.juc14;
+package com.ding.study.concurrent.jkjuc.juc14ReentrantLock;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
