@@ -207,11 +207,7 @@ II.线程池执行顺序
 2.队列满了以后创建的最大线程。
 3.队列的数据。
 
-
-
-
-
-
+ 
 
 
 I.Future(飞偶车)接口和FutureTask实现类获得线程返回值
@@ -245,6 +241,10 @@ II.线程本地存储模式:ThreadLocal每个线程一个对象
 II.CAS无锁
 CompareAndSwap
 -最终hostsport 调用汇编指令 : lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg)
+
+I.输出ABC123
+synchronized(obj)wait+notify :wait会释放当前线程占有的对象; notify唤醒一个；notifyALL全部唤醒再竞争。
+LockSupport.park();unpark(obj);
 -------------------------------------------------------------------------
 
 Oject obj=new Object占用多少字节

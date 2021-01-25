@@ -1644,24 +1644,8 @@ Not exists:发现1个匹配LEFT JOIN标准的行后，不再为前面的的行�
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+活动作品B站讲的最好的MySQL数据库教程全集（2020最新版）
+https://www.bilibili.com/video/BV1xh411Z79d?p=106
 
 
 
