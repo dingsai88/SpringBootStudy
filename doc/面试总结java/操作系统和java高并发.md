@@ -276,10 +276,3 @@ LockSupport.park();unpark(obj);
 
 Oject obj=new Object占用多少字节
 
-
-
-
-
-
-
-
