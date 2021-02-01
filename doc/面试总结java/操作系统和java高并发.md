@@ -166,26 +166,39 @@ volatile变量规则volatile variable rule：对一个volatile变量的写操作
 
 
 ---------------------------------------------并发工具类-----------------------------------------------------------------------------
+I.创建线程的三个方法:Thread、Runnable.run、 Callable.call 三种方式实现多线程。
+start 开启多线程 执行run方法
+
+I.带返回值(Callable.call  和带返回参数的 Runnable, T result))：
+1.实现Callable.call方法 或 带返回参数的 Runnable, T result
+2.submit线程:ExecutorService.submit(Callable<T> task)
+3.Future.get获得阻塞返回值(可设置等待时间)+ Future.isDone(实时判断是否执行完成-不阻塞)
+
+
 I.管程模型:Lock和Condition模拟管程操作
 管程组成:(互斥锁mutex) 、(状态condition一个或多个条件变量)、(共享变量及方法)
 
-I.AQS 抽象队列同步器
-volatile int state(1有锁、0无锁)+Node(Exclusive独占、Share共享)
-有独占锁的方法+共享锁的相关方法
+synchronized是只有一个条件变量的管程模型
 
 
-ReentrantLock
-1.能够响应中断:释放已占用的资源、
-2.支持超时、
+I.AQS 抽象队列同步器 -管程多条件 ：有独占锁的方法(一医一个病人)、共享锁(多医生多病人)的相关方法
+volatile int state(1有锁、0无锁)： lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg) 
+ConditionObject 实现 Condition接口：await等待、signal或singalAl唤醒
+核心模版方法:独占锁（tryAcquire、tryRelease）、共享锁(tryAcquireShared、tryReleaseShared)
+
+
+I.ReentrantLock(独占锁)
+1.能够响应中断:释放已占用的资源
+2.支持超时
 3.非阻塞地获取锁:获取不到不阻塞，直接返回
-4.公平性
+4.公平性：NonfairSync、FairSync
 
 
 I.Semaphore(赛卖for)信号量(操作系统PV)限流器并发池等
 模拟信号量：计数器、等待队列、三个方法（初始值、加一、减一）
 
 
-I.ReadWriteLock读写锁
+I.ReadWriteLock读写锁(共享锁)
 
 I.StampedLock邮戳8新增的读写锁升级
 三种锁模式
@@ -194,18 +207,13 @@ I.StampedLock邮戳8新增的读写锁升级
 3.乐观读tryOptimisticRead:validate(验证是否修改)--无锁
 
 
-I.CountDownLatch和CyclicBarrir（赛科雷 百瑞尔）:如何让多线程步调一致
+I.CountDownLatch和CyclicBarrir（赛科雷 百瑞尔）:如何让多线程步调一致 (共享锁)
 CountDownLatch主要解决一个线程等待多个线程(不能循环利用)
 CyclicBarrier主要解决一组线程之间互相等待(自动重置循环利用)
 
 
 --------------------------------------------------------------------------------------------------------
-
-I.无锁方案（最大的好处就是性能）:CAS
-ABA问题：增加版本号
-I.多线程的方法 Thread Runnable Callable(带返回值) 三种方式实现多线程。
-start 开启多线程 执行run方法
-
+ 
 
 I.Executor与线程池
 corePoolSize ：核心线程数量
@@ -234,12 +242,31 @@ II.线程池执行顺序
 2.队列满了以后创建的最大线程。
 3.队列的数据。
 
- 
 
+拒绝策略
+AbortPolicy：让调用者抛出 RejectedExecutionException 异常，这是默认策略
+CallerRunsPolicy：让调用者运行任务
+DiscardPolicy：放弃本次任务
+DiscardOldestPolicy：放弃队列中最早的任务，本任务取而代之
+
+阻塞队列
+ArrayBlockingQueue(数组阻塞队列):
+LinkedBlockingQueue(链表阻塞队列,不设置默认最大):
+PriorityBlockingQueue(排序的队列)：是一个没有边界的队列，它的排序规则和 java.util.PriorityQueue一样。需要注意，PriorityBlockingQueue中允许插入null对象。所有插入PriorityBlockingQueue的对象必须实现 java.lang.Comparable接口，队列优先级的排序规则就是按照我们对这个接口的实现来定义的。
+DelayQueue(延迟多久+排序):阻塞的是其内部元素,元素必须实现 java.util.concurrent.Delayed接口，该接口只有一个方法就是long getDelay(TimeUnit unit)，返回值就是队列元素被释放前的保持时间，如果返回0或者一个负值，就意味着该元素已经到期需要被释放，此时DelayedQueue会通过其take()方法释放此对象，DelayQueue可应用于定时关闭连接、缓存对象，超时处理等各种场景；
+SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：队列内部仅允许容纳一个元素。当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。
+
+II.Executor.execute(Runnable);只有一个方法
+II.ExecutorService 带返回值的
+   submit(Callable<T> task)：是Executor子接口，新增了submit支持获得返回值
+   submit(Runnable task, T result); 变相拿返回值
+   shutdown();平滑的关闭线程池
+II.CompletionService 升级版本可提交多个任务(ExecutorService的升级版)
+   CompletionService当有多个任务时，可以返回一个处理一个。
 
 I.Future(飞偶车)接口和FutureTask实现类获得线程返回值
 开启线程，执行内容 等待线程内容返回。
-  Future future2 = executorService.submit(callableDemo);
+  Future future2 = executorService.submit(Callable.call方法);
   System.out.println(future2.get());
 
 II.CompletableFuture（康姆铺莱特爆-飞偶车）:异步编程8才提供
@@ -266,8 +293,7 @@ CopyOnWriteArraySet
 II.线程本地存储模式:ThreadLocal每个线程一个对象
 
 II.CAS无锁
-CompareAndSwap
--最终hostsport 调用汇编指令 : lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg)
+CompareAndSwap -最终hostsport 调用汇编指令 : lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg)
 
 I.输出ABC123
 synchronized(obj)wait+notify :wait会释放当前线程占有的对象; notify唤醒一个；notifyALL全部唤醒再竞争。
