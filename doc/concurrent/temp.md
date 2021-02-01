@@ -43,9 +43,9 @@ SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：
 创建线程的三个方法:Thread、Runnable.run、 Callable.call
 
 
-I.带返回值(Callable.call  和带返回参数的 Runnable, T result))：
+I.获得线程返回内容(Callable.call  和 返回参数Runnable,T result)：
 I.获得线程返回内容（重新Callable.call  +  获得结果Future.get）
-1.实现Callable.call方法 或 带返回参数的 Runnable, T result
+1.实现Callable.call方法 或 带返回参数的 (Runnable, T result)
 2.submit线程:ExecutorService.submit(Callable<T> task)
 3.Future.get获得阻塞返回值(可设置等待时间)+ Future.isDone(实时判断是否执行完成-不阻塞)
 
