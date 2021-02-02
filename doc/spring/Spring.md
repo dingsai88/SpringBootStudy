@@ -180,3 +180,250 @@ API网关服务：Spring Cloud Zuul  网关 （负载均衡+雪崩）
 
 
 
+--------------------------------------------------------------------------------------------
+
+
+05 - 如何配置单数据源
+
+06 - 如何配置多数据源
+
+07 - 那 些好用的连接池们：HikariCP
+https://github.com/brettwooldridge/HikariCP
+ 
+1.HikariCP 字节码级别的优化 JavaAssist生成
+2.大量小改动
+fastStatementList 替换arrayList
+无锁集合ConcurrentBag
+代理类的优化  用invokestatic 代替了 invokevirtual
+
+
+Sprin gBoot 2.* 默认使用 HikariCP
+配置 spirng.datasource.hikari.* 配置
+
+SpringBoot 1.* 需要自己改
+
+
+
+
+08 - 那些好用的连接池们：Alibaba Druid
+
+详细的监控
+exceptionSorter 主流数据库返回码都支持
+sql 防注入
+内置加密配置
+众多拓展点，方便进行定制
+
+
+在连接前后 做一些操作
+
+
+选择连接池：可靠性、性能、功能、可运维、可拓展、其他
+
+
+09 - 如何通过Spring JDBC访问数据库.mp4
+
+
+
+**注解定义bean:**
+Component
+Repository
+Service
+Controller、RestController
+
+
+
+**JdbcTemplate的方法:**
+query
+queryForObject
+queryForList
+update
+execute
+
+
+JdbcTemplat e批处理
+batchUpdate 、 BatchPreparedStatementSetter
+
+NamedParameterJdbcTemplate
+batchUpdate、SqlParameterSourceUtils.createBatch
+
+
+
+
+10 - 什么是Spring的事务抽象（上）
+
+Spring的事务传播特性
+PROPAGEATION_REQUIRED : 0  当前有事务就用当前，没有就用新的 (默认事务传播特性)
+PROPAGEATION_SUPPORTS : 1  事务可有可无、不是必须的        
+PROPAGEATION_MANDATORY ：2  当前一定要有事务，不然就抛异常
+PROPAGEATION_REQUIRES_NEW ：3 无论是否有事务，都启新的事务
+PROPAGEATION_NOT_SUPPORTED ：4 不支持事务，按分事务方式进行
+PROPAGEATION_NEVER ：5   不支持事务，如果有事务则抛异常
+PROPAGEATION_NESTED ：6  当前有事务就在当前事务里再启一个事务
+
+
+事务隔离级别：默认是-1  走数据库的隔离级别
+
+
+11 - 什么是Spring的事务抽象（下）
+ 
+
+**I.编程式事务**
+I.TransactionTemplate  自己写
+II.TransactionCallback
+II.TransactionCallbackWithoutResult 重写方法 TransactionTemplate.execute执行
+
+I.PlatformTransactionManager
+II.可以传入TransactionDefinition进行定义
+
+**II.代码样例**
+private TransactionTemplate transactionTemplate;
+private JdbcTemplate jdbcTemplate;
+transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+@Override
+protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+jdbcTemplate.execute("INSERT INTO FOO (ID, BAR) VALUES (1, 'aaa')");
+log.info("COUNT IN TRANSACTION: {}", getCount());
+  transactionStatus.setRollbackOnly();
+}
+});
+
+
+
+
+**I.声明式事务**  
+面向切面:
+
+Caller>AOP Proxy>Transaction createOrRollback > Custom Advisor(befor、after) > TargetMethod
+
+基于注解的配置
+
+
+**开启事务注解方式:**
+@EnableTransactionManagement
+<tx:annotation-driven/>
+
+
+**一些配置**
+
+proxyTargetClass :true false:是基于接口的事务还是基于类的事务
+mode:
+order:事务AOP拦截顺序、默认最低，
+
+
+**@Transactional** 
+transactionManager
+propagation
+isolation
+timeout
+readOnly
+怎么回滚等 可以配置遇到特定异常才回滚
+
+
+
+
+**12 - 了解Spring的JDBC异常抽象**
+
+Spring将 各个数据的异常都转换成  ：DataAccessException
+
+不管使用 jdbc hibernate都会翻译成 :DataAccessException
+
+
+Spring是怎么认识数据库各个错误码的
+通过SQLErrorCodeSQLExceptionTranslator解析错误码
+
+ErrorCode定义
+support/sql-error-codes.xml
+Classpath下的 sql-error-codes.xml 可以自己定义来替换SQL的定义
+
+
+**定制错误码解析逻辑**
+sql-error-codes.xml
+
+https://gitee.com/geektime-geekbang/geektime-spring-family/tree/master/Chapter%202/errorcode-demo
+
+
+单测 单元测试 spring
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class ErrorCodeDemoApplicationTests {
+@Autowired
+private JdbcTemplate jdbcTemplate;
+	@Test(expected = CustomDuplicatedKeyException.class)
+	public void testThrowingCustomException() {
+		jdbcTemplate.execute("INSERT INTO FOO (ID, BAR) VALUES (1, 'a')");
+	}
+}
+
+
+
+
+
+13 - 课程答疑（上） 14 - 课程答疑（下）
+
+**开发环境**
+java8 ide lombak 
+
+**I.spring常见注解**
+
+**II.java Config相关**
+@Configuration
+@ImportResource
+@ComponentScan
+@Bean
+@ConfigurationProperties
+
+**II.定义相关注解**
+@Component @Repository数据库 @Service
+@Controller @RestController
+@RequestMapping
+
+**II.注入相关注解**
+@Autowired @Qualifier @Resource
+@Value
+
+
+
+
+**Actuator Endpoints访问不到**
+健康检查、查看容器中的所有bean、查看web Url映射、 查看环境信息
+
+生产不要用这些功能
+
+
+
+
+**多数据源 分库分表 读写分离**
+中间件进行路由
+
+
+
+
+
+
+**内部方法调用和事务问题**
+
+
+
+**REQUIRES_NEW 和 NESTED 事务传播的说明**
+
+
+
+**Alibaba Druid 展开说明**
+系统属性配置
+慢SQL配置 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
