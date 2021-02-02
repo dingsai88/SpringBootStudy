@@ -1651,3 +1651,21 @@ https://www.bilibili.com/video/BV1xh411Z79d?p=106
 
 
 
+
+
+
+
+set session transaction isolation level repeatable read;
+
+
+start transaction;
+
+
+SELECT * from test where test=1;
+
+
+-- update test set data_value =data_value+5  where test=1;
+
+SELECT @@tx_isolation ;
+
+

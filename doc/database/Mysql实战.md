@@ -1873,6 +1873,24 @@ innodb_max_purge_lag_delay:最大毫秒数,防止purege操作无限等待
 
 
 
+set session transaction isolation level repeatable read;
+
+
+start transaction;
+
+
+SELECT * from test where test=1;
+
+
+-- update test set data_value =data_value+5  where test=1;
+
+SELECT @@tx_isolation ;
+
+
+
+
+
+
 
 
 

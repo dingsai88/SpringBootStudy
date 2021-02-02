@@ -417,7 +417,258 @@ java8 ide lombak
 
 
 
+**15 - 认识Spring Data JPA**
 
+
+
+JPA 为对象关系映射提供了⼀种基于 POJO 的持久化模型
+简化数据持久化代码的开发⼯作
+为 Java 社区屏蔽不同持久化 API 的差异
+
+
+
+
+**Spring Data**
+
+在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+
+
+主要模块：
+Spring Data Commons
+Spring Data JDBC
+Spring Data JPA
+Spring Data Redis
+
+
+
+
+
+
+**16 - 定义JPA的实体对象**
+
+**常⽤ JPA 注解**
+
+**I.实体**
+• @Entity、@MappedSuperclass
+• @Table(name)
+
+
+
+**I.主键**
+• @Id
+•• @GeneratedValue(strategy, generator)
+•• @SequenceGenerator(name, sequenceName)
+
+
+**I.映射**
+• @Column(name, nullable, length, insertable, updatable)
+• @JoinTable(name)、@JoinColumn(name)
+
+**I.关系**
+• @OneToOne、@OneToMany、@ManyToOne、@ManyToMany
+• @OrderBy
+
+
+
+
+
+
+**17 - 开始我们的线上咖啡馆实战项目：SpringBucks**
+
+
+
+实体定义
+org.joda
+joda-money
+1.0.1
+
+org.jadira.usertype
+usertype.core
+
+@Column
+@Type(type="PersistentMoneyAmount",@org.hibernate.Parameter(name="currencyCode",value="CNY"))
+private Money price;
+
+
+
+
+18 - 通过Spring Data JPA操作数据库
+
+
+**Repository**
+
+@EnableJpaRepositories 
+
+Repository<T, ID> 接⼝
+• CrudRepository<T, ID>
+• PagingAndSortingRepository<T, ID>
+• JpaRepository<T, ID>
+
+**定义查询**
+
+根据⽅法名定义查询
+• find…By… / read…By… / query…By… / get…By…
+• count…By…
+• …OrderBy…[Asc / Desc]
+• And / Or / IgnoreCase
+• Top / First / Distinct
+
+
+**分⻚查询**
+• PagingAndSortingRepository<T, ID>
+• Pageable / Sort
+• Slice<T> / Page<T>
+
+
+
+**保存实体**
+https://gitee.com/geektime-geekbang/geektime-spring-family/tree/master/Chapter%203/springbucks/src/main/java/geektime/spring/springbucks/model
+
+
+
+
+
+**查询实体**
+
+
+@Slf4j
+@Service
+public class CoffeeService {
+@Autowired
+private CoffeeRepository coffeeRepository;
+    public Optional<Coffee> findOneCoffee(String name) {
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", exact().ignoreCase());
+        Optional<Coffee> coffee = coffeeRepository.findOne(
+                Example.of(Coffee.builder().name(name).build(), matcher));
+        log.info("Coffee Found: {}", coffee);
+        return coffee;
+    }
+}
+
+https://gitee.com/geektime-geekbang/geektime-spring-family/tree/master/Chapter%203
+
+
+
+
+
+**Repository 是怎么从接⼝变成 Bean 的**
+
+JpaRepositoriesRegistrar
+• 激活了 @EnableJpaRepositories
+• 返回了 JpaRepositoryConfigExtension
+RepositoryBeanDefinitionRegistrarSupport.registerBeanDefinitions
+• 注册 Repository Bean（类型是 JpaRepositoryFactoryBean ）
+RepositoryConfigurationExtensionSupport.getRepositoryConfigurations
+• 取得 Repository 配置
+JpaRepositoryFactory.getTargetRepository
+• 创建了 Repository
+
+
+
+**接⼝中的⽅法是如何被解释的**
+RepositoryFactorySupport.getRepository 添加了Advice
+• DefaultMethodInvokingMethodInterceptor
+• QueryExecutorMethodInterceptor
+AbstractJpaQuery.execute 执⾏具体的查询
+语法解析在 Part 中
+
+
+
+
+**通过 MyBatis 操作数据库**
+
+
+
+
+
+
+
+**20 - 通过MyBatis操作数据库**
+
+
+认识 MyBatis
+MyBatis（https://github.com/mybatis/mybatis-3）
+• ⼀款优秀的持久层框架
+• ⽀持定制化 SQL、存储过程和⾼级映射
+
+
+在 Spring 中使⽤ MyBatis
+• MyBatis Spring Adapter（https://github.com/mybatis/spring）
+• MyBatis Spring-Boot-Starter（https://github.com/mybatis/spring-boot-starter）
+
+
+简单配置
+• mybatis.mapper-locations = classpath*:mapper/**/*.xml
+• mybatis.type-aliases-package = 类型别名的包名
+• mybatis.type-handlers-package = TypeHandler扫描包名
+• mybatis.configuration.map-underscore-to-camel-case = true
+
+
+
+
+Mapper 的定义与扫描
+• @MapperScan 配置扫描位置
+• @Mapper 定义接⼝
+• 映射的定义—— XML 与注解
+
+
+
+
+
+Mapper 的定义与扫描
+
+
+
+
+**21 - 让MyBatis更好用的那些工具：MyBatis Generator**
+自动生成 语句
+
+MyBatis Generator（http://www.mybatis.org/generator/）
+• MyBatis 代码⽣成器
+• 根据数据库表⽣成相关代码
+• POJO
+• Mapper 接⼝
+• SQL Map XML
+
+
+**运⾏ MyBatis Generator**
+**I.命令⾏   我自己用的方式**
+• java -jar mybatis-generator-core-x.x.x.jar -configfile generatorConfig.xml
+
+
+**I.Maven Plugin（mybatis-generator-maven-plugin）**
+• mvn mybatis-generator:generate
+• ${basedir}/src/main/resources/generatorConfig.xml
+
+**I.Eclipse Plugin**
+**I.Java 程序**
+**I.Ant Task**
+
+
+
+
+
+
+配置 MyBatis Generator
+generatorConfiguration
+context
+• jdbcConnection
+• javaModelGenerator
+• sqlMapGenerator
+• javaClientGenerator （ANNOTATEDMAPPER / XMLMAPPER / MIXEDMAPPER）
+• table
+
+
+
+
+**22 - 让MyBatis更好用的那些工具：MyBatis PageHelper**
+
+MyBatis PageHepler（https://pagehelper.github.io）
+• ⽀持多种数据库
+• ⽀持多种分⻚⽅式
+• SpringBoot ⽀持（https://github.com/pagehelper/pagehelper-spring-boot ）
+• pagehelper-spring-boot-starter
 
 
 
