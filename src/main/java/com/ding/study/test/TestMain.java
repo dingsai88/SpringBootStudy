@@ -2,6 +2,8 @@ package com.ding.study.test;
 
 import com.ding.study.util.JsonUtils;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 
 /**
@@ -22,6 +24,13 @@ public class TestMain {
         linkedList2.add(4);
         linkedList2.add(6);
         System.out.println(JsonUtils.convertObjToJsonString(sortLink(linkedList1, linkedList2)));
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+
+        LocalDateTime ldt = LocalDateTime.parse("2021-02-08T00:00:00.000+0800",df);
+        System.out.println("LocalDateTime转成String类型的时间："+ldt);
+
+
 
     }
 
