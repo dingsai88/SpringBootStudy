@@ -1,6 +1,6 @@
 https://www.jianshu.com/p/c59f5f353390
 https://docs.spring.io/spring-boot/docs/2.1.12.RELEASE/reference/html/production-ready-metrics.html
-
+http://c.biancheng.net/view/5362.html
 
 
 
@@ -243,7 +243,7 @@ update
 execute
 
 
-JdbcTemplat e批处理
+JdbcTemplate批处理
 batchUpdate 、 BatchPreparedStatementSetter
 
 NamedParameterJdbcTemplate
@@ -496,16 +496,90 @@ private Money price;
 
 
 18 - 通过Spring Data JPA操作数据库
+在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+
+JPA 为对象关系映射提供了⼀种基于 POJO 的持久化模型
+• 简化数据持久化代码的开发⼯作
+• 为 Java 社区屏蔽不同持久化 API 的差异
+
+**Spring Data**
+在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+主要模块
+• Spring Data Commons
+• Spring Data JDBC
+• Spring Data JPA
+• Spring Data Redis
 
 
-**Repository**
 
-@EnableJpaRepositories 
+
+
+
+
+
+
+**常⽤ JPA 注解**
+ 
+
+@EnableJpaRepositories
+@EnableJpaRepositories( basePackages = "com.ding")取代xml
 
 Repository<T, ID> 接⼝
 • CrudRepository<T, ID>
 • PagingAndSortingRepository<T, ID>
 • JpaRepository<T, ID>
+
+
+实体
+• @Entity、@MappedSuperclass
+• @Table(name)
+
+
+主键
+• @Id
+• @GeneratedValue(strategy, generator)
+• @SequenceGenerator(name, sequenceName)
+
+映射
+• @Column(name, nullable, length, insertable, updatable)
+• @JoinTable(name)、@JoinColumn(name)
+
+
+关系
+• @OneToOne、@OneToMany、@ManyToOne、@ManyToMany
+• @OrderBy
+
+
+
+
+
+
+
+
+
+Project Lombok
+Project Lombok 能够⾃动嵌⼊ IDE 和构建⼯具，提升开发效率
+常⽤功能
+• @Getter / @Setter
+• @ToString
+• @NoArgsConstructor / @RequiredArgsConstructor / @AllArgsConstructor
+• @Data
+• @Builder
+• @Slf4j / @CommonsLog / @Log4j2
+
+
+
+
+
+@EnableJpaRepositories
+@EnableJpaRepositories( basePackages = "com.ding")取代xml
+
+Repository<T, ID> 接⼝
+• CrudRepository<T, ID>
+• PagingAndSortingRepository<T, ID>
+• JpaRepository<T, ID>
+
+
 
 **定义查询**
 
@@ -977,6 +1051,11 @@ StringRedisTemplate
 
 **31 - Project Reactor 介绍（上）**
 
+“在计算机中，响应式编程或反应式编程（英语：Reactive
+Programming）是⼀种⾯向数据流和变化传播的编程范式。这
+意味着可以在编程语⾔中很⽅便地表达静态或动态的数据流，
+⽽相关的计算模型会⾃动将变化的值通过数据流进⾏传播。
+
 
 33 - 通过 Reactive 的方式访问 Redis
 
@@ -1087,7 +1166,7 @@ Alibaba Druid
 DispatcherServlet(所有请求的入口)
 I.Controller
 
-II.xxxResolver
+II.xxxResolver解析器
 III. ViewResolver(视图解析器)
 III. HandlerExceptionResolver(异常解析器)
 III. MultipartResolver（文件上传等解析器）
@@ -1113,14 +1192,14 @@ I. @RequestBody / @ResponseBody / @ResponseStatus(返回的http相应吗)
 
 
 
-理解 Spring 的应⽤上下⽂
+理解 Spring 的应⽤上下⽂：是一个容器(业务容器+配置)、管理对象的生命周期
 
 
 **关于上下⽂常⽤的接⼝**
-I.  BeanFactory
+I.  BeanFactory(Spring里最低层的接口，提供了最简单的容器的功能，只提供了实例化对象和拿对象的功能；)
 II.DefaultListableBeanFactory
 
-I. ApplicationContext
+I. ApplicationContext(继承BeanFactory接口，它是Spring的一各更高级的容器，提供了更多的有用的功能)
 II.ClassPathXmlApplicationContext
 II.FileSystemXmlApplicationContext
 II.AnnotationConfigApplicationContext
@@ -1137,11 +1216,14 @@ I. WebApplicationContext
 ⼀个请求的⼤致处理流程
 绑定⼀些 Attribute
 • WebApplicationContext / LocaleResolver / ThemeResolver
+
 处理 Multipart
 • 如果是，则将请求转为 MultipartHttpServletRequest
+
 Handler 处理
 • 如果找到对应 Handler，执⾏ Controller 及前后置处理器逻辑
-处理返回的 Model ，呈现视图
+
+处理返回的Model ，呈现视图
 
 
 
@@ -1181,8 +1263,8 @@ Handler 处理
 定义类型转换
 ⾃⼰实现 WebMvcConfigurer
 • Spring Boot 在 WebMvcAutoConfiguration 中实现了⼀个
-• 添加⾃定义的 Converter
-• 添加⾃定义的 Formatter
+• 添加⾃定义的 Converter  转换器
+• 添加⾃定义的 Formatter 格式化程序
 
 
 
@@ -1190,7 +1272,7 @@ Handler 处理
 
 定义校验
 • 通过 Validator 对绑定结果进⾏校验
-• Hibernate Validator
+•• Hibernate Validator
 • @Valid 注解
 • BindingResult 
 
@@ -1237,7 +1319,7 @@ DispatcherServlet 中的视图解析逻辑
 
 重定向
 两种不同的重定向前缀
-• redirect:
+• redirect:发送到客户端重新访问新地址
 • forward:
 
 
@@ -1252,11 +1334,18 @@ SpringBoot支持如下页面模板语言
 
 
 
-Spring MVC ⽀持的视图
+**Spring MVC ⽀持的视图**
 ⽀持的视图列表
-• https://docs.spring.io/spring/docs/5.1.5.RELEASE/spring-frameworkreference/web.html#mvc-view
+https://docs.spring.io/spring/docs/5.1.5.RELEASE/spring-frameworkreference/web.html#mvc-view
+https://docs.spring.io/spring-framework/docs/5.1.5.RELEASE/spring-framework-reference/web.html#mvc-view
+
+
+
 • Jackson-based JSON / XML
-• Thymeleaf & FreeMarker
+Thymeleaf 
+FreeMarker
+Thymeleaf
+
 
 
 配置 MessageConverter
@@ -1387,6 +1476,8 @@ Spring Boot 中的配置
 
 
 **53 - 通过 RestTemplate 访问 Web 资源**
+https://docs.spring.io/spring-framework/docs/5.1.5.RELEASE/spring-framework-reference/web.html#webmvc-client
+
 
 
 Spring Boot 中的 RestTemplate
@@ -1591,8 +1682,8 @@ WebClient 的基本⽤法
 如何实现 Restful Web Service
 • 识别资源
 • 选择合适的资源粒度
-• 设计 URI
-• 选择合适的 HTTP ⽅法和返回码
+• 设计URI
+• 选择合适的HTTP⽅法和返回码
 • 设计资源的表述
 
 
@@ -1882,7 +1973,7 @@ WebFlux 中的编程模型
 
 **67 - 认识 Spring Boot 的组成部分**
 
-认识 Spring Boot 的组成部分
+认识 Spring Boot的组成部分
 
 
 
@@ -1924,6 +2015,7 @@ Spring Boot 的特性
 ⾃动配置
 • 基于添加的 JAR 依赖⾃动对 Spring Boot 应⽤程序进⾏配置
 • spring-boot-autoconfiguration
+
 开启⾃动配置
 • @EnableAutoConfiguration
 ••  exclude = Class<?>[]
@@ -1968,8 +2060,11 @@ ConditionEvaluationReportLoggingListener
 主要⼯作内容
 编写 Java Config
 • @Configuration
+
 添加条件
 • @Conditional
+
+
 定位⾃动配置
 • META-INF/spring.factories
 
@@ -2095,8 +2190,10 @@ XxxAware 接⼝
 了解你的依赖
 • mvn dependency:tree
 • IDEA Maven Helper 插件
+
 排除特定依赖
 • exclusion
+
 统⼀管理依赖
 • dependencyManagement
 • Bill of Materials - bom
@@ -2128,6 +2225,7 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot
 主要内容
 • autoconfigure 模块，包含⾃动配置代码
 • starter 模块，包含指向⾃动配置模块的依赖及其他相关依赖
+
 命名⽅式
 • xxx-spring-boot-autoconfigure
 • xxx-spring-boot-starter
@@ -2155,27 +2253,16 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot
 • @SpringBootTest#properties 属性
 • 命令⾏参数（ --server.port=9000 ）
 • SPRING_APPLICATION_JSON 中的属性
-
-外化配置加载顺序
- 
 • ServletConfig 初始化参数
 • ServletContext 初始化参数
 • java:comp/env 中的 JNDI 属性
 • System.getProperties()  启动 -d 的一些参数
 • 操作系统环境变量
 • random.* 涉及到的 RandomValuePropertySource
-
-
-
-
 • jar 包外部的 application-{profile}.properties 或 .yml
 • jar 包内部的 application-{profile}.properties 或 .yml
 • jar 包外部的 application.properties 或 .yml
 • jar 包内部的 application.properties 或 .yml
-
-
-
-外化配置加载顺序
 • @Configuration 类上的 @PropertySource
 • SpringApplication.setDefaultProperties() 设置的默认属性
 
@@ -2200,17 +2287,18 @@ application.properties
 
 Relaxed Binding
 命名⻛格 使⽤范围 示例
-短划线分隔
+
 Properties ⽂件
 YAML ⽂件
 系统属性
+短划线分隔
 geektime.spring-boot.first-demo
 驼峰式 geektime.springBoot.firstDemo
 下划线分隔 geektime.spring_boot.first_demo
 全⼤写，下划线分隔 环境变量 GEEKTIME_SPRINGBOOT_FIRSTDEMO
 
 
-
+短划线分隔、驼峰式、下划线分隔、全⼤写下划线分隔
 
 
 
@@ -2393,7 +2481,7 @@ DataSourceHealthIndicator MailHealthIndicator RedisHealthIndicator
 **77 - 通过 Micrometer 获取运行数据**
 https://docs.spring.io/spring-boot/docs/2.1.12.RELEASE/reference/html/production-ready-metrics.html
 
-
+Micrometer(给监控提供度量)
 为主流监控系统提供探针等功能  
 
 认识 Micrometer
@@ -2472,7 +2560,7 @@ Datadog
 
 **78 - 通过 Spring Boot Admin 了解程序的运行状态**
 
-Spring Boot Admin
+Spring Boot Admin（后台管理Actuator监控）
 ⽬的
 • 为 Spring Boot 应⽤程序提供⼀套管理界⾯
 主要功能
@@ -2753,10 +2841,1548 @@ USER 设置运⾏的⽤户 USER <user>[:<group>]
 **86 - 简单理解微服务**
 
 
+Spring Cloud 及 Cloud Native 概述
+
+
+简单理解微服务
+“微服务就是⼀些协同⼯作的⼩⽽⾃治的服务。”
+
+
+
+微服务的优点
+异构性• 语⾔、存储……
+
+弹性• ⼀个组件不可⽤，不会导致级联故障
+
+扩展• 单体服务不易扩展，多个较⼩的服务可以按需扩展
+
+
+微服务的优点
+• 易于部署
+• 与组织结构对⻬
+• 可组合性
+• 可替代性
+
+
+实施微服务的代价
+• 没有银弹！！！
+• 分布式系统的复杂性
+• 开发、测试等诸多研发过程中的复杂性
+• 部署、监控等诸多运维复杂性
 
 
 
 
+**87 - 如何理解云原生(Cloud Native)**
+
+
+“云原⽣技术有利于各组织在公有云、私有云和混合云等新型动态环境中，构建和运⾏可弹性扩展的应⽤。”
+
+
+云原⽣应⽤要求……
+DevOps(开发运维高品质软件服务)
+• 开发与运维⼀同致⼒于交付⾼品质的软件服务于客户
+
+持续交付
+• 软件的构建、测试和发布，要更快、更频繁、更稳定
+
+微服务
+• 以⼀组⼩型服务的形式来部署应⽤
+
+容器
+• 提供⽐传统虚拟机更⾼的效率
+
+
+Cloud Native Computing Foundation
+
+DevOps(开发运维高品质软件服务)、持续交付(构建测试和发布)、微服务、容器(比VM更高效率)
+
+
+**88 - 12-Factor App（上）**
+
+云原生(Cloud Native) 的实践
+12-Factor App
+Factor App-云原生(Cloud Native) 的实践
+
+THE TWELVE-FACTOR APP
+⽬的
+• 为构建 SaaS 应⽤提供⾏之有效的⽅法论
+• 适⽤于任意语⾔和后端服务的开发的应⽤程序
+• https://12factor.net/zh_cn/
+
+
+
+了解 12-Factors
+基准代码（Codebase）:• ⼀份基准代码，多份部署
+
+依赖（Dependencies）:• 显式声明依赖关系
+
+配置（Config）:• 在环境中存储配置
+
+后端服务（Backing services）:• 把后端服务当作附加资源
+
+ 
+构建，发布，运⾏（Build, release, run）:• 严格分离构建和运⾏
+
+进程（Processes）:• 以⼀个或多个⽆状态进程运⾏应⽤
+
+端⼝绑定（Port Binding）:• 通过端⼝绑定提供服务
+
+并发（Concurrency）:• 通过进程模型进⾏扩展
+
+ 
+易处理（Disposability）:• 快速启动和优雅终⽌可最⼤化健壮性
+
+开发环境与线上环境等价（Dev / Prod parity）:• 尽可能的保持开发，预发布，线上环境相同
+
+⽇志（Logs）:• 把⽇志当作事件流
+
+管理进程（Admin processes）:• 后台管理任务当作⼀次性进程运⾏
+
+
+⼀份基准代码，多份部署
+• 使⽤版本控制系统加以管理
+• 基准代码与应⽤保持⼀⼀对应的关系
+• 尽管每个应⽤只对应⼀份基准代码，但可以同时存在多份部署
+
+
+
+显式声明依赖关系
+• 12-Factor 的应⽤程序不会隐式依赖系统级的类库
+• 它⼀定通过依赖清单，确切地声明所有依赖项
+• 在运⾏过程中，通过依赖隔离⼯具来确保程序不会调⽤系统中存
+在但清单中未声明的依赖项
+
+
+
+严格分离构建和运⾏
+• 12-Facfor 应⽤严格区分构建、发布、运⾏三个步骤
+• 部署⼯具通常都提供了发布管理⼯具
+• 每⼀个发布版本必须对应⼀个唯⼀的发布 ID
+
+
+以⼀个或多个⽆状态进程运⾏应⽤
+• 12-Factor 应⽤的进程必须⽆状态且⽆共享
+• 任何需要持久化的数据都要存储在后端服务内
+
+
+快速启动和优雅终⽌可最⼤化健壮性
+• 进程应当追求最⼩启动时间
+• 进程⼀旦接收终⽌信号就会优雅的终⽌
+• 进程应当在⾯对突然死亡时保持健壮
+
+
+尽可能的保持开发，预发布，线上环境相同
+• 想要做到持续部署就必须缩⼩本地与线上差异
+• 后端服务是保持开发与线上等价的重要部分
+• 应该反对在不同环境间使⽤不同的后端服务
+
+
+
+
+**90 - 认识Spring Cloud的组成部分**
+
+
+“Spring Cloud offers a simple and accessible programming
+model to the most common distributed system patterns,
+helping developers build resilient, reliable, and coordinated  applications.”
+
+
+
+Spring Cloud 的主要功能
+• 服务发现
+• 服务熔断
+• 配置服务
+• 服务安全
+• 服务⽹关
+• 分布式消息
+• 分布式跟踪
+• 各种云平台⽀持
+
+
+Spring Cloud 的版本号规则
+• Spring Cloud 是个⼤⼯程，其中包含多个独⽴项⽬
+• BOM - Release Train
+• London Tube Stations
+• 字⺟序排列
+• Greenwich, Finchley, Edgware …
+• SR - Service Release
+
+
+
+
+
+
+**91 - 使用Eureka作为服务注册中心** 不建议学习和使用了
+https://spring.io/guides/gs/service-registration-and-discovery/
+
+认识 Eureka
+什么是 Eureka
+• Eureka 是在 AWS 上定位服务的 REST 服务
+Netflix OSS
+• https://netflix.github.io
+Spring 对 Netflix 套件的⽀持
+• Spring Cloud Netflix
+
+
+在本地启动⼀个简单的 Eureka 服务
+Starter
+• spring-cloud-dependencies
+• spring-cloud-starter-netflix-eureka-starter
+声明
+• @EnableEurekaServer
+注意事项
+• 默认端⼝8761
+• Eureka ⾃⼰不要注册到 Eureka 了
+
+将服务注册到 Eureka Server
+Starter
+• spring-cloud-starter-netflix-eureka-client
+声明
+• @EnableDiscoveryClient
+• @EnableEurekaClient
+⼀些配置项
+• eureka.client.service-url.default-zone
+• eureka.client.instance.prefer-ip-address
+
+
+关于 Bootstrap 属性
+Bootstrap 属性
+• 启动引导阶段加载的属性
+• bootstrap.properties | .yml
+• spring.cloud.bootstrap.name=bootstrap
+常⽤配置
+• spring.application.name=应⽤名
+• 配置中⼼相关
+
+
+
+
+
+
+
+
+
+
+
+
+**92 - 使用Spring Cloud Loadbalancer访问服务**
+
+
+如何获得服务地址
+EurekaClient
+• getNextServerFromEureka()
+
+DiscoveryClient
+• getInstances()
+
+
+Spring Cloud Ribbon（负载均衡器）:
+
+
+
+Load Balancer Client
+RestTemplate 与 WebClient
+
+
+• @LoadBalaced
+• 实际是通过 ClientHttpRequestInterceptor 实现的
+•• LoadBalancerInterceptor
+•• LoadBalancerClient
+••• RibbonLoadBalancerClient
+
+
+
+
+
+**93 - 使用Feign访问服务** feign份
+
+
+
+
+
+认识 Feign
+
+
+Feign
+• 声明式 REST Web 服务客户端
+• https://github.com/OpenFeign/feign
+
+Spring Cloud OpenFeign
+• spring-cloud-starter-openfeign
+
+
+
+Feign 的简单使⽤
+开启 Feign ⽀持
+• @EnableFeignClients
+
+定义 Feign 接⼝
+• @FeignClient
+
+
+简单配置
+• FeignClientsConfiguration
+• Encoder / Decoder / Logger / Contract / Client …
+
+
+
+
+
+
+
+
+Feign 的⼀些其他配置
+• feign.okhttp.enabled=true
+• feign.httpclient.enabled=true
+• feign.compression.response.enabled=true
+• feign.compression.request.enabled=true
+• feign.compression.request.mime-types=
+text/xml,application/xml,application/json
+• feign.compression.request.min-request-size=2048
+
+
+
+
+
+
+
+
+
+**94 - 深入理解服务发现背后的DiscoveryClient**
+
+
+
+
+Spring Cloud Commons 提供的抽象
+服务注册抽象
+• 提供了 ServiceRegistry 抽象
+客户发现抽象
+• 提供了 DiscoveryClient 抽象
+• @EnableDiscoveryClient
+• 提供了 LoadBalancerClient 抽象
+
+
+
+⾃动向 Eureka 服务端注册
+ServiceRegistry
+• EurekaServiceRegistry
+• EurekaRegistration
+⾃动配置
+• EurekaClientAutoConfiguration
+• EurekaAutoServiceRegistration
+• SmartLifecycle
+
+
+
+
+**95 - 使用Zookeeper作为服务注册中心**
+
+
+
+
+认识 Zookeeper
+Zookeeper
+• A Distributed Coordination Service for Distributed Applications
+• http://zookeeper.apache.org
+设计⽬标
+• 简单
+• 多副本
+• 有序
+• 快
+
+
+使⽤ Zookeeper 作为注册中⼼
+Spring Cloud Zookeeper
+• spring-cloud-starter-zookeeper-discovery
+• Apache Curator
+简单配置
+• spring.cloud.zookeeper.connect-string=localhost:2181
+提示
+• 注意 Zookeeper 的版本
+• 3.5.x 还是 Beta，但很多⼈在⽣产中使⽤它
+
+
+
+
+
+使⽤ Zookeeper 作为注册中⼼的问题
+两篇⽂章值得阅读
+• 《阿⾥巴巴为什么不⽤ Zookeeper 做服务发现》
+• 《Eureka! Why You Shouldn’t Use ZooKeeper for Service Discovery》
+
+核⼼思想
+• 在实践中，注册中⼼不能因为⾃身的任何原因破坏服务之间本身的可连通性
+• 注册中⼼需要 AP，⽽ Zookeeper 是 CP
+• CAP - ⼀致性、可⽤性、分区容忍性
+
+
+通过 Docker 启动 Zookeeper
+官⽅指引
+• https://hub.docker.com/_/zookeeper
+获取镜像
+• docker pull zookeeper:3.5
+运⾏ Zookeeper 镜像
+• docker run --name zookeeper -p 2181:2181 -d zookeeper:3.5
+
+
+
+
+
+
+**96 - 使用Consul作为服务注册中心**
+
+
+
+“Consul is a distributed, highly available, and data center
+aware solution to connect and configure applications across
+dynamic, distributed infrastructure.”
+
+
+
+https://github.com/hashicorp/consul
+
+
+
+认识 HashiCorp Consul
+Consul
+• https://www.consul.io
+
+
+关键特性
+• 服务发现
+• 健康检查
+• KV 存储
+• 多数据中⼼⽀持
+• 安全的服务间通信
+
+
+
+使⽤ Consul 提供服务发现能⼒
+Consul 的能⼒
+• Service registry, integrated health checks, and DNS and HTTP
+interfaces enable any service to discover and be discovered by
+other services
+
+
+好⽤的功能
+• HTTP API
+• DNS（ xxx.service.consul ）
+• 与 Nginx 联动，⽐如 ngx_http_consul_backend_module
+
+
+
+使⽤ Consul 作为注册中⼼
+Spring Cloud Consul
+• spring-cloud-starter-consul-discovery
+简单配置
+• spring.cloud.consul.host=localhost
+• spring.cloud.consul.port=8500
+• spring.cloud.consul.discovery.prefer-ip-address=true
+
+
+
+
+
+通过 Docker 启动 Consul
+官⽅指引
+• https://hub.docker.com/_/consul
+
+获取镜像
+• docker pull consul
+
+
+运⾏ Consul 镜像
+• docker run --name consul -d -p 8500:8500 -p 8600:8600/udp consul
+
+
+
+
+**97 - 使用Nacos作为服务注册中心** 推荐 阿里巴巴开源
+
+认识 Nacos(阿里巴巴)
+Nacos
+• ⼀个更易于构建云原⽣应⽤的动态服务发现、配置管理和服务管理平台。
+• https://nacos.io/zh-cn/index.html
+
+功能
+• 动态服务配置  ：配置
+• 服务发现和管理 ：服务发现
+• 动态 DNS 服务
+
+认识 Nacos
+
+
+
+使⽤ Nacos 作为注册中⼼
+Spring Cloud Alibaba
+• spring-cloud-alibaba-dependencies
+• spring-cloud-starter-alibaba-nacos-discovery
+简单配置
+• spring.cloud.nacos.discovery.server-addr
+
+
+
+
+
+通过 Docker 启动 Nacos
+官⽅指引
+• https://hub.docker.com/r/nacos/nacos-server
+获取镜像
+• docker pull nacos/nacos-server
+运⾏ Nacos 镜像
+• docker run --name nacos -d -p 8848:8848 -e MODE=standalone
+nacos/nacos-server
+• ⽤户名密码为 nacos
+
+
+
+
+
+
+
+
+**如何定制⾃⼰的 DiscoveryClient**
+
+
+
+已经接触过的 Spring Cloud 类
+DiscoveryClient
+• EurekaDiscoveryClient
+• ZookeeperDiscoveryClient
+• ConsulDiscoveryClient
+• NacosDiscoveryClient
+
+
+LoadBalancerClient
+• RibbonLoadBalancerClient
+
+
+
+
+
+实现⾃⼰的 DiscoveryClient
+需要做的：
+• 返回该 DiscoveryClient 能提供的服务名列表
+• 返回指定服务对应的 ServiceInstance 列表
+• 返回 DiscoveryClient 的顺序
+• 返回 HealthIndicator ⾥显示的描述
+
+
+
+
+实现⾃⼰的 RibbonClient ⽀持
+需要做的：
+• 实现⾃⼰的 ServerList<T extends Server>
+• Ribbon 提供了 AbstractServerList<T extends Server>
+• 提供⼀个配置类，声明 ServerList Bean 实例
+
+
+
+
+
+
+
+**99 - SpringBucks实战项目进度小结**
+
+
+
+各种服务注册中⼼
+• Eureka、Zookeeper、Consul、Nacos
+
+
+**如何在服务间进⾏负载均衡**
+• Ribbon(RestTemplat、WebClient)、OpenFeign
+
+
+I.Spring Cloud Ribbon:是一个基于HTTP和TCP的客户端负载均衡工具 ，它基于Netflix Ribbon实现。通过Spring Cloud的封装
+II.spring提供(RestTemplat(带有注解LoadBalanced) 
+II.WebClient(spring提供)： reactive版的RestTemplate。
+
+
+I.Feign(OpenFeign (Netflix 的产品))：
+II.OpenFeign (Netflix 的产品)
+
+
+
+Spring Cloud 的服务注册与发现机制
+• ServiceRegistry、DiscoveryClient
+• LoadBalancerClient
+
+
+
+
+
+**100 - 使用Hystrix 实现服务熔断（上）**  官方不再支持
+
+服务熔断
+
+降级:保核心业务非核心不保:抛异常、返回NULL、调用Mock数据、调用Fallback处理逻辑
+
+限流:超出请求返回错误
+
+
+
+
+
+断路器模式
+
+
+断路器
+• Circuit Breaker pattern - Release It, Michael Nygard
+• CircuitBreaker, Martin Fowler
+• https://martinfowler.com/bliki/CircuitBreaker.html
+
+
+
+**核⼼思想**
+• 在断路器对象中封装受保护的⽅法调⽤
+• 该对象监控调⽤和断路情况
+• 调⽤失败触发阈值后，后续调⽤直接由断路器返回错误，不再执⾏实际调⽤
+
+断路器
+1.前几次服务之间调用都是超时
+2.超过阈值以后，直接返回错误，不往后台再请求了。
+
+
+
+
+
+Netflix Hystrix
+• 实现了断路器模式
+• @HystrixCommand
+• fallbackMethod / commandProperties
+• @HystrixProperty(name="execution.isolation.strategy",
+value=“SEMAPHORE")
+• https://github.com/Netflix/Hystrix/wiki/Configuration
+
+
+
+
+
+
+
+Netflix Hystrix
+
+
+**Spring Cloud ⽀持**
+• spring-cloud-starter-netflix-hystrix
+• @EnableCircuitBreaker
+
+
+
+**Feign ⽀持**
+• feign.hystrix.enabled=true
+
+• @FeignClient
+•• fallback / fallbackFactory
+
+
+
+
+
+
+
+
+
+
+**102 - 如何观察服务熔断**
+
+如何了解熔断的情况
+打⽇志
+• 在发⽣熔断时打印特定该⽇志
+
+
+
+看监控
+• 主动向监控系统埋点，上报熔断情况
+• 提供与熔断相关的 Endpoint，让第三⽅系统来拉取信息
+
+
+
+Hystrix Dashboard
+
+Spring Cloud 为我们提供了
+
+• Hystrix Metrics Stream
+•• spring-boot-starter-actuator
+••• /actuator/hystrix.stream
+
+
+• Hystrix Dashboard
+
+•• spring-cloud-starter-netflix-hystrix-dashboard
+
+••• @EnableHystrixDashboard
+••• /hystrix
+
+
+
+
+聚合集群熔断信息
+Spring Cloud 为我们提供了
+• Netflix Turbine
+• spring-cloud-starter-netflix-turbines
+• @EnableTurbine
+• /turbine.stream?cluster=集群名
+
+
+
+
+
+**103 - 使用Resilience4j实现服务熔断**
+
+
+Hystrix 以外的选择
+
+
+Hystrix
+• Netflix 停⽌维护，给了官⽅推荐
+
+Resilience4j
+• https://github.com/resilience4j/resilience4j
+• ⼀款受 Hystrix 启发的轻量级且易于使⽤的容错库
+• 针对 Java 8 与函数式编程设计
+
+
+核⼼组件
+组件名称 功能
+resilience4j-circuitbreaker Circuit breaking
+resilience4j-ratelimiter 频率控制
+resilience4j-bulkhead 依赖隔离&负载保护
+resilience4j-retry ⾃动重试
+resilience4j-cache 应答缓存
+resilience4j-timelimiter 超时控制
+
+
+附加组件
+组件名称 功能
+resilience4j-reactor Spring Reactor ⽀持
+resilience4j-micrometer Micrometer Metrics 输出
+resilience4j-prometheus Prometheus Metrics 输出
+resilience4j-spring-boot2 Spring Boot 2 Starter
+resilience4j-feign Feign 适配器
+
+
+
+
+断路器
+实现
+• 基于 ConcurrentHashMap 的内存断路器
+• CircuitBreakerRegistry
+• CircuitBreakerConfig
+
+
+依赖
+• resilience4j-spring-boot2
+• resilience4j-circuitbreaker
+• resilience4j-micrometer
+
+
+
+
+
+断路器
+注解⽅式
+• @CircuitBreaker(name = "名称")
+配置
+• CircuitBreakerProperties
+•• resilience4j.circuitbreaker.backends.名称
+••• failure-rate-threshold
+••• wait-duration-in-open-state
+
+
+
+
+**104 - 使用Resilience4j实现服务限流（上）**
+
+
+Bulkhead
+⽬的
+• 防⽌下游依赖被并发请求冲击
+• 防⽌发⽣连环故障
+
+
+⽤法
+• BulkheadRegistry / BulkheadConfig
+• @Bulkhead(name = "名称")
+
+
+
+Bulkhead
+配置
+• BulkheadProperties
+• resilience4j.bulkhead.backends.名称
+• max-concurrent-call
+• max-wait-time
+
+
+
+
+
+RateLimiter
+⽬的
+• 限制特定时间段内的执⾏次数
+⽤法
+• RateLimiterRegistry / RateLimiterConfig
+• @RateLimiter(name = "名称")
+
+
+配置
+• RateLimiterProperties
+• resilience4j.ratelimiter.limiters.名称
+• limit-for-period
+• limit-refresh-period-in-millis
+• timeout-in-millis
+
+
+
+
+
+
+
+
+
+**106 - SpringBucks实战项目进度小结**
+
+
+
+
+
+本章⼩结
+⼏种模式
+• 断路器 / 隔舱 / 速率限制器
+
+两个⼯具
+• Netflix Hystrix / Resilience4j
+• 建议学习，Google Guava
+
+观察与监控
+• Hystrix Dashboard / Micrometer
+
+
+
+
+
+
+
+**107 - 基于Git的配置中心（上）**
+
+
+
+
+基于 Git 的配置中⼼
+
+
+
+
+Spring Cloud Config Server
+⽬的
+• 提供针对外置配置的 HTTP API
+依赖
+• spring-cloud-config-server
+•• @EnableConfigServer
+•• ⽀持 Git / SVN / Vault / JDBC …
+
+
+使⽤ Git 作为后端存储
+
+配置
+• MultipleJGitEnvironmentProperties
+•• spring.cloud.config.server.git.uri
+
+
+配置⽂件的要素
+• {application}，即客户端的 spring.application.name
+• {profile}，即客户端的 spring.profiles.active
+• {label}，配置⽂件的特定标签，默认 master
+
+
+
+
+使⽤ Git 作为后端存储
+访问配置内容
+• HTTP 请求
+• GET /{application}/{profile}[/{label}]
+• GET /{application}-{profile}.yml
+• GET /{label}/{application}-{profile}.yml
+• GET /{application}-{profile}.properties
+• GET /{label}/{application}-{profile}.properties
+
+
+
+
+Spring Cloud Config Client
+
+
+依赖
+• spring-cloud-starter-config
+
+
+
+发现配置中⼼
+• bootstrap.properties | yml
+• spring.cloud.config.fail-fast=true
+• 通过配置
+• spring.cloud.config.uri=http://localhost:8888 
+
+
+
+
+Spring Cloud Config Client
+
+
+发现配置中⼼
+• bootstrap.properties | yml
+• 通过服务发现
+• spring.cloud.config.discovery.enabled=true
+• spring.cloud.config.discovery.service-id=configserver
+
+
+配置刷新
+• @RefreshScope
+• Endpoint - /actuator/refresh
+
+
+
+
+
+
+**109 - 基于Zookeeper的配置中心**  可以自动刷新
+
+
+
+
+Spring Cloud Zookeeper Config
+
+
+依赖
+• spring-cloud-starter-zookeeper-config
+• 注意 Zookeeper 版本
+
+
+启⽤
+• bootstrap.properties | yml
+• spring.cloud.zookeeper.connect-string=localhost:2181
+• spring.cloud.zookeeper.config.enabled=true
+
+
+
+
+Zookeeper 中的数据怎么存
+
+
+配置项
+• /config/应⽤名,profile/key=value
+• /config/application,profile/key=value
+
+
+如何定制
+• spring.cloud.zookeeper.config.root=config
+• spring.cloud.zookeeper.config.default-context=application
+• spring.cloud.zookeeper.config.profile-separator=','
+
+
+
+
+
+
+110 - 深入理解Spring Cloud的配置抽象
+深⼊理解 Spring Cloud 的配置抽象
+
+
+
+
+
+Spring Cloud Config
+⽬标
+• 在分布式系统中，提供外置配置⽀持
+
+
+实现
+• 类似于 Spring 应⽤中的 Environment 与 PropertySource
+• 在上下⽂中增加 Spring Cloud Config 的 PropertySource
+
+
+
+
+
+Spring Cloud Config 的 PropertySource
+
+
+**PropertySource:**
+• Spring Cloud Config Client - CompositePropertySource
+• Zookeeper - ZookeeperPropertySource
+• Consul - ConsulPropertySource / ConsulFilesPropertySource
+
+
+PropertySourceLocator
+• 通过 PropertySourceLocator 提供 PropertySource
+
+
+Spring Cloud Config Server
+
+
+EnvironmentRepository
+• Git / SVN / Vault / JDBC …
+
+
+功能特性
+• SSH、代理访问、配置加密 …
+
+
+配置刷新
+• /actuator/refresh
+• Spring Cloud Bus - RefreshRemoteApplicationEvent
+
+
+
+Spring Cloud Config Zookeeper
+
+
+ZookeeperConfigBootstrapConfiguration
+• 注册 ZookeeperPropertySourceLocator
+• 提供 ZookeeperPropertySource
+
+
+
+ZookeeperConfigAutoConfiguration
+• 注册 ConfigWatcher
+
+
+配置的组合顺序
+
+以 yml 为例
+• 应⽤名-profile.yml
+• 应⽤名.yml
+• application-profile.yml
+• application.yml
+
+
+
+
+
+
+**111 - 基于Consul的配置中心**
+
+Spring Cloud Consul Config
+依赖
+• spring-cloud-starter-consul-config
+
+启⽤
+• bootstrap.properties | yml
+• spring.cloud.consul.host=localhost
+• spring.cloud.consul.port=8500
+• spring.cloud.consul.config.enabled=true
+
+
+
+
+Consul 中的数据怎么存
+配置项
+• spring.cloud.consul.config.format=KEY_VALUE | YAML | PROPERTIES | FILES
+
+
+• /config/应⽤名,profile/data
+• /config/application,profile/data
+
+
+
+
+
+Consul 中的数据怎么存
+如何定制
+• spring.cloud.consul.config.data-key=data
+• spring.cloud.consul.config.root=config
+• spring.cloud.consul.config.default-context=application
+• spring.cloud.consul.config.profile-separator=','
+
+
+
+
+配置项变更
+⾃动刷新配置
+• spring.cloud.consul.config.watch.enabled=true
+• spring.cloud.consul.config.watch.delay=1000
+
+实现原理
+• 单线程 ThreadPoolTaskScheduler
+• ConsulConfigAutoConfiguration.CONFIG_WATCH_TASK_SCHEDULER_NAME
+
+
+
+
+
+
+
+
+**112 - 基于Nacos的配置中心**
+
+
+Spring Cloud Alibaba Nacos Config
+
+依赖
+• spring-cloud-starter-alibaba-nacos-config
+• spring-cloud-alibaba-dependencies:0.9.0
+• 注意 Spring Cloud 与 Spring Boot 的对应版本
+
+
+启⽤
+• bootstrap.properties | yml
+• spring.cloud.nacos.config.server-addr=127.0.0.1:8848
+• spring.cloud.nacos.config.enabled=true
+
+
+
+
+
+
+Nacos 中的数据怎么存
+配置项
+• dataId
+•• ${prefix}-${spring.profile.active}.${file-extension}
+•• spring.cloud.nacos.config.prefix
+•• spring.cloud.nacos.config.file-extension
+
+• spring.cloud.nacos.config.group
+
+
+
+
+本章⼩结
+**⼏种不同的配置中⼼**
+• Spring Cloud Config Server(springcloud bus自己广播修改)
+•• Git / SVN / RDBMS / Vault ： 需要刷新自己的加东西
+
+• Zookeeper (自己节点监听)
+• Consul (定时刷新)
+• Nacos (定时刷新)
+• 携程 Apollo 配置中心
+
+
+SpringBucks 进度⼩结
+waiter-service
+• 增加了订单⾦额与折扣
+• 增加了 Waiter 名称
+• 使⽤了不同的配置中⼼
+• Spring Cloud Config Client
+•• 使⽤ Zookeeper
+•• 使⽤ Consul
+•• 使⽤ Nacos
+
+
+
+
+配置中心
+携程 Apollo
+官⽅地址
+• https://github.com/ctripcorp/apollo
+
+特性
+• 统⼀管理不同环境、不同集群的配置
+• 配置修改实时⽣效（热发布）
+• 版本发布管理
+• 灰度发布
+• 权限管理、发布审核、操作审计
+• 客户端配置信息监控
+• 提供开放平台API
+
+
+
+
+
+
+
+**114 - 认识Spring Cloud Stream** 消息中间件
+
+
+认识 Spring Cloud Stream
+
+
+
+
+Spring Cloud Stream 是什么
+• ⼀款⽤于构建消息驱动的微服务应⽤程序的轻量级框架
+
+
+**特性**
+• 声明式编程模型
+
+• 引⼊多种概念抽象
+••  发布订阅、消费组、分区
+
+• ⽀持多种消息中间件
+•• RabbitMQ、Kafka 
+
+
+**Spring Cloud Stream 的⼀些核⼼概念**
+
+
+Binder
+• RabbitMQ
+• Apache Kafka
+• Kafka Streams
+• Amazon Kinesis
+• RocketMQ
+
+
+**I.Binding** 
+应⽤中⽣产者、消费者与消息系统之间的桥梁
+
+• @EnableBinding
+• @Input / SubscribableChannel
+• @Output / MessageChannel
+
+
+**I.消费组**
+• 对同⼀消息，每个组中都会有⼀个消费者收到消息
+
+
+**I.如何发送与接收消息**
+
+
+⽣产消息
+• 使⽤ MessageChannel 中的 send()
+• @SendTo
+
+消费消息
+• @StreamListener
+• @Payload / @Headers / @Header
+
+其他说明
+• 可以使⽤ Spring Integration
+
+
+
+
+
+**115 - 通过Spring Cloud Stream访问RabbitMQ**
+
+
+
+“RabbitMQ is the most widely deployed open source message broker.”
+
+
+
+**Spring Cloud Stream 对 RabbitMQ 的⽀持**
+
+依赖
+• Spring Cloud - spring-cloud-starter-stream-rabbit
+• Spring Boot - spring-boot-starter-amqp
+
+
+配置
+• spring.cloud.stream.rabbit.binder.*
+• spring.cloud.stream.rabbit.bindings.<channelName>.consumer.*
+• spring.rabbitmq.*
+
+
+
+通过 Docker 启动 RabbitMQ
+官⽅指引
+• https://hub.docker.com/_/rabbitmq
+
+获取镜像
+• docker pull rabbitmq
+• docker pull rabbitmq:3.7-management
+
+运⾏ RabbitMQ 镜像
+• docker run --name rabbitmq -d -p 5672:5672 -p 15672:15672
+-e RABBITMQ_DEFAULT_USER=spring -e RABBITMQ_DEFAULT_PASS=spring
+rabbitmq:3.7-management
+
+
+**116 - 通过Spring Cloud Stream访问Kafka**
+
+
+认识 Apache Kafka
+什么是 Kafka
+• 诞⽣之初被⽤作消息队列，现已发展为强⼤的分布式事件流平台
+• LinkedIn 在 2011 年开源
+
+
+Spring Cloud Stream 对 Kafka 的⽀持
+
+依赖
+• Spring Cloud - spring-cloud-starter-stream-kafka
+
+配置
+• spring.cloud.stream.kafka.binder.*
+• spring.cloud.stream.kafka.bindings.<channelName>.consumer.*
+• spring.kafka.*
+
+
+
+
+通过 Docker 启动 Kafka
+
+官⽅指引
+• https://hub.docker.com/r/confluentinc/cp-kafka
+• https://docs.confluent.io/current/quickstart/cos-docker-quickstart.html
+
+运⾏镜像
+• https://github.com/confluentinc/cp-docker-images
+•• kafka-single-node/docker-compose.yml
+
+• docker-compose up -d
+
+
+
+
+**Spring 中的定时任务**
+
+Spring 的抽象
+• TaskScheduler / Trigger / TriggerContext
+
+
+配置定时任务
+• @EnableScheduling
+• <task:scheduler />
+• @Scheduled
+
+
+
+
+Spring 中的事件机制
+
+Spring 中的事件
+• ApplicationEvent
+
+发送事件
+• ApplicationEventPublisherAware
+• ApplicationEventPublisher.publishEvent()
+
+
+监听事件
+• ApplicationListener<T>
+• @EventListener
+
+**117 - SpringBucks实战项目进度小结**
+
+
+
+本章⼩结
+
+Spring Cloud Stream
+• Spring Cloud Stream 对消息的抽象
+• 对不同中间件的⽀持
+• RabbitMQ
+• Apache Kafka
+
+
+
+Spring 的⼀些机制
+• 上下⽂中的事件机制
+• 定时任务
+
+
+
+SpringBucks 进度⼩结
+
+waiter-service
+• 增加⽀付功能
+• 在⽀付后发送消息通知制作订单
+• 接收订单完成通知
+
+customer-service
+• 增加⽀付功能
+• 查询订单状态并取⾛咖啡
+
+barista-service
+• 等待通知制作订单
+
+
+
+
+
+
+
+
+
+
+
+**118 - 通过Dapper理解链路治理**
+
+
+通过 Dapper 理解链路治理
+
+
+
+我们在关注什么？
+• 系统中都有哪些服务
+• 服务之间的依赖关系是什么样的
+• ⼀个常⻅请求具体的执⾏路径是什么样的
+• 请求每个环节的执⾏是否正常与耗时情况
+
+
+Google Dapper 的⼀些术语
+• Span - 基本的⼯作单元
+• Trace - 由⼀组 Span 构成的树形结构
+• Annotation - ⽤于及时记录事件
+• cs - Client Sent
+• sr - Server Received
+• ss - Server Sent
+• cr - Client Received
+
+
+
+
+
+Google Dapper
+
+
+**119 - 使用Spring Cloud Sleuth实现链路追踪**
+
+通过 Spring Cloud Sleuth 实现链路追踪
+
+
+
+
+Spring Cloud 提供的服务治理功能
+
+依赖
+• Spring Cloud Sleuth - spring-cloud-starter-sleuth
+• Spring Cloud Sleuth with Zipkin - spring-cloud-starter-zipkin
+
+⽇志输出
+• [appname,traceId,spanId,exportable]
+
+
+
+
+
+
+
+Spring Cloud 提供的服务治理功能
+配置
+• spring.zipkin.base-url=http://localhost:9411/
+•• spring.zipkin.discovery-client-enabled=false
+• spring.zipkin.sender.type=web | rabbit | kafka
+• spring.zipkin.compression.enabled=false
+• spring.sleuth.sampler.probability=0.1
+
+
+
+
+
+
+通过 Docker 启动 Zipkin
+
+官⽅指引
+• https://hub.docker.com/r/openzipkin/zipkin
+• https://github.com/openzipkin/docker-zipkin
+
+获取镜像
+• docker pull openzipkin/zipkin
+
+运⾏ Zipkin 镜像
+• docker run --name zipkin -d -p 9411:9411 openzipkin/zipkin
+
+
+
+
+
+
+**120 - 如何追踪消息链路**
+
+
+如何追踪消息链路
+
+
+
+⽤ Spring Cloud Sleuth 追踪消息
+依赖
+• Spring Cloud Sleuth with Zipkin - spring-cloud-starter-zipkin
+• 如需通过 MQ 埋点，需增加 RabbitMQ 或 Kafka 依赖
+
+
+配置
+• 如使⽤ HTTP 埋点，则与追踪 HTTP 服务完全⼀致
+• spring.zipkin.sender.type=rabbit
+• spring.zipkin.rabbitmq.queue=zipkin
+• spring.rabbitmq.*
+
+
+
+
+
+
+让 Zipkin 能通过 RabbitMQ 接收消息
+
+环境变量
+• RABBIT_ADDRESSES=<RabbitMQ地址>
+• RABBIT_USER / RABBIT_PASSWORD
+• https://github.com/apache/incubator-zipkin/tree/master/zipkin-collector/rabbitmq
+
+运⾏ Zipkin 镜像
+• docker run --name rabbit-zipkin -d -p 9411:9411
+--link rabbitmq -e RABBIT_ADDRESSES=rabbitmq:5672
+-e RABBIT_USER=spring -e RABBIT_PASSWORD=spring openzipkin/
+zipkin
+
+
+
+完整的应⽤链路
+
+
+**121 - 除了链路还要治理什么**
+除了链路还要追踪什么
+
+服务治理关⼼什么才好
+
+我们已经看过了
+• 简单服务之间的依赖关系
+• ⼀个请求的同步、异步链路
+
+我们还需要关注
+• 很多……很多……
+
+“⼀个企业实施的⽤以保障事情正确完成的流程，即遵循最佳
+实践，体系架构原则，治理条例，法律和其他决定因素。SOA
+治理是指⽤于管理SOA的采⽤和实现的流程。”
+
+
+**服务治理关⼼什么才好**
+
+**宏观上**
+• 架构设计是否合理
+• 哪些链路算是关键链路
+• 链路的容量⽔位趋势
+• 对系统变更的管理与审计
+
+**微观上**
+• ⼀个系统都依赖了什么
+• ⼀个系统都有哪些配置
+• ⼀个系统的主观与客观质量
+
+
+
+**122 - SpringBucks实战项目进度小结**
+
+SpringBucks 实战项⽬进度⼩结
+
+
+本章⼩结
+Spring Cloud 的服务治理功能
+• 借鉴⾃ Google Dapper
+
+• Spring Cloud Sleuth
+•• Zipkin
+••• Web
+••• RabbitMQ
+
+• 我们应该关⼼更多
+
+
+SpringBucks 进度⼩结
+waiter-service / customer-service
+• 增加基于 Web 向 Zipkin 埋点功能
+
+barista-service
+• 增加基于 MQ 向 Zipkin 埋点功能
+
+最终的成品
+• 通过 Docker 运⾏整个 SpringBucks
 
 
 
