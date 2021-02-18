@@ -39,6 +39,25 @@ I.
 
 
 
+Netflix (net flex) > Spring Cloud > Alibaba
+
+
+1.Eureka服务注册和发现
+
+2.断路器Hystrix :不更新
+
+3.网络访问Feign  Netflix: SpringCloud2后F改为OpenFeign
+
+4.客户端负载均衡 Ribbon
+
+5.网关路由和过滤 Zuul :不更新
+
+6.动态配置Archaius  ：不更新
+
+
+
+
+
 
 
 
