@@ -191,6 +191,8 @@ II.客户端-项目-增加配置
 
 1.
 spring.cloud.sentinel.transport.dashboard=127.0.0.1:1111
+spring.application.name=NameProject
+
 
 2.
 spring:
@@ -354,4 +356,461 @@ sentinel-core:jar:1.8.0
 
 
 
+**I.B站课程**
+--------------------------------------------B站课程开始------------------------------------------------------------
 
+
+I.课程
+https://www.aliyun.com/product/ahas?spm=5176.19720258.J_8058803260.91.45dc2c4aYOqXiD
+
+
+
+ <dependency>
+    <groupId>com.alibaba.csp</groupId>
+    <artifactId>sentinel-core</artifactId>
+    <version>1.8.1</version>
+</dependency>
+
+
+启动时:
+流控降级日志:C:\Users\Administrator.CE-20160511RDFS\logs\csp\
+sentinel-block.log  限流日志
+
+
+
+INFO: Sentinel log output type is: file
+INFO: Sentinel log charset is: utf-8
+INFO: Sentinel log base directory is: C:\Users\Administrator.CE-20160511RDFS\logs\csp\
+INFO: Sentinel log name use pid is: false
+
+
+II.本地用法不用后台，自动生效。
+1.客户端引入jar包和配置启动 sentinel-core
+2.定义资源 SphU.entry("HelloWorld") 和 entry.exit()
+3.定义规则 FlowRuleManager.loadRules(rules);
+4.检查效果 http://localhost:8080/study/qpsTest?mobile=1111111
+
+
+    /**
+     * 当前类的构造函数之后执行以下信息。
+     */
+    @PostConstruct
+    public static void initFlowRulesStudy(){
+        log.info("ZStudyController.initFlowRulesStudy");
+        List<FlowRule> rules=new ArrayList<>();
+        FlowRule rule=new FlowRule();
+        rule.setResource("HelloWorld");
+        //限流类型是 QPS
+        rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+        //每秒能通过的个数
+        rule.setCount(2);
+        rules.add(rule);
+        FlowRuleManager.loadRules(rules);
+    }
+
+ 
+     @GetMapping("/qpsTest")
+    @ResponseBody
+    public AppResult<Phone> getPhoneMessage(String mobile) throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        Entry entry = null;
+        try {
+            entry = SphU.entry("HelloWorld");
+            /*您的业务逻辑 - 开始*/
+            mobile="15901229166";
+            Phone phone = phoneMapper.selectByPhone(mobile.substring(0, 7));
+            result.setData(phone);
+            /*您的业务逻辑 - 结束*/
+        } catch (BlockException e1) {
+            /*流控逻辑处理 - 开始*/
+            log.info("触发限流了:block!");
+            result.setCode("9999");
+            result.setDesc("限流器限流了");
+            /*流控逻辑处理 - 结束*/
+        } finally {
+            if (entry != null) {
+                entry.exit();
+            }
+        }
+
+        return result;
+    }
+
+
+
+II.定义资源的方式
+https://github.com/alibaba/Sentinel/wiki/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8
+https://github.com/alibaba/Sentinel/wiki/如何使用
+
+
+1.正常框架兼容
+
+2.抛出异常的方式 try catch的方式:
+http://localhost:8080/study/qpsTest
+
+       try (Entry entry = SphU.entry("HelloWorld")){
+            /*您的业务逻辑 - 开始*/
+            log.info("业务逻辑:xxx");
+            /*您的业务逻辑 - 结束*/
+        } catch (BlockException e1) {
+            /*流控逻辑处理 - 开始*/
+            log.info("触发限流了:block!");
+            /*流控逻辑处理 - 结束*/
+        }
+
+3.返回boolean值的方式
+
+localhost:8080/study/qpsTestBoolean
+
+// 资源名可使用任意有业务语义的字符串
+if (SphO.entry("自定义资源名")) {  
+try {
+// 务必保证finally会被执行
+} finally {
+SphO.exit();
+}
+} else {
+// 资源访问阻止，被限流或被降级
+// 进行相应的处理操作
+}
+
+
+4.注解方式定义资源
+localhost:8080/study/qpsTestAnnotation
+https://github.com/alibaba/Sentinel/wiki/%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81
+https://github.com/alibaba/Sentinel/wiki/注解支持
+
+优先级:blockHandler>fallback
+@SentinelResource(value = "HelloWorld_Annotation", blockHandler = "blockHandler", fallback = "fallback")
+
+
+
+
+
+5.异步调用方式
+
+try {
+AsyncEntry entry = SphU.asyncEntry(resourceName);
+// 异步调用.
+doAsync(userId, result -> {
+try {
+} finally {
+// 在回调结束后 exit.
+entry.exit();
+}
+});
+} catch (BlockException ex) {
+// Request blocked.Handle the exception (e.g. retry or fallback).
+}
+
+
+
+II.全局自定义错误:重写接口
+
+servlet:UrlBlockHandler
+
+spring.webmvc:BlockExceptionHandler
+
+@Configuration
+public class SentinelException implements BlockExceptionHandler
+
+
+
+
+
+
+
+
+
+II.定义规则方式：规则的种类
+https://github.com/alibaba/Sentinel/wiki/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8
+https://github.com/alibaba/Sentinel/wiki/如何使用
+
+
+规则的种类:流量控制规则、熔断降级规则、系统保护规则、来源访问控制规则 和 热点参数规则。
+
+
+
+III.流量控制规则 (FlowRule):一个资源可以设置多个
+
+grade:
+1.QPS 模式
+2.并发线程数模式
+
+limitApp:1.流控针对的调用来源
+
+controlBehavior流控效果:
+1.直接拒绝:默认
+2.WarmUp:匀速增加到阈值-防止一下全上来
+3.匀速+排队等待
+
+
+
+III.熔断降级规则 (DegradeRule):慢请求了:返回错误
+https://github.com/alibaba/Sentinel/wiki/熔断降级
+
+
+grade熔断策略:
+1.慢调用比例:默认
+2.异常比例
+3.异常数策略
+
+minRequestAmount默认5：
+熔断触发的最小请求数
+请求数小于该值时即使异常比率超出阈值也不会熔断
+
+
+
+
+
+
+
+III.系统自适应限流--后台"系统规则"功能
+https://github.com/alibaba/Sentinel/wiki/系统自适应限流
+
+Load、CPU 使用率、总体平均 RT、入口 QPS 和并发线程数等几个维度的监控指标
+
+
+
+
+III.授权规则
+https://github.com/alibaba/Sentinel/wiki/黑白名单控制
+
+
+
+
+III.热点参数限流
+
+https://github.com/alibaba/Sentinel/wiki/热点参数限流
+
+
+
+
+
+
+
+--------------------------------------------B站课程结束------------------------------------------------------------
+
+
+
+--------------------------------------------实例代码------------------------------------------------------------
+
+/**
+* 定义异常1的方式限流1
+*
+* @return
+* @throws Exception
+*/
+
+    @GetMapping("/qpsTest")
+    @ResponseBody
+    public AppResult<Phone> getPhoneMessage() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        Entry entry = null;
+        try {
+            entry = SphU.entry("HelloWorld");
+            /*您的业务逻辑 - 开始*/
+            Phone phone = phoneMapper.selectByPhone("15901229166".substring(0, 7));
+            result.setData(phone);
+            /*您的业务逻辑 - 结束*/
+        } catch (BlockException e1) {
+            /*流控逻辑处理 - 开始*/
+            log.info("触发限流了:block!");
+            result.setCode("9999");
+            result.setDesc("限流器限流了");
+            /*流控逻辑处理 - 结束*/
+        } catch (Exception ex) {
+            // 若需要配置降级规则，需要通过这种方式记录业务异常
+            Tracer.traceEntry(ex, entry);
+        } finally {
+            if (entry != null) {
+                entry.exit();
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 定义异常2的方式限流2
+     *
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/qpsTest2")
+    @ResponseBody
+    public AppResult<Phone> getPhoneMessage2() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+
+        try (Entry entry = SphU.entry("HelloWorld")) {
+            /*您的业务逻辑 - 开始*/
+            log.info("业务逻辑:xxx");
+            /*您的业务逻辑 - 结束*/
+        } catch (BlockException e1) {
+            /*流控逻辑处理 - 开始*/
+            log.info("触发限流了:block!");
+            /*流控逻辑处理 - 结束*/
+        }
+        return result;
+    }
+
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/qpsTestBoolean")
+    @ResponseBody
+    public AppResult<Phone> getPhoneMessageBoolean() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+
+        if (SphO.entry("HelloWorld_Boolean")) {
+            try {
+                /*您的业务逻辑 - 开始*/
+                Phone phone = phoneMapper.selectByPhone("15901229166".substring(0, 7));
+                result.setData(phone);
+                log.info("业务逻辑:xxx");
+                /*您的业务逻辑 - 结束*/
+            } finally {
+                SphO.exit();
+            }
+        } else {
+            log.info("触发限流了:block!");
+            result.setCode("9999");
+            result.setDesc("限流器限流了");
+        }
+        return result;
+    }
+
+    /**
+     * https://github.com/alibaba/Sentinel/wiki/%E6%B3%A8%E8%A7%A3%E6%94%AF%E6%8C%81
+     * https://github.com/alibaba/Sentinel/wiki/注解支持
+     *
+     * 优先级:blockHandler>fallback
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/qpsTestAnnotation")
+    @ResponseBody
+    @SentinelResource(value = "HelloWorld_Annotation", blockHandler = "blockHandler", fallback = "fallback")
+    public AppResult<Phone> qpsTestAnnotation() throws Exception {
+        log.info("qpsTestAnnotation!");
+        AppResult<Phone> result = new AppResult<>();
+        /*您的业务逻辑 - 开始*/
+        Phone phone = phoneMapper.selectByPhone("15901229166".substring(0, 7));
+        result.setData(phone);
+        return result;
+    }
+
+    public AppResult<Phone> blockHandler( BlockException ex) throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        result.setCode("9999");
+        result.setDesc("blockHandler限流器限流了");
+        log.info("blockHandler:触发限流了:block!");
+        log.error("异常了",ex);
+        return result;
+    }
+
+
+    public AppResult<Phone> fallback() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        result.setCode("9999");
+        result.setDesc("fallback限流器限流了");
+        log.info("fallback:触发限流了:block!");
+        return result;
+    }
+
+
+    /**
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/qpsTestDegradeRule")
+    @ResponseBody
+    public AppResult<Phone> DegradeRule() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        log.info("qpsTestDegradeRule:xxx");
+            try {
+                Thread.sleep(1111);
+                /*您的业务逻辑 - 开始*/
+                Phone phone = phoneMapper.selectByPhone("15901229166".substring(0, 7));
+                result.setData(phone);
+                log.info("业务逻辑:xxx");
+                /*您的业务逻辑 - 结束*/
+            } finally {
+            }
+        return result;
+    }
+
+    /**
+     * 当前类的构造函数之后执行以下信息:
+     * 限流自定义
+     */
+@PostConstruct
+public static void initFlowRulesStudy() {
+log.info("ZStudyController.initFlowRulesStudy");
+List<FlowRule> rules = new ArrayList<>();
+FlowRule rule = new FlowRule();
+rule.setResource("HelloWorld");
+//限流类型是 QPS
+rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+//每秒能通过的个数
+rule.setCount(2);
+rules.add(rule);
+FlowRuleManager.loadRules(rules);
+}
+
+
+
+-----------------------------------------------------------------------------
+
+全局返回异常
+
+/**
+* @author daniel 2021-2-24 0024.
+  */
+  @Configuration
+  public class SentinelException implements BlockExceptionHandler {
+
+  @Override
+  public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, BlockException e) throws Exception {
+  MyResponse errorResponse = new MyResponse();
+  // 不同的异常返回不同的提示语
+  if (e instanceof FlowException) {
+  errorResponse.setMsg("被限流了");
+  errorResponse.setStatus(1);
+  } else if (e instanceof DegradeException) {
+  errorResponse.setMsg("服务降级了");
+  errorResponse.setStatus(2);
+  } else if (e instanceof ParamFlowException) {
+  errorResponse.setMsg("被限流了");
+  errorResponse.setStatus(3);
+  } else if (e instanceof SystemBlockException) {
+  errorResponse.setMsg("被系统保护了");
+  errorResponse.setStatus(4);
+  } else if (e instanceof AuthorityException) {
+  errorResponse.setMsg("被授权了");
+  errorResponse.setStatus(5);
+  }       httpServletResponse.setStatus(500);
+       httpServletResponse.setCharacterEncoding("utf-8");
+       httpServletResponse.getWriter().print(new Gson().toJson(errorResponse));
+  }
+  }
+
+class MyResponse {
+private Integer status;
+private String msg;
+    public Integer getStatus() {
+        return status;
+    }    public static Object builder() {
+        return null;
+    }
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+    public String getMsg() {
+        return msg;
+    }
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+}
