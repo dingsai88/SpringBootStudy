@@ -36,10 +36,17 @@ https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明
 
 II.一共两部分：
 
-	<dependency>
+		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
 			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
 			<version>2.1.2.RELEASE</version>
+			<!--去除jackson-dataformat-xml，否则会返回xml文件，而不是JSON-->
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.dataformat</groupId>
+					<artifactId>jackson-dataformat-xml</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 
@@ -48,6 +55,7 @@ II.一共两部分：
 			<artifactId>sentinel-dubbo-adapter</artifactId>
 			<version>1.8.0</version>
 		</dependency>
+
 
 
 
@@ -85,7 +93,16 @@ org\springframework\cloud\spring-cloud-alibaba-dependencies
 
 springboot对应的sentinel版本信息在:spring-cloud-alibaba-dependencies
 
-
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+			<version>0.2.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba.csp</groupId>
+			<artifactId>sentinel-dubbo-adapter</artifactId>
+			<version>1.5.2</version>
+		</dependency>
 
 
 
@@ -338,6 +355,8 @@ sentinel-core:jar:1.8.0
 			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
 			<version>2.2.5.RELEASE</version>
 		</dependency>
+
+
 -->
 
 		<!-- spring sentinel
