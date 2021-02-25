@@ -193,6 +193,7 @@ II.客户端-项目-增加配置
 spring.cloud.sentinel.transport.dashboard=127.0.0.1:1111
 spring.application.name=NameProject
 
+项目名称: project.name=dingsai
 
 2.
 spring:
@@ -580,8 +581,42 @@ https://github.com/alibaba/Sentinel/wiki/黑白名单控制
 
 
 III.热点参数限流
-
 https://github.com/alibaba/Sentinel/wiki/热点参数限流
+
+
+
+
+
+III.动态规则扩展
+https://github.com/alibaba/Sentinel/wiki/动态规则扩展
+
+
+1.通过 API 直接修改 (loadRules)
+
+手动通过 API 修改比较直观，可以通过以下几个 API 修改不同的规则：
+
+// 修改流控规则
+FlowRuleManager.loadRules(List<FlowRule> rules);
+// 修改降级规则
+DegradeRuleManager.loadRules(List<DegradeRule> rules); 
+
+手动修改规则（硬编码方式）一般仅用于测试和演示，生产上一般通过动态规则源的方式来动态管理规则。
+
+
+2.通过 DataSource 适配不同数据源修改
+
+
+
+
+FlowRuleManager.loadRules(List<FlowRule> rules);// 修改流控规则
+DegradeRuleManager.loadRules(List<DegradeRule> rules);// 修改降级规则
+
+
+
+
+
+
+
 
 
 
