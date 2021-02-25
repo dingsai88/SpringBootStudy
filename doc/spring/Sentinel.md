@@ -825,7 +825,9 @@ FlowRuleManager.loadRules(rules);
   } else if (e instanceof AuthorityException) {
   errorResponse.setMsg("被授权了");
   errorResponse.setStatus(5);
-  }       httpServletResponse.setStatus(500);
+  }      
+       httpServletResponse.setStatus(500);
+       httpServletResponse.setHeader("Content-type", "text/html;charset=UTF-8");
        httpServletResponse.setCharacterEncoding("utf-8");
        httpServletResponse.getWriter().print(new Gson().toJson(errorResponse));
   }
