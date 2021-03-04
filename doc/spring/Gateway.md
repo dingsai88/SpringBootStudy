@@ -256,8 +256,14 @@ https://github.com/spring2go/s2g-zuul
 
 
 **其它开源网关产品**
+Nginx+lua:
+
 Kong(核心开源):基于nginx 性能高
 https://github.com/Kong/kong
+
+Traefik:go语言开发
+
+Spring cloud Netflix zuul:
 
 Tyk(核心开源)
 https://github.com/TykTechnologies/tyk
@@ -279,6 +285,55 @@ metrics监控:kairosDB
 调用链监控:大众点评cat
 
 健康检查和告警:ZMon、zalando
+
+
+
+-----------------------------------Spring cloud gateway---------------------------------------------------------------------
+
+https://www.cnblogs.com/mrhelloworld/p/gateway1.html
+
+https://www.cnblogs.com/mrhelloworld/tag/%E7%BD%91%E5%85%B3/
+https://www.cnblogs.com/mrhelloworld/tag/网关/
+
+
+**Glossary**词汇表
+
+**路由（Route）：**
+路由是网关最基础的部分，路由信息由 ID、目标 URI、一组断言和一组过滤器组成。如果断言路由为真，则说明请求的 URI 和配置匹配。
+
+**断言（Predicate）：**
+Java8 中的断言函数。Spring Cloud Gateway 中的断言函数输入类型是 Spring 5.0 框架中的 ServerWebExchange。Spring Cloud Gateway 中的断言函数允许开发者去定义匹配来自于 Http Request 中的任何信息，比如请求头和参数等。
+
+**过滤器（Filter）：**
+一个标准的 Spring Web Filter。Spring Cloud Gateway 中的 Filter 分为两种类型，分别是 Gateway Filter 和 Global Filter。过滤器将会对请求和响应进行处理。
+
+
+
+
+
+1.Gateway Handler Mapping
+
+2.Gateway Web Handler
+
+
+
+spring.application.name=gateway-server # 应用名称
+spring.cloud.gateway.routes.id=product-service           # 路由 ID，唯一
+spring.cloud.gateway.routes.uri=http://localhost:7070/   # 目标 URI，路由到微服务的地址
+spring.cloud.gateway.routes.predicates.Path=/product/**          # 匹配对应 URL 的请求，将匹配到的请求追加在目标 URI 之后
+
+
+gateway:
+# 路由规则
+  routes:
+      - id: product-service           # 路由 ID，唯一
+uri: http://localhost:7070/   # 目标 URI，路由到微服务的地址
+predicates:                   # 断言（判断条件）
+- Path=/product/**          # 匹配对应 URL 的请求，将匹配到的请求追加在目标 URI 之后
+
+
+
+
 
 
 

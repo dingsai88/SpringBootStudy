@@ -72,7 +72,16 @@ invokedynamic:动态解析出调用点限定符引用方法
 4.同步指令 synchronized关键字需要管程（monitor）monitorenter、monitorexit支持；同步方法内部出现异常也会执行monitorexit释放同步
 
 
- 
+I.探针 Agent代理 :实现java字节码注入
+JavaAgent(java代理) 
+II.在main premain > main
+
+1.启动时，加入 -javaagent:C:/springloaded-1.2.5.RELEASE.jar -noverify
+2.在main方法前执行  premain(String args, Instrumentation inst)方法 
+3.Instrumentation接口加入addTransformer 在类加载前后做 一些操作。
+
+
+我理解的skywalking是通过javaagent+bytebuddy+plugins方式实现的。
 
 
 
