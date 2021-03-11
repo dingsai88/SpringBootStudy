@@ -130,10 +130,12 @@ CHANGED:只检查上次检查后被更改的表，和没有被正确关闭的表
 MEDIUM:扫描行，以验证被删除的链接是有效的。也可以计算各行的关键字校验和，并使用计算出的校验和验证这一点。
 EXTENDED:对每行的所有关键字进行一个全面的关键字查找。这可以确保表是100％一致的，但是花的时间较长。
 
-**Optimize Table**
+**Optimize Table** 优化表
 优化表，删除大段数据等以后操作
 Optimize Table  order_investment  ;
 
+一旦数据达到稳定的大小，或者正在增长的表增加了几十或几百兆字节，请考虑使用该OPTIMIZE TABLE语句重新组织表并压缩所有浪费的空间。
+重组后的表需要较少的磁盘I / O来执行全表扫描。这是一种直接的技术，可以在其他技术（如改善索引使用率或调整应用程序代码）不可行时提高性能。
 
 **repair table**
 数据表修复myisam用
@@ -282,6 +284,61 @@ SELECT * FROM `a_study`  where (c1,c2)=(aaa,bbb);
 
 
 
+---------------------------------------------------------------------------------------------
+优化数据更改语句
+
+
+
+**INVISIBLE** 8.0新增功能
+不可见索引隐士
+
+加减索引很消耗性能、不可见所以可以测试删除索引以后的影响。
+
+
+CREATE INDEX j_idx ON t1 (j) INVISIBLE;
+ALTER TABLE t1 ADD INDEX k_idx (k) INVISIBLE;
+
+ALTER TABLE t1 ALTER INDEX i_idx INVISIBLE;
+ALTER TABLE t1 ALTER INDEX i_idx VISIBLE;
+
+
+**降序索引 desc** 8.0新增功能
+8.0 之前，两个排序顺序不一样的时候 就要filesort
+
+
+8之前的创建语句。
+CREATE TABLE t (
+c1 INT, c2 INT,
+INDEX idx1 (c1 ASC, c2 ASC),
+INDEX idx2 (c1 ASC, c2 DESC),
+INDEX idx3 (c1 DESC, c2 ASC),
+INDEX idx4 (c1 DESC, c2 DESC)
+);
+
+建完以后的语句 已经忽略了 desc
+CREATE TABLE `t` (
+`c1` int(11) DEFAULT NULL,
+`c2` int(11) DEFAULT NULL,
+KEY `idx1` (`c1`,`c2`),
+KEY `idx2` (`c1`,`c2`),
+KEY `idx3` (`c1`,`c2`),
+KEY `idx4` (`c1`,`c2`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+explain select * from  t  ORDER BY c1 ASC, c2 ASC  ;  --  Using index;
+explain select * from  t  ORDER BY c1 DESC, c2 DESC ; --  Using index;    
+explain select * from  t  ORDER BY c1 ASC, c2 DESC ;  --  Using index; Using filesort
+explain select * from  t  ORDER BY c1 DESC, c2 ASC  ; -- Using index; Using filesort
+
+
+
+**data-size-Optimization 优化数据大小**
+
+Table Columns 表字段，建议符合规定的最小值。
+MEDIUMINT通常比INT因为MEDIUMINT列占用的空间少25％更好，这 是一个更好的选择。
 
 
 
@@ -289,8 +346,66 @@ SELECT * FROM `a_study`  where (c1,c2)=(aaa,bbb);
 
 
 
+**Temporary Table  临时表(Using temporary)**
+https://dev.mysql.com/doc/refman/8.0/en/internal-temporary-tables.html
+
+EXPLAIN 并检查该 Extra列是否表明其 含义Using temporary
+
+UNION、views、derived-tables派生表(as生成的表)、公用表表达式的求值
+ORDER BY(非覆盖索引等) GROUP BY(非覆盖索引等)、
+
+与DISTINCT结合的 评估ORDER BY可能需要一个临时表。
+INSERT ... SELECT 
+
+1.内部临时表可以保存在内存中，并由TempTable（默认值）或 MEMORY存储引擎处理，或者由InnoDB存储引擎存储在磁盘上。
+
+以下情况不在内存创建临时表，而在磁盘创建:
+I.表中存在:BLOB或 TEXT列
+I.select String字段超过512 使用union 或者 union all的时候
+I.超出temptable_max_ram限制
 
 
+
+TempTable存储引擎管理时 :temptable_max_ram 限制 InnoDB 磁盘上的内部临时表。
+
+MEMORY存储引擎管理时:
+
+
+
+**表列数和行大小的限制**
+列数限制:
+4096列的硬限制 (InnoDB每个表的限制为1017列)
+
+
+行大小限制:
+65,535字节
+
+
+
+**优化InnoDB事务管理**
+
+1.默认的MySQL设置AUTOCOMMIT=1 ,如果流量很大的，SET AUTOCOMMIT=0或START TRANSACTION声明 。多个操作一起提交
+
+2.只有 select 的最好打开只读事务
+
+3.避免大量update insert delete 之后回滚
+加大缓冲池、在缓存中修改不写入磁盘修改
+进行设置， innodb_change_buffering=all 以便除了插入操作外还缓冲更新和删除操作。：允许将更新和删除操作缓存在内存中，从而使它们首先可以更快地执行，
+小批量的先提交
+
+4.undo日志不会立刻删除，提交了也不一定立刻删。
+修改或删除行时，不会立即删除行和关联的 撤消日志，甚至不会在事务提交后立即删除。保留旧数据，直到更早或同时开始的事务完成为止，以便那些事务可以访问已修改或已删除行的先前状态。因此，长时间运行的事务可以防止InnoDB清除由其他事务更改的数据。
+
+
+5.长时间运行的事务 由于可重复读，会有很多日志
+
+6.当长时间运行的事务修改表时，来自其他事务的对该表的查询不会使用覆盖索引技术。通常可以从二级索引检索所有结果列，而从表数据中查找适当值的查询。
+
+
+**优化InnoDB查询**
+不建议主键过长，因为二级索引辅助索引都会重复保存它。
+不建议每一列都加索引：尝试创建组合索引。最好都是覆盖索引  (覆盖索引：包含查询检索的所有列 的索引)
+如果列不能包含null,请创建表的时候就指定，这样方便索引对查询更优。
 
 
 
