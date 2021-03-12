@@ -346,7 +346,7 @@ MEDIUMINT通常比INT因为MEDIUMINT列占用的空间少25％更好，这 是�
 
 
 
-**Temporary Table  临时表(Using temporary)**
+**Temporary Table  临时表(Using temporary)** TempTable 、Memory、 Innodb磁盘
 https://dev.mysql.com/doc/refman/8.0/en/internal-temporary-tables.html
 
 EXPLAIN 并检查该 Extra列是否表明其 含义Using temporary
@@ -407,7 +407,91 @@ MEMORY存储引擎管理时:
 不建议每一列都加索引：尝试创建组合索引。最好都是覆盖索引  (覆盖索引：包含查询检索的所有列 的索引)
 如果列不能包含null,请创建表的时候就指定，这样方便索引对查询更优。
 
+https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-queries.html
 
+
+
+**优化InnoDB DDL操作** CREATE, ALTER,   DROP
+
+InnoDB和在线DDL
+创建不具有二级索引的表，然后在数据加载后添加二级索引，从而加快创建和加载表及关联索引的过程。
+
+drop (删除表)：删除内容和定义，释放空间。简单来说就是把整个表去掉.以后要新增数据是不可能的,除非新增一个表。
+drop语句将删除表的结构被依赖的约束（constrain),触发器（trigger)索引（index);依赖于该表的存储过程/函数将被保留，但其状态会变为：invalid。
+
+truncate (清空表中的数据)没有undolog 不能恢复：删除内容、释放空间但不删除定义(保留表的数据结构)。与drop不同的是,只是清空表数据而已。
+注意:truncate 不能删除行数据,要删就要把表清空。
+
+delete语句是数据库操作语言(dml)，这个操作会放到 rollback segement 
+
+执行速度，一般来说: drop> truncate > delete。
+
+truncate、drop 是数据库定义语言(ddl)，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。 
+
+
+**优化InnoDB磁盘I / O**
+CPU使用百分比小于70％您的工作负载可能是磁盘绑定的
+https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-diskio.html
+
+1.增加缓冲池大小  
+可以通过查询重复访问它，而无需任何磁盘I / O。 系统内存的50％到75％
+
+
+2.调整刷盘方法
+fsync()
+
+
+
+**优化InnoDB配置变量**
+https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-configuration-variables.html
+
+
+
+
+**execution-plan-information 执行计划信息explain**
+
+
+EXPLAIN作品有 SELECT， DELETE， INSERT， REPLACE，和 UPDATE语句。
+
+EXPLAIN对于检查涉及分区表的查询很有用。
+
+
+**explain  Output Format输出格式**format、traditional、json
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+
+该FORMAT选项可用于选择输出格式。TRADITIONAL以表格格式显示输出。如果不FORMAT存在任何选项，则为默认设置 。 JSONformat以JSON格式显示信息。
+
+三种输出格式:默认(format=format) 
+explain format=TRADITIONAL SELECT * FROM `tb_tdc_call51_brief`;
+explain  SELECT * FROM `tb_tdc_call51_brief`;
+explain format=json SELECT * FROM `tb_tdc_call51_brief`;
+
+
+**explain各项说明 很重要**
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
+
+id、select_type、table、type、possible_keys、key、key_len、ref、rows、Extra
+
+
+**I.select_type**
+
+II.SIMPLE:  简单SELECT（不使用 UNION或子查询）
+explain SELECT * FROM a;
+
+II.PRIMARY、UNION、DEPENDENT UNION、UNION RESULT
+--执行出来有三个分析
+explain SELECT id FROM a union SELECT id FROM b ;
+
+PRIMARY：最外层 SELECT
+UNION：SELECT陈述中的 第二条或更高条UNION
+DEPENDENT UNION： 第二个或更高版本的SELECT语句 UNION，取决于外部查询
+UNION RESULT：结果UNION
+
+II.table:输出行所引用的表的名称。这也可以是以下值之一：
+用到的表明
+<unionM,N>：该行指的是具有和id值的行 的 M并集 N。
+<derivedN>：该行是指用于与该行的派生表结果id的值 N
+<subqueryN>：该行是指该行的物化子查询的结果
 
 
 
