@@ -879,6 +879,16 @@ private String msg;
 I.Sentinel实现原理
 https://github.com/alibaba/Sentinel/wiki/Sentinel工作主流程
 https://github.com/alibaba/Sentinel/wiki/Sentinel-核心类解析
+https://github.com/alibaba/Sentinel/wiki/限流---冷启动
+https://github.com/alibaba/Sentinel/wiki/流量控制-匀速排队模式
+https://github.com/alibaba/Sentinel/wiki/Sentinel工作主流程
+https://github.com/alibaba/Sentinel/wiki/流量控制
+https://github.com/alibaba/Sentinel/wiki/在生产环境中使用-Sentinel#同类组件功能对比
+
+
+
+
+
 
 核心功能:slot 
 通过:slot chain 进行串联
