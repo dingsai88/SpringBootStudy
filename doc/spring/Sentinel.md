@@ -927,6 +927,7 @@ http://bank-finance.167.test.yirendai.com/sentinel/slow
 
 I.启动sentinel 1.8.1
 cd D:\jar
+cd C:\Work\jar
 java -Dserver.port=1111 -Dcsp.sentinel.dashboard.server=localhost:1111 -Dproject.name=sentinel-dashboard -jar sentinel-dashboard-1.8.1.jar
 
 http://127.0.0.1:1111/#/login
@@ -936,7 +937,7 @@ user:sentinel
 
 日志路径：
 C:\Users\Administrator.CE-20160511RDFS\logs\csp
-
+C:\Users\Daniel_MacPro\logs\csp\
 
 
 
