@@ -870,3 +870,78 @@ private String msg;
         this.msg = msg;
     }
 }
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+I.Sentinel实现原理
+https://github.com/alibaba/Sentinel/wiki/Sentinel工作主流程
+https://github.com/alibaba/Sentinel/wiki/Sentinel-核心类解析
+
+核心功能:slot 
+通过:slot chain 进行串联
+
+
+
+I.DefaultSlotChainBuilder:
+
+I.ProcessorSlot:功能模块
+II.NodeSelectorSlot:收集资源的路径，并将这些资源的调用路径，以树状结构存储起来，用于根据调用路径来限流降级；
+II.ClusterBuilderSlot:用于存储资源的统计信息以及调用者信息，例如该资源的 RT, QPS, thread count 等等，这些信息将用作为多维度限流，降级的依据；
+II.LogSlot:
+II.StatisticSlot:用于记录、统计不同纬度的 runtime 指标监控信息；
+II.AuthoritySlot:根据配置的黑白名单和调用来源信息，来做黑白名单控制；
+II.SystemSlot:通过系统的状态，例如 load1 等，来控制总的入口流量；
+II.FlowSlot:用于根据预设的限流规则以及前面 slot 统计的状态，来进行流量控制；
+II.DegradeSlot:通过统计信息以及预设的规则，来做熔断降级；
+
+I.Constants:链路顺序  order = Constants.ORDER_LOG_SLOT
+
+    public static final int ORDER_NODE_SELECTOR_SLOT = -10000;
+    public static final int ORDER_CLUSTER_BUILDER_SLOT = -9000;
+    public static final int ORDER_LOG_SLOT = -8000;
+    public static final int ORDER_STATISTIC_SLOT = -7000;
+    public static final int ORDER_AUTHORITY_SLOT = -6000;
+    public static final int ORDER_SYSTEM_SLOT = -5000;
+    public static final int ORDER_FLOW_SLOT = -2000;
+    public static final int ORDER_DEGRADE_SLOT = -1000;
+
+
+
+
+
+http://bank-finance.167.test.yirendai.com/sentinel/circuitBreaker
+
+http://bank-finance.167.test.yirendai.com/sentinel/slow
+
+
+
+
+
+
+
+
+
+
+I.启动sentinel 1.8.1
+cd D:\jar
+java -Dserver.port=1111 -Dcsp.sentinel.dashboard.server=localhost:1111 -Dproject.name=sentinel-dashboard -jar sentinel-dashboard-1.8.1.jar
+
+http://127.0.0.1:1111/#/login
+
+user:sentinel
+
+
+日志路径：
+C:\Users\Administrator.CE-20160511RDFS\logs\csp
+
+
+
+
+
+
+
+
+

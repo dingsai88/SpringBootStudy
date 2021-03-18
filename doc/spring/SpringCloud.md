@@ -48,7 +48,7 @@ Netflix (net flex) > Spring Cloud > Alibaba
 
 3.网络访问Feign  Netflix: SpringCloud2后F改为OpenFeign
 
-4.客户端负载均衡 Ribbon
+4.客户端负载均衡 Ribbon 负载均衡
 
 5.网关路由和过滤 Zuul :不更新
 

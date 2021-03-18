@@ -45,7 +45,24 @@ public class TestMain {
         System.out.println("结束:------------1:"+input);
         System.out.println("结束:------------2:"+GetLeastNumbers_Solution(input,3));
 
+
+        System.out.println("测试开始");
+        Integer i=999;
+        TestMain testMain=new TestMain();
+        testMain.countInt(i);
+        System.out.println("测试开始1");
+        testMain.countInt(i);
+        System.out.println("测试开始2");
+
     }
+
+    public void countInt(Integer i){
+        System.out.println("开始:------------:"+i);
+        i++;
+        System.out.println("结束:------------:"+i);
+
+    }
+
 
     public static ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
         ArrayList<Integer> result=new ArrayList<Integer>();
