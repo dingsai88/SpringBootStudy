@@ -487,11 +487,42 @@ UNION：SELECT陈述中的 第二条或更高条UNION
 DEPENDENT UNION： 第二个或更高版本的SELECT语句 UNION，取决于外部查询
 UNION RESULT：结果UNION
 
-II.table:输出行所引用的表的名称。这也可以是以下值之一：
+**I.table:输出行所引用的表的名称。这也可以是以下值之一：**
 用到的表明
 <unionM,N>：该行指的是具有和id值的行 的 M并集 N。
 <derivedN>：该行是指用于与该行的派生表结果id的值 N
 <subqueryN>：该行是指该行的物化子查询的结果
+
+
+
+**I.partitions（JSON名： partitions） 查询将从中匹配记录的分区。该值适用NULL于未分区的表**
+5.7 版本没看见
+
+
+
+**I.type（JSON名： access_type）**
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#jointype_system
+ 
+
+system>const>eq_ref>ref>range>index>ALL
+
+system：1.只有一条数据的系统表 。 2.或衍生表只能有一条数据的主查询
+const：(单表唯一可为空)仅仅能查出一条的SQL语句并且用于Primary key 或 unique索引；
+eq_ref：(连表查唯一不可为空)token必须是非空非空非空唯一索引( 单独的唯一索引不可以) (explain SELECT * FROM t1 , t2 where t1.token=t2.token;)
+ref: 单表时非唯一性索引等于匹配的行; 连表时 普通索引相等的
+fulltext:使用FULLTEXT 索引执行联接。
+ref_or_null:和ref很像多个or null，column='aa' OR  column is  null;
+index_merge:索引合并优化  两个带索引的 and or 操作
+unique_subquery：主键:value IN (SELECT primary_key FROM single_table WHERE some_expr)
+index_subquery：普通索引:value IN (SELECT key_column FROM single_table WHERE some_expr)
+range:  索引 in (1000,2000)、BETWEEN
+index:和all 一样是全表扫描 只不过返回的是ID
+ALL:全表扫描
+
+
+
+
+
 
 
 
