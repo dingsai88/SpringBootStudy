@@ -114,7 +114,7 @@ Packed:指示关键字如何被压缩。如果没有被压缩，则为NULL。
 Null:如果列含有NULL，则含有YES。如果没有，则为空。
 Index_type：存储索引数据结构方法（BTREE, FULLTEXT, HASH, RTREE）
 
-**ANALYZE  TABLE** 分析表 ，上边语句的Cardinality唯一值估算并不准确，分析后查询更快。
+**ANALYZE  TABLE** 分析表 ，上边语句的 Cardinality 唯一值估算并不准确，分析后查询更快。
 
 ANALYZE  table order_investment;
 
@@ -235,6 +235,11 @@ Using index(索引排序): SELECT pk, key_part1, key_part2 FROM t1 where key_par
 **II.GROUP BY Optimization**(联合索引下，全部字段是覆盖索引内的字段)
 常规操作:扫整表并且创建包含连续的分组行的临时表.Using temporary;
 避免临时表创建:所有的group by子句中的列属性必须来至同一个index(联合):**(所有列都是来自同一个索引)**
+
+SURNAME_SID无索引
+
+explain SELECT * FROM tb_tdc_gjj_user GROUP BY SURNAME_SID ;
+
 
 **Loose Index Scan:松散索引扫描**
 1.单表上查询
@@ -519,9 +524,287 @@ range:  索引 in (1000,2000)、BETWEEN
 index:和all 一样是全表扫描 只不过返回的是ID
 ALL:全表扫描
 
+unique_subquery:能出来的例子
+explain select straight_join * from fund_product fp  join fund_manager fm on fm.fund_code = fp.fund_code where group_manager_id in (select id from fund_group_manager fgm where fm.user_name = fgm.user_name);
+
+index_subquery:能出来的例子
+explain select straight_join * from fund_product fp  join fund_manager fm on fm.fund_code = fp.fund_code where user_id in (select user_id from fund_group_manager fgm where fm.user_name = fgm.user_name);
 
 
 
+
+CREATE TABLE `fund_product` (
+`product_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+`fund_code` varchar(50) NOT NULL COMMENT '',
+PRIMARY KEY (`product_id`),
+UNIQUE KEY `fundcode` (`fund_code`),
+KEY `super_baby` (`super_baby`) USING BTREE
+) ;
+
+CREATE TABLE `fund_manager` (
+`manager_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '',
+`fund_code` varchar(50) NOT NULL COMMENT '',
+`user_name` varchar(50) DEFAULT '' COMMENT '',
+PRIMARY KEY (`manager_id`),
+KEY `fund_code` (`fund_code`) USING BTREE,
+KEY `group_manager_id` (`group_manager_id`) USING BTREE
+) ;
+
+
+CREATE TABLE `fund_group_manager` (
+`id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+`user_name` varchar(50) DEFAULT '' COMMENT '',
+PRIMARY KEY (`id`),
+KEY `idx_user_id` (`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=553 DEFAULT CHARSET=utf8 COMMENT='';
+
+
+
+
+**possible_keys（JSON名： possible_keys）**
+可能用到的索引。
+但不一定被查询实际使用。
+
+
+SHOW INDEX FROM tbl_name
+
+explain SELECT * FROM `tb_tdc_gjj_user`  FORCE INDEX(un_lp) where LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  FORCE INDEX(idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  USE  INDEX(idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  IGNORE   INDEX(un_lp)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  IGNORE   INDEX(un_lp,idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+
+
+CREATE TABLE `tb_tdc_gjj_user` (
+`ID` int(11) NOT NULL AUTO_INCREMENT,
+`USER_UUID` varchar(32) DEFAULT NULL,
+`LOCATION_CID` varchar(32) NOT NULL COMMENT '',
+`PASSPORT` varchar(20) NOT NULL COMMENT '',
+PRIMARY KEY (`ID`),
+UNIQUE KEY `un_lp` (`LOCATION_CID`,`PASSPORT`) USING BTREE,
+KEY `idx_USER_UUID` (`USER_UUID`),
+KEY `idx_LOCATION_CID` (`LOCATION_CID`)
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+
+
+
+**key（JSON名：key）**
+实际使用的索引: 如果MySQL决定使用possible_keys 索引之一来查找行，则将该索引列为键值。
+
+1.NULL，则没有使用索引。（或者索引失效）
+2.覆盖索引时，possible_keys=null  ，索引只出现在key explain SELECT LOCATION_CID,PASSPORT FROM `tb_tdc_gjj_user`  ;
+3.数据量小有可能为null不使用索引
+4.可以强制指定索引:
+强制使用:FORCE INDEX(un_lp)、
+推荐使用mysql自己决定是否使用 USE  INDEX(idx_LOCATION_CID)、
+忽略某个索引IGNORE   INDEX(un_lp,idx_LOCATION_CID)
+
+
+explain SELECT * FROM `tb_tdc_gjj_user`  FORCE INDEX(un_lp) where LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  FORCE INDEX(idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  USE  INDEX(idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  IGNORE   INDEX(un_lp)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+explain SELECT * FROM `tb_tdc_gjj_user`  IGNORE   INDEX(un_lp,idx_LOCATION_CID)  where  LOCATION_CID='c147b4f3fb9e4948a535e4fef8cc1590';
+
+
+
+**key_len（JSON名： key_length）**
+表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度。在不损失精确性的情况下，长度越短越好
+key_len显示的值为索引字段的最大可能长度，并非实际使用长度，即key_len是根据表定义计算而得，不是通过表内检索出的
+
+
+
+**ref（JSON名：ref）** 使用什么和索引比较的
+哪些列或常量与该key列中命名的索引进行比较
+const 使用常量和索引比较的
+func 使用函数和key比较的
+
+
+
+
+**rows（JSON名： rows）** 影响行数 不准确可以使用
+MySQL认为执行查询必须检查的行数
+
+分析表  优化表可以精确影响行数
+ANALYZE  table order_investment;
+
+Optimize Table  order_investment  ;
+
+
+
+**filtered（JSON名： filtered）**  
+按表条件过滤的表行的估计百分比。最大值为100，这表示未对行进行过滤。
+值从100减小表示过滤量增加。 
+rows显示检查的估计行数，rows× filtered显示与下表连接的行数。
+例如，如果 rows为1000且 filtered为50.00（50％），则与下表连接的行数为1000×50％= 500。
+
+
+
+
+**Extra （JSON名称：无）**
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-information
+
+II.Child of 'table' pushed join@1（JSON：message 文本）  :没试
+NDB Cluster 存储引擎
+
+
+II.const row not found（JSON属性： const_row_not_found）  :没试出来
+
+对于诸如之类的查询，该表为空。 SELECT ... FROM tbl_name
+
+
+II.Deleting all rows（JSON属性： message）
+对于DELETE，某些存储引擎（例如MyISAM）支持一种处理程序方法，该方法以一种简单而快速的方式删除所有表行。Extra如果引擎使用此优化，则显示此值
+
+
+II.Distinct（JSON属性： distinct）
+MySQL正在寻找不同的值，因此在找到第一个匹配的行后，它将停止为当前行组合搜索更多行。
+
+
+II.FirstMatch(tbl_name) (JSON property: first_match)
+The semijoin FirstMatch join shortcutting strategy is used for tbl_name.
+
+
+II.Full scan on NULL key  (JSON property: message)
+This occurs for subquery optimization as a fallback strategy when the optimizer cannot use an index-lookup access method.
+子查询中的一种优化方式，主要在遇到无法通过索引访问null值的使用
+
+
+II.Impossible HAVING (JSON property: message)
+The HAVING clause is always false and cannot select any rows.
+HAVING子句始终为false，不能选择任何行
+
+explain SELECT count(*) FROM t2 GROUP BY user_id HAVING 1<0 ;
+
+Extra :Impossible HAVING
+
+
+
+II.Impossible WHERE（JSON属性： message）
+The WHERE clause is always false and cannot select any rows.
+WHERE子句始终为false，不能选择任何行
+
+explain SELECT * FROM t2 where 1<0;
+
+
+
+II.Impossible WHERE noticed after reading const tables 
+MySQL has read all const (and system) tables and notice that the WHERE clause is always false.
+MySQL已经读取了所有 const（和 system）表，并注意到该WHERE子句始终为false。
+
+
+explain SELECT min(id) FROM t2 where un='222';
+
+
+II.LooseScan(m..n) （JSON属性：message）
+
+The semijoin LooseScan strategy is used. m and n are key part numbers. 
+使用半连接的LooseScan策略。 m和 n是关键部件号。
+
+
+
+II.No matching min/max row (JSON property: message)
+没有行满足查询的条件，例如 。 SELECT MIN(...) FROM ... WHERE condition
+
+explain SELECT min(id) FROM t2 ;  空表
+
+
+II.no matching row in const table（JSON属性：message）:没试出来
+表为空或者表中根据唯一键查询时没有匹配的行
+
+
+II.No matching rows after partition pruning
+
+对于DELETE或 UPDATE，在分区修剪后，优化器未发现任何要删除或更新的内容。它的含义类似于Impossible WHERE forSELECT语句。
+
+II.No tables used（JSON属性： message）
+查询没有FROM子句，或者有 FROM DUAL子句。
+
+
+II.Not exists（JSON属性： message）
+MySQL能够对LEFT JOIN 查询进行优化，并且在找到符合LEFT JOIN条件的一行后，不检查该表中的更多行是否为上一行组合。这是可以通过这种方式优化的查询类型的示例：
+explain
+SELECT * FROM t3 LEFT JOIN t2 ON t3.id=t2.id
+WHERE t2.id IS NULL;
+
+
+
+II.Plan isn't ready yet 
+II.Range checked for each record (index map: N)
+II.Recursive
+II.Rematerialize
+II.Scanned N databases
+II.Select tables optimized away
+II.Skip_open_table， Open_frm_only， Open_full_table
+II.Start temporary，End temporary
+II.unique row not found
+
+
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-information
+
+
+II.Using filesort
+使用了文件排序 order by 没有覆盖索引 
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-information
+https://dev.mysql.com/doc/refman/8.0/en/order-by-optimization.html
+
+user_id有索引，但是不是覆盖索引
+explain SELECT * FROM t2   order by user_id;
+
+
+II.Using index
+单索引不用回表
+explain SELECT id,USER_UUID FROM tb_tdc_gjj_user  where USER_UUID ='2';
+
+当查询仅使用作为单个索引的一部分的列时，可以使用此策略。
+仅使用索引树中的信息从表中检索列信息，而不需要进行附加搜索来读取实际行(使用二级覆盖索引即可获取数据)
+
+
+II.Using index condition
+通过访问索引元组并首先对其进行测试以确定是否读取完整的表行来读取表。这样，除非有必要，否则索引信息将用于延迟（“下推”）整个表行的读取。
+会先条件过滤索引，过滤完索引后找到所有符合索引条件的数据行，随后用 WHERE 子句中的其他条件去过滤这些数据行；
+
+一个有索引再加另外一个条件
+explain SELECT id,USER_UUID FROM tb_tdc_gjj_user  where USER_UUID >'2' and LOCATION_CID='1';
+
+
+II.Using index for group-by:没试出来
+
+与Using index表访问方法类似，Using index for group-by 表示MySQL找到了一个索引，该索引可用于检索aGROUP BY或 DISTINCT查询的所有列，
+而无需对实际表进行任何额外的磁盘访问。此外，以最有效的方式使用索引，因此对于每个组，仅读取少数索引条目。有关详细信息
+
+
+II.Using index for skip scan
+II.Using join buffer (Block Nested Loop)， Using join buffer (Batched Key Access)， Using join buffer (hash join
+II.Using MRR
+II.Using sort_union(...)，Using union(...)，Using intersect(...)
+
+
+II.Using temporary 临时表 using_temporary_table
+
+为了解决查询，MySQL需要创建一个临时表来保存结果。如果查询包含GROUP BY和 ORDER BY子句以不同的方式列出列，通常会发生这种情况。
+
+SURNAME_SID无索引
+explain SELECT * FROM tb_tdc_gjj_user GROUP BY SURNAME_SID ;
+
+
+II.Using where
+ 过滤条件字段无索引；
+
+SURNAME_SID无索引
+explain SELECT * FROM tb_tdc_gjj_user where SURNAME_SID='111';
+
+
+
+II.Using where with pushed condition:没试出来
+NDB存储引擎 NDB Cluster
+
+II.Zero limit:没试出来
+
+该查询有一个LIMIT 0子句，不能选择任何行。
+
+
+https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-information
 
 
 
