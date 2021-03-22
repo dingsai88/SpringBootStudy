@@ -808,6 +808,20 @@ https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-inform
 
 
 
+--------------------------------------------------------------------------------------------------------------------------------------------------
+**SHOW WARNINGS** 输出上一条语句的错误 ：没试出来
+
+EXPLAIN
+SELECT t2.id, t2.id IN (SELECT t3.id FROM t3) FROM t2;
+SHOW WARNINGS  ;
+
+
+SELECT CONNECTION_ID();
+SELECT * FROM `PROCESSLIST`;
+
+
+
+
 
 
 

@@ -285,7 +285,7 @@ Region分类:Eden、Survivor、Old、Humongous
 跨代问题:CardTable  跨Region: RememberedSet
 
 1.⽆需回收整个堆，⽽是选择⼀个Collection Set (CS)
-2.两种GC： Fully young GC(只回收年轻代)、 Mixed GC(全部都回收)
+2.两种GC： Full young GC(只回收年轻代)、 Mixed GC(全部都回收)
 3.估计每个Region中的垃圾⽐例，优先回收垃圾多的Region
 
 G1:初始标记(需要STW)>并发标记（三色标记法）>重新标记(STW)>cleanup(STW)⽴刻回收全空的区 (半空区域进行拷贝)
