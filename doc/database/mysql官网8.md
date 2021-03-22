@@ -829,10 +829,37 @@ https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 
 
 
+**优化器开关 optimize switch**
+
+SELECT @@optimizer_switch;
+
+修改值:
+SET [GLOBAL|SESSION] optimizer_switch='command[,command]...';
+opt_name=default、on、off
+
+-- SET GLOBAL optimizer_switch='index_merge=default';
 
 
 
 
+index_merge=on,   --控制所有索引合并优化。
+index_merge_union=on,   --控制索引合并联合访问优化。
+index_merge_sort_union=on,  --控制索引合并排序访问优化。
+index_merge_intersection=on,
+engine_condition_pushdown=on, --控制发动机状态下推。
+index_condition_pushdown=on, --控制索引条件下推。
+mrr=on,
+mrr_cost_based=on,
+block_nested_loop=on,
+batched_key_access=off,
+materialization=on,
+semijoin=on,
+loosescan=on,
+firstmatch=on,
+subquery_materialization_cost_based=on,
+use_index_extensions=on --控制索引扩展的使用。
+
+https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 
 
 
