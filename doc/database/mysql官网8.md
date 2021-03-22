@@ -821,6 +821,22 @@ SELECT * FROM `PROCESSLIST`;
 
 
 
+---------------------------------------------------------------------------------------------
+控制查询优化器
+ 
+I.SELECT @@optimizer_switch;
+https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
+
+
+
+
+
+
+
+
+
+
+
 
 
 
