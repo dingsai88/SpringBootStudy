@@ -827,7 +827,7 @@ SELECT * FROM `PROCESSLIST`;
 I.SELECT @@optimizer_switch;
 https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 
-
+控制优化器:优化器开关(全局都修改)、优化器提示(只运用于单条-优先级更高)
 
 **优化器开关 optimize switch**
 
@@ -860,6 +860,134 @@ subquery_materialization_cost_based=on,
 use_index_extensions=on --控制索引扩展的使用。
 
 https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
+
+
+
+
+
+**优化器提示Optimizer Hints**
+控制优化器的另一种方法是使用优化器提示：优先级大于优化器开关 optimize switch
+
+控制优化器的另一种方法是使用优化器提示，该提示可以在各个语句中指定。
+由于优化程序提示是基于每个语句应用的，因此它们提供了比使用更好的控制语句执行计划 optimizer_switch。
+例如，可以在语句中为一个表启用优化，而对另一表禁用优化。
+语句中的提示优先于 optimizer_switch标志。
+
+
+
+I.优化器提示-作用域
+全局：提示会影响整个语句
+查询块：提示会影响语句中的特定查询块
+表级别：提示会影响查询块中的特定表
+索引级：提示会影响表中的特定索引
+
+https://dev.mysql.com/doc/refman/8.0/en/optimizer-hints.html#optimizer-hints-overview
+
+
+
+I.优化器提示-语法
+
+优化器提示必须在/*+ ... */注释中指定。也就是说，优化程序提示使用/* ... */ C样式注释语法的变体，并+在/*注释打开序列之后添加一个字符。
+
+/*+ BKA(t1) */
+/*+ BNL(t1, t2) */
+/*+ NO_RANGE_OPTIMIZATION(t4 PRIMARY) */
+/*+ QB_NAME(qb2) */
+
+
+
+
+I.Join-Order Optimizer Hints 联合排序优化器提示
+
+影响优化器联接表的顺序。
+
+
+II.hint_name：允许使用这些提示名称：
+
+JOIN_FIXED_ORDER：强制优化器使用表在FROM 子句中出现的顺序来联接表。这与指定相同SELECT STRAIGHT_JOIN。
+
+JOIN_ORDER：指示优化器使用指定的表顺序联接表。提示适用于命名表。优化器可以将未命名的表放置在连接顺序中的任何位置，包括在指定的表之间。
+
+JOIN_PREFIX：指示优化器使用指定的表顺序为联接执行计划的前几个表联接表。提示适用于命名表。优化器将所有其他表放在命名表之后。
+
+JOIN_SUFFIX：指示优化器使用指定的表顺序连接表，以执行连接执行计划的最后一个表。提示适用于命名表。优化器将所有其他表放在命名表之前。
+
+
+
+II.tbl_name :
+语句中使用的表的名称。命名表的提示适用于它命名的所有表。
+
+
+
+II.query_block_name：
+提示适用于的查询块。如果提示中不包含任何前导 ，则该提示适用于出现该查询的查询块。对于 语法，提示适用于命名查询块中的命名表。要将名称分配给查询块
+
+
+
+
+I.Table-Level Optimizer Hints  表级优化器提示
+
+
+
+**I.Index-Level Optimizer Hints  索引级 优化器提示**
+索引级优化器提示 优先级大于 force index、  IGNORE   INDEX、use index
+
+
+索引级优化标记 GROUP_INDEX，INDEX， JOIN_INDEX，和 ORDER_INDEX所有优先于等效FORCE INDEX的提示; 也就是说，它们导致FORCE INDEX提示被忽略。同样， NO_GROUP_INDEX， NO_INDEX， NO_JOIN_INDEX，和 NO_ORDER_INDEX提示都优先于任何IGNORE INDEX 等价物，也使他们被忽略。
+
+
+
+
+II.hint_name：
+
+允许使用这些提示名称：
+
+
+**GROUP_INDEX， NO_GROUP_INDEX：**
+启用或禁用指定的一个或多个索引以进行GROUP BY 操作的索引扫描。相当于索引提示 FORCE INDEX FOR GROUP BY， IGNORE INDEX FOR GROUP BY。在MySQL 8.0.20及更高版本中可用。
+
+**INDEX， NO_INDEX：**
+作为的组合 JOIN_INDEX， GROUP_INDEX以及 ORDER_INDEX，迫使服务器以用于任何指定索引或索引和所有范围，或为一体的组合 NO_JOIN_INDEX， NO_GROUP_INDEX和 NO_ORDER_INDEX，这使得服务器忽略任何指定索引或索引和所有范围。相当于 FORCE INDEX，IGNORE INDEX。从MySQL 8.0.20开始可用。
+
+**INDEX_MERGE， NO_INDEX_MERGE：**
+启用或禁用指定表或索引的索引合并访问方法。有关此访问方法的信息，请参见 第8.2.1.3节“索引合并优化”。这些提示适用于所有三种索引合并算法。
+
+该INDEX_MERGE提示会强制优化器使用指定的索引集对指定的表使用索引合并。如果未指定索引，则优化器将考虑所有可能的索引组合并选择最便宜的索引组合。如果索引组合不适用于给定的语句，则可以忽略该提示。
+
+该NO_INDEX_MERGE 提示将禁用涉及任何指定索引的索引合并组合。如果提示未指定索引，则表不允许索引合并。
+
+**JOIN_INDEX， NO_JOIN_INDEX：**
+强制MySQL使用或忽略指定的索引或索引为任何存取方法，诸如 ref，range， index_merge，等。相当于FORCE INDEX FOR JOIN，IGNORE INDEX FOR JOIN。在MySQL 8.0.20及更高版本中可用。
+
+**MRR， NO_MRR：**
+启用或禁用指定表或索引的MRR。MRR提示仅适用于InnoDB和 MyISAM表。有关此访问方法的信息，请参见 第8.2.1.11节“多范围读取优化”。
+
+**NO_ICP：**
+对指定的表或索引禁用ICP。默认情况下，ICP是一种候选优化策略，因此没有启用它的提示。有关此访问方法的信息，请参见 第8.2.1.6节“索引条件下推优化”。
+
+**NO_RANGE_OPTIMIZATION：**
+禁用指定表或索引的索引范围访问。此提示还禁用表或索引的索引合并和松散索引扫描。默认情况下，范围访问是一种候选优化策略，因此没有启用它的提示。
+
+当范围数可能很高并且范围优化将需要许多资源时，此提示可能会很有用。
+
+**ORDER_INDEX， NO_ORDER_INDEX：**
+使MySQL使用或忽略指定的一个或多个用于对行进行排序的索引。相当于FORCE INDEX FOR ORDER BY，IGNORE INDEX FOR ORDER BY。从MySQL 8.0.20开始可用。
+
+**SKIP_SCAN， NO_SKIP_SCAN：**
+为指定的表或索引启用或禁用“跳过扫描”访问方法。有关此访问方法的信息，请参见 跳过扫描范围访问方法。这些提示自MySQL 8.0.13起可用。
+
+该SKIP_SCAN提示会强制优化器使用指定索引集对指定表使用“跳过扫描”。如果未指定索引，则优化器将考虑所有可能的索引并选择最便宜的索引。如果索引不适用于给定的语句，则可以忽略该提示。
+
+该NO_SKIP_SCAN 提示禁用指定索引的“跳过扫描”。如果提示未指定索引，则不允许对该表进行“跳过扫描”。
+
+
+
+
+
+I.Subquery Optimizer Hints 子查询优化器提示
+https://dev.mysql.com/doc/refman/8.0/en/optimizer-hints.html#optimizer-hints-subquery
+
+
 
 
 
