@@ -989,6 +989,107 @@ https://dev.mysql.com/doc/refman/8.0/en/optimizer-hints.html#optimizer-hints-sub
 
 
 
+I.语句执行优化器提示 Statement Execution Time Optimizer Hints
+
+SELECT /*+ MAX_EXECUTION_TIME(1000) */ * FROM t1 INNER JOIN t2 WHER
+
+
+
+I.Variable-Setting Hint Syntax 变量设置提示语法
+
+SELECT /*+ SET_VAR(sort_buffer_size = 16M) */ name FROM people ORDER BY name;
+INSERT /*+ SET_VAR(foreign_key_checks=OFF) */ INTO t2 VALUES(2);
+SELECT /*+ SET_VAR(optimizer_switch = 'mrr_cost_based=off') */ 1;
+
+
+
+
+I.Resource Group Hint Syntax 资源组提示 语法
+此提示将执行语句的线程临时分配给命名资源组（在语句持续时间内）
+SELECT /*+ RESOURCE_GROUP(USR_default) */ name FROM people ORDER BY name;
+INSERT /*+ RESOURCE_GROUP(Batch) */ INTO t2 VALUES(2);
+
+
+
+I.Optimizer Hints for Naming Query Blocks 用于命名查询块的优化器提示
+SELECT /*+ QB_NAME(qb1) */ ...
+FROM (SELECT /*+ QB_NAME(qb2) */ ...
+FROM (SELECT /*+ QB_NAME(qb3) */ ... FROM ...)) ...
+
+
+
+----------------------------------------------------------------------------------------
+**Index Hints索引提示**
+
+索引提示为优化器提供有关在查询处理期间如何选择索引的信息。
+索引和优化器提示optimizer hints可以单独使用，也可以一起使用。
+索引提示仅适用于SELECT 和UPDATE语句。
+
+USE INDEX (index_list) 
+IGNORE INDEX (index_list)   
+FORCE INDEX (index_list)
+
+
+服务器支持该索引级优化标记JOIN_INDEX， GROUP_INDEX， ORDER_INDEX，和 INDEX，其中等同于和用于替代FORCE INDEX 索引提示，
+以及所述 NO_JOIN_INDEX， NO_GROUP_INDEX， NO_ORDER_INDEX，和 NO_INDEX优化标记，这相当于和意图取代 IGNORE INDEX索引提示。
+
+因此，您应该期望USE INDEX，FORCE INDEX和IGNORE INDEX在将来的MySQL版本中被弃用，并在之后的某个时间将其完全删除。
+
+要引用主键，请使用名称PRIMARY
+
+**USE INDEX、IGNORE INDEX、FORCE INDEX 后期要被删除** 
+
+**FORCE INDEX强制使用索引:** 替换为
+JOIN_INDEX， GROUP_INDEX， ORDER_INDEX，和 INDEX
+
+**IGNORE INDEX 强制不使用某个索引** 替换为
+NO_JOIN_INDEX， NO_GROUP_INDEX， NO_ORDER_INDEX，和 NO_INDEX
+
+
+
+
+--------------------------------------------------------------------------
+**The Optimizer Cost Model 优化器覆盖模型**
+
+
+为了生成执行计划，优化器使用成本模型，该模型基于对查询执行期间发生的各种操作的成本进行估算。
+优化器具有一组内置的默认“成本常数”，可用于制定有关执行计划的决策。
+
+
+Cost Model General Operation成本模型一般运作
+
+
+
+
+The Cost Model Database成本模型数据库
+
+
+
+Making Changes to the Cost Model Database更改成本模型数据库
+
+
+
+
+-----------------------------------------------------
+**Optimizer Statistics优化器统计**
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------
+**8.10 Buffering and Caching缓冲和缓存**
+
+https://dev.mysql.com/doc/refman/8.0/en/buffering-caching.html
+
+
+
+**8.10.1 InnoDB缓冲池优化**
+
 
 
 
