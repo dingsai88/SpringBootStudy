@@ -457,4 +457,21 @@ THULAC 清华大学的分词器
 
 
 
+--------------------------------查询----------------------------------------
+SearchAPI
+
++ URI Search
+   GET 方式
++ Request Body Search
+
+
+
+GET kibana_sample_data_ecommerce/_search?q=customer_first_name:Eddie
+
+
+
+
+
+
+
 
