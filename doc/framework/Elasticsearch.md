@@ -1,6 +1,13 @@
 镜像下载地址:
 https://elasticsearch.cn/download/
 
+**I.mysql和Elasticsearch对比**
+
+表table== index(Type)索引
+行数据Row==Document文档
+字段Column==Filed
+Schema(DataBase数据库)==Mapping
+
 
 **为什么要学Elasticsearch**
 
@@ -73,6 +80,7 @@ https://www.elastic.co/cn/downloads/past-releases/elasticsearch-6-8-14
 
 https://www.elastic.co/cn/downloads/past-releases/kibana-6-8-14
 
+**II.elasticsearch启动**
 F:\DingSaiElastic\Elasticsearch\elasticsearch-6.8.14\bin
 elasticsearch.bat
 
@@ -468,18 +476,319 @@ THULAC 清华大学的分词器
 --------------------------------查询----------------------------------------
 SearchAPI
 
-+ URI Search
+**+ URI Search**
    GET 方式
-+ Request Body Search
+**+ Request Body Search**
 
+
+集群上所有的索引
+GET /_search
+
+
+GET /index1/_search
 
 
 GET kibana_sample_data_ecommerce/_search?q=customer_first_name:Eddie
 
+使用q,指定查询字符串
+搜索叫做Eddie的客户 
+
+
+
+#REQUEST Body
+POST kibana_sample_data_ecommerce/_search
+{
+"profile": true,
+"query": {
+"match_all": {}
+}
+}
+
+
+curl -XGET/POST "http://a:9200/kibana_sample_data_ecommerce/_search" -H
+'Content-Type:application/json' -d '{"query":{"match_all":{}}}'
 
 
 
 
 
 
+{
+"took" : 6,    **took花费时间**
+"timed_out" : false,
+"_shards" : {
+"total" : 1,
+"successful" : 1,
+"skipped" : 0,
+"failed" : 0
+},
+"hits" : {
+"total" : 4675,    **total符合条件总数**
+"max_score" : 1.0,
+"hits" : [     **hits结果集，默认前10个**
+{
+"_index" : "kibana_sample_data_ecommerce", **索引名**
+"_type" : "_doc",
+"_id" : "6xgQXngBoai3J6BcSKMn",   **文档ID**
+"_score" : 1.0,  **相关度评分**
+"_source" : {   **文档原始信息**
+"category" : [
+"Men's Clothing"
+],
+"currency" : "EUR",
+"customer_first_name" : "Eddie",
+"customer_full_name" : "Eddie Underwood",
+"customer_gender" : "MALE",
+"customer_id" : 38, 
+
+
+
+**搜索的相关性 Relevance**
+
++ 搜索是用户和搜索引擎的对话
++ 用户关心的是搜索结果的相关性
+   + 是否可以找到所有相关的内容
+   + 有所少不相关的内容被返回了
+   + 文档的打分是否合理
+   + 结合业务需求，平衡结果查询
+
+
+**衡量相关性**
+
+Information Retrieval 
++ Precision 查询率-尽可能返回少的无关文档
++ Recall 查全率 -尽量返回较多的相关文档
++ Ranking - 是否能够按照相关度进行排序
+
+
+
+**15-URI-Search详解**
+https://github.com/dingsai88/geektime-ELK/tree/master/part-1/3.7-URISearch%E8%AF%A6%E8%A7%A3
+
+**指定字段 VS 泛查询**
+
+II.指定字段
+
+#指定字段
+GET /movies/_search?q=title:2012&sort=year:desc&from=0&size=10&timeout=1s
+{
+"profile":"true"
+}
+
+
+#指定字段  只查询title字段里包含2012的数据，返回2行
+GET /movies/_search?q=title:2012
+{
+"profile":"true"  **开启查询分析**
+}
+
+"type" : "TermQuery", **使用TermQuery搜索**
+"description" : "title:2012",   **只查询title字段里包含2012的数据**
+
+II.泛查询
+#泛查询，正对_all,所有字段
+GET /movies/_search?q=2012
+{
+"profile":"true" **开启查询分析**
+}
+
+"type" : "DisjunctionMaxQuery",  **使用DisjunctionMaxQuery搜索**
+"description" : "(title.keyword:2012 | id.keyword:2012 | year:[2012 TO 2012] | genre:2012 | @version:2012 | @version.keyword:2012 | id:2012 | genre.keyword:2012 | title:2012)",
+**使用搜索很多字段2012**
+
+
+
+II.  **Term  VS Phrase**  or and 
+
+Term Query 期限搜索       :Beautiful Mind 等于  Beautiful  OR  Mind
+Phrase  Query 短语搜索    :"Beautiful Mind" 等于  Beautiful  AND   Mind，还要求顺序要一致
+
+分组与引号
+title:(Beautiful AND Mind)
+title="Beautiful Mind"
+
+
+
+# 查找美丽心灵, Mind为泛查询
+GET /movies/_search?q=title:Beautiful Mind
+{
+"profile":"true"
+}
+
+"type" : "BooleanQuery",
+"description" : """title:beautiful (title.keyword:Mind | id.keyword:Mind | MatchNoDocsQuery("failed [year] query, caused by number_format_exception:[For input string: "Mind"]") | genre:mind | @version:mind | @version.keyword:Mind | id:mind | genre.keyword:Mind | title:mind)""",
+#分组，Bool查询
+GET /movies/_search?q=title:(Beautiful Mind)
+
+
+
+
+#使用引号，Phrase查询
+GET /movies/_search?q=title:"Beautiful Mind"
+{
+"profile":"true"
+}
+
+"type" : "PhraseQuery",  **两个都出现而且要保证顺序**
+"description" : """title:"beautiful mind"""",
+
+
+
+II. 布尔操作  AND OR NOT && ||  !
+必须大写
+title:(matrix  NOT reloaded)
+
+II.分组
++ 表示 must
+- 表示 must_not 
+title:(+aaa -bbb)
+
+II.范围
+区间表示:   [] 闭区间             {}开区间
+
+year:{2019 TO 2018}
+year:[* TO 2018]
+
+II.算数符号
+
+year:>2010
+year:>2010
+year:(>2010&&<=2018)
+year:(+>2010 +<=2018)
+
+II.通配符查询 (效率低、占内存大，不建议使用。遵循左前缀，不建议放在最前)
+
+?表示一个字符
+*代表0或者多个
+
+title:mi?d
+title:be*
+
+
+II.正则
+title:[bt]oy
+
+
+II.模糊匹配和近似查询
+
+单词拼错了，近似查询
+title:befutifl~1
+
+
+不考虑位置
+
+title:"lord rings"~2
+
+具体语句
+https://github.com/dingsai88/geektime-ELK/tree/master/part-1/3.7-URISearch%E8%AF%A6%E8%A7%A3
+
+
+
+
+
+
+
+**16-Request-Body与Query-DSL简介**
+
+
+https://github.com/dingsai88/geektime-ELK/tree/master/part-1/3.8-RequestBody%E4%B8%8EQueryDSL%E7%AE%80%E4%BB%8B
+
+II.分页
+
+POST /kibana_sample_data_ecommerce/_search
+{
+"from":10,
+"size":20,
+"query":{
+"match_all": {}
+}
+}
+
+II. #对日期排序
+POST kibana_sample_data_ecommerce/_search
+{
+"sort":[{"order_date":"desc"}],
+"query":{
+"match_all": {}
+}}
+
+II. #source filtering   针对返回的信息进行过滤
+"_source":["order_date"],  只返回 order_date
+"_source":["order_id"],
+
+II.脚本字段 
+查询全部数据，返回一个新字段 new_field  =order_date+'hello'
+#脚本字段  script_fields  
+GET kibana_sample_data_ecommerce/_search
+{
+  "script_fields": {
+       "new_field": {
+              "script": {
+                         "lang": "painless",
+                          "source": "doc['order_date'].value+'hello'"
+                          }}},
+     "query": {
+          "match_all": {} 
+               }
+}
+
+
+II.  **Term  VS Phrase**  or and 
+
+III. or 
+"title": "last christmas"
+
+III. and
+"title": {
+"query": "last christmas",
+"operator": "and"
+}
+
+III. 中间可以空字符
+
+"title":{
+"query": "one love",
+"slop": 1 }
+
+
+
+
+
+
+-------------------------------------------------------------------------------------
+**17-Query-String&Simple-Query-String查询**
+**18-Dynamic-Mapping和常见字段类型**
+
+**查看Mapping文件 表结构类似**
+
+Dynamic Mapping 和常见字段类型
+
+
+PUT mapping_test/_doc/1
+{
+"firstName":"Chan",
+"lastName": "Jackie",
+"loginDate":"2018-07-24T10:29:48.103Z"
+}
+
+#查看 Mapping文件 返回各个字段的类型 type=text、date
+GET mapping_test/_mapping
+
+GET mapping_test/_doc/1
+
+#Delete index
+DELETE mapping_test
+
+
+
+
+
+
+
+
+
+表table== index(Type)索引
+行数据Row==Document文档
+字段Column==Filed
+Schema(DataBase数据库)==Mapping
 
