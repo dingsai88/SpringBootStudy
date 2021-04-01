@@ -3,10 +3,15 @@ https://elasticsearch.cn/download/
 
 **I.mysql和Elasticsearch对比**
 
-表table== index(Type)索引
-行数据Row==Document文档
+表table== index(Type)索引(录入数据叫索引indexing) :(7版之前index可以多个type，已不建议)
+行数据Row==Document文档 (包含元数据:_index、_type、_id、_source、_version、_score)
 字段Column==Filed
-Schema(DataBase数据库)==Mapping
+Schema(DataBase数据库)==Mapping(一个index字段名、数据类型、是否分词和加入倒排索引)
+SQL===DSL
+
+
+
+
 
 
 **为什么要学Elasticsearch**
@@ -180,8 +185,13 @@ https://blog.csdn.net/LJFPHP/article/details/89340807
 + JSON文档，格式灵活，不需要预先定义格式
    + 字段的类型可以指定或者通过Elasticsearch自动推算
    + 支持数组/支持嵌套
-    
 
+
+表table== index(Type)索引(录入数据叫索引indexing) :(7版之前index可以多个type，已不建议)
+行数据Row==Document文档 (包含元数据:_index、_type、_id、_source、_version、_score)
+字段Column==Filed
+Schema(DataBase数据库)==Mapping
+SQL===DSL
 
 **I.文档的元数据**
 
@@ -761,7 +771,73 @@ III. 中间可以空字符
 
 **查看Mapping文件 表结构类似**
 
-Dynamic Mapping 和常见字段类型
+**Dynamic Mapping 和常见字段类型**
+
+
+**I.什么是mapping**
+
+Mapping类似数据库中的schema定义作用如下:
++ 定义索引中的字段的名称
++ 定义字段的数据类型，例如字符串，数字，布尔
++ 字段，倒排索引的相关配置
+
+Mapping会把Json 文档映射成Lucene所需要的扁平格式
+
+一个mapping 属于一个索引的type
++ 每个文档都属于一个type
++ 一个type有一个mapping定义
++ 7.0开始，不需要在mapping定义中指定type信息
+
+
+**I.字段的数据类型:**
+https://baijiahao.baidu.com/s?id=1661467987954314526&wfr=spider&for=pc
+
+字符串:
+text 类型适用于需要被全文检索的字段、会被分词 倒排。text 字段不能被用于排序
+
+keyword 适合简短、结构化的字符串(姓名、商品名).可以用于过滤、排序、精确查找
+
+
+Dynamic Mapping 
+写入索引时，如果不存在索引，则自动创建
+
+类型的自动识别:
+
+Json串>匹配日期。
+
+
+**19-显式Mapping设置与常见参数介绍[更多课程qq 2949651508]**
+https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-params.html
+
+**I.Mapping建议**
+
+**II.index是否被索引**
+index:false可以控制是否被索引
+
+index_options:offsets 可以设置索引级别
+
+docs    
+freqs
+positions : text类型默认docs其他类型默认都是 docs
+offsets
+
+
+**null_value空值**
+需要对null搜索
+只有keyword类型支持设定null_value
+
+**copy_to设置**
+_all 在7中被 copy_to 替代
+
+满足特定需求
+copy_to 将字段数值拷贝到目标字段。
+
+copy_to 不会出现在_source中
+
+**数组类型**
+
+
+
 
 
 PUT mapping_test/_doc/1
@@ -782,13 +858,174 @@ DELETE mapping_test
 
 
 
+**20-多字段特性及Mapping中配置自定义Analyzer**
+
+**字符串:**
+text 类型适用于需要被全文检索的字段、会被分词 倒排。text 字段不能被用于排序
+
+keyword 适合简短、结构化的字符串(姓名、商品名).可以用于过滤、排序、精确查找
+
+
+
+**多字段特性**
+给索引定制mapping时可以给text类型的字段指定一个keyword字段实现精准匹配
+
+使用不同analyzer分词器，可以针对不同语言进行分词等
++ 不同语言
++ pinyin字段的搜索
++ 支持为搜索和索引指定不同的analyzer
+
+
+**Exact values 精确 VS full text 全文本**
+
+Exact values:精确值不需要被分词
+full text :全文本，非结构化的文本数据 需要text类型
+
+
+
+
+**21-Index-Template和Dynamic-Template**
+更好的设置索引
+
+日志索引
+logs-20120202
+logs-20120203
+logs-20120204
+
+**什么是Index-Template**
+帮助你设定mapping和settings 并按照一定的规则，自动匹配到新创建的索引之上。
+
++ 模板仅在一个索引被新创建时，才会产生作用。修改模板不会影响已创建的索引
++ 可以设定多个索引模板，设置会被merge
++ 可以指定order数值,控制merging的过程
+
+
+**Index Template的工作方式**
+
+新索引被创建时
++ 应用ES默认的setting和mapping
++ 应用order 数值低的index template设定
++ 应用order 高的 index template ,之前的设置被覆盖
++ 应用指定的setting 和mapping 并覆盖之前的
+
+
+
+什么是Dynamic Template
+根据ES 识别的数据类型，结合字段名称，来动态设定字段类型
++ 所有字符串都设定成keyword,或者关闭keyword字段
++ is开头的字段都设成boolean
++ long_开头的都设置成long类型
+
+
+
+
+**22-Elasticsearch聚合分析简介**
+
+
+什么是聚合 Aggregation 聚集集合 四种
+
+Es 除了搜索以外，提供针对ES数据进行实时统计分析的功能
++ 实时分析
++  hadoop T+1
+
+
+通过聚合，我们会得到一个数据概览，是分析和总结全套的数据，而不是寻找单个文档
++ 尖沙咀和香港岛的客房数量
++ 不同价格区间，经济和五星
+
+高性能，只需要一条语句，可以得到ES的分析结果
++ 无需在客户端自己去实现分析逻辑
+
+
+
+**集合的分类**
+
++ Bucket Aggregation 一些累满足特定条件的文档集合
++ Metric Aggregation 一些数学运算，可以对文档字段进行统计分析
++ Pipeline Aggregation 对其他的聚合结果进行二次聚合
++ Matrix Aggregation 支持对多个字段的操作并提供一个结果矩阵
+
+
+
+**Bucket 桶 & Metric 度量**
+
+Bucket >> count  桶
+
+Metric >> group   度量
+
+select count(id) -- Metric度量 一系列的统计方法
+from cars
+Group by age     -- Bucket桶 一组满足条件的文档
+
+
+**II.Bucket 桶 count**
+
+Term& range 时间、年龄、地理位置
+
+
+
+**II.Metric 度量 group**
+
+min 、max、 sum、avg、cardinality
 
 
 
 
 
-表table== index(Type)索引
-行数据Row==Document文档
+可视化报表--聚合分析
+
+
+
+
+
+**57-集群内部安全通信**
+
+
+
+I.分布式特性
+
+ES分布式好处
++ 存储的水平拓展，支持PB数据
++ 提高系统的可用性，部分节点停止服务，整个集群的服务不受影响
+
+ES分布式架构
++ 不同机器通过不同的名字来区分
++ 修改配置文件 或者命令进行修改
+
+
+ElasticSearch监控工具 - cerebro
+
+
+
+segment
+
+
+
+
+
+
+表table== index(Type)索引(录入数据叫索引indexing) :(7版之前index可以多个type，已不建议)
+行数据Row==Document文档 (包含元数据:_index、_type、_id、_source、_version、_score)
 字段Column==Filed
-Schema(DataBase数据库)==Mapping
+Schema(DataBase数据库)==Mapping(一个index字段名、数据类型、是否分词和加入倒排索引)
+SQL===DSL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -224,11 +224,11 @@ unit ：keepAliveTime的时间单位
 threadFactory ：线程工厂，用来创建线程
 rejectHandler ：当拒绝处理任务时的策略
 
-Executors 一克在key特死
+Executors  
 newCachedThreadPool() 可灵活回收空闲线程，若无可回收，则新建线程
 newFixedThreadPool 无界的工作队列 固定的 可控制线程最大并发数，超出的线程会在队列中等待
 newSingleThreadExecutor()  单独的 指定顺序(FIFO, LIFO, 优先级)
-newScheduledThreadPoo 支持定时及周期性任务执行 定时延迟三秒执行
+newScheduledThreadPool 支持定时及周期性任务执行 定时延迟三秒执行
 newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理顺序
 
 I.线程池放入顺序
