@@ -1240,6 +1240,199 @@ SELECT BENCHMARK(1000000,1+1);
 
 
 
+----------------------------------------------------------------------------------------------------
+**第11章数据类型**
+https://dev.mysql.com/doc/refman/8.0/en/data-types.html
+
+
+
+11.1数值数据类型
+11.2日期和时间数据类型
+11.3字符串数据类型
+11.4空间数据类型
+11.5 JSON数据类型
+
+**超出范围和溢出处理**
+
+
+1.如果启用了严格的SQL模式，则根据SQL标准，MySQL会拒绝超出范围的值并产生错误，并且插入将失败。
+
+2.如果没有启用限制模式，MySQL会将值裁剪到列数据类型范围的适当端点，并存储结果值。
+
+
+
+
+**11.1数值数据类型**
+
+
++ 整数类型（精确值）-INTEGER，INT，SMALLINT，TINYINT，MEDIUMINT，BIGINT
+
+    + TINYINT
+    + SMALLINT
+    + MEDIUMINT
+    + INT
+    + BIGINT
+ https://dev.mysql.com/doc/refman/8.0/en/integer-types.html
+
++ 定点类型（精确值）-DECIMAL，NUMERIC
+   + DECIMAL       DECIMAL maximum  65       DECIMAL(5,2)范围是从-999.99到 999.99
+   + NUMERIC NUMERIC实现为DECIMAL，因此以下有关的说明DECIMAL同样适用于 NUMERIC。
+
+DECIMAL列 的声明语法为 。自变量的值范围如下： DECIMAL(M,D)
+M是最大位数（精度）。范围是1到65。
+D是小数点右边的位数（小数位数）。范围是0到30，并且不能大于M。
+
+
++ 浮点类型（近似值）-FLOAT，DOUBLE
+   + FLOAT
+   + DOUBLE
+
++ 位值类型-BIT
+
+
+
+
+
+**11.2日期和时间数据类型**
+
+
++ DATE，DATETIME和TIMESTAMP类型
+   + DATE 只到天  'YYYY-MM-DD''1000-01-01''9999-12-31'
+   + DATATIME  'YYYY-MM-DD hh:mm:ss''1000-01-01 00:00:00''9999-12-31 23:59:59'
+   + TIMESTAMP '1970-01-01 00:00:01'UTC到'2038-01-19 03:14:07' 
+
+
++ TIME类型 
+  'hh:mm:ss'格式（或 'hhh:mm:ss'大小时数格式）显示值 。TIME值的范围可以从 '-838:59:59'到 '838:59:59'
+
+
++  YEAR
+   1字节类型 等效于YEAR(4)显式显示宽度   范围 1901为2155，和 0000。
+   会将无效YEAR值转换 为0000
+
+
+
+
+
+**11.3字符串数据类型**
+
+
+
++  CHAR和VARCHAR类型 ：它们被存储和检索的方式不同。它们的最大长度以及是否保留尾随空格也不同
+   + CHAR   长度可以是0到255之间的任何值     固定占用
+   + VARCHAR 长度可以指定为0到65535之间的值  变长
+     https://dev.mysql.com/doc/refman/8.0/en/char.html
+
++ BINARY和VARBINARY类型 和上边的类似，不过是二进制存储
+  
+
++ BLOB和TEXT类型
+   + BLOB 二进制字符串（照片等文件）
+      + TINYBLOB    0-255字节
+      + BLOB        0-65535字节
+      + MEDIUMBLOB   0-16MB
+      + LONGBLOB     0-4G
+   + TEXT 非二进制字符串(只能保存字符串)
+      + TINYTEXT   0-255字节
+      + TEXT          0-65535字节
+      + MEDIUMTEXT   0-16MB
+      + LONGTEXT     0-4G
+ 
+
++  ENUM 枚举类型 节省空间 最多可包含65,535个不同的元素。 可以有null
+   size ENUM('x-small', 'small', 'medium', 'large', 'x-large')
+   INSERT INTO shirts (name, size) VALUES ('dress shirt','large')
+
++ SET类型  具有零个或多个值的字符串对象
+  SET('one', 'two')  :''  'one'  'two'  'one,two'
+
+
+
+**11.4空间数据类型** GIS
+https://dev.mysql.com/doc/refman/8.0/en/spatial-types.html
+GEOMETRY、POINT、LINESTRING、POLYGON、MULTIPOINT、MULTILINESTRING、MULTIPOLYGON、GEOMETRYCOLLECTION
+
+几何类：球、多边形
+Point类：坐标类 X\Y
+曲线类:
+多表面累
+
+
+
+**11.5 JSON数据类型**
+https://dev.mysql.com/doc/refman/8.0/en/json.html
+CREATE TABLE t1 (jdoc JSON);
+INSERT INTO t1 VALUES('{"key1": "value1", "key2": "value2"}');
+
+
+
+---------------------------------------------------------------------------------------
+
+
+**第十二章函数和运算符**
+https://dev.mysql.com/doc/refman/8.0/en/functions.html
+
+
+
+12.1 SQL函数和运算符参考：全部函数 巨多
+https://dev.mysql.com/doc/refman/8.0/en/sql-function-reference.html
+
+%， MOD :	模运算符
+ABS()   :  返回绝对值
+ADDTIME() : 加时间
+
+12.2用户定义的功能参考
+https://dev.mysql.com/doc/refman/8.0/en/udf-reference.html
+
+
+12.4运算符
+https://dev.mysql.com/doc/refman/8.0/en/non-typed-operators.html
+
+
+12.5流量控制功能 Flow Control Functions 流程控制 case when
+
+SELECT CASE 1 WHEN 1 THEN 'one'
+WHEN 2 THEN 'two' ELSE 'more' END;
+
+SELECT CASE WHEN 1>0 THEN 'true' ELSE 'false' END;
+
+SELECT CASE BINARY 'C'
+WHEN 'a' THEN 1 WHEN 'b' THEN 2 END;
+
+
+12.7日期和时间函数
+https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html
+
+12.8字符串函数和运算符
+
+
+
+12.10全文搜索功能
+
+
+12.11强制转换函数和运算符
+
+BINARY	将字符串转换为二进制字符串
+CAST()	将值强制转换为特定类型
+CONVERT()	将值强制转换为特定类型
+
+
+12.20.1汇总功能说明
+MAX()	返回最大值
+MIN()	返回最小值
+STD()	返回人口标准差
+STDDEV()	返回人口标准差
+STDDEV_POP()	返回人口标准差
+https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html
+
+
+
+
+
+
+
+
+
 
 
 
