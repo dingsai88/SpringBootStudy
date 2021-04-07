@@ -1428,8 +1428,73 @@ https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html
 
 
 
+**12.20.2 GROUP BY修饰符**
+https://dev.mysql.com/doc/refman/8.0/en/group-by-modifiers.html
+with rollup 汇总之前分组的全部数据
+SELECT year, SUM(profit) AS profit
+FROM sales
+GROUP BY year WITH ROLLUP;
 
 
+
+SELECT user_id ,sum(buy_amount) FROM `order_investment`  where 1=1
+group by user_id WITH ROLLUP
+
+
+
+**12.21.1窗口功能说明 Window Function Descriptions**  8.0新增
+
+CUME_DIST()	累积分布值
+DENSE_RANK()	当前行在其分区内的排名，没有空格
+FIRST_VALUE()	窗框第一行的自变量值
+LAG()	分区中当前行滞后的参数值
+LAST_VALUE()	窗口框架最后一行的参数值
+LEAD()	来自分区内当前行的行的参数值
+NTH_VALUE()	窗框第N行的自变量值
+NTILE()	分区中当前行的存储桶号。
+PERCENT_RANK()	百分比排名值
+RANK()	当前行在其分区内的排名，带有空格
+ROW_NUMBER()	分区中当前行的数量
+
+
+
+create table TEST_ROW_NUMBER_OVER(
+id varchar(10) not null,
+name varchar(10) null,
+age varchar(10) null,
+salary int null
+);
+select * from TEST_ROW_NUMBER_OVER t;
+
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(1,'a',10,8000);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(1,'a2',11,6500);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(2,'b',12,13000);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(2,'b2',13,4500);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(3,'c',14,3000);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(3,'c2',15,20000);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(4,'d',16,30000);
+insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(5,'d2',17,1800);
+
+
+    select id,name,age,salary,  row_number()over(order by salary desc) 
+    from TEST_ROW_NUMBER_OVER 
+
+
+
+
+**12.25精确数学**
+https://dev.mysql.com/doc/refman/8.0/en/precision-math.html
+
+Numeric
+DECIMAL
+
+
+
+
+172
+
+**第13章SQL语句**
+https://dev.mysql.com/doc/refman/8.0/en/sql-statements.html
 
 
 
