@@ -1518,7 +1518,7 @@ mysql都需要执行排序操作，而无法利用索引排序。
 
 where a='' order by b desc ,c asc;
 
-查询这个orderby子句中引用了一个不再索引中的列
+查询这个order by子句中引用了一个不再索引中的列
 
 where and order by 中的列无法组成索引的最左前缀。
 

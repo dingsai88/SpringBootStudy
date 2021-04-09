@@ -158,6 +158,54 @@ https://blog.csdn.net/LJFPHP/article/details/89340807
 
 
 
+
+------------------------------------------------------------------------------------
+7.11.2安装
+
+ElasticSearch
+
+
+F:\DingSaiElastic\Elasticsearch\elasticsearch-7.11.2\bin
+elasticsearch.bat
+ 
+自带JDK 需要修改配置:
+elasticsearch-env.bat  46行附近 新增 set java_home 指定为自带jdk
+
+set JAVA_HOME=F:\DingSaiElastic\Elasticsearch\elasticsearch-7.11.2\jdk
+if "%JAVA_HOME%" == "" (
+set JAVA="%ES_HOME%\jdk\bin\java.exe"
+set "JAVA_HOME=%ES_HOME%\jdk"
+set JAVA_TYPE=bundled jdk
+) else (
+set JAVA="%JAVA_HOME%\bin\java.exe"
+set JAVA_TYPE=JAVA_HOME
+)
+
+
+http://localhost:9200
+
+
+Kibana:
+
+
+F:\DingSaiElastic\kibana\kibana-7.11.2-windows-x86_64\bin
+
+ 
+
+kibana.bat
+
+
+http://localhost:5601
+
+
+F:\DingSaiElastic\kibana\kibana-7.11.2-windows-x86_64\bin>kibana.bat
+Node.js is only supported on Windows 8.1, Windows Server 2012 R2, or higher.
+Setting the NODE_SKIP_PLATFORM_CHECK environment variable to 1 skips this
+check, but Node.js might not execute correctly. Any issues encountered on
+unsupported platforms will not be fixed.
+F:\DingSaiElastic\kibana\kibana-7.11.2-windows-x86_64\bin>
+
+
 ---------------------------------------------------------------------------------------------------------------
 **Elasticsearch入门**
 基本概念(1)- 索引，文档和 REST API
@@ -1003,6 +1051,117 @@ segment
 
 
 
+**59-常见的集群部署方式[更多课程qq 2949651508]**
+
+
+
+**节点类型** 建议单一角色的节点
+
+
+**不同角色的节点**
+○ Master eligible / Data / Ingest / Coordinating / Machine Learning
+
+● 在开发环境中，一个节点可承担多种角色
+
+● 在生产环境中，
++ 根据数据量，写入和查询的吞吐量，选择合适的部署方式
++ 建议设置单一角色的节点（dedicated node）
+
+
+
+**节点参数配置**
+
++ master eligible
+  配置参数:node.master
+  默认值:true
+  
++ data node
+  配置参数:node.data
+  默认值:true
+  
++ ingest node
+  配置参数:node.ingest
+  默认值:true
+
++ coordinating only
+  配置参数:无
+  默认值:设置上面三个参数全部为false
+
++ machine learning
+  配置参数:node.ml
+  默认值:true (需要enable x-pack)
+
+
+**单一职责的节点**
+
+
++ master eligible
+  node.master: true
+  node.ingest: false
+  node.data: false
+
++ data node
+  node.master: false
+  node.ingest: false
+  node.data: true
+
++ ingest node
+  node.master: false
+  node.ingest: true
+  node.data: false
+
++ coordinating only
+  node.master: false
+  node.ingest: false
+  node.data: false
+
+https://www.cnblogs.com/liang1101/p/7284205.html
+
+**ES node单一角色：职责分离的好处**
+
++ master  nodes：负责集群状态(cluster state)的管理
+   + 使用低配置的 CPU，RAM 和磁盘
+
++ data nodes：负责数据存储及处理客户端请求
+   + 使用高配置的 CPU, RAM 和磁盘
+
++ ingest nodes：负责数据处理-- 用于预处理数据（索引和搜索阶段都可以用到）
+   + 使用高配置 CPU；中等配置的RAM； 低配置的磁盘
+
++ Coordinating Only Node (Client Node)
+   + 配置：将 Master，Data，Ingest 都配置成 False
+    Medium/High CUP；Medium/High RAM；Low Disk
+   + 生产环境中，建议为一些大的集群配置 Coordinating Only Nodes
+     ○ 扮演 Load Balancers。降低 Master 和 Data Nodes 的负载
+     ○ 负责搜索结果的 Gather/Reduce
+     ○ 有时候无法预知客户端会发送怎么样的请求 ( 大量占用内存的结合操作，一个深度聚合可能会引发 OOM)
+
+
++ Master Node
+
+● 从高可用 & 避免脑裂的角度出发
+○ 一般在生产环境中配置 3 台
+○ 一个集群只有 1 台活跃的主节点 (负责分片管理，索引创建，集群管理等操作)
+
+● 如果和数据节点或者 Coordinate 节点混合部署
+○ 数据节点相对有比较大的内存占用
+○ Coordinate 节点有时候可能会有开销很高的查询，导致 OOM
+○ 这些都有可能影响 Master 节点，导致集群的不稳定
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **61-分片设计及管理[更多课程qq 2949651508]**
 
 
@@ -1186,6 +1345,58 @@ SQL===DSL
 
 
 
+
+
+
+
+
+
+**Elasticsearch SQL是一个X-Pack组件**
+6.3 版本以后就开始自带了  7.0开始变
+
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-getting-started.html
+https://www.elastic.co/guide/en/elasticsearch/reference/7.12/sql-getting-started.html
+
+curl -X PUT "localhost:9200/library/book/_bulk?refresh&pretty" -H 'Content-Type: application/json' -d'
+{"index":{"_id": "Leviathan Wakes"}}
+{"name": "Leviathan Wakes", "author": "James S.A. Corey", "release_date": "2011-06-02", "page_count": 561}
+{"index":{"_id": "Hyperion"}}
+{"name": "Hyperion", "author": "Dan Simmons", "release_date": "1989-05-26", "page_count": 482}
+{"index":{"_id": "Dune"}}
+{"name": "Dune", "author": "Frank Herbert", "release_date": "1965-06-01", "page_count": 604}
+'
+
+
+PUT /library/book/_bulk?refresh
+{"index":{"_id": "Leviathan Wakes"}}
+{"name": "Leviathan Wakes", "author": "James S.A. Corey", "release_date": "2011-06-02", "page_count": 561}
+{"index":{"_id": "Hyperion"}}
+{"name": "Hyperion", "author": "Dan Simmons", "release_date": "1989-05-26", "page_count": 482}
+{"index":{"_id": "Dune"}}
+{"name": "Dune", "author": "Frank Herbert", "release_date": "1965-06-01", "page_count": 604}
+
+
+
+
+--新版本语法
+POST /_sql?format=txt
+{
+"query": "SELECT * FROM library WHERE release_date < '2300-01-01'"
+}
+
+-- 本机老版本语法
+
+POST /_xpack/sql?format=txt
+{
+"query": "SELECT * FROM library WHERE release_date <'2300-01-01'"
+}
+
+
+POST /_xpack/sql?format=txt
+{
+"query": "SELECT * FROM library WHERE release_date < 'now/d-15d'"
+}
 
 
 
