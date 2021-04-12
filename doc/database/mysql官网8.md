@@ -1564,8 +1564,38 @@ https://dev.mysql.com/doc/refman/8.0/en/sql-data-manipulation-statements.html
 
 
 
+**13.3交易和锁定声明**
 
 
+13.3.1 START TRANSACTION，COMMIT和ROLLBACK语句
 
+**I.事务控制**
+
+**II.开始事务**
+1.START TRANSACTION; == BEGIN; == START TRANSACTION READ WRITE;
+2.BEGIN开始新的交易。
+3.WITH CONSISTENT SNAPSHOT
+4.READ WRITE
+5.READ ONLY
+
+**III.默认值**
+START TRANSACTION或 BEGIN;
+
+START TRANSACTION READ WRITE;
+
+**III. with consistent snapshot**
+第一种启动方式，一致性视图是在执行第一个快照读语句时创建的；
+第二种启动方式，一致性视图是在执行start transaction with consistent snapshot时候创建的。
+
+**III. read only;**
+start transaction read only;
+只能读取,写删改等会报错
+
+
+COMMIT 提交当前事务，使其更改永久生效。
+
+ROLLBACK 回滚当前事务，取消其更改。
+
+SET autocommit 禁用或启用当前会话的默认自动提交模式。
 
 
