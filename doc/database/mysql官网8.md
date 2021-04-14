@@ -1571,7 +1571,7 @@ https://dev.mysql.com/doc/refman/8.0/en/sql-data-manipulation-statements.html
 
 **I.事务控制**
 
-**II.开始事务**
+**II.开始事务**  开始事务后 autocommit会关闭
 1.START TRANSACTION; == BEGIN; == START TRANSACTION READ WRITE;
 2.BEGIN开始新的交易。
 3.WITH CONSISTENT SNAPSHOT
@@ -1597,5 +1597,640 @@ COMMIT 提交当前事务，使其更改永久生效。
 ROLLBACK 回滚当前事务，取消其更改。
 
 SET autocommit 禁用或启用当前会话的默认自动提交模式。
+
+**II.显式禁用自动提交**
+SET autocommit=0;commit;
+您必须使用COMMIT将更改存储到磁盘或ROLLBACK忽略更改。
+
+
+
+**13.3.2无法回滚的语句**
+II.无法回滚的语句
+
+DDL语句，例如创建或删除数据库的语句
+，创建，删除或更改表或存储例程的语句。
+
+
+
+**13.3.3导致隐式提交的语句**
+II.定义或修改数据库对象的数据定义语言（DDL）语句。
+ALTER EVENT， ALTER FUNCTION， ALTER PROCEDURE， ALTER SERVER， ALTER TABLE， ALTER VIEW， CREATE DATABASE， CREATE EVENT， CREATE FUNCTION， CREATE INDEX， CREATE PROCEDURE， CREATE ROLE， CREATE SERVER， CREATE SPATIAL REFERENCE SYSTEM，CREATE TABLE， CREATE TRIGGER， CREATE VIEW， DROP DATABASE， DROP EVENT， DROP FUNCTION， DROP INDEX， DROP PROCEDURE， DROP ROLE， DROP SERVER， DROP SPATIAL REFERENCE SYSTEM， DROP TABLE， DROP TRIGGER， DROP VIEW， INSTALL PLUGIN， RENAME TABLE， TRUNCATE TABLE， UNINSTALL PLUGIN。
+
+
+
+
+II.隐式使用或修改mysql数据库中表的语句。
+ALTER USER， CREATE USER， DROP USER， GRANT， RENAME USER， REVOKE， SET PASSWORD。
+
+
+II.事务控制和锁定语句。
+
+BEGIN， LOCK TABLES，SET autocommit = 1（如果该值不是1）， ， 。 START TRANSACTION UNLOCK TABLES
+UNLOCK TABLES仅LOCK TABLES当当前已锁定任何表以获取非事务性表锁时，才提交事务。由于后面的语句不获取表级锁，因此不会进行UNLOCK TABLES后续的提交 FLUSH TABLES WITH READ LOCK。
+事务不能嵌套。 
+
+
+
+II.数据加载语句。 LOAD DATA。 LOAD DATA导致仅对使用NDB存储引擎的表进行隐式提交 。
+
+
+
+II.行政声明。分析表等 
+
+ANALYZE TABLE， CACHE INDEX， CHECK TABLE， FLUSH， LOAD INDEX INTO CACHE，OPTIMIZE TABLE，REPAIR TABLE， RESET（但不是 RESET PERSIST）。
+
+II.复制控制语句。主从等 
+
+START REPLICA | SLAVE， STOP REPLICA | SLAVE， RESET REPLICA | SLAVE，CHANGE REPLICATION SOURCE TO，CHANGE MASTER TO。
+
+
+
+
+**13.3.4 SAVEPOINT**
+SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT Statements
+
+
+SAVEPOINT identifier;-- 创建某个点
+ROLLBACK TO  identifier; -- 回滚到某个点
+RELEASE SAVEPOINT identifier; -- 释放某个点
+
+
+
+**13.3.5 BACK和LOCK INSTANCE语句的锁定实例**
+https://dev.mysql.com/doc/refman/8.0/en/lock-instance-for-backup.html
+轻量级的备份锁
+MySQL8.x 中新增了一个轻量级的备份锁，它允许在 online 备份的时候进行 DML 操作，同时可防止快照不一致。
+
+II.禁止的内容
+文件的创建、删除、改名
+账户的管理
+REPAIR TABLE
+TRUNCATE TABLE
+OPTIMIZE TABLE
+
+
+II.语句
+
+备份锁由 lock instance for backup 和 unlock instance 语法组成。使用这些语句需要 BACKUP_ADMIN 权限。
+
+
+
+**13.3.6 LOCK TABLES和UNLOCK TABLES语句**
+
+在更新表时，可以使用锁来模拟事务或提高速度。表锁定限制和条件中对此进行了详细说明 。
+LOCK TABLES
+tbl_name [[AS] alias] lock_type
+[, tbl_name [[AS] alias] lock_type] ...
+
+lock_type: {
+READ [LOCAL]| [LOW_PRIORITY] WRITE
+}
+
+UNLOCK TABLES;
+
+----------------------------------
+
+lock tables user read;
+unlock tables;
+
+
+lock tables user read local;
+unlock tables;
+
+lock tables user write;
+unlock tables;
+
+**I.锁获取**
+
+**锁类型**
+
+II.READ [LOCAL] 锁：
+
+持有锁的会话可以读取表（但不能写入表）。
+多个会话可以同时获取READ该表的锁。
+其他会话可以在不显式获取READ锁的情况下读取表。
+该LOCAL修改使不冲突的 INSERT其他会话语句（并发插入），而持有锁来执行。
+
+
+II.[LOW_PRIORITY] WRITE 锁：
+持有锁的会话可以读取和写入表。
+只有持有锁的会话才能访问该表。在释放锁之前，没有其他会话可以访问它。
+保持锁定状态时，其他会话对表的锁定请求将阻塞WRITE。
+该LOW_PRIORITY修饰符无效。在以前的MySQL版本中，它影响了锁定行为，但现在不再如此。现在已弃用它，并且使用它会产生警告。WRITE不 使用LOW_PRIORITY而代之。
+
+
+
+WRITE锁通常比READ锁具有更高的优先级
+
+
+**I.锁释放**
+
+显式释放其锁 UNLOCK TABLES。
+
+
+隐式释放锁:LOCK TABLES时如果之前有锁，会先释放
+会话发出LOCK TABLES已持有锁的同时获取锁的语句，则在授予新锁之前会隐式释放其现有锁。
+
+会话开始事务:（例如，使用START TRANSACTION 则将 UNLOCK TABLES执行隐式 操作）
+
+客户端断开链接会自动释放锁
+
+
+**I.表锁定与事务的交互**
+
+LOCK TABLES并 UNLOCK TABLES与交易进行交
+
+1.LOCK TABLES 不是事务安全的，而是在尝试锁定表之前隐式提交任何活动事务。
+2.UNLOCK TABLES隐式提交任何活动事务，但前提是LOCK TABLES已用于获取表锁。
+3. START TRANSACTION 隐式提交任何当前事务并释放现有的表锁。
+4. FLUSH TABLES WITH READ LOCK 获得全局读锁定，而不是表锁，所以它不会受到相同的行为 LOCK TABLES，并 UNLOCK TABLES相对于表锁定和隐式的提交。
+5. 其他隐式导致事务提交的语句不会释放现有的表锁。
+
+当您调用时LOCK TABLES， InnoDB内部会使用自己的表锁，而MySQL则会使用自己的表锁。
+
+
+
+**I.锁定表和触发器**
+如果LOCK TABLES使用显式锁定表，则触发器中使用的任何表也将隐式锁定：
+
+
+
+
+
+**13.3.7 SET TRANSACTION语句**
+
+SET [GLOBAL | SESSION] TRANSACTION
+transaction_characteristic [, transaction_characteristic] 
+transaction_characteristic: {
+ISOLATION LEVEL level| access_mode
+}
+
+level: {
+REPEATABLE READ
+| READ COMMITTED
+| READ UNCOMMITTED
+| SERIALIZABLE
+}
+
+access_mode: {
+READ WRITE
+| READ ONLY
+}
+
+修改隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED  ;
+只读
+set transaction read only；
+
+
+
+**隔离级别:**
+REPEATABLE READ
+READ COMMITTED
+READ UNCOMMITTED
+SERIALIZABLE
+
+**访问模式:**
+READ WRITE
+READ ONLY
+
+
+**特征范围:**
+GLOBAL:
+该声明适用于所有后续会话。现有会话不受影响。
+
+SESSION:
+当前会话中执行的所有后续事务、不会影响当前正在进行的事务。
+
+在没有任何SESSION或 GLOBAL关键字：
+仅适用于会话中执行的下一个单个事务。
+不允许现有事务中
+
+SET GLOBAL TRANSACTION transaction_characteristic	全球的
+SET SESSION TRANSACTION transaction_characteristic	会议
+SET TRANSACTION transaction_characteristic	仅下一笔交易
+
+
+
+
+**13.3.8 XA交易**
+https://dev.mysql.com/doc/refman/8.0/en/xa.html
+
+
+MySQL服务器的XA接口由以XA关键字开头的SQL语句组成。
+
+
+**应用程序涉及一个或多个资源管理器和一个事务管理器：**
+资源管理器（RM):(单个DB)提供对事务性资源的访问。数据库服务器是一种资源管理器。必须能够提交或回滚RM管理的事务。
+
+事务管理器（TM）协调作为全局事务一部分的事务。它与处理每个事务的RM通信。全局事务中的单个事务是全局事务的 “分支”。全局事务及其分支由后面描述的命名方案标识。
+
+**两阶段提交（2PC）**
+
+在第一阶段，准备所有分支。也就是说，TM告诉他们准备提交。通常，这意味着管理分支的每个RM在稳定的存储中记录分支的动作。分支指示它们是否能够执行此操作，并将这些结果用于第二阶段。
+
+在第二阶段，TM告诉RM，是提交还是回滚。如果所有分支在准备就绪时都表示可以提交，则将告知所有分支进行提交。如果有任何分支在准备就绪时指示无法提交，则将告知所有分支回滚。
+
+
+
+**13.4 Replication Statements** 复制说明  主从等
+
+SHOW BINARY LOGS; 查看binlog大小等
+
+SHOW BINLOG EVENTS; binlog事件
+
+SHOW MASTER STATUS; 
+
+SHOW REPLICAS 高版本以后;SHOW SLAVE HOSTS;老版本  显示副本 
+
+
+**13.4.1.1 PURGE BINARY LOGS语句  purge清除**
+删除指定索引文件名或日期之前在日志索引文件中列出的所有二进制日志文件。
+
+
+PURGE BINARY LOGS TO 'mysql-bin.010';
+PURGE BINARY LOGS BEFORE '2019-04-02 22:46:26';
+
+
+要安全清除二进制日志文件，请按照以下步骤操作：
+
+1.在每个副本上，用于 SHOW REPLICA | SLAVE STATUS检查它正在读取哪个日志文件。
+2.使用来获取源中二进制日志文件的列表 SHOW BINARY LOGS。
+3.确定所有副本中最早的日志文件。这是目标文件。如果所有副本都是最新的，则这是列表上的最后一个日志文件。
+4.对要删除的所有日志文件进行备份。（此步骤是可选的，但始终建议这样做。）
+5.清除所有日志文件，但不包括目标文件。
+
+默认的二进制日志有效期为30天。您可以使用binlog_expire_logs_seconds 系统变量指定替代的有效期限 。
+
+
+
+**13.4.1.2 RESET MASTER语句**
+请谨慎使用此语句
+https://dev.mysql.com/doc/refman/8.0/en/reset-master.html
+
+RESET MASTER删除所有现有的二进制日志文件并重置二进制日志索引文件，将服务器重置为开始二进制日志记录之前的状态。将创建一个新的空二进制日志文件，以便可以重新启动二进制日志记录。
+
+
+
+
+
+
+**13.4.1.3 SET sql_log_bin语句**
+https://dev.mysql.com/doc/refman/8.0/en/set-sql-log-bin.html
+控制是否为当前会话启用到二进制日志的日志记录（假设二进制日志本身已启用）。默认值为ON。
+
+要为当前会话禁用或启用二进制日志记录，请将会话sql_log_bin变量设置为 OFF或ON。
+
+
+
+**13.4.2用于控制副本服务器的SQL语句**
+MySQL 8.0.22开始;
+
+SHOW REPLICA STATUS;从MySQL 8.0.22开始替换 SHOW SLAVE STATUS;
+
+SHOW RELAYLOG EVENTS；
+
+
+**13.4.2.1更改主报表**
+https://dev.mysql.com/doc/refman/8.0/en/change-master-to.html
+
+8.0.23起，使用 CHANGE REPLICATION SOURCE TO代替CHANGE MASTER TO，
+
+
+13.4.2.1更改主报表
+13.4.2.2更改复制过滤器语句
+13.4.2.3更改声明的复制源
+13.4.2.4 MASTER_POS_WAIT（）语句
+13.4.2.5重置副本| 奴隶声明
+13.4.2.6复位从动| REPLICA声明
+13.4.2.7开始替换| 奴隶声明
+13.4.2.8启动从属| REPLICA声明
+13.4.2.9停止复制| 奴隶声明
+13.4.2.10停止从动| REPLICA声明
+13.4.2.11配置源列表的功能
+
+13.4.2.1 CHANGE MASTER TO Statement
+13.4.2.2 CHANGE REPLICATION FILTER Statement
+13.4.2.3 CHANGE REPLICATION SOURCE TO Statement
+13.4.2.4 MASTER_POS_WAIT() Statement
+13.4.2.5 RESET REPLICA | SLAVE Statement
+13.4.2.6 RESET SLAVE | REPLICA Statement
+13.4.2.7 START REPLICA | SLAVE Statement
+13.4.2.8 START SLAVE | REPLICA Statement
+13.4.2.9 STOP REPLICA | SLAVE Statement
+13.4.2.10 STOP SLAVE | REPLICA Statement
+13.4.2.11 Functions which Configure the Source List
+
+
+
+
+
+**13.5 Prepared Statements**
+预处理占位符
+
+
+1.预处理
+2.执行
+3.取消
+PREPARE stmt1 FROM 'SELECT SQRT(POW(?,2) + POW(?,2)) AS hypotenuse';
+SET @a = 3;
+SET @b = 4;
+
+EXECUTE stmt1 USING @a, @b;
+
+DEALLOCATE PREPARE stmt1;  --取消
+
+在使用准备好语句之后 PREPARE，可以使用EXECUTE引用准备好的语句名称的语句来执行它 。
+如果prepared语句包含任何参数标记，则必须提供一个USING 子句，该子句列出包含要绑定到参数的值的用户变量。
+参数值只能由用户变量提供，并且USING子句的命名变量必须与语句中参数标记的数量一样多。
+
+
+
+**13.6复合语句语法**
+
+13.6.1 BEGIN ... END复合语句
+13.6.2语句标签
+13.6.3 DECLARE声明
+13.6.4存储程序中的变量
+13.6.5流控制语句
+13.6.6游标
+13.6.7条件处理
+13.6.8条件处理的限制
+
+ 
+CREATE PROCEDURE doiterate(p1 INT)
+BEGIN
+label1: LOOP
+SET p1 = p1 + 1;
+IF p1 < 10 THEN ITERATE label1; END IF;
+LEAVE label1;
+END LOOP label1;
+END;
+
+
+DECLARE仅允许在BEGIN ... END 复合语句内部使用
+
+
+
+
+**13.7数据库管理语句**
+https://dev.mysql.com/doc/refman/8.0/en/account-management-statements.html
+13.7.1.1 ALTER USER语句
+13.7.1.2 CREATE ROLE语句
+13.7.1.3 CREATE USER语句
+13.7.1.4 DROP ROLE语句
+13.7.1.5 DROP USER语句
+13.7.1.6 GRANT语句
+13.7.1.7 RENAME USER语句
+13.7.1.8 REVOKE语句
+13.7.1.9 SET DEFAULT ROLE语句
+13.7.1.10 SET PASSWORD语句
+13.7.1.11 SET ROLE语句
+
+
+**13.7.2资源组管理声明**
+https://dev.mysql.com/doc/refman/8.0/en/resource-group-statements.html
+
+13.7.2.1 ALTER RESOURCE GROUP语句
+13.7.2.2 CREATE RESOURCE GROUP语句
+13.7.2.3 DROP RESOURCE GROUP语句
+13.7.2.4 SET RESOURCE GROUP语句
+
+
+**13.7.3表维护声明**
+13.7.3.1 ANALYZE TABLE语句
+13.7.3.2 CHECK TABLE语句
+13.7.3.3 CHECKSUM TABLE语句
+13.7.3.4优化表语句
+13.7.3.5 REPAIR TABLE语句
+
+
+
+
+**13.7.7 SHOW语句**
+
+13.7.7.1 SHOW BINARY LOGS Statement
+13.7.7.2 SHOW BINLOG EVENTS Statement
+13.7.7.3 SHOW CHARACTER SET Statement
+13.7.7.4 SHOW COLLATION Statement
+13.7.7.5 SHOW COLUMNS Statement
+13.7.7.6 SHOW CREATE DATABASE Statement
+13.7.7.7 SHOW CREATE EVENT Statement
+13.7.7.8 SHOW CREATE FUNCTION Statement
+13.7.7.9 SHOW CREATE PROCEDURE Statement
+13.7.7.10 SHOW CREATE TABLE Statement
+13.7.7.11 SHOW CREATE TRIGGER Statement
+13.7.7.12 SHOW CREATE USER Statement
+13.7.7.13 SHOW CREATE VIEW Statement
+13.7.7.14 SHOW DATABASES Statement
+13.7.7.15 SHOW ENGINE Statement
+13.7.7.16 SHOW ENGINES Statement
+13.7.7.17 SHOW ERRORS Statement
+13.7.7.18 SHOW EVENTS Statement
+13.7.7.19 SHOW FUNCTION CODE Statement
+13.7.7.20 SHOW FUNCTION STATUS Statement
+13.7.7.21 SHOW GRANTS Statement
+13.7.7.22 SHOW INDEX Statement
+13.7.7.23 SHOW MASTER STATUS Statement
+13.7.7.24 SHOW OPEN TABLES Statement
+13.7.7.25 SHOW PLUGINS Statement
+13.7.7.26 SHOW PRIVILEGES Statement
+13.7.7.27 SHOW PROCEDURE CODE Statement
+13.7.7.28 SHOW PROCEDURE STATUS Statement
+13.7.7.29 SHOW PROCESSLIST Statement
+13.7.7.30 SHOW PROFILE Statement
+13.7.7.31 SHOW PROFILES Statement
+13.7.7.32 SHOW RELAYLOG EVENTS Statement
+13.7.7.33 SHOW REPLICAS | SHOW SLAVE HOSTS Statement
+13.7.7.34 SHOW SLAVE HOSTS | SHOW REPLICAS Statement
+13.7.7.35 SHOW REPLICA | SLAVE STATUS Statement
+13.7.7.36 SHOW SLAVE | REPLICA STATUS Statement
+13.7.7.37 SHOW STATUS Statement
+13.7.7.38 SHOW TABLE STATUS Statement
+13.7.7.39 SHOW TABLES Statement
+13.7.7.40 SHOW TRIGGERS Statement
+13.7.7.41 SHOW VARIABLES Statement
+13.7.7.42 SHOW WARNINGS Statement
+
+
+
+**13.7.8其他行政声明**
+13.7.8.1 BINLOG语句
+13.7.8.2 CACHE INDEX语句
+13.7.8.3 FLUSH声明
+13.7.8.4 KILL声明
+13.7.8.5 LOAD INDEX INTO CACHE语句
+13.7.8.6 RESET语句
+13.7.8.7 RESET PERSIST语句
+13.7.8.8 RESTART语句
+13.7.8.9 SHUTDOWN语句
+
+
+
+
+
+**13.8实用程序声明**
+13.8.1 DESCRIBE陈述
+13.8.2 EXPLAIN声明
+13.8.3帮助声明
+13.8.4 USE声明  USE db1;
+
+DESCRIBE SQL; == EXPLAIN SQL; 
+
+I.获取表结构信息 几个相等
+explain `order_investment`; ==  DESCRIBE `order_investment`;
+SHOW COLUMNS from `order_investment`;
+
+
+explain SELECT * FROM `order_investment`;
+DESCRIBE SELECT * FROM `order_investment`;
+
+
+**13.8.3帮助声明**
+
+HELP 'create table';
+HELP 'contents';
+HELP 'status';
+
+
+--------------------------------------------------------------------------------------------------
+
+Chapter 15 The InnoDB Storage Engine
+**第15章InnoDB存储引擎**
+15.1 InnoDB简介
+15.2 InnoDB和ACID模型
+15.3 InnoDB多版本
+15.4 InnoDB架构
+15.5 InnoDB内存结构
+15.6 InnoDB磁盘结构
+15.7 InnoDB锁定和事务模型
+15.8 InnoDB配置
+15.9 InnoDB表和页面压缩
+15.10 InnoDB行格式
+15.11 InnoDB磁盘I / O和文件空间管理
+15.12 InnoDB和在线DDL
+15.13 InnoDB静态数据加密
+15.14 InnoDB启动选项和系统变量
+15.15 InnoDB INFORMATION_SCHEMA表
+15.16 InnoDB与MySQL性能架构的集成
+15.17 InnoDB监视器
+15.18 InnoDB备份和恢复
+15.19 InnoDB和MySQL复制
+15.20 InnoDB memcached插件
+15.21 InnoDB故障排除
+15.22 InnoDB限制
+15.23 InnoDB的限制和局限性
+
+
+**15.1 InnoDB简介**
+I.DDL(Data Definition Language 数据定义语言)用于操作对象和对象的属性，
+Create语句：可以创建数据库和数据库的一些对象。
+Drop语句：可以删除数据表、索引、触发程序、条件约束以及数据表的权限等。
+Alter语句：修改数据表定义及属性。
+
+I.DML(Data Manipulation Language 数据操控语言)用于操作数据库对象中包含的数据，也就是说操作的单位是记录。
+insert update Delete 
+
+DCL(Data Control Language 数据控制语句)的操作是数据库对象的权限，这些操作的确定使数据更加的安全。
+InnoDB是一种兼顾了高可靠性和高性能的通用存储引擎。
+
+
+
+
+**15.1.1使用InnoDB表的好处**
+缓冲池，在主内存缓存表和索引数据作为数据被访问。
+
+压缩表和关联的索引
+
+创建和删除索引并执行其他DDL操作，而对性能和可用性的影响要小得多。 在线DDL online
+
+
+查询性能架构表来监视存储引擎的性能详细信息
+
+
+
+**15.1.2 InnoDB表的最佳实践**
+
+15.1.3验证InnoDB是默认存储引擎
+
+SHOW ENGINES;
+SELECT * FROM INFORMATION_SCHEMA.ENGINES;
+
+
+
+**15.2 InnoDB和ACID模型**
+https://dev.mysql.com/doc/refman/8.0/en/mysql-acid.html
+A: atomicity. 原子性
+
+C: consistency.一致性
+
+I: isolation.隔离性
+
+D: durability.持久性
+
+
+
+**II.atomicity原子性**
+主要涉及InnoDB 事务:(事务自动提交、手工commit或者rollback)
+The autocommit setting.
+The COMMIT statement.
+The ROLLBACK statement.
+
+
+
+
+**II.consistency.一致性**
+主要涉及内部InnoDB处理，以防止数据崩溃。:
+
+双InnoDB写缓冲区。
+InnoDB崩溃恢复。
+
+
+**II.isolation.隔离性**
+
+主要涉及InnoDB 事务，尤其是适用于每个事务的隔离级别。:
+
+The autocommit setting.
+事务隔离级别和SET TRANSACTION语句。
+InnoDB锁定的底层细节。
+
+
+
+**II.durability.持久性**
+您的特定硬件配置交互的MySQL软件功能:(由于取决于您的CPU，网络和存储设备的功能的可能性很多，因此为具体的准则提供最复杂的方面。)
+
+双InnoDB写缓冲区。
+innodb_flush_log_at_trx_commit:刷盘策略 :(要完全符合ACID，必须使用默认设置1。日志在每次事务提交时写入并刷新到磁盘。) https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
+该sync_binlog变量。:sync_binlog=1：在提交事务之前启用二进制日志到磁盘的同步。
+存储设备（例如磁盘驱动器，SSD或RAID阵列）中的写缓冲区。
+存储设备中由电池供电的高速缓存。
+用来运行MySQL的操作系统，特别是它对fsync()系统调用的支持。
+不间断电源（UPS）保护运行MySQL服务器并存储MySQL数据的所有计算机服务器和存储设备的电源。
+您的备份策略，例如备份的频率和类型以及备份保留期。
+对于分布式或托管数据应用程序，MySQL服务器的硬件所位于的数据中心的特定特性，以及数据中心之间的网络连接。
+
+
+
+
+
+**15.3 InnoDB多版本** MVCC
+
+https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
