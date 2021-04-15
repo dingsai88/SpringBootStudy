@@ -1059,7 +1059,7 @@ segment
 
 
 **不同角色的节点**
-○ Master eligible / Data / Ingest / Coordinating / Machine Learning
++ Master eligible / Data / Ingest / Coordinating / Machine Learning
 
 ● 在开发环境中，一个节点可承担多种角色
 
@@ -1132,21 +1132,21 @@ https://www.cnblogs.com/liang1101/p/7284205.html
    + 配置：将 Master，Data，Ingest 都配置成 False
     Medium/High CUP；Medium/High RAM；Low Disk
    + 生产环境中，建议为一些大的集群配置 Coordinating Only Nodes
-     ○ 扮演 Load Balancers。降低 Master 和 Data Nodes 的负载
-     ○ 负责搜索结果的 Gather/Reduce
-     ○ 有时候无法预知客户端会发送怎么样的请求 ( 大量占用内存的结合操作，一个深度聚合可能会引发 OOM)
+     + 扮演 Load Balancers。降低 Master 和 Data Nodes 的负载
+     + 负责搜索结果的 Gather/Reduce
+     + 有时候无法预知客户端会发送怎么样的请求 ( 大量占用内存的结合操作，一个深度聚合可能会引发 OOM)
 
 
 + Master Node
 
 ● 从高可用 & 避免脑裂的角度出发
-○ 一般在生产环境中配置 3 台
-○ 一个集群只有 1 台活跃的主节点 (负责分片管理，索引创建，集群管理等操作)
++ 一般在生产环境中配置 3 台
++ 一个集群只有 1 台活跃的主节点 (负责分片管理，索引创建，集群管理等操作)
 
 ● 如果和数据节点或者 Coordinate 节点混合部署
-○ 数据节点相对有比较大的内存占用
-○ Coordinate 节点有时候可能会有开销很高的查询，导致 OOM
-○ 这些都有可能影响 Master 节点，导致集群的不稳定
++ 数据节点相对有比较大的内存占用
++ Coordinate 节点有时候可能会有开销很高的查询，导致 OOM
++ 这些都有可能影响 Master 节点，导致集群的不稳定
 
 
 
@@ -1402,12 +1402,76 @@ POST /_xpack/sql?format=txt
 
 
 
+https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-params.html
+
+
+
+
+**71-集群压力测试[更多课程qq 2949651508]**
+
+基准测试:
+https://elasticsearch-benchmarks.elastic.co/
+
+
+**压力测试**
++ 压力测试的目的
+   + 容量规划 / 性能优化 / 版本间性能比较 / 性能问题诊断
+   + 确定系统稳定性，考察系统功能极限和隐患
+
+
++ 压力测试的方法与步骤
+   + 测试计划（确定测试场景和测试数据集）
+   + 脚本开发
+   + 测试环境搭建（不同的软硬件配置） & 运行测试
+   + 分析比较结果
 
 
 
 
 
+**测试目标 & 测试数据**
++ 测试目标
+   + 测试集群的读写性能 / 做集群容量规划
+   + 对 ES 配置参数进行修改，评估优化效果
+   + 修改 Mapping 和 Setting，对数据建模进行优化，并测试评估性能改进
+   + 测试 ES 新版本，结合实际场景和老版本进行比较，评估是否进行升级
+  
++ 测试数据
+   + 数据量 / 数据分布
 
+
+
+
+**测试脚本**
+传统调用
+
+ES Rally 简介
++ Elastic 官方开源，基于 Python 3 的压力测试工具
+   + https://github.com/elastic/rally
+   + 性能测试结果比较： https://elasticsearch-benchmarks.elastic.co
+
+https://www.elastic.co/cn/blog/rally-1-0-0-released-benchmark-elasticsearch-like-we-do
+https://esrally.readthedocs.io/en/stable/
+
+
+
+
+ 功能介绍
+ + 自动创建，配置，运行测试，并且销毁 ES 集群
+ + 支持不同的测试数据的比较，也支持将数据导入 ES 集群，进行二次分析
+ + 支持测试时指标数据的搜集，方便对测试结果进行深度的分析
+
+
+
+**Rally 的安装以及入门**
++ 安装运行
+   + Python 3.4+ 和 pip3 / JDK 8 / git 1.9+
+   + 运行 pip3 install esrally
+   + 运行 esrally configure
+
++  运行
+    + 运行 esrally –distribution-version=7.1.0
+    + 运行 1000 条测试数据： esrally –distribution-version=7.1.0 --test-mode
 
 
 
