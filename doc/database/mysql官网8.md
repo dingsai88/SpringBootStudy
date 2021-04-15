@@ -2172,9 +2172,9 @@ D: durability.持久性
 
 **II.atomicity原子性**
 主要涉及InnoDB 事务:(事务自动提交、手工commit或者rollback)
-The autocommit setting.
-The COMMIT statement.
-The ROLLBACK statement.
++ The autocommit setting.
++ The COMMIT statement.
++ The ROLLBACK statement.
 
 
 
@@ -2182,32 +2182,32 @@ The ROLLBACK statement.
 **II.consistency.一致性**
 主要涉及内部InnoDB处理，以防止数据崩溃。:
 
-双InnoDB写缓冲区。
-InnoDB崩溃恢复。
++ 双InnoDB写缓冲区。
++ InnoDB崩溃恢复。
 
 
 **II.isolation.隔离性**
 
 主要涉及InnoDB 事务，尤其是适用于每个事务的隔离级别。:
 
-The autocommit setting.
-事务隔离级别和SET TRANSACTION语句。
-InnoDB锁定的底层细节。
++ The autocommit setting.
++ 事务隔离级别和SET TRANSACTION语句。
++ InnoDB锁定的底层细节。
 
 
 
 **II.durability.持久性**
 您的特定硬件配置交互的MySQL软件功能:(由于取决于您的CPU，网络和存储设备的功能的可能性很多，因此为具体的准则提供最复杂的方面。)
 
-双InnoDB写缓冲区。
-innodb_flush_log_at_trx_commit:刷盘策略 :(要完全符合ACID，必须使用默认设置1。日志在每次事务提交时写入并刷新到磁盘。) https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
-该sync_binlog变量。:sync_binlog=1：在提交事务之前启用二进制日志到磁盘的同步。
-存储设备（例如磁盘驱动器，SSD或RAID阵列）中的写缓冲区。
-存储设备中由电池供电的高速缓存。
-用来运行MySQL的操作系统，特别是它对fsync()系统调用的支持。
-不间断电源（UPS）保护运行MySQL服务器并存储MySQL数据的所有计算机服务器和存储设备的电源。
-您的备份策略，例如备份的频率和类型以及备份保留期。
-对于分布式或托管数据应用程序，MySQL服务器的硬件所位于的数据中心的特定特性，以及数据中心之间的网络连接。
++ 双InnoDB写缓冲区。
++ innodb_flush_log_at_trx_commit:刷盘策略 :(要完全符合ACID，必须使用默认设置1。日志在每次事务提交时写入并刷新到磁盘。) https://dev.mysql.com/doc/refman/8.0/en/innodb-parameters.html#sysvar_innodb_flush_log_at_trx_commit
++ 该sync_binlog变量。:sync_binlog=1：在提交事务之前启用二进制日志到磁盘的同步。
++ 存储设备（例如磁盘驱动器，SSD或RAID阵列）中的写缓冲区。
++ 存储设备中由电池供电的高速缓存。
++ 用来运行MySQL的操作系统，特别是它对fsync()系统调用的支持。
++ 不间断电源（UPS）保护运行MySQL服务器并存储MySQL数据的所有计算机服务器和存储设备的电源。
++ 您的备份策略，例如备份的频率和类型以及备份保留期。
++ 对于分布式或托管数据应用程序，MySQL服务器的硬件所位于的数据中心的特定特性，以及数据中心之间的网络连接。
 
 
 
@@ -2217,12 +2217,24 @@ innodb_flush_log_at_trx_commit:刷盘策略 :(要完全符合ACID，必须使用
 
 https://dev.mysql.com/doc/refman/8.0/en/innodb-multi-versioning.html
 
+InnoDB是一个多版本的存储引擎。 它保留有关已更改行的旧版本的信息，以支持事务功能，
+例如并发和回滚。此信息存储在 undo tablespaces(undo 表空间) 的数据结构中，该数据结构称为rollback segment 回滚段。
+
+Innodb使用硅谷你的中的信息来执行事务回滚中所需的撤销操作。
+它还使用该信息来构建行的早期版本，以实现一致性读。
+
+在内部,innodb向数据库中存储的每一行添加三个字段:
++ DB_TRX_ID(事务id) 6字节(8位1字节;共6*8位)  字段指示 插入或更新该行的最后一笔交易的标识符。此外，删除在内部被视为更新，在该更新中，该行中的特殊位被设置为将其标记为已删除。
+
++ DB_ROLL_PTR(滚动指针、指向undo log) 7字节(8位1字节;共7*8位)  字段称为 滚动指针。
+滚动指针指向undo log 写入回滚段。如果这一行更新，undo log 记录 包含更新之前的全部信息。
+  
+
++ DB_ROW_ID(聚簇索引ID 行ID) 行id 6字节(8位1字节;共6*8位) 字段包含一个行ID，该行ID随着插入新行而单调增加。如果innodb自动生成局促索引，则该索引包含行ID值。否则，该DB_ROW_ID 列不会出现在任何索引中
 
 
 
-
-
-
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/mysql隐藏行_undo.png)
 
 
 
