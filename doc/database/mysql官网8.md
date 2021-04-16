@@ -2415,11 +2415,94 @@ http://blog.itpub.net/26736162/viewspace-2144680
 --------------------------------
 
 **15.6 InnoDB磁盘结构**
+15.6.1表格
+15.6.2索引
+15.6.3表空间
+15.6.4双写缓冲区
+15.6.5重做日志
+15.6.6撤消日志
 
 
 
 
+**15.6.1表格**
+https://dev.mysql.com/doc/refman/8.0/en/using-innodb-tables.html
+15.6.1.1创建InnoDB表
+15.6.1.2在外部创建表
+15.6.1.3导入InnoDB表
+15.6.1.4移动或复制InnoDB表
+15.6.1.5将表从MyISAM转换为InnoDB
+15.6.1.6 InnoDB中的AUTO_INCREMENT处理
 
+
+创建InnoDB表
+CREATE TABLE t1 (a INT, b CHAR (20), PRIMARY KEY (a)) ENGINE=InnoDB;
+
+-- 查看默认存储引擎
+SELECT @@default_storage_engine;
+
+**row 格式**
+行格式：InnoDB表 的行格式决定了其行在磁盘上的物理存储方式
+
+InnoDB支持四种行格式：
+REDUNDANT，COMPACT， DYNAMIC（默认），COMPRESSED 
+冗余，紧凑，动态，压缩 
+
+
+**主键**
+具有以下特征的列:
++ 最重要的查询所引用的列。
++ 永远不会留空的列。
++ 永远不会有重复值的列。
++ 插入后很少更改值的列。
+
+
+查看表属性 innodb属性
+
+SHOW TABLE STATUS ;
+SHOW TABLE STATUS  LIKE 'test%' ;
+SHOW TABLE STATUS FROM test  LIKE 'test%' ;
+
+
+
+**15.6.1.2在外部创建表**
+create table Externally;
+https://dev.mysql.com/doc/refman/8.0/en/innodb-create-table-external.html
+
+数据目录之外创建表。
+
+**使用数据目录子句**
+
+CREATE TABLE t1 (c1 INT PRIMARY KEY) DATA DIRECTORY = '/external/directory';
+
+
+
+**15.6.1.3导入InnoDB表**
+15.6.1.4移动或复制InnoDB表
+
+
+**15.6.1.6 InnoDB中的AUTO_INCREMENT处理**
+自增长ID  自动增长ID id自增  ID自增长
+
+InnoDB提供了一种可配置的锁定机制，该机制可以显着提高将行添加到带有AUTO_INCREMENT列的表的SQL语句的可伸缩性和性能 。
+
+插入数据的模式:
++ Simple inserts (简单插入)；预先知道插入的行数，普通的insert
++ Bulk inserts(大量插入):insert ...select；等 replace ...select; load data;
++ Mixed-mode inserts(混合模式插入:不全是简单插入):insert into t1(id,name)values(1,'a')(2,'b')(null,'c')
+
+
+
++ AUTO_INCREMENT Lock Modes:锁定模式
+  1.innodb_autoinc_lock_mode = 0 传统模式
+  2.innodb_autoinc_lock_mode = 1 （“连续”锁定模式） mysql8之前 默认
+  3.innodb_autoinc_lock_mode = 2 （“交错”锁定模式） mysql8 默认
+
+
++ Lock Mode Usage Implications:锁定模式含义和用法
++ InnoDB AUTO_INCREMENT Counter Initialization：计数器初始化
+
+ 
 
 
 
