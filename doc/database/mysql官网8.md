@@ -2425,7 +2425,7 @@ http://blog.itpub.net/26736162/viewspace-2144680
 
 
 
-**15.6.1表格**
+**15.6.1table**
 https://dev.mysql.com/doc/refman/8.0/en/using-innodb-tables.html
 15.6.1.1创建InnoDB表
 15.6.1.2在外部创建表
@@ -2484,25 +2484,326 @@ CREATE TABLE t1 (c1 INT PRIMARY KEY) DATA DIRECTORY = '/external/directory';
 **15.6.1.6 InnoDB中的AUTO_INCREMENT处理**
 自增长ID  自动增长ID id自增  ID自增长
 
+https://dev.mysql.com/doc/refman/8.0/en/innodb-auto-increment-handling.html
+
 InnoDB提供了一种可配置的锁定机制，该机制可以显着提高将行添加到带有AUTO_INCREMENT列的表的SQL语句的可伸缩性和性能 。
 
 插入数据的模式:
-+ Simple inserts (简单插入)；预先知道插入的行数，普通的insert
++ Simple inserts (简单插入)；预先知道插入的行数，普通的insert insert多条
 + Bulk inserts(大量插入):insert ...select；等 replace ...select; load data;
 + Mixed-mode inserts(混合模式插入:不全是简单插入):insert into t1(id,name)values(1,'a')(2,'b')(null,'c')
 
 
 
 + AUTO_INCREMENT Lock Modes:锁定模式
-  1.innodb_autoinc_lock_mode = 0 传统模式
-  2.innodb_autoinc_lock_mode = 1 （“连续”锁定模式） mysql8之前 默认
-  3.innodb_autoinc_lock_mode = 2 （“交错”锁定模式） mysql8 默认
+  1.innodb_autoinc_lock_mode = 0 传统模式:5.0前默认 (语句级别，事务里会锁)。
+  2.innodb_autoinc_lock_mode = 1 （“连续”锁定模式） mysql8之前 默认 (insert into  select;会执行完以后才释放) 
+  3.innodb_autoinc_lock_mode = 2 （“交错”锁定模式） mysql8 默认  (申请完就释放)
+
+binlog：
+基于语句的复制(存储空间少)（对于SBR不安全的语句。）
+基于行数据的复制(最安全的复制)(性能不高、不能看执行的是什么语句)
 
 
 + Lock Mode Usage Implications:锁定模式含义和用法
 + InnoDB AUTO_INCREMENT Counter Initialization：计数器初始化
 
  
+
+innodb_autoinc_lock_mode=0;
+传统锁定模式提供了与innodb_autoinc_lock_mode引入变量之前相同的行为。
+由于予以可能存在差异，提供了传统的锁定模式选项以实现向后兼容性，性能测试以及
+解决混合模式插入问题。
+
+这种锁定模式下，所有类似与insert的语句将获得特殊的表级autoince,以将其出入具有uato_increment列
+的表中。此锁通常保持在语句的末尾，以确保为给定的insert语句序列可以预测和可重复的顺序
+分配自动递增值，病确保自动递增值给任何给定语句分配的都是连续的。
+
+对于给予语句的复制，这 意味着副本服务器上复制SQL语句时，自动增量列使用与原服务器相同值。
+执行多条insert语句的结果是确定性的，并且副本将复制 与源上相同的数据。
+如果对多个inset语句生产的自动增量值进行脚趾，则两个并非insert语句的结果将是不确定的，
+并且无法使用给予语句的复制可靠的传播到副本服务器。
+TX1： insert into t1 (c2) select 1000 rows from another table;
+TX2: inset into t1(c2)values ('xxx');
+innodb无法预先判断从tx1 select语句中检索了多少行，并且随着语句的进行，它每次一次分配自动增量值。
+使用表级锁，一次执行执行一个insert应用表的语句T1，并且不会交错使用不同国语剧生成自动递增编号。
+tx1 insert select 语句生成的自动增量值是连续的，并且TX1语句使用的自动增量值
+是连续的。 insert tx2红的语句小于或大于用于TX1的所有语句，具体取决于那个语句首先执行。
+
+只要从二进制日志中重放SQL语句时执行顺序相同，结果与TX1和TX2首次 运行时候的结果相同。因此，
+在语句结束之前报纸的标记所使用insert使用自动增量的语句可以安全第一用于给予语句的复制。但是，当
+多个事务通知实行insert语句时，这些表及本所会限制并发性和可伸缩性。
+
+在前面的实例中，如果没有标记所，则insert tx2中用于 auto increment列的只完全去决定语句执行的时间。如果inserttx2的ts在insertTX1的运行时
+执行，则由两个insert语句分配的特定个自动增量值是不确定的，并且可能因运行而异。
+
+在连续锁定模式下，innodb可以避免对行数一直的简单插入语句使用表级autoinc锁定，并且仍然保留确定性执行
+和给予语句的复制的安全性。
+
+如果您不使用二进制日志来重播SQL语句作为回复或复制的一部分，则可以使用交错摸使用来autoinc所的所有使用
+以实现更大的并发性和性能，但以云溪自动讲个的代为为代价，语句分配的怎量编号，病可能适同事执行的 语句分配的编号交错。
+
+
+
+**InnoDB AUTO_INCREMENT锁定模式的用法含义**
++ 在复制中使用自动增量:
+  binlog基于语句复制(statement-based replication) 是用0或1模式 ；使用2模时或者主从使用不同的模式时，不能保证两个相同。
+  binlog基于行数据或混合模式(row-based或者mixed-format 复制),则所有自动增量锁定模式都是安全的。
+
++ auto_increment指定 null或者0 都视为未指定，并为其生成新值。
+
++ auto_increment 指定 负值 结果是不确定的。
+
++ auto_increment 指定 大于最大值 结果是不确定的。
+
++ 批量插入时 0、1都是连续的，没有间隙。2可能有间隙
+
++ 由“混合模式插入”分配的自动增量值 0、1、2三种模式都不同
+
++ AUTO_INCREMENT在INSERT语句 序列的中间 修改列值。8以后会自动变成最大值。
+
+
+
+**InnoDB AUTO_INCREMENT计数器初始化**
+
+5.7之前在内存中重启就清空。 再启动就是 select max(id)
+
+8.0以后记在redolog 重启不清空
+
+
+
+
+**15.6.2索引**
+https://dev.mysql.com/doc/refman/8.0/en/innodb-indexes.html
+15.6.2.1聚集索引和二级索引
+15.6.2.2 InnoDB索引的物理结构
+15.6.2.3排序索引构建
+15.6.2.4 InnoDB全文索引
+
+**聚集索引**
++ 表上定义primary key就是聚集索引、聚簇索引。逻辑唯一非空、或者使用主键的列，就增加一个自增列。
++ 没有primary key innodb就会选择一个唯一和not null的为聚集索引。
++ 没有适合的 就建隐藏的狙击索引 gen_clust_index,单调递增。
+
+
+**二级索引**
+除了聚簇索引以外所有的索引都是二级索引。innodb中辅助索引的每个记录都包含改行的主键列和辅助索引指定的列。
+
+主键较长，则辅助索引使用更多的空间。
+
+
+
+
+**15.6.2.2 InnoDB索引的物理结构**
+
+除空间索引外，InnoDB 索引是B树数据结构。
+
++ InnoDB 索引是B树数据结构
++ 空间索引使用 R树（R-tree是一种将Ｂ树扩展到多维情况下得到的数据结构）
+
+
+索引记录存储在其B树或R树数据结构的叶页中。
+索引页的默认大小为16KB。
+
+
+**15.6.2.3排序索引构建**
+
+索引构建分为三个阶段：
+
+第一阶段，将 扫描聚簇索引，并生成索引条目并将其添加到排序缓冲区（或者写入临时文件中）0。
+第二阶段中，将一个或多个运行写入临时中间文件，对文件中的所有条目执行合并排序。
+第三个阶段，将已排序的条目插入 B-tree中
+
+
+
+**15.6.2.4 InnoDB全文索引**
+
+InnoDB全文索引具有倒排索引设计
+
+
+
+
+
+
+**15.6.3表空间**
+15.6.3.1系统表空间
+15.6.3.2每表文件表空间
+15.6.3.3通用表空间
+15.6.3.4撤消表空间
+15.6.3.5临时表空间
+15.6.3.6在服务器离线时移动表空间文件
+15.6.3.7禁用表空间路径验证
+15.6.3.8在Linux上优化表空间空间分配
+15.6.3.9表空间AUTOEXTEND_SIZE配置
+
+
+
+**15.6.3.1系统表空间**
+5.7 系统表空间是: InnoDB数据字典，双写缓冲区，更改缓冲区和撤消日志的存储区域
+8.0 系统表空间是 :change buffer(更改缓冲区)的存储区。
+
+在以前的MySQL版本中，系统表空间还包含doublewrite缓冲区存储区。(MySQL 8.0.20起，此存储区位于单独的doublewrite文件中)
+系统表空间可以具有一个或多个数据文件。ibdata1在数据目录中创建一个名为的系统表空间数据文件 。
+
+
+元数据:描述数据的数据。
+
+
+
+**15.6.3.2 File-Per-Table Tablespaces**
+表文件空间 :innodb表的数据和索引。存储在单个数据文件中(table.ibd)
+
+**表文件空间的优势:**
+
+与共享表空间（例如系统表空间change buffer存储区或常规表空间）相比，每表文件表空间具有以下优点。
++ 表文件空间删除磁盘会回收，共享表空间(系统、常规)删除不会
++ alter table 对共享表空间会增加磁盘占用，并且不会释放
++ TRUNCATE TABLE 在每个表文件表空间中的表上执行时，性能会更好。
++ 可以在单独存储设备上创建数据文件，优化IO
++ 单独导入一张表
++ 数据损坏时 单表恢复快
++ 单表空间容易观察文件大小等
++ 单个文件有64T限制，每个文件都有64t 
+
+与共享表空间(changebuffer和常规空间)比缺点:
++ 使用每表文件表空间，每个表可能有未使用的空间，只能由同一表的行使用，如果管理不当，则会浪费空间。
++ fsync对每个表的多个数据文件而不是单个共享表空间数据文件执行操作。
++ mysqld必须为每个表文件空间保留一个打开的文件句柄，如果每个表文件空间中有许多表，则可能会影响性能。
++ 当每个表都有其自己的数据文件时，需要更多的文件描述符。
++ 可能存在更多碎片，这可能会影响 DROP TABLE表扫描性能。但是，如果管理碎片，则每表文件表空间可以提高这些操作的性能。
++ 删除每个表文件表空间中的表时，将扫描缓冲池，对于大型缓冲池可能要花费几秒钟的时间。使用宽泛的内部锁定执行扫描，这可能会延迟其他操作。
+
+
+**15.6.3.3通用(常规)表空间**
+https://dev.mysql.com/doc/refman/8.0/en/general-tablespaces.html
+InnoDB 使用CREATE TABLESPACE语法创建的共享表空间。 
+
+
+**通用(常规)表空间功能:**
+
++ 常规表空间是共享表空间，能够存储多个表的数据。
++ 常规表空间比每表文件表空间具有潜在的内存优势 。服务器在表空间的生存期内将表空间元数据保留在内存中。
++ 常规表空间支持所有表行格式和相关功能。
++  CREATE TABLE 有TABLESPACE 选项
++   ALTER TABLE 有TABLESPACE 选项
+
+
+**通用(常规)表空间限制**
+
++ 生成的表空间或现有表空间不能更改为常规表空间。
++ 不支持创建临时通用表空间。
++ 常规表空间不支持临时表。
+
+
+
+**15.6.3.4 Undo Tablespaces 撤销表空间**
+
+撤消表空间包含undo log，undo log是记录的集合，其中包含有关如何通过事务撤消对聚集索引记录的最新更改的信息。
+
+5.7撤消日志默认情况下存储在:系统表空间
+8.0初始化MySQL实例时，会创建两个默认的撤消表空间。undo_001、 undo_002  :
+
+
+
+
+**15.6.3.5临时表空间**
+InnoDB 使用会话临时表空间(Session Temporary Tablespaces)和全局临时表空间(Global Temporary Tablespace)。
+
+
+
+
+会话临时表空间(Session Temporary Tablespaces):
+存储用户创建的临时表 和 当InnoDB配置为磁盘内部临时表的存储引擎时由优化器创建的内部临时表。
+
+全局临时表空间(Global Temporary Tablespace)：ibtmp1
+用户创建的临时表进行更改的回滚段。
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------
+**15.6.4双写缓冲区**
+
+
+doublewrite缓冲区是一个存储区域：
+
+5.7doublewrite缓冲区存储区位于InnoDB系统表空间中。
+8.0doublewrite缓冲区存储区位于doublewrite文件中
+
+**Double Write的思路很简单:**
+A. 在覆盖磁盘上的数据前，先将Page的内容写入到磁盘上的其他地方(InnoDB存储引擎中的doublewrite  buffer，这里的buffer不是内存空间，是持久存储上的空间).
+B. 然后再将Page的内容覆盖到磁盘上原来的数据。
+
+A异常:原来的数据没有被覆盖，还是完整的。
+B异常:原来的数据不完整了，但是新数据已经被完整的写入了doublewrite buffer.  因此系统恢复时就可以用doublewrite buffer中的新Page来覆盖这个不完整的page.
+
+
+
+尽管数据被写入两次，但双写缓冲区不需要两倍的I / O开销或两倍的I / O操作。只需一次fsync()调用操作系统即可将数据按较大的顺序块写入doublewrite缓冲区（除非 innodb_flush_method设置为 O_DIRECT_NO_FSYNC）。
+
+
+
+**15.6.5重做日志redo log** ib_logfile0 ib_logfile1
+
+重做日志redo log 是基于磁盘的数据结构,在崩溃恢复期间用于纠正不完整事务写入的数据。
+在正常操作期间，重做日志对更改表数据的请求进行编码，这些请求是由SQL语句或低级API调用产生的。在初始化过程中以及接受连接之前，将自动重播在意外关闭之前未完成更新数据文件的修改。
+
+
+**默认情况两个文件物理表示:**
+ib_logfile0、ib_logfile1
+
+MySQL以循环方式写入重做日志文件
+
+
+
+
+**组提交以重做日志刷新Group Commit for Redo Log Flushing**
+innodb 像任何符合acid的数据库引擎一样，在提交事务之前刷新事务的重做日志。
+innodb使用组提交功能将多个此类刷新请求分组在一起，以避免每次提交都进行一次刷新。
+使用组提交，innodb可以对日志文件进行一次写入操作，以对大约同事提交的多个用户
+事务执行提交操作，从而显著提高了吞吐量。
+
+
+
+
+
+**15.6.6撤消日志undo log**
+撤消日志是与单个读写事务关联的撤消日志记录的集合。
+
+
+撤消日志记录包含有关如何撤消事务对**聚簇索引** 记录的最新更改的信息。
+
+
+
+-------------------------------------------------------------------------------
+
+**15.7 InnoDB锁定和事务模型**
+15.7.1 InnoDB锁定
+15.7.2 InnoDB交易模型
+15.7.3在InnoDB中由不同的SQL语句设置的锁
+15.7.4幻影行
+15.7.5 InnoDB中的死锁
+15.7.6事务调度
+
+
+
+
+**15.7.1 InnoDB locking**
+
+I.共享锁和排他锁
+InnoDB实现标准的行级锁定，其中有两种类型的锁： 共享（S）锁和排他（X）锁。
+
++ 共享锁读锁 shared (S) lock :事务持有这一行的读锁.
++ 排他锁写锁 exclusive (X) lock permits the transaction that holds the lock to update or delete a row.
+
+
+
+
+
 
 
 
