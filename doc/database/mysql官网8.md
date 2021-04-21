@@ -1758,6 +1758,9 @@ LOCK TABLES并 UNLOCK TABLES与交易进行交
 
 
 **13.3.7 SET TRANSACTION语句**
+SELECT @@tx_isolation; -- 查询事务隔离级别 8之前
+select @@transaction_isolation; -- 查询事务隔离级别 8之后
+show variables like 'transaction_isolation'; -- 查询事务隔离级别 8之后
 
 SET [GLOBAL | SESSION] TRANSACTION
 transaction_characteristic [, transaction_characteristic] 
@@ -2856,7 +2859,162 @@ gap locks是对索引记录之间的间隙的锁定，或者是对第一个或�
 
 
 对于使用唯一索引来锁定唯一行来锁定的语句，不需要间隙锁定。(这不包括搜素条件仅保护多列唯一索引的某些列的情况，)
+SELECT * FROM child WHERE id = 100;
+
+如果ID 未建立索引或具有非唯一索引，则该语句会锁定前面的间隙。
+
+间隙锁定innodb是 纯粹抑制性的，这意味着它们的唯一目的就是防止其他事务插入间隙。间隙锁可以共存。
+一个事务进行的间隙锁定不会阻止另一个事务对相同间隙进行锁定。
+共享间隙锁和排他间隙锁之间没有区别。它们彼此不冲突，并且执行相同的功能。
+
+间隙锁定可以显示禁用。如果将事务隔离级别更改为，read committed .将禁用间隙锁进行搜索和索引扫描，
+并且仅仅将用于外键约束检查和重复键检查。
+
+使用read committed隔离级别还有其他影响。MYSQL 评估where条件后，将释放不匹配行的记录锁定。对于对于update语句，
+innodb执行半一制读取，以便将最新的提交版本返回给mysql，以便mysql可以确定行是否与where条件匹配update
+
 
 
 
 **Next-key Locks**
+
+next key 锁是索引记录上的record lock和 gap lock的组合。
+
+innodb执行行级锁锁定的方式是，当它搜索或扫描表索引时，会在遇到的索引记录上设置共享
+或互斥锁。因此，行级锁实际上是索引记录锁定。索引记录上的next key lock也会影响该索引
+记录之前的间隙。即，next key lock 是索引记录锁加上索引记录之前的间隙上的间隙锁定。
+如果一个会话R在索引中的记录上具有 共享锁 或排他锁，则另一会话不能在R索引顺序之前
+的间隙中插入新的索引记录。
+
+
+假设索引包含10 11 13 和20 .次索引可能的next key 锁定涵盖了以下间隔，其中() 表示不包含  []表示包含：
+(negative infinity, 10]
+(10, 11]
+(11, 13]
+(13, 20]
+(20, positive infinity)
+
+对于最后一个间隔，next-key锁定将间隙锁定在索引中的最大值之上，并且 supremum 伪记录的值
+高于索引中的任何实际值。最高不是真正的索引记录，因此，实际上，在nextkeylock仅锁定最大
+索引值之后的间隙。
+
+默认情况下，innodb 以为 repeatable read 事务隔离界别运行。
+在这种情况下，请innodb使用next key 锁定进行搜索和索引扫描，以防止产生幻象行。
+
+用于next key 锁定事务数据出现类似于下面 show engine innodb status
+
+
+
+**插入意图锁Insert Intention locks**
+insert intention locks是一种通过 insert 行插入之前的操作设置的间隙锁。此锁发出插入意图的信号是，
+如果多个失误未插入间隙中的相同位置，则无需等待插入到同意索引间隙中的多个事务。
+假设有索引记录，其值分别是4\5。单独的事务分别尝试插入值5和6，在获得插入行的排他锁之前，
+每个事务都使用插入意图锁来锁定4和7之前的间隙，但不要互相阻塞，因为
+行是无冲突的。
+
+下面的实例演示了在获得对插入记录的排他锁之前，使用插入意图锁的事务。该实力设计两个客户端A和B。
+
+ CREATE TABLE child (id int(11) NOT NULL, PRIMARY KEY(id)) ENGINE=InnoDB;
+INSERT INTO child (id) values (90),(102);
+
+T1：
+START TRANSACTION;
+ SELECT * FROM child WHERE id > 100 FOR UPDATE;
+
+
+T2：
+START TRANSACTION;
+INSERT INTO child (id) VALUES (101);  -- 会被锁
+
+T2：
+SELECT * FROM child WHERE id = 103 FOR UPDATE;  -- 103 不存在 不会被锁
+
+SELECT * FROM child WHERE id = 102 FOR UPDATE;  -- 102 存在 会被锁
+
+
+SHOW ENGINE INNODB STATUS;
+
+
+**AUTO-INC Locks**
+
+一个auto-inc 锁是通过交易将与表中取得一个特殊的表级别锁 auto_increment列。
+在最简单的情况下，如果一个事务正在向表中插入值，则任何其他失误都必须等待自己在该表中进行插入，
+，以便第一个事务插入的行接收连续主键值。
+
+该innodb_autoinc_lock_mode 配置选项控制用于自动增加锁定的算法。它使您可以选择
+如何在可预测的自动增量值序列与插入操作的最大并发性之间进行权衡。
+
+
+**空间索引的谓词锁 Predicate Locks for Spatial Indexes**
+
+spatial 空间索引 多维数据 GIS相关
+
+
+
+---------------------Transaction  事务模型-------------------------------------------------------
+https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-model.html
+**15.7.2 InnoDB交易模型**
+
+15.7.2.1事务隔离级别
+15.7.2.2自动提交，提交和回滚
+15.7.2.3一致的非锁定读取
+15.7.2.4锁定读取
+
+
+在innodb transaction model中，目标是将多版本数据库的最佳属性与传统的两阶段锁定结合。
+InnoDB在默认情况下，采用oracle风格，在行级别执行锁定 并以非锁定一致读的形式运行查询。
+锁信息以innodb节省空间的方式存储，因此不需要锁升级。通常允许多个用户锁定innodb表中国年的每一行
+或者该行的任何随机子集，而不会导致innodb内存耗尽。
+
+
+**15.7.2.1 Transaction Isolation Levels事务隔离级别**
+https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html
+事务隔离级别是数据库处理的基础之一。隔离是ACID中的I;隔离级别是一种设置，用于在多个失误同事进行更改和执行查询时微调性能与结果的可靠性，
+一致性和可重复性之间的平衡。
+原子性
+一致性
+隔离性
+持久性
+
+Innodb报价由SQL描述的所有四个事务隔离级别:
+read Uncommitted.
+read committed
+repeatable read：默认
+serializable.
+
+用户可以使用set transaction语句更改单个回话或者所有后续链接的隔离级别。
+要为所有链接设置服务器的默认隔离级别， -- transaction - isolation
+
+Innodb支持使用不同的锁定策略在此描述的每个事务隔离级别。
+您可以对默认数据 repeatable read级别强制执行高度一致性，一遍在重要的ACID合规数据上进行操作。
+或者，在批量报告之类的情况下，精确的一致性和可重复的结果与最小化锁定开销相比，不那么重要，
+您read committed设置可以放宽甚至使用一致性规则 read uncommitted。
+ serializable 实施比甚至更严格的规则 repeatable read ,并且主要 用于特殊情况下 XA
+失误以及用于解决并发和死锁问题。
+
+下边描述了mysql 如何支持不同的失误级别。列表从最常用的级别到最不常用的级别。
+
+
+**repeatable read** 可重复读
+这是默认隔离级别innodb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

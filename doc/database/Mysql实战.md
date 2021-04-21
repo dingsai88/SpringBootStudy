@@ -1468,15 +1468,11 @@ innodb_autoinc_lock_mode：
  
  6.4 锁的算法
  
- 行锁的3种算法
- Record lock:当个行记录上的锁:只有唯一索引的情况下才生效，辅助索引不生效。
- Gap lock:间隙锁，锁定一个范围，但是不包含记录本身。
+ 行锁的算法（只有带索引的才生效）
+ Record lock:不管是普通索引还是聚簇索引，都是锁结果集对应的聚簇索引（换别的字段只要命中相同的聚簇索引也被锁定）
+ Gap lock（可重复读以上级别才生效）:间隙锁，锁定一个范围。 c1 BETWEEN 10 and 20 FOR UPDATE;   包含10、20 和中间的都锁定
  next-key lock:Gap lock+record lock，锁定一个范围，并且锁定记录本身。
- 
- 
- record lock总是会锁住索引记录。
- Next-key lock解决幻读问题
- 
+  
  
  previous key locking
  
@@ -1886,7 +1882,9 @@ SELECT * from test where test=1;
 
 SELECT @@tx_isolation ;
 
-
+SELECT @@tx_isolation; -- 查询事务隔离级别 8之前
+select @@transaction_isolation; -- 查询事务隔离级别 8之后
+show variables like 'transaction_isolation'; -- 查询事务隔离级别 8之后
 
 
 
