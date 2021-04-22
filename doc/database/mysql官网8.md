@@ -2996,19 +2996,53 @@ Innodb支持使用不同的锁定策略在此描述的每个事务隔离级别�
 
 
 **repeatable read** 可重复读
-这是默认隔离级别innodb
+这是默认隔离级别innodb。同一个事务中的一致性读取将要讲读取 第一次读取建立的快照。
+这意味着,如果您 select 在同一事务中发出多个普通非锁定语句，则这些select语句
+彼此之间也是一致的。
+
+对于锁定读取 for update 、for share ,update delete语句，锁定取决于语句是使用具有
+唯一搜索条件的唯一索引还是范围类型搜索条件。
+
++ 对于具有唯一搜索条件的唯一索引，innodb仅锁定找到的索引记录，而不锁定其前的间隙。
++ 对于其他搜索条件，innodb使用间隙锁定或者 next-key locks来锁定扫描的索引范围，以
+组织其他会话插入该范围所覆盖的间隙。
+  
+
+**read committed** 读提交
+即使在同一个事务中，每个一致的读取都将设置并且读取其自己的新快照。
+
+对于锁定读取 for update for share update delete 语句，innodb 仅锁定索引记录，
+而不锁定他们之间的间隙，因此允许在多ing记录旁边自由插入新纪录。
+间隙锁定仅用于外键约束检查和重复建检查。
+
+由于禁用了间隙锁定，因此可能胡IC喊声欢度问题，因为其他回话可以在间隙中插入新行。
+
+Read committed隔离级别仅支持基于行的二进制日志记录(row-based、不支持statment-base 记录SQL语句)
+如果read committed 配合 binlog_format=mixed混合模式，服务器将自动使用基于row-base 的binlog
+
+
+使用read committed具有其他效果;
+
++ 对于update 或者delete语句,innodb仅对其更新或删除的行持有锁定。mysql评估where 条件以后，
+将释放不匹配行的记录锁。这大大降低了死锁的可能性，但是仍然可以发生。
+
++ 对于update语句，如果某行已被锁定，则innodb执行半一致读取，将最新的提交版本返回给mysql,
+以便mysql可以确定该行是否与where 条件匹配update。 如果该行匹配更新，则mysql再次读取改行，
+  这一次将innodb其锁定或等待对其进行锁定。
+  
 
 
 
+**Read uncommitted 读未提交**
+select 语句以非锁定方式执行，但是可能会使用行的早期版本。因此使用此隔离级别，此类读取不一致。
+这也称为脏读。否则，次隔离级别的工作方式类似与 read commited.
 
 
-
-
-
-
-
-
-
+**Serializable串行化**
+此级别类似于 Repeatable read 但是innodb将所有普通select 语句隐式转换为 select for share if automommit 禁用。
+如果autocommit启用，则select是其自身的事务。因此，他被认为是只读的，
+如果作为一致性读取非锁定并且不需要阻塞其他事务，则可以序列号。
+select 如果其他事务已经修改所选行，则要强制平原组织，请禁用automooit .
 
 
 

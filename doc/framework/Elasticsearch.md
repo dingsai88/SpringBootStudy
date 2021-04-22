@@ -1474,6 +1474,69 @@ https://esrally.readthedocs.io/en/stable/
     + 运行 1000 条测试数据： esrally –distribution-version=7.1.0 --test-mode
 
 
+I.redhat安装 rally
+
+II.基础环境等安装参考
+https://blog.csdn.net/qq_41425925/article/details/109162814
+ 
+II.rally安装参考
+https://github.com/elastic/rally
+
+https://www.python.org/downloads/source/
+Python-3.8.0.tgz
+
+https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
+
+
+
+
+
+
+I.
+cd /usr/local
+
+代理:
+www.代理域名:8000
+
+II.离线python
+wget --no-check-certificate https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz -e use_proxy=yes -e https_proxy=www.代理域名:8000
+
+
+
+
+yum install gcc
+
+https://blog.csdn.net/qq_41425925/article/details/109162814
+
+
+II.离线setuptools
+
+wget –no-check-certificate https://pypi.python.org/packages/source/s/setuptools/setuptools-19.6.tar.gz  -e use_proxy=yes -e https_proxy=www.代理域名:8000
+
+
+
+https://pypi.org/project/wheel/0.35.1/#files
+
+
+
+
+
+II.离线  Rally
+pip3 --proxy="http://www.代理域名:8000"   install esrally
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
 
 
 
