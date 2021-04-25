@@ -1424,7 +1424,7 @@ RC提交读:读取最新版本的snapshot数据
 RR可重复读:读取事务开始版本的数据
 
 
-6.3.3一致性锁定读
+6.3.3锁定读
 select for update;加排他锁读
 select  lock in share mode;加共享锁读
 

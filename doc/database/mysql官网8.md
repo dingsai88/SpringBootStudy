@@ -3047,8 +3047,219 @@ select 如果其他事务已经修改所选行，则要强制平原组织，请�
 
 
 
+**15.7.2.2自动提交，提交和回滚**
+https://dev.mysql.com/doc/refman/8.0/en/innodb-autocommit-commit-rollback.html
+
+在innodb中，所有用户活动都发生在交易内部。如果autocommit启用了，则每个SQL语句自己形成一个事务。
+默认情况下，mysql为每个autocommit启用的新连接启动回话，因此如果该SQL语句未返回错误，
+则mysql在每个SQL语句之后进行提交。如果一条语句返回错误，则提交或回滚行为取决于该错误。
+
+具有回话autocommit启动可以通过显示启动它制定多语句事务
+start transaction 或者begin 语句，并用它结束commit或者rollback声明。
+
+如果autocommit与set autocommit=0的会话中禁用了mode，则该会话将始终打开一个事务。
+一个commit或者rollback语句结束当前事务和一个新的开始。
+
+如果禁用autocommit回话，没有显示提交最终事务的情况下结束，则mysql将要回滚该事务。
+
+某些语句隐式结束事务，就好像您commit在执行该语句之前已经完成了。
+
+这commit意味着当前失误总所做的更改将要变成永久性，并在其他回话中课件。一个rollback声明，
+而另外一方面，取消当前事务中的所有修改。双方commit并rollback释放所有innodb
+当当前事务期间设置的锁。
 
 
+将DML操作与事务分组
+
+默认情况下，链接到mysql服务器开始与自动提交模式启用，当你执行它自动提交每个SQL语句。如果您有
+其他数据库系统的经验，则可能不熟悉这种操作方式，在标准实践中，
+发出一些列DML语句并提交它们全部回滚。
+
+要使用多语句事务，请使用SQL语句关闭自动提交功能，set autocommit=0 并使用commit 或 rollback视情况结束每个事务。
+要保留自动提交功能，请以开始每个交易，start transaction \ commit\rollback结束。
+
+
+
+**15.7.2.3一致的非锁定读取Consistent Nonlocking Reads**
+一致性读取，该装置innodb在一个时间点使用多版本存在于查询数据库快照。
+该查询将看到在该时间点之前提交的事务所做的更改，而看不到以后或未提交的事务所做的更改。
+该规则的例外是查询可以看到同一事务中较早的语句所做的更改。此异常导致以下异常：
+如果更新表中得某些行，则select 查看已经更新行得最新版本，但也可能会看到任何行得旧版本。
+如果其他回话同时更新同一张表，则异常意味着您可能会以数据库中不存在状态查看该表。
+
+
+如果事务隔离级别为repeatable read 重复读 ,则同一事务中所有一直读取将读取由该事务中第一个此类读取
+建立的快照。 可以通过提交当前事务并在此之后发出新
+查询来获取查询的更新快照。
+
+使用 read committed隔离级别，事务中得每个一致性读取都会社这并读取其自己的新快照。
+
+
+一致性读取是在默认模式innodb检查select中的语句read committed repeatable read隔离级别。
+一致性读取不会在它访问的表上设置任何锁，因此其他回话可以自由地在对表
+执行一致性读取的同时修改这些表。
+
+
+假设您以默认 repeatable read 隔离级别运行。当您发出一致性读取，innodb将为您的事务提供一个
+时间点，根据时间点查询您看到数据库。
+如果分配了时间点后另一个事务删除了一行并提交，则看不到该行已被删除。插入和更新的处理方式相似。
+
+
+您可以通过提交交易，然后再进行另一个select 或者 提前交易时间 start transaction with consistent snapshot;
+
+这称为多版本并发控制。
+
+以下示例中，回话A仅在B提交了插入并且A也提交了时，才看到B插入的行，因此时间点比B提交提前了。
+
+
+如果要查数据库的最新状态，请使用read committed隔离级别或者 锁定读
+select * from t for share;
+
+
+使用read committed隔离级别，事务中得每一个一致性读取都会设置并读取自己的新快照。使用for
+share，将发生锁定读取； select 阻塞直到包含最新行得事务结束。
+
+
+一致性读取不适合某些DDL语句
++ 一致性读取无法姐姐问题 drop table,因为mysql无法使用已删除innodb表并被破坏该表。
++ 一直读取不能姐姐 alter table 创建临时表时创建原始表的临时副本并删除原始表的操作。
+当您在事务内重新发出一致IDE读取时，新表中得行时不可见得，因为在获取
+  快照时这些行不存在。这种情况下，事务返回一个错误，
+
+读取的类型因选择子句 insert into select 中的选择而有所不同update select create table select 未指定 for update for share 
++ 默认情况下，innodb对这些语句使用更强的锁定，并且该select部件的行为类似于read committed,其中即使
+在同一事务总的每次一致性读取，也会设置并读取其自己的新快照。
+  
++ 要在这种情况下执行非锁定读取，请将事务的隔离级别设置为 read uncommittet 或read committed避免
+在从选点表读取的行上设置锁定。
+
+
+I.问题。可重复读，B会话已经提交，A会话读取到旧知识，数据是否 已经更新。
+**15.7.2.4锁定读取Locking Reads** 没有一致性，只有锁定读
+
+https://dev.mysql.com/doc/refman/8.0/en/innodb-locking-reads.html
+
+如果查询数据，然后在同一事务中插入或更新相关数据，则常规select语句无法提供足够的保护。
+其他事务还可以更新或者删除刚查询的相同行。
+innodb支持两种类型的锁定读取，这些读取提供了额外的安全性"
+**for share**
+在读取的任何行上设置共享模式锁定。其他回话可以读取行，但是在事务提交之前不能修改它们。
+如果这些行中得任何一个被尚未提交的另一事务更改，则查询将等待直到该 事务结束，然后使用最新值。
+
+for share 替代 lock in share mode(向后兼容) 。这些语句是等效的。 
+
+使用NOWAIT和
+SKIP LOCKED锁定读取并发
+
+Grant Table Concurrency（授权并发读）。
+
+**for update**
+对于索引记录，搜索遇到的情况，锁定行和任何关联的索引条目，就像您update对这些行发出语句一样。
+其他事务被阻止 for share 在某些事务隔离级别中更新这些行，执行操作或者读取数据。
+一致性读取将忽略读取试图中存在的记录上设置的任何锁。(记录的旧版本无法锁定；可以通过在记录的内存副本上应用撤销日志来重构它们)
+
+for update 需要select权限和至少一个delete、 lock tables 或者update权限。
+
+这些子句在处理单个表中或查分成多个表的树结构或图结构数据时最有用。您从一处到另外一处遍历边缘或树枝，
+同时保留返回的权利并更改任何这些指针值。
+
+提交或回滚事务时，将释放for share 和设置所有锁定for update.
+
+笔记
+锁定读取仅仅在autocommit 时不可用时才生效
+start transaction
+autocommit=0;
+
+
+**不会锁定子句的行**
+
+SELECT * FROM t1 WHERE c1 = (SELECT c1 FROM t2) **FOR UPDATE**;
+
+**会锁定子句的行**
+
+SELECT * FROM t1 WHERE c1 = (SELECT c1 FROM t2 **FOR UPDATE**) **FOR UPDATE**;
+
+
+**例子1-锁定读for share**
+插入子表前需要父表存在数据.(防止在两句话中间，有人把爹给删了)
+SELECT * FROM parent WHERE NAME = 'Jones' FOR SHARE;
+insert child();
+
+
+**例子2-锁定读for update**
+有一个计数器 两个回话相同的数据时不对的，需要用for update;
+SELECT counter_field FROM child_codes FOR UPDATE;
+UPDATE child_codes SET counter_field = counter_field + 1;
+
+for update 读取最新的可用数据，并在读取的每一行上设置排它锁。因此，它设置了与update SQL的相同锁。
+ 
+UPDATE child_codes SET counter_field = LAST_INSERT_ID(counter_field + 1);
+SELECT LAST_INSERT_ID();
+
+LAST_INSERT_ID(counter_field + 1) 返回了最后更新完的值。
+
+
+
+**锁定读取并发:NOWAIT和 skip locked**
+Locking Read Concurrency with NOWAIT and SKIP LOCKED
+
+如果某行被某个事务锁定，则请求同一被锁定的行 for update 、for share事务必须等待，
+直到阻塞的事务释放该行锁为止。此行为可以防止事务更新或删除其他事务为更新而查询的行。
+但是如果希望在锁定请求的行时立即返回查询，或者可以接受从结果集中排出锁定的行，则不必等待释放行锁。
+
+为了避免等待其他事务释放行锁，nowait并且skip locked选项可以与使用for update forshare 语句使用。
+
+**NOWAIT** 有锁定返回失败
+永不等待的锁定读取，将等待获取行锁。查询将立即执行，如果请求的行被锁定，则会失败并显示错误。
+
+**SKIP locked**
+使用skip locked永不等待的锁定读取将等待获取行锁。查询立即执行，从结果集中删除锁定的行。
+
+笔记
+跳过锁定行得查询将返回不一致的数据视图。skip locked因此不适合一般交易工作。但是，当多个
+会话访问相同的类似队列的表时，可以使用它来避免锁征用。
+
+
+nowait 、skip locked 仅适用于行级锁。
+
+对于基于语句的肤质 使用 nowait skip locked 不安全。
+
+CREATE TABLE t (i INT, PRIMARY KEY (i)) ENGINE = InnoDB;
+INSERT INTO t (i) VALUES(1),(2),(3);
+
+session1
+START TRANSACTION;
+SELECT * FROM t WHERE i = 2 FOR UPDATE;
+
+
+
+
+Session 2:
+SELECT * FROM t WHERE i = 2 FOR UPDATE NOWAIT;
+ERROR 3572 (HY000): Do not wait for lock.
+
+
+Session 3:
+START TRANSACTION;
+SELECT * FROM t FOR UPDATE SKIP LOCKED;
+
+返回1、3 没有2.
+
+
+**15.7.3在InnoDB中由不同的SQL语句设置的锁**
+https://dev.mysql.com/doc/refman/8.0/en/innodb-locks-set.html
+
+locking read(for share 、for update) 、update、delete一般使用 record lock 作用在索引上。
+where语句中是否存在排除该行得条件并不重要。innodb不记得确切的where 条件，
+而是只知道扫描了那个索引范围。这些锁通常是 next-key ,也可以阻止紧接在记录之前插入 gap中。
+但是，可以明确禁用gap lock，这将导致不使用next key 锁定。 
+
+
+如果在搜索中使用二级索引，并且要设置的索引记录锁时互斥的，那么innodb还将索引相应的
+聚集索引记录并在其上设置锁。
+
+如果没有合适您的语句索引，并且mysql必须扫描整个表以便于处理该语句，则表的每一行都将被锁定，
+从而阻塞其他用户对该表的所有插入。
 
 
 
