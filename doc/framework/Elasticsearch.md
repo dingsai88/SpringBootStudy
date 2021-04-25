@@ -1487,6 +1487,8 @@ Python-3.8.0.tgz
 
 https://www.python.org/ftp/python/3.8.0/Python-3.8.0.tgz
 
+II.离线版本
+https://esrally.readthedocs.io/en/latest/offline.html
 
 
 
@@ -1523,13 +1525,303 @@ https://pypi.org/project/wheel/0.35.1/#files
 
 II.离线  Rally
 pip3 --proxy="http://www.代理域名:8000"   install esrally
- 
- 
- 
- 
+
+报错需要升级
+pip3  --proxy="http://www.代理域名:8000"  install --upgrade pip
 
 
 
+
+
+II.又报错
+FileNotFoundError: [Errno 2] No such file or directory: '/usr/local/python3/lib/python3.8/site-packages/setuptools-19.6-py3.8.egg'
+
+
+https://pypi.org/project/setuptools/#files
+
+
+tar -zxvf setuptools-56.0.0.tar.gz
+cd setuptools-56.0.0
+python3 setup.py build
+python3 setup.py install
+
+
+
+
+
+II.运行
+注意: 有坑!! esrally
+-bash: esrally: command not found
+
+
+cd /usr/local/python3/bin
+
+
+
+./esrally race --distribution-version=7.11.2 --track=geonames
+
+
+-- 检测JDK 等
+./esrally configure 
+
+
+
+
+
+
+
+
+
+./esrally race --track=geonames --pipeline=benchmark-only --target-hosts=aaa.aa.aa.aa:9200,
+
+
+
+
+II.
+Python 3.8 解决ModuleNotFoundError: No module named '_bz2'
+
+https://www.jianshu.com/p/b722adc2ba52
+
+/usr/local/python3/lib/python3.8/lib-dynload
+
+chmod +x _bz2.cpython-38-x86_64-linux-gnu.so
+
+
+
+cd /usr/local/python3/bin
+
+
+
+
+
+I.查看代理
+env|grep -i proxy
+
+export http_proxy=http://www.代理域名:8000
+export https_proxy=http://www.代理域名:8000
+
+II.取消代理
+unset http_proxy
+unset https_proxy
+
+
+env|grep -i proxy
+
+
+tar -xzf esrally-dist-linux-2.2.0.tar.gz
+
+esrally-dist-linux-2.2.0.tar.gz
+
+
+./esrally-dist-2.2.0/install.sh
+
+
+
+II.下载数据
+# downloads the script from Github
+
+curl -O https://raw.githubusercontent.com/elastic/rally-tracks/master/download.sh
+chmod u+x download.sh
+
+# download all data for the geonames track
+./download.sh geonames
+
+
+cp -r /usr/local/rally-track-data-geonames.tar /home/elsearch/
+
+cd /usr/local
+cd  /home/elsearch
+
+tar -xf rally-track-data-geonames.tar
+
+
+
+
+
+
+
+
+esrally list tracks
+
+
+II.错误
+Cannot list. Your git version is [['git version 1.8.3.1']] but Rally requires at least git 1.9. Please update git.
+
+cd /usr/local/
+
+下载需要安装的版本号
+wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.24.0.tar.gz
+安装需求
+yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel
+卸载Centos自带的git:
+yum remove git
+git --version
+安装
+tar -zxf git-2.24.0.tar.gz
+cd git-2.24.0
+make prefix=/usr/local/git all
+make prefix=/usr/local/git install
+添加环境变量
+vim /etc/profile
+export PATH=$PATH:/usr/local/git/bin
+source /etc/profile
+查看版本号
+git --version
+git version 2.24.0
+
+
+vim /etc/profile
+
+
+
+/usr/bin
+
+
+
+
+
+
+
+
+II.错误
+In file included from http.c:2:0:
+http.h:6:23: fatal error: curl/curl.h: No such file or directory
+#include <curl/curl.h>
+
+
+yum install libcurl-dev libcurl-devel
+
+yum install expat-devel
+
+
+
+
+/usr/local/python3/bin/esrally --help
+
+
+
+
+/usr/local/python3/bin/esrally list tracks
+
+/usr/local/python3/bin/esrally list tracks --offline
+
+git config --global http.proxy $http_proxy
+
+    git config --global https.proxy $https_proxy
+
+
+
+
+cd /home/elsearch/.rally/
+
+cd  /home/elsearch
+
+tar -xf rally-track-data-geonames.tar
+
+
+
+
+
+
+
+/usr/local/python3/bin/esrally race --track=geonames --pipeline=benchmark-only --target-hosts=aa.aa.vv.45:9200
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------
+ROOT账户执行-不知道为啥
+
+[root@localhost .rally]# rm -rf benchmarks/
+[root@localhost .rally]# ls
+logging.json  logs  rally.ini
+[root@localhost .rally]#  cd  /home/elsearch
+[root@localhost elsearch]# tar -xf rally-track-data-geonames.tar
+[root@localhost elsearch]# cd /home/elsearch/.rally/
+[root@localhost .rally]# ls
+benchmarks  logging.json  logs  rally.ini
+[root@localhost .rally]# rm -rf benchmarks/
+[root@localhost .rally]# ls
+logging.json  logs  rally.ini
+[root@localhost .rally]# cd  /home/elsearch
+[root@localhost elsearch]# tar -xf rally-track-data-geonames.tar
+[root@localhost elsearch]# cd /home/elsearch/.rally/
+[root@localhost .rally]# ls
+benchmarks  logging.json  logs  rally.ini
+[root@localhost .rally]#  /usr/local/python3/bin/esrally list tracks
+
+
+[root@localhost .rally]#  /usr/local/python3/bin/esrally list tracks
+
+    ____        ____
+/ __ \____ _/ / /_  __
+/ /_/ / __ `/ / / / / /
+/ _, _/ /_/ / / / /_/ /
+/_/ |_|\__,_/_/_/\__, /
+/____/
+
+[WARNING] No Internet connection detected. Automatic download of track data sets etc. is disabled.
+Available tracks:
+
+Name           Description                                                                                                                                                                        Documents    Compressed Size    Uncompressed Size    Default Challenge        All Challenges
+-------------  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  -----------  -----------------  -------------------  -----------------------  ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+eql            EQL benchmarks based on endgame index of SIEM demo cluster                                                                                                                         60,782,211   4.5 GB             109.2 GB             default                  default
+eventdata      This benchmark indexes HTTP access logs generated based sample logs from the elastic.co website using the generator available in https://github.com/elastic/rally-eventdata-track  20,000,000   756.0 MB           15.3 GB              append-no-conflicts      append-no-conflicts,transform
+geonames       POIs from Geonames                                                                                                                                                                 11,396,503   252.9 MB           3.3 GB               append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-sorted-no-conflicts,append-fast-with-conflicts
+geopoint       Point coordinates from PlanetOSM                                                                                                                                                   60,844,404   482.1 MB           2.3 GB               append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-fast-with-conflicts
+geopointshape  Point coordinates from PlanetOSM indexed as geoshapes                                                                                                                              60,844,404   470.8 MB           2.6 GB               append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-fast-with-conflicts
+geoshape       Shapes from PlanetOSM                                                                                                                                                              60,523,283   13.4 GB            45.4 GB              append-no-conflicts      append-no-conflicts
+http_logs      HTTP server log data                                                                                                                                                               247,249,096  1.2 GB             31.1 GB              append-no-conflicts      append-no-conflicts,runtime-fields,append-no-conflicts-index-only,append-sorted-no-conflicts,append-index-only-with-ingest-pipeline,update,append-no-conflicts-index-reindex-only
+metricbeat     Metricbeat data                                                                                                                                                                    1,079,600    87.7 MB            1.2 GB               append-no-conflicts      append-no-conflicts
+nested         StackOverflow Q&A stored as nested docs                                                                                                                                            11,203,029   663.3 MB           3.4 GB               nested-search-challenge  nested-search-challenge,index-only
+noaa           Global daily weather measurements from NOAA                                                                                                                                        33,659,481   949.4 MB           9.0 GB               append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,top_metrics,aggs
+nyc_taxis      Taxi rides in New York in 2015                                                                                                                                                     165,346,692  4.5 GB             74.3 GB              append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-sorted-no-conflicts-index-only,update,append-ml,date-histogram
+percolator     Percolator benchmark based on AOL queries                                                                                                                                          2,000,000    121.1 kB           104.9 MB             append-no-conflicts      append-no-conflicts
+pmc            Full text benchmark with academic papers from PMC                                                                                                                                  574,199      5.5 GB             21.7 GB              append-no-conflicts      append-no-conflicts,append-no-conflicts-index-only,append-sorted-no-conflicts,append-fast-with-conflicts
+so             Indexing benchmark using up to questions and answers from StackOverflow                                                                                                            36,062,278   8.9 GB             33.1 GB              append-no-conflicts      append-no-conflicts
+
+-------------------------------
+[INFO] SUCCESS (took 8 seconds)
+
+
+
+
+
+
+
+
+II.仅仅基准测试
+
+https://esrally.readthedocs.io/en/latest/pipelines.html
+
+
+
+
+
+
+
+I.结论
+
+II.阿里云提供的集群指标
+https://www.alibabacloud.com/help/zh/doc-detail/127658.htm?spm=a2c63.p38356.b99.17.302b5c89i5lcNq
+
+
+https://www.alibabacloud.com/help/zh/doc-detail/127662.htm?spm=a2c63.p38356.879954.7.518c704bzY7a6R#concept-1443296
+
+
+
+II.官网指标说明
+https://esrally.readthedocs.io/en/latest/summary_report.html
+
+
+
+curl http://aa.bb.cc.dd:9200/_cat/health\?v
 
 
 
