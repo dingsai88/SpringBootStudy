@@ -3261,5 +3261,170 @@ where语句中是否存在排除该行得条件并不重要。innodb不记得确
 如果没有合适您的语句索引，并且mysql必须扫描整个表以便于处理该语句，则表的每一行都将被锁定，
 从而阻塞其他用户对该表的所有插入。
 
+Innodb设置特定类型的锁
++ select ...from 是一致性读取，读取数据库的快照并且不设置锁定，除非将事务隔离级别设置为serializable
+对于serializable级别，搜索在遇到的索引记录上设置共享的 next-key锁定。但是，对于使用唯一索引
+来搜索唯一行的行锁定语句，仅需要索引记录锁定。
+
++ select for update 、for share使用唯一索引获取锁扫描行，并释放不包含在结果集中的资格
+(例如，如果他们不符合给的条件行语句where条款)。但是，在某些情况下，行可能不会立即被解锁，
+因为结果行与其原始源头之间的关系在查询执行过程中会丢失。例如，union从表中扫描并锁定的行坑你
+会在评估它们是否符合结果集之前插入到临时表中。在这种情况下，临时表中得行与原始表中得行
+之间的关系将丢失，并且直到查询执行结束后，侯航才被解锁。
+
+
++ 对于锁定读取 select forupdate share、update和delete语句，采用取决于语句是使用具有唯一搜索条件
+的唯一索引还是范围类型的搜索条件
+   + 对于具有唯一索引条件的唯一索引，innodb仅锁定找到的索引记录，而不锁定其前的空白。
+   + 对于其他搜索条件和非唯一索引，innodb使用gap锁 或者 next-key锁定索引范围，以阻止其他回话插入该范围所覆盖的间隙。
+ 
+（一致性非锁定读取忽略所有锁）对于索引记录，搜索遇到,select for update阻止其他回话执行 forshare 或读取某些事务隔离级别。
+一致性读取将忽略读取试图中存在的记录上设置的任何锁定。
+
+
+UPDATE ... WHERE ...在搜索遇到的每条记录上设置排他的下一键锁定。但是，对于使用唯一索引来搜索唯一行的行锁定的语句，仅需要索引记录锁定。
+
+update修改一个聚簇索引记录，将隐式锁定对应的二级索引。update在插入新的二级索引记录之前执行重复检查扫描时，以及在插入新的
+二级索引记录时，该操作还将对受影响的二级索引记录进行共享锁定。
+
+
+
+DELETE FROM ... WHERE ...在搜索遇到的每条记录上设置排他的下一键锁定。但是，对于使用唯一索引来搜索唯一行的行锁定的语句，仅需要索引记录锁定。
+
+
+INSERT在插入的行上设置排他锁。该锁是索引record lock记录锁，不是下一键锁（即没有gap lock），并且不会阻止其他会话插入到插入行之前的间隙中。
+
+在插入行之前，设置了一种称为插入意向间隙锁的间隙锁。
+
+
+**insertOrUpdate**
+INSERT ... ON DUPLICATE KEY UPDATE与简单的区别在于， INSERT在发生重复键错误时，将排他锁而不是共享锁放在要更新的行上。对重复的主键值采用排它索引记录锁定。唯一的下一键锁定用于重复的唯一键值。
+
+REPLACE is done like an INSERT if there is no collision on a unique key. Otherwise, an exclusive next-key lock is placed on the row to be replaced.
+
+
+
+15.7.4幻影行 Phantom Rows
+https://dev.mysql.com/doc/refman/8.0/en/innodb-next-key-locking.html
+
+在一个事务内，同一查询，在不同时间产生的结果不同，就是幻行幽灵行问题。
+为了防止在表中插入任何 id大于100的内容，设置的锁 InnoDB包括在id值102之后的间隙上的锁 。
+
+
+
+禁用间隙锁定 。这可能会导致幻影问题，因为在禁用间隙锁定时，其他会话可以在间隙中插入新行。
+90、102
+session1:
+
+start TRANSACTION;
+SELECT * FROM child WHERE id > 100 FOR UPDATE;
+
+
+session2: 无法插入
+start TRANSACTION;
+insert into child (id)values(105);
+
+
+
+session1:
+
+start TRANSACTION;
+SELECT * FROM child WHERE id > 100;
+
+session2 commit 以后:前后查询的结果一样，查不到新数据
+SELECT * FROM child WHERE id > 100;
+
+session2: 可以插入
+start TRANSACTION;
+insert into child (id)values(105);
+commit;
+
+
+
+
+**15.7.5 InnoDB中的死锁**
+
+https://dev.mysql.com/doc/refman/8.0/en/innodb-deadlocks.html
+
+15.7.5.1 InnoDB死锁示例
+15.7.5.2死锁检测
+15.7.5.3如何最小化和处理死锁
+
+死锁是指由每个事务都持有对方需要的锁而无法进行其他事务的情况。
+因为两个事务都在等待资源变为可用，所以两个都不会释放它持有的锁。
+
+当事务锁定多个表的行 但是相反的顺序锁定时，可能会发生死锁。当此类语句锁定索引记录
+和间隙范围时，由于时序问题，每个事务都获得了一些锁而没有获得其他锁，也会发生死锁。
+
+为了减少死锁的可能性，请使用事务而不是lock tables语句；保持插入或者更新数据的事务足够小，
+以使长时间不保持打开状态；当不同的事务更新多个表或大范文的行时，请
+select for update在每个事务中使用相同的操作顺序
+死锁的坑那些不受隔离级别影响，因为隔离级别更改了读取操作的行为，而死锁则是由于写入操作而发生的。
+
+启用死锁检测并且发生死锁后，innodb检查条件并回滚事务一方。 innodb_deallock_detect禁用死锁，
+则在死锁情况下 死锁依靠innodb lock wait_time设置回滚事务。
+因此，即使您的应用程序逻辑正确，您仍然必须处理充实事务的情况。要查看innodb事务中最后一个死锁，
+使用 show engine innodb status.
+
+
+
+**15.7.5.1 InnoDB死锁示例**
+
+事务1有锁定共享锁for share; 事务2有锁定排它锁在等待事务1结束；事务1拿着锁定共享锁，获取锁定排他锁，这时候有死锁了。
+
+
+
+
+CREATE TABLE t (i INT) ENGINE = InnoDB;
+
+
+ INSERT INTO t (i) VALUES(1);
+
+session 1:
+
+START TRANSACTION;
+SELECT * FROM t WHERE i = 1 FOR SHARE;
+
+session2 执行以后执行
+DELETE FROM t WHERE i = 1;
+
+
+session 2:
+START TRANSACTION;
+DELETE FROM t WHERE i = 1;  -- 会阻塞等待事务1 
+
+
+
+ERROR 1213 (40001): Deadlock found when trying to get lock;try restarting transaction
+
+
+
+**15.7.5.2死锁检测**
+当死锁检测被使用(默认开启) innodb自动检测事务的死锁和回滚事务或交易打破僵局。
+InnoDB尝试选择要回滚的小事务，其中事务的大小由插入、更新或者删除行确定。
+innodb标所 innodb_table_locks=1 和autocommit=0 (不自动提交)并且它上面的mysql层知道行级锁。
+否则,innodb无法检测死锁，该死锁时由mysql lock tables语句设置的表锁或由
+存储引擎设置的锁innodb涉及的锁。
+
+1.回顾选择小事务(插入、更新、删除的行数确定)
+
+
+**15.7.5.3如何最小化和处理死锁**
+有关死锁的概念性信息为基础。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
