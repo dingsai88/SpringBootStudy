@@ -305,7 +305,7 @@ SELECT * FROM `a_study`  where (c1,c2)=(aaa,bbb);
 
 
 **INVISIBLE** 8.0新增功能
-不可见索引隐士
+不可见索引隐式
 
 加减索引很消耗性能、不可见所以可以测试删除索引以后的影响。
 
@@ -396,6 +396,24 @@ MEMORY存储引擎管理时:
 65,535字节
 
 
+**8.5优化InnoDB表**
+https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb.html
+
+8.5.1优化InnoDB表的存储布局
+8.5.2优化InnoDB事务管理
+8.5.3优化InnoDB只读事务
+8.5.4优化InnoDB重做日志
+8.5.5 InnoDB表的批量数据加载
+8.5.6优化InnoDB查询
+8.5.7优化InnoDB DDL操作
+8.5.8优化InnoDB磁盘I / O
+8.5.9优化InnoDB配置变量
+8.5.10为具有多个表的系统优化InnoDB
+
+
+
+
+
 
 **优化InnoDB事务管理**
 
@@ -417,6 +435,13 @@ MEMORY存储引擎管理时:
 6.当长时间运行的事务修改表时，来自其他事务的对该表的查询不会使用覆盖索引技术。通常可以从二级索引检索所有结果列，而从表数据中查找适当值的查询。
 
 
+**8.5.4优化InnoDB重做日志 Optimizing InnoDB Redo Logging**
+
+
+
+
+
+
 **优化InnoDB查询**
 不建议主键过长，因为二级索引辅助索引都会重复保存它。
 不建议每一列都加索引：尝试创建组合索引。最好都是覆盖索引  (覆盖索引：包含查询检索的所有列 的索引)
@@ -426,15 +451,17 @@ https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-queries.html
 
 
 
-**优化InnoDB DDL操作** CREATE, ALTER,   DROP
+**优化InnoDB DDL 操作** CREATE, ALTER,   DROP
 
 InnoDB和在线DDL
 创建不具有二级索引的表，然后在数据加载后添加二级索引，从而加快创建和加载表及关联索引的过程。
 
-drop (删除表)：删除内容和定义，释放空间。简单来说就是把整个表去掉.以后要新增数据是不可能的,除非新增一个表。
+**drop (删除表)：**
+删除内容和定义，释放空间。简单来说就是把整个表去掉.以后要新增数据是不可能的,除非新增一个表。
 drop语句将删除表的结构被依赖的约束（constrain),触发器（trigger)索引（index);依赖于该表的存储过程/函数将被保留，但其状态会变为：invalid。
 
-truncate (清空表中的数据)没有undolog 不能恢复：删除内容、释放空间但不删除定义(保留表的数据结构)。与drop不同的是,只是清空表数据而已。
+**truncate (清空表中的数据)没有undolog 不能恢复：**
+删除内容、释放空间但不删除定义(保留表的数据结构)。与drop不同的是,只是清空表数据而已。
 注意:truncate 不能删除行数据,要删就要把表清空。
 
 delete语句是数据库操作语言(dml)，这个操作会放到 rollback segement 
@@ -443,8 +470,14 @@ delete语句是数据库操作语言(dml)，这个操作会放到 rollback segem
 
 truncate、drop 是数据库定义语言(ddl)，操作立即生效，原数据不放到 rollback segment 中，不能回滚，操作不触发 trigger。 
 
++ 先建表、再导入数据、最后建立索引
++ 使用  TRUNCATE TABLE清空表，不要使用 DELETE FROM;  有外键的时候TRUNCATE和delete一样，这个时候建议使用   DROP TABLE and CREATE TABLE；
++ 建表的时候就给主键，不要删除或者修改主键 alter、drop
 
-**优化InnoDB磁盘I / O**
+
+**8.5.8优化InnoDB磁盘I / O**
+https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-diskio.html
+ 
 CPU使用百分比小于70％您的工作负载可能是磁盘绑定的
 https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-diskio.html
 
@@ -452,31 +485,94 @@ https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-diskio.html
 可以通过查询重复访问它，而无需任何磁盘I / O。 系统内存的50％到75％
 
 
-2.调整刷盘方法
+2.调整刷盘方法fsync()
 fsync()
 
+3.配置fsync阈值
 
 
-**优化InnoDB配置变量**
+4.Use a noop or deadline I/O scheduler with native AIO on Linux
+
+5.使用其他存储设备 设置RAID配置
+
+
+6.考虑非旋转存储 不用磁盘
+
+7.增加I / O容量以避免积压
+
+8. 如果不落后冲洗，则I / O容量会降低
+
+9.将系统表空间文件存储在Fusion-io设备上
+通过将包含doublewrite存储区的文件存储在支持原子写入的Fusion-io设备上，可以利用与doublewrite缓冲区相关的I / O优化。
+（在MySQL 8.0.20之前，doublewrite缓冲区存储位于系统表空间数据文件中。从MySQL 8.0.20开始，该存储区位于doublewrite文件中。请参见 第15.6.4节“ Doublewrite缓冲区”。）
+
+
+10.禁用压缩页面的日志记录
+
+
+
+**8.5.9优化InnoDB配置变量**
 https://dev.mysql.com/doc/refman/8.0/en/optimizing-innodb-configuration-variables.html
 
+1.控制数据更改操作的类型，以 InnoDB缓存更改后的数据，以避免频繁的小磁盘写入。
 
+2.自适应哈希索引功能-使用该innodb_adaptive_hash_index 选项打开和关闭自适应哈希索引功能 。
+
+3.InnoDB如果上下文切换是瓶颈，请 设置对处理的并发线程数的 限制。
+
+4.控制预InnoDB读操作的预取量 。当系统具有未使用的I / O容量时，更多的预读可以提高查询的性能。过多的预读可能会导致负载较重的系统上的性能定期下降。
+
+
+5.如果您具有默认值未完全利用的高端I / O子系统，则增加用于读取或写入操作的后台线程的数量。
+
+6.控制InnoDB在后台执行多少I / O。
+
+7.控制确定何时InnoDB执行某些类型的后台写入的算法 。
+
+8.利用多核处理器及其高速缓存存储器配置来最大程度地减少上下文切换中的延迟。
+
+9.防止诸如表扫描之类的一次性操作干扰存储在InnoDB缓冲区高速缓存中的频繁访问的数据 。
+
+10.将日志文件调整为对可靠性和崩溃恢复有意义的大小。InnoDB 日志文件通常保持较小，以避免崩溃后启动时间过长
+
+11.配置InnoDB缓冲池的实例大小和数量，这 对于具有数千兆字节缓冲池的系统而言尤其重要。
+
+12.增加并发事务的最大数量，从而极大地提高了最繁忙数据库的可伸缩性。
+
+13.将清除操作（一种垃圾收集）移动到后台线程中。
+
+14.减少InnoDB在并发线程之间进行的切换量 ，以使繁忙的服务器上的SQL操作不会排队并形成“流量阻塞”。
+
+**8.8了解查询执行计划 Understanding the Query Execution Plan**
+https://dev.mysql.com/doc/refman/8.0/en/execution-plan-information.html
+8.8.1 Optimizing Queries with EXPLAIN 使用EXPLAIN优化查询
+8.8.2 EXPLAIN Output Format 解释输出格式
+8.8.3 Extended EXPLAIN Output Format 扩展的EXPLAIN输出格式
+8.8.4 Obtaining Execution Plan Information for a Named Connection 获取命名连接的执行计划信息
+8.8.5 Estimating Query Performance 
+ 
 
 
 **execution-plan-information 执行计划信息explain**
 
 
-EXPLAIN作品有 SELECT， DELETE， INSERT， REPLACE，和 UPDATE语句。
+1.EXPLAIN作品有 SELECT， DELETE， INSERT， REPLACE 替换存在就不插入，和 UPDATE语句。
+存在就不插入 REPLACE INTO users (id,name,age) VALUES(123, ‘chao’, 50);
 
-EXPLAIN对于检查涉及分区表的查询很有用。
+2.EXPLAIN对于检查涉及分区表的查询很有用。
+
+3.该FORMAT选项可用于选择输出格式。TRADITIONAL 以表格格式显示输出。如果不FORMAT存在任何选项，则为默认设置 。JSON格式
+explain format=(TRADITIONA表格传统的默认、JSON ) 
+
+explain format=TRADITIONAL  SELECT * FROM `bank`;
 
 
-**explain  Output Format输出格式**format、traditional、json
+**explain  Output Format输出格式**format=(traditional传统默认不写、json)
 https://dev.mysql.com/doc/refman/8.0/en/explain-output.html
 
-该FORMAT选项可用于选择输出格式。TRADITIONAL以表格格式显示输出。如果不FORMAT存在任何选项，则为默认设置 。 JSONformat以JSON格式显示信息。
+该FORMAT选项可用于选择输出格式。TRADITIONAL以表格格式显示输出 默认设置 。 JSONformat以JSON格式显示信息。
 
-三种输出格式:默认(format=format) 
+三种输出格式:默认(format=traditional) 
 explain format=TRADITIONAL SELECT * FROM `tb_tdc_call51_brief`;
 explain  SELECT * FROM `tb_tdc_call51_brief`;
 explain format=json SELECT * FROM `tb_tdc_call51_brief`;
@@ -819,7 +915,19 @@ https://dev.mysql.com/doc/refman/8.0/en/explain-output.html#explain-extra-inform
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------
+**8.8.3扩展的EXPLAIN输出格式**
+https://dev.mysql.com/doc/refman/8.0/en/explain-extended.html
+EXPLAIN语句会产生额外的（“扩展”）信息，这些信息不是EXPLAIN输出的一部分，可以通过在SHOW WARNINGS 其后发出一条语句来查看EXPLAIN。
+
+
+
 **SHOW WARNINGS** 输出上一条语句的错误 ：没试出来
+CREATE TABLE `t1` (
+`a` tinyint(4) NOT NULL,
+`b` char(4) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 EXPLAIN
 SELECT t2.id, t2.id IN (SELECT t3.id FROM t3) FROM t2;
@@ -830,9 +938,37 @@ SELECT CONNECTION_ID();
 SELECT * FROM `PROCESSLIST`;
 
 
+<auto_key>:自动生成的临时表密钥。
+<cache>(expr):表达式（例如标量子查询）执行一次，结果值保存在内存中以备后用。对于包含多个值的结果，可以创建一个临时表并<temporary table>显示它。
+
+
+**8.8.5估计查询性能**
+可以通过计算磁盘搜索次数来估计查询性能。 4次
+
+**公式:**
+log(row_count) / log(index_block_length / 3 * 2 / (index_length + data_pointer_length)) + 1.
+
+1.索引块通常为1,024字节   :row>page页:16kb>extent区1MB(64个page页16K)>Segments段>index(一个索引两个段segments)
+2.500,000-row行数据
+3.数据指针通常是4kb 4字节
+4.对于键值长度为3kb字节 MEDIUMINT 中等大小整数 :比INT小，比SMALLINT大(取值范围为：-8388608到8388607 ; 无符号的范围是0到16777215)
+
+log(500,000)/log(1024/3*2/(3+4)) + 1 = 4 seeks. 4次
 
 ---------------------------------------------------------------------------------------------
-控制查询优化器
+**8.9控制查询优化器Controlling the Query Optimizer**
+https://dev.mysql.com/doc/refman/8.0/en/controlling-optimizer.html
+
+8.9.1控制查询计划评估
+8.9.2可切换的优化
+8.9.3优化器提示
+8.9.4索引提示
+8.9.5优化器成本模型
+8.9.6优化器统计
+
+
+
+
  
 I.SELECT @@optimizer_switch;
 https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
@@ -840,6 +976,7 @@ https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 控制优化器:优化器开关(全局都修改)、优化器提示(只运用于单条-优先级更高)
 
 **优化器开关 optimize switch**
+查看优化器开关
 
 SELECT @@optimizer_switch;
 
@@ -850,7 +987,7 @@ opt_name=default、on、off
 -- SET GLOBAL optimizer_switch='index_merge=default';
 
 
-
+**各种有优化器是否开启**
 
 index_merge=on,   --控制所有索引合并优化。
 index_merge_union=on,   --控制索引合并联合访问优化。
@@ -872,6 +1009,29 @@ use_index_extensions=on --控制索引扩展的使用。
 https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 
 
++ 批处理密钥访问标志batched_key_access （默认off）
++ 块嵌套循环标志 block_nested_loop （默认on）
++ 条件过滤标志 condition_fanout_filter （默认on）
++ 派生条件下推标志 derived_condition_pushdown （默认on）
++ 派生表合并标志 derived_merge（默认 on）
++ 发动机状态下推标志 engine_condition_pushdown （默认on）
++ 哈希联接标志 hash_join（默认 on） （仅适用于MySQL 8.0.18；在MySQL 8.0.19或更高版本中无效）。
++ 索引条件下推标志 index_condition_pushdown （默认on）
++ 索引扩展标志 use_index_extensions （默认on）
++ 索引合并标志 index_merge（默认 on） 控制所有索引合并优化。
+  index_merge_intersection （默认on） 控制索引合并路口访问优化。
+  index_merge_sort_union （默认on）控制索引合并排序联盟访问优化。
+  index_merge_union （默认on）控制索引合并联合访问优化。
++ 索引可见性标志 use_invisible_indexes （默认off）
++ 极限优化标志 prefer_ordering_index （默认on）
++ 多范围读取标志 mrr（默认 on） mrr_cost_based （默认on）
++ 半连接标志
++ 跳过扫描标志 skip_scan（默认 on）
++ 子查询实现标志 materialization （默认on）
++ 子查询转换标志 subquery_to_derived （默认off）
+
+ 
+
 
 
 
@@ -885,7 +1045,7 @@ https://dev.mysql.com/doc/refman/8.0/en/switchable-optimizations.html
 
 
 
-I.优化器提示-作用域
+**I.优化器提示-作用域**
 全局：提示会影响整个语句
 查询块：提示会影响语句中的特定查询块
 表级别：提示会影响查询块中的特定表
@@ -938,6 +1098,9 @@ II.query_block_name：
 I.Table-Level Optimizer Hints  表级优化器提示
 
 
+**8.9.4索引提示**
+https://dev.mysql.com/doc/refman/8.0/en/index-hints.html
+索引提示仅适用于SELECT 和UPDATE语句。
 
 **I.Index-Level Optimizer Hints  索引级 优化器提示**
 索引级优化器提示 优先级大于 force index、  IGNORE   INDEX、use index
@@ -1035,9 +1198,9 @@ FROM (SELECT /*+ QB_NAME(qb3) */ ... FROM ...)) ...
 索引和优化器提示optimizer hints可以单独使用，也可以一起使用。
 索引提示仅适用于SELECT 和UPDATE语句。
 
-USE INDEX (index_list) 
-IGNORE INDEX (index_list)   
-FORCE INDEX (index_list)
+USE INDEX (index_list)  你希望使用这个索引
+IGNORE INDEX (index_list)     忽略某个索引
+FORCE INDEX (index_list)  强制使用某个索引
 
 
 服务器支持该索引级优化标记JOIN_INDEX， GROUP_INDEX， ORDER_INDEX，和 INDEX，其中等同于和用于替代FORCE INDEX 索引提示，
@@ -1095,7 +1258,9 @@ Making Changes to the Cost Model Database更改成本模型数据库
 **8.10 Buffering and Caching缓冲和缓存**
 
 https://dev.mysql.com/doc/refman/8.0/en/buffering-caching.html
-
+8.10.1 InnoDB缓冲池优化
+8.10.2 MyISAM密钥缓存
+8.10.3缓存准备好的语句和存储的程序
 
 
 **8.10.1 InnoDB缓冲池优化**
@@ -1110,6 +1275,13 @@ InnoDB维护一个称为缓冲池的存储区， 用于在内存中缓存数据�
 
 配置缓冲池刷新
 
+第15.8.3.4节“配置InnoDB缓冲池预取（预读）”
+第15.8.3.5节“配置缓冲池刷新”
+第15.8.3.3节“使缓冲池扫描具有抵抗力”
+第15.8.3.2节“配置多个缓冲池实例”
+第15.8.3.6节“保存和恢复缓冲池状态”
+第15.8.3.1节“配置InnoDB缓冲池大小”
+
 
 
 
@@ -1120,7 +1292,12 @@ InnoDB维护一个称为缓冲池的存储区， 用于在内存中缓存数据�
 
 外部锁定：当服务器和其他程序锁定MyISAM表文件以相互协调哪个程序可以在何时访问表时，就会发生外部锁定。
 
-
+https://dev.mysql.com/doc/refman/8.0/en/locking-issues.html
+8.11.1内部锁定方法
+8.11.2表锁定问题
+8.11.3并发插入
+8.11.4元数据锁定
+8.11.5外部锁定
 
 
 **8.11.1内部锁定方法**
@@ -1157,7 +1334,7 @@ MySQL uses 表级锁 在 MyISAM、MEMORY、MERGE 存储引擎的表
 
 
 
-I.表级锁定的优点：
+**I.表级锁定的优点：**
 + 所需的内存相对较少（行锁定需要锁定每行或每组行的内存）
 + 在表的大部分上使用时非常快，因为只涉及一个锁。
 + 如果您经常GROUP BY 对大部分数据进行操作，或者必须经常扫描整个表，则速度很快。
@@ -1190,13 +1367,20 @@ I.表级锁定的优点：
 
 **8.11.2表锁定问题**
 
+MySQL对所有存储引擎都使用表锁定
 
 性能方面的考虑使用InnoDB
 
+InnoDB避免使用该LOCK TABLES语句，因为它不提供任何额外的保护，而是减少了并发性。
+
+**表锁定的以下缺点**
++ 表锁定使许多会话可以同时从一个表读取数据，但是如果一个会话要写入一个表，则必须首先获得互斥访问，这意味着它可能必须先等待其他会话才能完成对该表的访问。在更新期间，要访问此特定表的所有其他会话都必须等待，直到更新完成。
++ 在会话等待期间，表锁定会导致问题，因为磁盘已满，并且在会话继续之前需要释放可用空间。
++ 一个SELECT很长的时间，导致其他请求也变慢。
 
 
 **8.11.3 Concurrent Inserts**
-MyISAM存储引擎支持并发插入
+MyISAM存储引擎支持并发插入，减少读者和作者之间的竞争给定表：
 
 
 
@@ -1231,7 +1415,7 @@ I.元数据锁定释放
 
 
 -------------------------------------------8.12优化MySQL服务器----------------------------------------------------------------------------
-8.12优化MySQL服务器
+**8.12优化MySQL服务器**
 
 https://dev.mysql.com/doc/refman/8.0/en/optimizing-server.html
 
@@ -1239,9 +1423,26 @@ https://dev.mysql.com/doc/refman/8.0/en/optimizing-server.html
 8.12.2使用符号链接
 8.12.3优化内存使用
 
+**8.12.1优化磁盘I / O**
++ 磁盘寻道是巨大的性能瓶颈。
++ 通过将文件符号链接到不同的磁盘或分割磁盘来增加可用磁盘心轴的数量（从而减少查找开销）：
++ 提高可靠性，可能需要使用RAID 0 + 1（条带化和镜像）
++ 改变RAID级别。
++ 为数据库使用的文件系统设置参数
 
 
-8.13评估效果（基准测试）
+**8.12.3优化内存使用**
+8.12.3.1 MySQL如何使用内存
+8.12.3.2启用大页面支持
+
+
+
+**8.13评估效果（基准测试）**
+https://dev.mysql.com/doc/refman/8.0/en/optimize-benchmarking.html
+
+8.13.1测量表达式和函数的速度
+8.13.2使用自己的基准
+8.13.3使用performance_schema评估性能
 
 
 SELECT BENCHMARK(1000000,1+1);
@@ -1254,13 +1455,17 @@ SELECT BENCHMARK(1000000,1+1);
 **第11章数据类型**
 https://dev.mysql.com/doc/refman/8.0/en/data-types.html
 
-
-
+ 
 11.1数值数据类型
 11.2日期和时间数据类型
 11.3字符串数据类型
 11.4空间数据类型
 11.5 JSON数据类型
+11.6数据类型默认值
+11.7数据类型存储要求
+11.8为列选择正确的类型
+11.9使用其他数据库引擎中的数据类型
+
 
 **超出范围和溢出处理**
 
@@ -1273,11 +1478,40 @@ https://dev.mysql.com/doc/refman/8.0/en/data-types.html
 
 
 **11.1数值数据类型**
+https://dev.mysql.com/doc/refman/8.0/en/numeric-types.html
+11.1.1数值数据类型语法
+11.1.2整数类型（精确值）-INTEGER，INT，SMALLINT，TINYINT，MEDIUMINT，BIGINT
+11.1.3定点类型（精确值）-DECIMAL，NUMERIC
+11.1.4浮点类型（近似值）-FLOAT，DOUBLE
+11.1.5位值类型-BIT
+11.1.6数值类型属性
+11.1.7超出范围和溢出处理
+
+**11.1.1数值数据类型语法**
+M指示最大显示宽度。最大显示宽度为255。显示宽度与类型可以存储的值的范围无关，
+
+ZEROFILL 前边加零010不推荐使用数字数据类型的属性。您应该期望在将来的MySQL版本中删除对它的支持。 
+UNSIGNED 无符号 属性是不鼓励对类型的列 FLOAT， DOUBLE和 DECIMAL（和任何同义词）;
+
+**类型**
+
+BIT :从1到64。如果M省略，默认值为1 。
+TINYINT[(M)] [UNSIGNED] [ZEROFILL]:签署的范围是 -128到127。无符号的范围是0到 255
+BOOL， BOOLEAN：TINYINT(1)  0是false 1是ture
+SMALLINT[(M)] [UNSIGNED] [ZEROFILL]:范围是 -32768到32767。无符号的范围是0到 65535。
+MEDIUMINT[(M)] [UNSIGNED] [ZEROFILL]: -8388608到8388607。无符号的范围是0到 16777215
+INT[(M)] [UNSIGNED] [ZEROFILL]:范围是 -2147483648到 2147483647。无符号的范围是 0到4294967295
+INTEGER[(M)] [UNSIGNED] [ZEROFILL]:和int一样
+BIGINT[(M)] [UNSIGNED] [ZEROFILL]: -9223372036854775808到 9223372036854775807。无符号的范围是0到 18446744073709551615
+DECIMAL[(M[,D])] [UNSIGNED] [ZEROFILL]:最大位数（M）为 DECIMAL65。支持的小数位数（D）的最大值为30。如果D省略，则默认值为0。M省略，默认值为10
+NUMERIC、DEC: decimal一样
+FLOAT[(M,D)] [UNSIGNED] [ZEROFILL]:-3.402823466E+38 对-1.175494351E-38， 0以及1.175494351E-38 对3.402823466E+38。
+DOUBLE[(M,D)] [UNSIGNED] [ZEROFILL]: -1.7976931348623157E+308对 -2.2250738585072014E-308， 0以及 2.2250738585072014E-308对 1.7976931348623157E+308
 
 
 + 整数类型（精确值）-INTEGER，INT，SMALLINT，TINYINT，MEDIUMINT，BIGINT
 
-    + TINYINT
+    + TINYINT 范围是 -128到127。无符号的范围是0到 255
     + SMALLINT
     + MEDIUMINT
     + INT
@@ -1285,7 +1519,7 @@ https://dev.mysql.com/doc/refman/8.0/en/data-types.html
  https://dev.mysql.com/doc/refman/8.0/en/integer-types.html
 
 + 定点类型（精确值）-DECIMAL，NUMERIC
-   + DECIMAL       DECIMAL maximum  65       DECIMAL(5,2)范围是从-999.99到 999.99
+   + DECIMAL、DEC       DECIMAL maximum  65       DECIMAL(5,2)范围是从-999.99到 999.99
    + NUMERIC NUMERIC实现为DECIMAL，因此以下有关的说明DECIMAL同样适用于 NUMERIC。
 
 DECIMAL列 的声明语法为 。自变量的值范围如下： DECIMAL(M,D)
@@ -1299,6 +1533,9 @@ D是小数点右边的位数（小数位数）。范围是0到30，并且不能�
 
 + 位值类型-BIT
 
+**11.1.7超出范围和溢出处理**
+如果启用了严格的SQL模式，则按照SQL标准，MySQL会拒绝超出范围的值并产生错误，并且插入将失败。
+如果没有启用限制模式，MySQL会将值裁剪到列数据类型范围的适当端点，并存储结果值。
 
 
 
@@ -1325,6 +1562,13 @@ D是小数点右边的位数（小数位数）。范围是0到30，并且不能�
 
 
 **11.3字符串数据类型**
+https://dev.mysql.com/doc/refman/8.0/en/string-types.html
+11.3.1字符串数据类型语法
+11.3.2 CHAR和VARCHAR类型
+11.3.3 BINARY和VARBINARY类型
+11.3.4 BLOB和TEXT类型
+11.3.5枚举类型
+11.3.6 SET类型
 
 
 
@@ -3694,6 +3938,12 @@ https://dev.mysql.com/doc/refman/8.0/en/innodb-page-compression.html
 
 
 **15.10 InnoDB行格式 (InnoDB Row Formats)**
+行格式、行类型
+
+Version 5.6 已经默认使用 Compact
+Version 5.7 默认使用Dynamic
+
+
 表的行格式决定了其行得物理存储方式，进而会影响查询和DML操作的性能。随着更多的行适合
 单个磁盘页面，查询和索引查询可以更快地工作，缓冲池中需要的缓存内存更少，以及写出
 更新值所需的IO更少。
@@ -3849,13 +4099,14 @@ InnoDB使用一种新颖的文件刷新技术，该技术涉及一种称为doubl
 https://dev.mysql.com/doc/refman/8.0/en/innodb-file-space.html
 
 
-
+row>page页:16kb>extent区1MB(64个page页16K)>Segments段>index(一个索引两个段segments)
 
 
 **Pages、Extent区、Segments段落、Tablespaces表空间**
 
 
-**page页:**
+
+**page页:16kb**
 https://dev.mysql.com/doc/refman/8.0/en/glossary.html#glos_page
 InnoDB 在磁盘（数据文件）和内存（ 缓冲池）之间任意时间传输多少数据的单位。
 一个页面可以包含一个或多个行，具体取决于每一行中的数据量。如果一行不能完全容纳在单个页面中，请InnoDB设置其他指针样式的数据结构，以便有关该行的信息可以存储在一页中。
@@ -3906,6 +4157,7 @@ innodb每个索引分配两个段segments.一个用于B树的非叶节点，一�
 **非叶节点不存数据只存临界值（最大或者最小）**
 
 
+**行格式、行类型**
 
 SHOW TABLE STATUS;
 扩展区 extends 区
@@ -4452,4 +4704,46 @@ https://dev.mysql.com/doc/refman/8.0/en/replication-solutions.html
 副本1，副本2和副本3充当源2的副本，并复制来自源2的信息，该信息实际上由登录到源1的升级组成。
 
 
+
+
+
+1.第11章数据类型Data Types
+
+I.data type数据类型
+
+
+
+I.Functions and Operators 功能和运算 函数
+
+
+
+I.sql语句
+II.正常语句
+II.事务语句
+II.xa和锁
+
+
+
+I.innodb
+II.简介和架构
+II.事务的acid
+II.多版本 MVCC
+II.内存结构
+II.磁盘结构
+II.锁和事务模型
+II.配置
+II.行格式和压缩
+II.磁盘IO和文件空间(page>extent>segment>tablespace)
+II.在线DDL和innodb各种限制
+
+
+
+
+I.mysql复制Replication binlog 基于语句、行、和混合
+
+
+
+I.优化
+II.explain查询计划
+II.查询优化器 Query Optimizer: USE INDEX建议 、force index强制
 
