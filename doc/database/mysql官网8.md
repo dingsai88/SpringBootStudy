@@ -1567,7 +1567,7 @@ https://dev.mysql.com/doc/refman/8.0/en/string-types.html
 11.3.2 CHAR和VARCHAR类型
 11.3.3 BINARY和VARBINARY类型
 11.3.4 BLOB和TEXT类型
-11.3.5枚举类型
+11.3.5 ENUM枚举类型
 11.3.6 SET类型
 
 
@@ -1596,9 +1596,10 @@ https://dev.mysql.com/doc/refman/8.0/en/string-types.html
 +  ENUM 枚举类型 节省空间 最多可包含65,535个不同的元素。 可以有null
    size ENUM('x-small', 'small', 'medium', 'large', 'x-large')
    INSERT INTO shirts (name, size) VALUES ('dress shirt','large')
+   是一个字符串对象，其值是从允许值的列表中选择的
 
-+ SET类型  具有零个或多个值的字符串对象
-  SET('one', 'two')  :''  'one'  'two'  'one,two'
++ SET类型  具有零个或多个值的字符串对象,每个值都必须从创建表时指定的允许值列表中选择。
+  SET('one', 'two')  可以存入:''  'one'  'two'  'one,two'
 
 
 
@@ -1609,8 +1610,11 @@ GEOMETRY、POINT、LINESTRING、POLYGON、MULTIPOINT、MULTILINESTRING、MULTIPO
 几何类：球、多边形
 Point类：坐标类 X\Y
 曲线类:
-多表面累
-
+多表面类
+GEOMETRY
+POINT
+LINESTRING
+POLYGON
 
 
 **11.5 JSON数据类型**
@@ -1626,7 +1630,7 @@ INSERT INTO t1 VALUES('{"key1": "value1", "key2": "value2"}');
 **第十二章函数和运算符**
 https://dev.mysql.com/doc/refman/8.0/en/functions.html
 
-
+表达式中的类型转换
 
 12.1 SQL函数和运算符参考：全部函数 巨多
 https://dev.mysql.com/doc/refman/8.0/en/sql-function-reference.html
@@ -1669,6 +1673,19 @@ https://dev.mysql.com/doc/refman/8.0/en/date-and-time-functions.html
 BINARY	将字符串转换为二进制字符串
 CAST()	将值强制转换为特定类型
 CONVERT()	将值强制转换为特定类型
+
+
+12.15锁定功能
+用户级锁的功能
+
+SELECT GET_LOCK('lock1',10);
+用户级锁的功能
+
+
+
+
+
+
 
 
 12.20.1汇总功能说明
@@ -1730,8 +1747,7 @@ insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(4,'d',16,30000);
 insert into TEST_ROW_NUMBER_OVER(id,name,age,salary) values(5,'d2',17,1800);
 
 
-    select id,name,age,salary,  row_number()over(order by salary desc) 
-    from TEST_ROW_NUMBER_OVER 
+select id,name,age,salary,  row_number()over(order by salary desc)  from TEST_ROW_NUMBER_OVER 
 
 
 
