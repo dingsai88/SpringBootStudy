@@ -1832,6 +1832,46 @@ https://dev.mysql.com/doc/refman/8.0/en/sql-data-definition-statements.html
 
 https://dev.mysql.com/doc/refman/8.0/en/sql-data-manipulation-statements.html
 
+**13.3.1 START TRANSACTION，COMMIT和ROLLBACK语句**
+(start transaction)/(begin)
+
+(with consistent snapshot)/(read write)/(read only);
+
+这些语句提供对事物使用的控制
+start transaction或begin 开始新的交易。
+commit 提交当前交易，使其更改永久生效。
+rollback回滚当前事务，取消其更改。
+set autocommit 禁用或者启动回话默认自动提交事务。
+
+默认情况下，mysql在启用自动提交模式的情况下运行。这意味着，当不在事务内时，
+每个语句都是原子的，就像它被start transaction和包围一样commit.
+用来撤销效果。但是，如果在语句执行期间发生错误，则会回滚该语句。
+要隐式禁用单个语句系列的自动提交模式，请使用start transaction。
+
+使用时start transaction 自动提交保持禁用状态，直到您使用commit或者rollback结束。
+然后自动提交模式将回复之前的状态。
+start transaction运行使用几个修饰符来控制交易特征。要指定多个修饰符，用逗号分割。
+with consistent snapshot 开始一直读取存储引擎，仅适用于innodb。其效果与从任何表发出
+start transaction 后跟一个select from innodb表相同。
+该修改不改变当前的事务隔离级别，所以它提供了一个一致的快照仅在当前隔离级别是一个运行连续读取。
+运行一直读取的唯一隔离级别是可重复读取 repeatable read。其他隔离级别 consistent snapshot将被忽略。
+
+在read write 和 read onle 修饰符设置事务访问模式。他们允许或禁止更改事务中使用的表。
+该read onle 限制可防止事务或锁定其他事务可见的事务表和非事务表。
+事务仍然可以修改或锁定临时表。
+
+Innodb当已知事务时只读时，mysql可以对表查询进行额外的优化。通过指定read only可确保
+在无法自动确定只读状态的情况下应用浙西而油耗。
+如果未指定访问模式，则应用默认模式，除非更改了默认值否则它是读写的。不允许在
+同一语句中同事指定read write 和read only
+在只读模式下，仍然可以temporary使用dml语句更改用关键字创建表。与永久表一样，
+不允许使用ddl语句进行更改。
+有关事务访问模式的其他信息，包括更改默认模式方法。
+
+readonly 启动了系统变量，
+
+
+
 
 
 **13.3交易和锁定声明**
@@ -2089,6 +2129,8 @@ SET TRANSACTION transaction_characteristic	仅下一笔交易
 **13.3.8 XA交易**
 https://dev.mysql.com/doc/refman/8.0/en/xa.html
 
+XA
+用于协调分布式事务的标准接口 ，允许多个数据库参与事务，同时保持 ACID合规性
 
 MySQL服务器的XA接口由以XA关键字开头的SQL语句组成。
 

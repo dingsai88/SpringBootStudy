@@ -96,8 +96,11 @@ https://www.elastic.co/cn/downloads/elasticsearch
 
 http://localhost:9200
 
+文档:
+https://www.elastic.co/guide/en/elasticsearch/reference/7.1/index.html
 
-
+RestHighLevelClient:
+https://www.elastic.co/guide/en/elasticsearch/client/java-rest/7.1/java-rest-high.html
 
 问题1:
 ElasticsearchException[X-Pack is not supported and Machine Learning is not a
@@ -1823,7 +1826,7 @@ https://esrally.readthedocs.io/en/latest/summary_report.html
 
 curl http://aa.bb.cc.dd:9200/_cat/health\?v
 
-
+https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-params.html
 
 
 
