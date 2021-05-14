@@ -43,13 +43,20 @@ SELECT ... FOR UPDATE或SELECT ... FOR SHARE事务必须等待
 
 1、2、3 三条记录
 
-SELECT * FROM `tb_tdc_email_user` where id=3 for update;
-SELECT * FROM `tb_tdc_email_user` where id=3  lock in share mode;
+SELECT * FROM `order_investment` where id=2 for update;
+SELECT * FROM `order_investment` where id=2  lock in share mode;
 
-SELECT * FROM `tb_tdc_email_user` where id=3 for update NOWAIT;
+SELECT * FROM `order_investment` where id=2 for update NOWAIT;
+SELECT * FROM `order_investment`  for update NOWAIT;
 ERROR 3572 (HY000): Do not wait for lock.
 
-SELECT * FROM `tb_tdc_email_user`  for update  SKIP LOCKED;
+SELECT * FROM `order_investment` where id=1 for update NOWAIT;
+
+
+
+SELECT * FROM `order_investment`  for update  SKIP LOCKED;
+SELECT * FROM `order_investment` FOR SHARE  SKIP LOCKED;
+
 返回id=1、2的数据 跳过3
 
 
@@ -4804,4 +4811,19 @@ I.mysql复制Replication binlog 基于语句、行、和混合
 I.优化
 II.explain查询计划
 II.查询优化器 Query Optimizer: USE INDEX建议 、force index强制
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

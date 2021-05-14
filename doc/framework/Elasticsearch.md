@@ -127,7 +127,7 @@ GET /_cat/nodes
 
 运行的节点
 GET /_cat/nodes?v
-
+/usr/bin/curl http://xxx:9200/_cat/nodes?v
 
 
 **I.Logstash安装**
