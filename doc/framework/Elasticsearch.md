@@ -908,7 +908,7 @@ GET mapping_test/_doc/1
 #Delete index
 DELETE mapping_test
 
-
+删除索引:慎用  /usr/bin/curl -XDELETE http://10.aa.aa.aa:9200/geonames
 
 
 **20-多字段特性及Mapping中配置自定义Analyzer**
