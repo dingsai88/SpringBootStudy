@@ -4164,7 +4164,7 @@ InnoDB使用一种新颖的文件刷新技术，该技术涉及一种称为doubl
 https://dev.mysql.com/doc/refman/8.0/en/innodb-file-space.html
 
 
-row>page页:16kb>extent区1MB(64个page页16K)>Segments段>index(一个索引两个段segments)
+row>page页:16kb(磁盘和内存之间传输的数据单位)>extent区1MB(64个page页16K)>Segments段>index(两个段:页节点segments、非页节点segments)
 
 
 **Pages、Extent区、Segments段落、Tablespaces表空间**
