@@ -250,7 +250,8 @@ Using index(索引排序): SELECT pk, key_part1, key_part2 FROM t1 where key_par
 
 
 **II.GROUP BY Optimization**(联合索引下，全部字段是覆盖索引内的字段)
-常规操作:扫整表并且创建包含连续的分组行的临时表.Using temporary;
+常规操作:扫整表并且创建包含连续的分组行的临时表.Using temporary;子句无联合索引
+
 避免临时表创建:所有的group by子句中的列属性必须来至同一个index(联合):**(所有列都是来自同一个索引)**
 
 SURNAME_SID无索引
@@ -275,11 +276,9 @@ SELECT c1, c2, c3 FROM t1 WHERE c1 = 'a' GROUP BY c2, c3;
 大多数情况下，DISTINCT子句可被视为的特殊情况GROUP BY。
 
 以下两个查询是等效的
-SELECT DISTINCT c1, c2, c3 FROM t1
-WHERE c1 > const;
+SELECT DISTINCT c1, c2, c3 FROM t1 WHERE c1 > const;
 
-SELECT c1, c2, c3 FROM t1
-WHERE c1 > const GROUP BY c1, c2, c3;
+SELECT c1, c2, c3 FROM t1 WHERE c1 > const GROUP BY c1, c2, c3;
 
 
 
