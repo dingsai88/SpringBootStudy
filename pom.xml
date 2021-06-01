@@ -126,8 +126,18 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.4</version>
+		</dependency>
 
-
+		<!-- https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明   	<version>1.5.9.RELEASE</version>-->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+			<version>1.5.1.RELEASE</version>
+		</dependency>
 
 
 	</dependencies>

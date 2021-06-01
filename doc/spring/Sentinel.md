@@ -932,7 +932,7 @@ http://bank-finance.167.test.yirendai.com/sentinel/slow
 
 
 
-
+--------------------------------------------------20210531介入--------------------------------------------------------------------------------------
 
 
 I.启动sentinel 1.8.1
@@ -951,7 +951,160 @@ C:\Users\Daniel_MacPro\logs\csp\
 
 
 
+I.20210531
+新系统增加sentinel支持
+https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明
+Hoxton.SR8>2.2.5.RELEASE
 
+
+<spring.cloud-version>Hoxton.SR8</spring.cloud-version>
+  
+<!-- https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明 -->
+<dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>2.2.5.RELEASE</version>
+ </dependency>
+
+
+
+
+II.用法1:
+
+熔断 配置
+@PostConstruct
+public static void initDegradeRuleStudy() {
+log.info("ZStudyController.initDegradeRuleStudy");
+List<DegradeRule> rules = new ArrayList<>();
+DegradeRule rule = new DegradeRule();
+rule.setResource("HelloWorldDegradeRule");
+// set threshold RT, 10 ms
+rule.setCount(10);
+rule.setGrade(RuleConstant.DEGRADE_GRADE_RT);
+rule.setTimeWindow(10);
+rules.add(rule);
+DegradeRuleManager.loadRules(rules);
+}*
+
+
+限流  配置
+    public static void initFlowRulesStudy() {
+        log.info("ZStudyController.initFlowRulesStudy");
+        List<FlowRule> rules = new ArrayList<>();
+        FlowRule rule = new FlowRule();
+        rule.setResource("HelloWorld");
+        //限流类型是 QPS
+        rule.setGrade(RuleConstant.FLOW_GRADE_QPS);
+        //每秒能通过的个数
+        rule.setCount(2);
+        rules.add(rule);
+        FlowRuleManager.loadRules(rules);
+    }
+
+
+代码执行
+@GetMapping("/qpsTest")
+    @ResponseBody
+ public AppResult<Phone> getPhoneMessage() throws Exception {
+        AppResult<Phone> result = new AppResult<>();
+        Entry entry = null;
+        try {
+            entry = SphU.entry("HelloWorld");
+            /*您的业务逻辑 - 开始*/
+            Phone phone = phoneMapper.selectByPhone("15901229166".substring(0, 7));
+            result.setData(phone);
+            /*您的业务逻辑 - 结束*/
+        } catch (BlockException e1) {
+            /*流控逻辑处理 - 开始*/
+            log.info("触发限流了:block!");
+            result.setCode("9999");
+            result.setDesc("限流器限流了");
+            /*流控逻辑处理 - 结束*/
+        } catch (Exception ex) {
+            // 若需要配置降级规则，需要通过这种方式记录业务异常
+            Tracer.traceEntry(ex, entry);
+        } finally {
+            if (entry != null) {
+                entry.exit();
+            }
+        }
+        return result;
+    }
+
+
+II.用法2 注解:
+
+@SentinelResource(value = "searchUserTag_Sentinel", blockHandler = "searchUserTagBlockHandler",blockHandlerClass = SentinelUtil.class,fallback = "searchUserTagFallback",fallbackClass = SentinelUtil.class)
+    //一定要小心，后台配置的是searchUserTag_Sentinel不是自动的接口名；1.6以后blockHandler含有限流和降级,fallback1.6以后只有接口错误才会调用，没有降级。
+//searchUserTagFallback 都要是static方法，如果是本类的就不需要
+ public SearchUserTagDataResponse searchUserTagData(@Valid SearchUserTagDataRequest request, BindingResult bindingResult) {
+
+
+public static SearchUserTagDataResponse searchUserTagBlockHandler(@Valid SearchUserTagDataRequest request, BindingResult bindingResult, BlockException ex) {
+SearchUserTagDataResponse result = new SearchUserTagDataResponse();
+result.setCode(SENTINEL_BLOCK_CODE);
+result.setMsg("searchUserTag限流");
+log.info("searchUserTagBlockHandler:限流:{}",request);
+return result;
+}
+
+    /**
+     * searchUserTag 接口熔断
+     * @param request
+     * @param bindingResult
+     * @return
+     * @throws Exception
+     */
+ public static SearchUserTagDataResponse searchUserTagFallback(@Valid SearchUserTagDataRequest request, BindingResult bindingResult) {
+        SearchUserTagDataResponse result = new SearchUserTagDataResponse();
+        result.setCode(SENTINEL_BLOCK_CODE);
+        result.setMsg("searchUserTag熔断");
+        log.info("searchUserTagFallback:降级:{}",request);
+        return result;
+ }
+
+
+
+
+II.用法3.全局
+
+
+
+@Configuration
+public class SentinelConfig   implements BlockExceptionHandler {
+*//**
+* 全局异常时，临时使用
+* @param request
+* @param response
+* @param e
+* @throws Exception
+*//*
+@Override
+public void handle(HttpServletRequest request, HttpServletResponse response, BlockException e) throws Exception {
+BaseResponse errorResponse = new BaseResponse();
+// 不同的异常返回不同的提示语
+if (e instanceof FlowException) {
+errorResponse.setMsg("被限流了");
+errorResponse.setCode(Constant.SENTINEL_BLOCK_CODE);
+} else if (e instanceof DegradeException) {
+errorResponse.setMsg("服务降级了");
+errorResponse.setCode(Constant.SENTINEL_BLOCK_CODE);
+} else if (e instanceof ParamFlowException) {
+errorResponse.setMsg("被限流了");
+errorResponse.setCode(Constant.SENTINEL_BLOCK_CODE);
+} else if (e instanceof SystemBlockException) {
+errorResponse.setMsg("被系统保护了");
+errorResponse.setCode(Constant.SENTINEL_BLOCK_CODE);
+} else if (e instanceof AuthorityException) {
+errorResponse.setMsg("授权被限制");
+errorResponse.setCode(Constant.SENTINEL_BLOCK_CODE);
+}
+response.setStatus(200);
+response.setHeader("Content-type", "text/html;charset=UTF-8");
+response.setCharacterEncoding("utf-8");
+response.getWriter().print(new Gson().toJson(errorResponse));
+}
+}
 
 
 
