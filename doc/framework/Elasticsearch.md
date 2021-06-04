@@ -96,6 +96,8 @@ https://www.elastic.co/cn/downloads/elasticsearch
 
 http://localhost:9200
 
+
+
 文档:
 https://www.elastic.co/guide/en/elasticsearch/reference/7.1/index.html
 
@@ -110,6 +112,10 @@ xpack.ml.enabled: false
 
 
 **I.kibana安装**
+
+https://www.elastic.co/cn/downloads/past-releases/kibana-7-11-2
+https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-linux-x86_64.tar.gz
+
 
 F:\DingSaiElastic\kibana\kibana-6.8.14-windows-x86_64\bin
 
@@ -1402,6 +1408,10 @@ POST /_xpack/sql?format=txt
 }
 
 
+POST /_sql?format=txt
+{
+"query": "select medal_10_dengyu01 from yrcf_tag_data_20210527 where  user_id = zzz limit 2"
+}
 
 
 
