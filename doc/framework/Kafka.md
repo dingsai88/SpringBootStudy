@@ -44,7 +44,7 @@ Kafka 的选择：它使用的是纯二进制的字节序列。当然消息还�
 
 
 
-
+----------------------------------------------------------------------------------------------
 
 **02 | 一篇文章带你快速搞定Kafka术语** 
 
@@ -64,7 +64,7 @@ Broker 负责接收和处理客户端发送过来的请求，以及对消息进�
 2.备份机制（Replication） ：相同的数据拷贝到多台机器上，而这些相同的数据拷贝在 Kafka 中被称为副本（Replica）。
 副本的数量是可以配置的，这些副本保存着相同的数据，但却有不同的角色和作用。
 
-**Kafka 定义了两类副本：**
+**Kafka 定义了两类副本：** 分区分片级别
 领导者副本（Leader Replica）:与客户端程序进行交互
 追随者副本（Follower Replica）:被动地追随领导者副本而已，不能与外界进行交互
 
@@ -152,3 +152,522 @@ II.名词
 
 
 ![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/生产者-消费者组-leaderFollower.png)
+
+
+
+--------------------------------------------------------------
+
+**03 | Kafka只是消息引擎系统吗？**  分布式流处理平台 Distributed Streaming Platform
+
+消息引擎系统+分布式流处理平台
+
+Apache Kafka 是消息引擎系统，也是一个分布式流处理平台  （Distributed Streaming Platform）。
+
+**Kafka Streams**
+实现精确一次（Exactly-once）处理语义的实时流处理平台
+
+LinkedIn开发   ActiveMQ 来解决这些问题 > Kafka。 
+
+大数据工程领域，Kafka 在承接上下游、串联数据流管道方面发挥了重要的作用。
+
+
+**实时流处理平台**
+Apache Kafka 
+Apache Storm
+Apache Spark 
+Apache Flink
+
+
+
+
+第一点是更容易实现端到端的正确性（Correctness）  。
+
+要实现正确性和提供能够推导时间的工具。实现正确性是流处理能够匹敌批处理的基石  。
+
+
+
+**04  我应该选择哪种Kafka？[更多课程qq 2949651508]**
+
+
+Apache Kafka
+仅仅提供最最基础的组件
+Kafka Streams:Kafka Connect 而言，社区版 Kafka 只提供一种连接器
+
+开源的监控框架可以帮助用于监控 Kafka（比如 Kafka manager）。
+
+
+I.Apache Kafka
+监控:Kafka manager
+2. Confluent Kafka
+   需要用到 Kafka 的一些高级特性，那么推荐你使用 Confluent Kafka
+   
+
+3. Cloudera/Hortonworks Kafka 
+
+
+
+**05  聊聊Kafka的版本号**
+
+
+都运行在JVM：  Java VS Scala(.class)
+
+Kafka 服务器端的代码完全由 Scala 语言编写
+Kafka 新版客户端代码完全由 Java 语言编
+
+
+社区来了一批JAVA程序员，老的Scala程序员隐退
+
+
+
+**06  Kafka线上集群部署方案怎么做？**
+
+-------------------------------------
+操作系统、磁盘、磁盘容量、带宽
+
+
+**I.操作系统**
+JVM 系的大数据框架
+目前常见的操作系统有 3 种：Linux、Windows 和 macOS
+
+
+**Linux**
+1.I/O 模型的使用
+2.数据网络传输效率
+3.社区支持度 
+
+**II.I/O 模型的使用**
+
+阻塞式 I/O、非阻塞式 I/O、I/O 多路复用、信号驱动 I/O 和异步 I/O
+
+Socket 对象的阻塞模式和非阻塞模式就对应于前两种模型
+
+Linux 中的系统调用 select 函数就属于 I/O 多路复用模型
+
+epoll 系统调用则介于第三种和第四种模型之间；
+
+
+异步 I/O很少有 Linux 系统支持  Windows 系统 IOCP 线程模型
+
+**Kafka 客户端底层**
+selector 在 Linux 上的实现机制是 epoll
+Kafka 部署在 Linux 上是有优势的，因为能够获得更高效的 I/O 性能。 
+
+
+
+**II.数据网络传输效率**
+
+Kafka 生产和消费的消息都是通过网络传输的,而消息保存在磁盘
+Kafka 需要在磁盘和网络间进行大量数据传输。
+
+Linux，你肯定听过零拷贝（Zero Copy）技术
+Windows  Java 8才能“享受”
+
+Linux 部署 Kafka 能够享受到零拷贝技术所带来的快速数据传输特性
+
+
+**II.社区支持度** 
+
+ 
+
+
+
+**I.磁盘选择:** 顺序读写操作
+Kafka 大量使用磁盘
+
+• 追求性价比的公司可以不搭建 RAID，使用普通磁盘组成存储空间即可。
+• 使用机械磁盘完全能够胜任 Kafka 线上环境。 
+
+**I.磁盘容量**
+每天 1 亿条 1KB 大小的消息，保存两份且留存两周的时间
+
+1 亿 * 1KB * 2 / 1000 / 1000 = 200GB
+数据预留出 10% 的磁盘空间
+
+220GB * 14，大约 3TB 左右
+
+**I.带宽**
+带宽资源不足导致 Kafka 出现性能问题的比例至少占 60% 以上
+跨机房传输，那么情况可能就更糟
+
+
+假设 Kafka 会用到 70% 的带宽资源
+ 
+1Gbps 的千兆网络和 10Gbps 的万兆网络
+
+业务目标或 SLA 是在 1 小时内处理 1TB 的业务数据
+
+
+------------------------------------------------------
+**07  最最最重要的集群参数配置（上）**
+
+
+Broker 端参数 、Topic 级别参数 、JVM 参数 、操作系统参数 
+
+
+
+
+**I.Broker 端参数**
+
+II. log.dirs 保证这些目录挂载到不同的物理磁盘上
+指定了 Broker 需要使用的若干个文件目录路径
+/home/kafka1,/home/kafka2,/home/kafka3 
+
+1.提升读写性能：比起单块磁盘，多块物理磁盘同时读写数据有更高的吞吐量。
+
+2.能够实现故障转移：即 Failover。这是 Kafka 1.1 版本新引入的强大功能。
+
+
+
+**I.Topic 级别参数**
+
+retention.ms
+Topic 消息被保存的时长。默认是 7 天
+
+
+retention.bytes
+规定了要为该 Topic 预留多大的磁盘空间
+
+
+**I.JVM 参数**
+Java 8
+
+G1 
+
+
+**I.操作系统参数** 
+
+• 文件描述符限制
+• 文件系统类型
+• Swappiness
+• 提交时间 
+
+
+
+
+
+**09 | 生产者消息分区机制原理剖析** 
+
+主题（Topic）的概念
+
+主题（Topic） - 分区（Partition） - 消息
+
+
+**分区的作用:**
+提供负载均衡的能力，实现系统的高伸缩性（Scalability）。
+
+
+
+**分区策略**
+所谓分区策略是决定生产者将消息发送到哪个分区的算法。
+
+默认的分区策略、自定义分区策略
+
+
+II.轮询策略(默认策略)
+
+轮询策略有非常优秀的负载均衡表现，它总是能保证消息最大限度地被平均分配到所有分区上，故默认情况下它是最合理的分区策略，也是我们最常用的分区策略之一。 
+
+
+II.随机策略 
+
+
+如果追求数据的均匀分布，还是使用轮询策略比较好  。
+事实上，随机策略是老版本生产者使用的分区策略，在新版本中已经改为轮询了。 
+
+
+II.按消息键保序策略  
+Kafka 允许为每条消息定义消息键，简称为 Key。这个 Key 的作用非常大，它可以是一个有着明确业务含义的字符串，比如客户代码、部门编号或是业务 ID 等；也可以用来表征消息元数据。
+
+相同的key放到相同的分区里
+消息的顺序问题
+
+
+
+II.其他分区策略
+北京、广州新注册用户
+
+
+
+
+**10  生产者压缩算法面面观**
+
+
+Producer 端压缩、Broker 端保持、Consumer 端解压缩
+
+压缩（compression），用时间去换空间的经典 trade-off权衡 思想
+
+CPU 时间去换磁盘空间或网络 I/O 传输量
+
+
+
+
+**Kafka 的消息层次都分为两层**  没看懂
+消息集合（message set）、消息（message）
+
+
+**何时压缩**
+
+生产者端(正常会压缩)和 Broker 端(正常不压缩和解压，原封存储)
+
+生产者端:正常情况下，生产者端压缩，Broker端原封不动的存储，不会解压。
+Broker 端:
+1.Producer 端和Broker 端压缩算法不一样， Broker 端会重新压缩
+2.Broker 端发生了消息格式转换。为了兼容老版本消息格式会进行解压缩和重新压缩
+
+
+**何时解压缩**
+
+Consumer消费者 自行解压缩还原成之前的消息
+
+Broker 端会解压缩:对消息执行各种验证
+每个压缩过的消息集合在 Broker 端写入时都要发生解压缩操作，目的就是为了对消息执行各种验证。我们必须承认这种解压缩对 Broker 端性能是有一定影响的，特别是对 CPU 的使用率而言。 
+
+
+**各种压缩算法对比**   LZ4
+
+指标:都是越高越好
+1.压缩比:100 份空间的东西经压缩之后变成了占 20 份空间，那么压缩比就是 5
+2.吞吐量:每秒能压缩或解压缩多少 MB 的数据
+
+吞吐量:LZ4 > Snappy > zstd 和 GZIP
+压缩比:zstd > LZ4 > GZIP > Snappy
+
+CPU 使用率:压缩时 Snappy 最多；其他差不多。 加压时GZIP 使用最多
+
+
+
+**最佳实践** 
+
+CPU 很高的应用 最好别用
+CPU 空闲，带宽不大的建议开启
+
+
+
+
+**11 | 无消息丢失配置怎么实现？**
+
+
+I.Kafka 只对“已提交”的消息（committed message）做有限度的持久化保证。 
+
+
+II.已提交的消息
+broker 接收到一条消息并写入到日志文件后，它们会告诉生产者程序这条消息已成功提交。
+
+
+II.有限度的持久化保证
+地球消失了，肯定丢了。
+存在 N 个 Kafka Broker 上，只有一个存活就成立。
+
+
+
+
+I.“消息丢失”案例
+案例 1：生产者程序丢失数据 
+
+Kafka Producer 是异步发送消息的。
+producer.send(msg) 这个 API，那么它通常会立即返回
+
+
+要使用 producer.send(msg, callback) 
+
+
+案例 2：消费者程序丢失数据
+Consumer 端要消费的消息不见了
+
+**丢失情况1**
+背景
+标签：标记消费队列消费到第几个；
+真实消费。
+
+问题现象:
+先挪动标签，再真实消费，但是消费中断了，下次启动的时候，就丢消息了。
+
+问题解决:
+先真实消费，再挪动标签
+
+出现新问题
+消息重复小王问题
+
+
+**丢失情况2**
+Consumer 程序从 Kafka 获取到消息后开启了多个线程异步处理消息，
+而 Consumer 程序自动地向前更新位移。
+
+
+
+**12 | 客户端都有哪些不常见但是很高级的功能？** 
+
+
+
+**Kafka 拦截器**
+
+生产者拦截器和消费者拦截器
+
+
+**典型使用场景**  
+客户端监控、端到端系统性能检测、消息审计等多种功能在内的场景
+
+
+1.监控消息队列平均消费时间
+
+
+
+
+**13 | Java生产者是如何管理TCP连接的？** 
+
+
+Apache Kafka 的所有通信都是基于 TCP 的，而不是基于 HTTP 或其他协议。
+
+
+**Kafka 生产者程序概览** 
+
+Kafka 的 Java 生产者 API 主要的对象就是 KafkaProducer。
+
+第 1 步：构造生产者对象所需的参数对象。
+第 2 步：利用第 1 步的参数对象，创建 KafkaProducer 对象实例。
+第 3 步：使用 KafkaProducer 的 send 方法发送消息。
+第 4 步：调用 KafkaProducer 的 close 方法关闭生产者并释放各种系统资源。 
+
+
+
+I.何时创建 TCP 连接？
+Producer<String, String> producer = new KafkaProducer<>(props);  已创建连接
+producer.send(new ProducerRecord<String, String>(……), callback);
+
+在创建 KafkaProducer 实例时，生产者应用会在后台创建并启动一个名为 Sender 的线程，该 Sender 线程开始运行时首先会创建与 Broker 的连接  
+
+
+TCP 连接还**可能**在两个地方被创建:
+一个是在更新元数据后(集群新增节点)、另一个是在消息发送时 
+
+Producer 更新了集群的元数据信息之后，如果发现与某些 Broker 当前没有连接，那么它就会创建一个 TCP 连接。
+Producer 发现尚不存在与目标 Broker 的连接，也会创建一个。
+
+
+**Producer 设计合理性**
+有着 1000 台 Broker 的集群中,Producer会建立1000个tcp连接，不管用不用。
+
+
+
+
+I.何时关闭 TCP 连接？
+
+Producer 端关闭 TCP 连接的方式有两种：  
+一种是用户主动关闭；一种是 Kafka 自动关闭  。 
+
+用户主动关闭:
+正常关闭、kill -9 等
+
+Kafka 自动关闭 :
+默认几分钟没有消息就关闭。 Producer 端设置 connections.max.idle.ms=-1 禁用自动关闭
+
+
+
+
+
+**14 | 幂等生产者和事务生产者是一回事吗？** 
+
+
+Kafka 消息交付可靠性保障以及精确处理一次语义的实现。 
+
+
+Kafka 对 Producer 和 Consumer 消息交付可靠性保障(默认至少一次)
+• 最多一次（at most once）：消息可能会丢失，但绝不会被重复发送。
+• 至少一次（at least once）：消息不会丢失，但有可能被重复发送。(默认提供)
+• 精确一次（exactly once）：消息不会丢失，也不会被重复发送。 
+
+**最多一次（at most once）实现：**
+让 Producer 禁止重试即可
+
+
+**精确一次（exactly once）实现:**
+幂等性（Idempotence）和事务（Transaction）
+
+幂等性:某些操作或函数能够被执行多次，但每次得到的结果都是不变的。
+幂等性有很多好处，  其最大的优势在于我们可以安全地重试任何幂等性操作，反正它们也不会破坏我们的系统状态  。
+
+
+II.Producer幂等性:
+Producer 默认不是幂等性的。打开属性即可
+props.put(“enable.idempotence”, ture)，(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG， true)。 
+
+当 Producer 发送了具有相同字段值的消息后，Broker 能够自动知晓这些消息已经重复了，于是可以在后台默默地把它们“丢弃”掉。
+
+III.Producer 的作用范围
+1.只能保证单分区上的幂等性。
+一个幂等性 Producer 能够保证某个主题的一个分区上不出现重复消息，它无法实现多个分区的幂等性。
+
+2.只能保证单会话上的幂等性
+重启了 Producer 进程之后，这种幂等性保证就丧失了。
+
+II.Producer事务
+ACID，即原子性（Atomicity）、一致性 (Consistency)、隔离性 (Isolation) 和持久性 (Durability)。
+
+ read committed 隔离级别上做事情。它能保证多条消息原子性地写入到目标分区，同时也能保证 Consumer 只能看到事务成功提交的消息。
+
+
+事务型 Producer 能够保证将消息原子性地写入到多个分区中。这批消息要么全部写入成功，要么全部失败。
+事务型 Producer 也不惧进程的重启。Producer 重启回来后，Kafka 依然保证它们发送消息的精确一次处理。 
+
+III.开启生产者事务
+enable.idempotence = true。 +设置 Producer 端参数 transctional. id
+
+III.改变语法
+producer.initTransactions();
+try {
+            producer.beginTransaction();
+            producer.send(record1);
+            producer.send(record2);
+            producer.commitTransaction();
+} catch (KafkaException e) {
+            producer.abortTransaction();
+}
+ 
+III.消费者端修改代码
+Consumer 端，读取事务型 Producer 发送的消息也是需要一些变更的
+修改隔离级别isolation.level ：
+read_uncommitted 默认读未提交、需要修改
+
+read_committed:读取事务消息，需要使用这个级别
+
+
+对比:
+幂等性 Producer 只能保证单分区、单会话上的消息幂等性
+事务能够保证跨分区、跨会话间的幂等性
+比起幂等性 Producer，事务型 Producer 的性能要更差
+
+
+
+
+
+**15 | 消费者组到底是什么？** 
+
+Consumer Group 是 Kafka 提供的可扩展且具有容错性的消费者机制 
+
+有多个消费者或消费者实例（Consumer Instance）
+
+消费订阅主题（Subscribed Topics）的所有分区（Partition）。每个分区只能由同一个消费者组内的一个 Consumer 实例来消费
+
+1 .Consumer Group 下可以有一个或多个 Consumer 实例。这里的实例可以是一个单独的进程，也可以是同一进程下的线程。在实际场景中，使用进程更为常见一些。
+2. Group ID 是一个字符串，在一个 Kafka 集群中，它标识唯一的一个 Consumer Group。
+3. Consumer Group 下所有实例订阅的主题的单个分区，只能分配给组内的某个 Consumer 实例消费。这个分区当然也可以被其他的 Group 消费。 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
