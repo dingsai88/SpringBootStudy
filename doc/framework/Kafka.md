@@ -78,8 +78,7 @@ MySQL 的从库是可以处理读操作的，但是在 Kafka 中追随者副本�
 
 
 **III.高性能:**
-伸缩性即所谓的 Scalability
-单台 Broker 机器都无法容纳
+伸缩性即所谓的 Scalability 单台 Broker 机器都无法容纳
 
 **分区（Partitioning）：** 分片、分区
 把数据分割成多份保存在不同的 Broker 上。
@@ -407,9 +406,9 @@ CPU 时间去换磁盘空间或网络 I/O 传输量
 
 **何时压缩**
 
-生产者端(正常会压缩)和 Broker 端(正常不压缩和解压，原封存储)
+Producer生产者端(正常会压缩)和 Broker 端(正常不压缩和解压，原封存储)
 
-生产者端:正常情况下，生产者端压缩，Broker端原封不动的存储，不会解压。
+生产者端:正常情况下，生产者端压缩，Broker端原封不动的存储，不会压缩，会解压校验。
 Broker 端:
 1.Producer 端和Broker 端压缩算法不一样， Broker 端会重新压缩
 2.Broker 端发生了消息格式转换。为了兼容老版本消息格式会进行解压缩和重新压缩
@@ -423,7 +422,7 @@ Broker 端会解压缩:对消息执行各种验证
 每个压缩过的消息集合在 Broker 端写入时都要发生解压缩操作，目的就是为了对消息执行各种验证。我们必须承认这种解压缩对 Broker 端性能是有一定影响的，特别是对 CPU 的使用率而言。 
 
 
-**各种压缩算法对比**   LZ4
+**各种压缩算法对比**   LZ4 
 
 指标:都是越高越好
 1.压缩比:100 份空间的东西经压缩之后变成了占 20 份空间，那么压缩比就是 5
@@ -461,7 +460,7 @@ II.有限度的持久化保证
 
 
 
-I.“消息丢失”案例
+**I.“消息丢失”案例**
 案例 1：生产者程序丢失数据 
 
 Kafka Producer 是异步发送消息的。
@@ -653,17 +652,456 @@ Consumer Group 是 Kafka 提供的可扩展且具有容错性的消费者机制
 3. Consumer Group 下所有实例订阅的主题的单个分区，只能分配给组内的某个 Consumer 实例消费。这个分区当然也可以被其他的 Group 消费。 
 
 
+点对点模型和发布(消费队列) / 订阅模型 
+
+国内很多文章都习惯把消息中间件这类框架统称为消息队列，我在这里不评价这种提法是否准确，只是想提醒你注意这里所说的消息队列，特指经典的消息引擎模型。 
+
+
+**传统的消息队列模型:** 只能一个消费
+缺陷在于消息一旦被消费，就会从队列中被删除，而且只能被下游的一个 Consumer 消费。
+伸缩性（scalability）很差
+下游的多个 Consumer 都要“抢”这个共享消息队列的消息。
+
+**发布 / 订阅模型**  每个都要消费全部。
+允许消息被多个 Consumer 消费。
+伸缩性（scalability）很差，**每个订阅者都必须要订阅主题的所有分区**。
+
+
+
+
+**避开这两种模型的缺陷又兼具它们的优点**。
+
+**Consumer Group 机制:** 组内每个示例值消费部分分区
+
+
+当 Consumer Group 订阅了多个主题后，组内的每个实例不要求一定要订阅主题的所有分区，它只会消费部分分区中的消息。 
+
+Consumer Group 之间彼此独立，互不影响，它们能够订阅相同的一组主题而互不干涉。
+
+Broker 端的消息留存机制，Kafka 的 Consumer Group 完美地规避了上面提到的伸缩性差的问题。
+
+
+**同时实现了传统消息引擎系统的两大模型  :**
+如果所有实例都属于同一个 Group，那么它实现的就是消息队列模型。
+如果所有实例分别属于不同的 Group，那么它实现的就是发布 / 订阅模型。 
+
+**Consumer Group实例个数**
+Consumer 实例的数量应该等于该 Group 订阅主题的分区总数。 
+
+
+三个topic A、B、C:  A1个分片、B有2个分片 、C有3个分片
+那Consumer理论实例个数=A*1+B*2+C*3=6个实例。
+最大限度地实现高伸缩性
+
+如果有3个Consumer实例,每个实例消费2个分区=6/3。
+如果有8个Consumer实例，会有2个实例不会被分到任何分区(8-6=2)
+
+因此，在实际使用过程中一般不推荐设置大于总分区数的 Consumer 实例。设置多余的实例只会浪费资源，而没有任何好处。 
+
+
+**Consumer Group 管理位移（Offset）**
+对于 Consumer Group 而言 位移Offset 是一组 KV 对。
+Key 是分区，V 对应 Consumer 消费该分区的最新位移
+
+老版本的 Consumer Group 把位移保存在 ZooKeeper 中.不适合进行频繁的写更新
+
+新版本的 Consumer Group 保存在 Kafka Broker端 内部主题。 
+__consumer_offsets
+
+
+
+**Consumer Group重平衡Rebalance**
+
+Rebalance 是一种协议，规定了一个Consumer Group下的所有 Consumer如何达成一致，来分配订阅 Topic 的每个分区。
+
+Group 下20 个 Consumer ,消费100 个分区的 Topic。正常1个Consumer会分到5个分区。
+
+**Rebalance 的触发条件有 3 个**
+
+I.组成员数发生变更。
+新的 Consumer 实例加入组或者离开组、Consumer 实例崩溃被“踢出”组。
+
+I.订阅主题数发生变更。
+Group订阅所有以字母 t开头的主题。在Consumer Group的运行过程中，你新创建了一个满足这样条件的主题，那么该 Group 就会发生 Rebalance。 
+
+I.订阅主题的分区数发生变更。
+Kafka 当前只能允许增加一个主题的分区数。当分区数增加时，就会触发订阅该主题的所有 Group 开启 Rebalance。
+
+
+
+Rebalance时所有的 Consumer 实例都会协调在一起共同参与
+
+
+**Kafka 默认提供了 3 种分配策略**
+
+Rebalance 所有 Consumer 实例都会停止消费，等待 Rebalance 完成
+stop the world，简称 STW
+所有 Consumer 实例都会停止消费，等待 Rebalance 完成
+
+
+国外用户的 Group 内有几百个 Consumer 实例，成功 Rebalance 一次要几个小时！
+
+
+
+
+------------------------------------
+**16 | 揭开神秘的“位移主题”面纱** 
+
+内部主题（Internal Topic）__consumer_offsets
+
+位移主题:
+消费者KV(topic,offsets) 消费那个主体topic和消费到那个位移offsets
+位移主题是 Kafka 自动创建的，那么该主题的分区数是 50，副本数是 3  。
+
+
+将 Consumer 的位移数据作为一条条普通的 Kafka 消息，提交到 __consumer_offsets 中。
+可以这么说，__consumer_offsets 的主要作用是保存 Kafka 消费者的位移信息。
+
+
+位移主题:
+它的消息格式却是 Kafka 自己定义的  
+
+
+Key: Group ID+主题名topic+分区号
+value:
+
+3 种消息格式
+
+
+第一个 Consumer 程序启动时，Kafka 会自动创建位移主题
+
+
+
+
+Consumer 提交位移的方式有两种： 
+自动提交位移:只要 Consumer 一直启动着，它就会无限期地向位移主题写入消息。
+手动提交位移
+
+
+enable.auto.commit=true
+
+enable.auto.commit = false;consumer.commitSync
+
+
+删除位移主题中的过期消息:
+
+Compact 策略:同一个 Key 的两条消息 M1 和 M2.如果 M1 的发送时间早于 M2，那么 M1 就是过期消息。
+
+Kafka 提供了专门的后台线程定期地巡检待 Compact 的主题，看看是否存在满足条件的可删除数据  。
+
+
+
+
+**17 | 消费者组重平衡能避免吗？** 
+
+
+
+Coordinator协调者：
+它专门为 Consumer Group 服务，负责为 Group 执行 Rebalance 以及提供位移管理和组成员管理等。 
+
+
+所有 Broker 都有各自的 Coordinator 组件  :
+
+
+
+Rebalance 的弊端:
+1.Rebalance 影响 Consumer 端 TPS
+2.Rebalance 很慢。如果你的 Group 下成员很多，就一定会有这样的痛点。
+3.Rebalance 效率不高。当前 Kafka 的设计机制决定了每次 Rebalance 时，Group 下的所有成员都要参与进来，而且通常不会考虑局部性原理，但局部性原理对提升系统性能是特别重要的。 
+
+**Rebalance 发生的时机有三个:**
+• 组成员数量发生变化
+• 订阅主题数量发生变化:无解
+• 订阅主题的分区数发生变化:无解 
+
+
+组成员数量发生变化:
+1.真实添加删除成员
+2.误删除
+
+2.1 Consumer 实例都会定期地向 Coordinator 发送心跳请求: session.timeout.ms 默认值是 10 秒
+2.2 Consumer 实际消费能力对 Rebalance 的影响:max.poll.interval.ms  默认值是 5 分钟
+它限定了 Consumer 端应用程序两次调用 poll 方法的最大时间间隔。
+
+
+
+第一类非必要 Rebalance 是因为未能及时发送心跳，导致 Consumer 被“踢出”Group 而引发的  。
+设置 session.timeout.ms 和 heartbeat.interval.ms  的值
+
+可以“无脑”地应用在你的生产环境中。
+• 设置 session.timeout.ms = 6s。
+• 设置 heartbeat.interval.ms = 2s。
+• 要保证 Consumer 实例在被判定为“dead”之前，能够发送至少 3 轮的心跳请求，即 session.timeout.ms >= 3 * heartbeat.interval.ms。
+
+
+
+
+第二类非必要 Rebalance 是 Consumer 消费时间过长导致的  。
+消息处理时间缩短。
 
 
 
 
 
 
+-------------------------------------------------
+**18 | Kafka中位移提交那些事儿** 
+
+
+Consumer 需要向 Kafka 汇报自己的位移数据，这个汇报过程被称为提交位移  。
+
+Consumer 需要为分配给它的每个分区提交各自的位移数据  。
+
+0-20位移
+消费到4，下一个要消费5，就提交5. 如果提交10，5-9就丢了。提交2，就要重复消费3以后。
+
+位移提交的语义保障是由你来负责的，Kafka 只会“无脑”地接受你提交的位移  。
+
+
+用户的角度来说，位移提交分为：自动提交和手动提交
+从 Consumer 端的角度来说，位移提交分为：同步提交和异步提交  。 
+
+
+默认值是 5 秒自动提交一次位移
+
+II.Consumer自动提交位移
+Properties props = new Properties();
+
+     props.put("enable.auto.commit", "true");
+     props.put("auto.commit.interval.ms", "2000");
+
+II.Consumer手工提交位移
+ 
+props.put("enable.auto.commit", "false");
+KafkaConsumer#commitSync()  
+1.同步提交
+consumer.commitSync();
+
+2.异步提交: 回调函数（callback）
+consumer.commitAsync((offsets, exception) -> {
+	if (exception != null)
+	handle(exception);
+	});
 
 
 
 
 
+Consumer自动提交位移:它可能会出现重复消费  
+
+Rebalance 发生了，你执行了3秒，5秒才提交。 前3秒需要重复消费。
+
+
+
+
+----------------------------
+**19 | CommitFailedException异常怎么处理？** 
+
+
+
+CommitFailedException
+Consumer 客户端在提交位移时出现了错误或异常，而且还是那种不可恢复的严重异常  。
+
+
+你的消费者实例连续两次调用 poll 方法的时间间隔超过了期望的 max.poll.interval.ms 参数值
+
+1. 增加期望的时间间隔 max.poll.interval.ms 参数值。
+2. 减少 poll 方法一次性返回的消息数量，即减少 max.poll.records 参数值。 
+
+
+
+场景一  单条消费时间过长
+1.缩短单条消息处理的时间  。
+2.增加 Consumer 端允许下游系统消费一批消息的最大时长  。
+3.减少下游系统一次性消费的消息总数  
+4.下游系统使用多线程来加速消费  。
+
+
+场景二 
+
+
+20 | 多线程开发消费者实例 
+
+**Kafka Java Consumer 设计原理 :**
+用户主线程和心跳线程
+
+启动 Consumer 应用程序 main 方法的那个线程，而新引入的心跳线程（Heartbeat Thread）只负责定期给对应的 Broker 机器发送心跳请求，以标识消费者应用的存活性（liveness）  
+
+
+
+**多线程方案** 
+
+自己开发多线程
+
+启动多个 Consumer 进程
+
+
+
+**21 | Java 消费者是如何管理TCP连接的?** 
+
+
+**何时创建 TCP 连接？** 
+
+程序入口是 KafkaConsumer 类
+和生产者不同的是，构建 KafkaConsumer 实例时是不会创建任何 TCP 连接的
+
+new KafkaConsumer(properties) 不会建立连接，和生产者不一样!
+
+
+TCP 连接是在调用 KafkaConsumer.poll 方法时被创建的  
+
+poll 方法内部有 3 个时机可以创建 TCP 连接:
+1. 发起 FindCoordinator 请求时  。 协调者（Coordinator）
+2. 连接协调者时。 
+3. 消费数据时。 
+
+
+
+**创建多少个 TCP 连接？**
+消费者程序会创建 3 类 TCP 连接：
+
+1. 确定协调者和获取集群元数据。
+2. 连接协调者，令其执行组成员管理操作。
+3. 执行实际的消息获取。 
+
+
+
+**何时关闭 TCP 连接？** 
+
+手动调用 KafkaConsumer.close() 方法，或者是执行 Kill 命令  
+Kafka 自动关闭是由  消费者端参数 connection.max.idle.ms  控制的，该参数现在的默认值是 9 分钟
+
+
+
+**22 | 消费者组消费进度监控都怎么实现？** 
+
+
+监控它们的消费进度，或者说是监控它们消费的滞后程度。
+这个滞后程度有个专门的名称：
+消费者 Lag 或 Consumer Lag。 
+
+
+滞后程度:就是指消费者当前落后于生产者的程度  。
+
+100 万条，消费80 万，消费者滞后了 20 万，即 Lag 等于20万。 
+
+Lag 的单位是消息数
+
+Kafka 监控 Lag 的层级是在分区上的.
+如果要计算主题级别的，你需要手动汇总所有主题分区的 Lag，将它们累加起来，合并成最终的 Lag 值。
+
+消费者而言，Lag 应该算是最最重要的监控指标了
+
+
+由于消费者的速度无法匹及生产者的速度,导致它消费的数据已经不在操作系统的页缓存中失去享有 Zero Copy 技术的资格。
+进一步拉大了与生产者的差距，进而出现马太效应。
+
+
+怎么监控:
+1. 使用 Kafka 自带的命令行工具 kafka-consumer-groups 脚本。
+2. 使用 Kafka Java Consumer API 编程。
+3. 使用 Kafka 自带的 JMX 监控指标。  作者推荐
+
+
+
+**Kafka 自带命令 :**
+bin/kafka-consumer-groups.sh
+$ bin/kafka-consumer-groups.sh --bootstrap-server <Kafka broker 连接信息 > --describe --group <group 名称 >
+
+
+bin/kafka-consumer-groups.sh --bootstrap-server 127.0.0.1:9092 --describe --group TestGroup
+消费者组名：testgroup
+
+**Kafka Java Consumer API**
+自动化监控,自己写代码
+
+AdminClient.listConsumerGroupOffsets 
+
+
+
+
+**Kafka JMX 监控指标** 
+
+**Lead 值:**
+消费者最新消费消息的位移与分区当前第一条消息位移的差值  。
+默认7天删除，差值距离第一条越小，证明消息块删了，还没消费。
+
+Lag 越大的话，Lead 就越小，反之也是同理  。 
+
+
+同时监控 Lag 值和 Lead 值
+
+
+
+
+
+
+**23 | Kafka副本机制详解** 
+
+
+**副本机制（Replication）备份机制好处(非kafka好处)** 
+1.  提供数据冗余  (高可用)。即使系统部分组件失效，系统依然能够继续运转，因而增加了整体可用性以及数据持久性。
+2.  提供高伸缩性  (高性能，只读)。  支持横向扩展，能够通过增加机器的方式来提升读性能，进而提高读操作吞吐量。
+3.  改善数据局部性  (高性能，距离)。 允许将数据放入与用户地理位置相近的地方，从而降低系统延时。 
+
+
+
+Apache Kafka 只能提供数据冗余1。
+
+主题>多个分区>每个分区有副本
+
+所谓副本（Replica），本质就是一个只能追加写消息的提交日志  
+
+
+
+副本角色 :
+领导者副本（Leader Replica）
+追随者副本（Follower Replica）
+
+每个分区在创建时都要选举一个副本，称为领导者副本，其余的副本自动称为追随者副本。 
+
+追随者副本不处理客户端请求，从领导者副本异步拉取 消息，并写入到自己的提交日志中，从而实现与领导者副本的同步。 
+
+
+领导者副本挂掉:从追随者副本中选一个作为新的领导者。
+
+
+**Kafka 为什么要这样设计呢**
+
+1. 方便实现“Read-your-writes”  。
+
+生产者 API 向 Kafka 成功写入消息后，马上使用消费者 API 去读取刚才生产的消息。
+发完一条微博，肯定是希望能立即看到
+
+
+2. 方便实现单调读（Monotonic Reads）  。
+主从延迟
+是对于一个消费者用户而言，在多次消费消息时，它不会看到某条消息一会儿存在一会儿不存在。 
+
+
+
+
+**In-sync Replicas（ISR）** 同步副本: 不一定所有副本都在ISR中
+
+
+这个标准就是 Broker 端参数 replica.lag.time.max.ms 参数值
+Follower 副本能够落后 Leader 副本的最长时间间隔。
+超出这个间隔就会被踢出ISR
+
+
+
+**Unclean 领导者选举（Unclean Leader Election）** 
+
+非同步副本:Kafka 把所有不在 ISR 中的存活副本
+
+Broker 端参数 unclean.leader.election.enable 控制是否允许 Unclean 领导者选举  。
+
+开启 Unclean 领导者选举：可能会造成数据丢失。提升了高可用性
+禁止 Unclean 领导者选举：维护了数据的一致性，避免了消息丢失，但牺牲了高可用性。
+
+
+CAP：
+一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance）中的两
 
 
 
