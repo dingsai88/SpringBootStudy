@@ -1844,4 +1844,15 @@ https://www.elastic.co/guide/en/elasticsearch/reference/7.1/mapping-params.html
 
 
 
+I.基准测试
+
+POST /_sql?format=json
+{
+"query": "select count(*) from geonames     "
+}
+
+POST /_sql?format=json
+{
+"query": "select * from geonames     limit 11"
+}
 

@@ -1107,5 +1107,162 @@ CAP：
 
 
 
+**24 | 请求是怎么被处理的？** 
+
+
+
+Kafka 客户端(produce+consumer)
+“请求 / 响应
+Broker 端
+
+
+**Apache Kafka 定义请求协议，用于实现各种各样的交互操作:**
+PRODUCE 请求是用于生产消息的
+FETCH 请求是用于消费消息
+METADATA 请求是用于请求 Kafka 集群元数据信息的。 
+
+
+所有的请求都是通过 TCP 网络以 Socket 的方式进行通讯的 
+
+
+
+**Reactor 模式:**
+事件驱动架构的一种实现方式，特别适合应用于处理多个客户端并发向服务器端发送请求的场景  。
+
+多个client>Reactor
+
+Reactor(Acceptor线程[分发线程Dispatcher])
+
+**Kafka实现**
+多个client>Broker
+ 
+1.分发 Broker
+SocketServer 组件:作Dispatcher分发
+Acceptor 线程和网络线程池
+
+Broker 默认有: 3 个网络线程池
+num.network.threads
+
+Dispatcher 只是用于请求分发而不负责响应回传。
+
+2.处理
+
+
+
+3.流程
+client(produce生产、fetch出售，消费)  >> SocketServer 组件(3个网络线程池分发) 
+SocketServer 组件(3个网络线程池分发) >>网络线程(收到转发请求)
+网络线程(收到转发请求)>>共享请求队列>> IO 线程池默认8线程(从队列中取出来请求) num.io.threads 
+
+IO 线程池:(操作(produce生产写入磁盘、fetch请求磁盘缓存读数据))
+
+IO 线程池处理完成>>网络线程池响应队列
+IO 线程池处理完成>>网络线程池响应队列
+
+
+Purgatory 的组件:缓存延时请求  （Delayed Request）
+未满足条件不能立刻处理的请求
+
+
+**请求队列响应队列区别**
+请求队列是所有网络线程共享的，而响应队列则是每个网络线程专属的 
+
+
+数据类请求:
+PRODUCE 和 FETCH 这类请求
+
+
+控制类请求:
+LeaderAndIsr、StopReplica
+
+控制类请求有这样一种能力：它可以直接令数据类请求失效！
+
+
+
+----------------------------------------------------------------
+25 | 消费者组重平衡全流程解析 
+
+
+触发与通知 :
+
+ 3 个触发条件：
+1. 组成员数量发生变化。
+2. 订阅主题数量发生变化。
+3. 订阅主题的分区数发生变化。 
+
+**如何监听到需要重平衡** broker 协调者决定重平衡
+
+重平衡过程是如何通知到其他消费者实例的
+消费者端的心跳线程（Heartbeat Thread）
+
+
+消费者定期>>发送心跳请求（Heartbeat Request）>>Broker 端的协调者
+
+当协调者决定开启新一轮重平衡后:
+Broker 端的协调者>> 响应内容增加 rebalance_in_progress响应中
+
+
+**消费者端重平衡流程**  
+
+两个步骤:
+1.JoinGroup 请求加入组(第一个加入者就是领导者)
+2.SyncGroup 请求 等待领导者消费者（Leader Consumer）分配方案
+3.LeaveGroup 请求 离开组请求
+
+JoinGroup加入组请求:
+A JoinGroup请求>Broker协调者  >A 你是领导者
+B JoinGroup请求>Broker协调者  >B 你是成员,A是领导者
+
+
+SyncGroup同步组请求:
+A 领导者(A消费topic1，B消费topic2)SyncGroup请求>Broker协调者 (A你消费topic1)> A(A你消费topic1)
+
+B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费topic2)
+
+
+
+**Broker 端重平衡场景剖析** 
+
+
+新组加入流程:
+
+1.A新组(JoinGroup请求)>Broker协调者 ;一直保持
+2.B心跳请求(我还活着)>Broker协调者(重平衡开始，你需要重新加入)>B
+3.B(JoinGroup请求)>Broker协调者 (你已入组,你是成员)>B (成员)
+4.Broker协调者响应A的join请求>> 返回A组的join请求  (你已入组,你是领导)>A
+5.A 领导者(A消费topic1，B消费topic2)SyncGroup请求>Broker协调者 (A你消费topic1)> A(A你消费topic1)
+6.B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费topic2)
+
+
+
+组异常离开流程:
+1.A组断开超时，Broker协调者判断A离开。
+2.B心跳请求(我还活着)>Broker协调者(重平衡开始，你需要重新加入)>B
+3.B(JoinGroup请求)>Broker协调者 (你已入组,你是领导)>B (领导)
+4.B 领导者(B消费topic1)SyncGroup请求>Broker协调者 (B你消费topic1)> B(B消费topic1)
+
+组正常离开
+1.A组我要离开了(LeaveGroup 请求) >Broker协调者>A组 拜拜
+后边跟异常离开一样
+
+
+
+--------------------------------------------------
+26 | 你一定不能错过的Kafka控制器 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
