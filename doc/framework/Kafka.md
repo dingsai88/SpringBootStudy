@@ -1180,7 +1180,7 @@ LeaderAndIsr、StopReplica
 
 
 ----------------------------------------------------------------
-25 | 消费者组重平衡全流程解析 
+**25 | 消费者组重平衡全流程解析** 
 
 
 触发与通知 :
@@ -1248,12 +1248,695 @@ B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费to
 
 
 --------------------------------------------------
-26 | 你一定不能错过的Kafka控制器 
+**26 | 你一定不能错过的Kafka控制器**  选举
+
+
+控制器组件（Controller）:管理和协调整个 Kafka 集群
+
+集群中任意一台 Broker 都能充当控制器的角色。
+
+任意时刻都有且只有一个控制器。activeController 
+
+
+**Apache ZooKeeper**
+是一个提供高可靠性的分布式协调服务框架  
+集群成员管理、分布式锁、领导者选举
+
+
+ znode节点:保存一些元数据协调信息。 
+
+持久性 znode:不会因为 ZooKeeper 集群重启而消失
+临时 znode: 会话绑定，会话结束，该节点会被自动删除。 
+
+**zookeeper Watch 通知功能**
+客户端监控 znode 变更的能力
+
+znode 节点被创建、删除，子节点数量发生变化、数据变更
+
+通过节点变更监听器 (ChangeHandler) 的方式显式通知客户端。 
+
+
+**kafka在zookeeper 各个节点**
+
+II./brokers/ids:目录下创建临时节点znode。
+Broker 宕机或主动关闭后，该 Broker 与 ZooKeeper 的会话结束，这个 znode 会被自动删除。
+机制将这一变更推送给控制器
+/brokers/topic
+
+II./controller:控制器节点，先到先得，第一个就是控制器
+Broker 在启动时，尝试去 ZooKeeper 中创建 /controller 节点
+第一个成功创建 /controller 节点的 Broker 会被指定为控制器  。 
+
+
+II./consumers:记录消费者组信息
+/consumer_group_name消费者组名/offset 位移
+/consumer_group_name消费者组名/ids 组内多少个消费者
+/consumer_group_name消费者组名/owners   消费者leader 负责重平衡分配
+
+
+
+II./controller_epoch
+
+II./isr_change_notification
+
+II./config
+
+II./admin
+
+
+**Broker控制器controller如何被选出**
+
+Broker 在启动时尝试创建  /controller 节点 :临时节点
+
+第一个成功创建 /controller 节点的 Broker 会被指定为控制器  。
+
+
+
+**Broker控制器controller作用**
+1. 主题管理（创建、删除、增加分区） 
+
+kafka-topics 脚本  
+
+2. 分区重分配(领导、追随者)
+kafka-reassign-partitions 脚本
+   对已有主题分区进行细粒度的分配功能。这部分功能也是控制器实现的
+
+3.  Preferred 领导者选举较喜欢
+    Kafka 为了避免部分 Broker 负载过重而提供的一种换 Leader 的方案
+
+是控制器的职责范围就可以了。 
+
+4. 集群成员管理（新增 Broker、Broker 主动关闭、Broker 宕机）  
+
+  Watch 功能和 ZooKeeper 临时节点组合实现的。
+  Watch 机制:  检查 ZooKeeper 的 /brokers/ids 节点下的子节点数量变更。
+  临时节点  :/brokers/ids 下创建一个临时 znode
+  当 Broker 宕机或主动关闭后，该 Broker 与 ZooKeeper 的会话结束，这个 znode 会被自动删除。
+
+
+
+5. 数据服务
+   控制器上保存了最全的集群元数据信息
+
+所有 Broker 会定期接收控制器发来的元数据更新请求，从而更新其内存中的缓存数据。 
+
+数据Zookeeper有一份 broker控制器 有一份
+
+
+
+所有主题信息。包括具体的分区信息，比如领导者副本是谁，ISR 集合中有哪些副本等。
+• 所有 Broker 信息。包括当前都有哪些运行中的 Broker，哪些正在关闭中的 Broker 等。
+• 所有涉及运维任务的分区。包括当前正在进行 Preferred 领导者选举以及分区重分配的分区列表。 
+
+
+**控制器故障转移（Failover）** 
+
+只能有一台 Broker 充当控制器
+
+单点失效  （Single Point of Failure）的风险
+
+控制器提供故障转移功能，也就是说所谓的 Failover。 
+
+
+故障转移指的是，当运行中的控制器突然宕机或意外终止时，Kafka 能够快速地感知到，并立即启用备用控制器来代替之前失败的控制器  。
+
+流程: 控制器broker失效后
+1.zookeeper 向其余所有broker发送消息,控制器broker失效。
+2.所有broker抢注，/controller临时节点。先到先得成为控制器节点
+3.新broker控制器节点向zookeeper请求元数据。
+
+
+
+
+**控制器内部设计原理** 
+
+Kafka 将控制器发送的请求与普通数据类请求分开，实现了控制器请求单独处理的逻辑。
+
+
+小技巧：broker控制器异常无法创建topic删除主题topic。删除临时会话控制器节点，引发重新选举
+ZooKeeper 中手动删除 /controller 节点。  具体命令是 rmr /controller  
 
 
 
 
 
+----------------------------------------------
+**27 | 关于高水位和Leader Epoch的讨论** 
+
+
+**水位:**
+是一个单调增加且表征最早未完成工作的时间戳
+
+**高水位High Watermark:**
+提交消息、和未提交消息。（消息都已经写入，但是未提交）。
+
+高水位以下的值(已提交消息)才能被消费。
+高水位以上的值(未提交消息)不能被位移消费。
+
+低水位（Low Watermark）:Kafka 删除消息相关联的概念
+
+
+定义:
+在时刻 T，任意创建时间（Event Time）为 T’，且 T’≤T 的所有事件都已经到达或被观测到，那么 T 就被定义为水位。
+水位是一个单调增加且表征最早未完成工作（oldest work not yet completed）的时间戳。 
+
+在分区高水位以下的消息被认为是已提交消息。kafka中，分区的高水位就是其 Leader 副本的高水位。
+
+
+**高水位的作用**
+1. 定义消息可见性，即用来标识分区下的哪些消息是可以被消费者消费的。
+2. 帮助 Kafka 完成副本同步。
+
+已提交消息 >> 消费者位移 >= 高水位值 >> 未提交消息 >> 日志末端位移LEO
+
+
+
+**事务机制**
+高水位和事务机制无关:
+因为事务机制会影响消费者所能看到的消息的范围，它不只是简单依赖高水位来判断。
+LSO（Log Stable Offset）的位移值来判断事务型消费者的可见性。
+
+
+
+**分区（Partitioning）：** 分片、分区
+把数据分割成多份保存在不同的 Broker 上。
+
+
+
+**日志末端位移Log End Offset，简写是 LEO:**
+副本写入下一条消息的位移值。
+
+同一个副本对象，其高水位值不会大于 LEO 值  。
+
+
+高水位和 LEO 之间的消息就属于 未提交消息。
+
+
+**Leader Epoch**
+大致可以认为是 Leader 版本。它由两部分数据组成。
+1. Epoch。一个单调增加的版本号。   每当副本领导权发生变更时，都会增加该版本号。小版本号的 Leader 被认为是过期 Leader，不能再行使 Leader 权力。
+2. 起始位移（Start Offset）。    Leader 副本在该 Epoch 值上写入的首条消息的位移。
+
+
+
+高水位在界定 Kafka 消息对外可见性以及实现副本机制等方面起到了非常重要的作用，但其设计上的缺陷给 Kafka 留下了很多数据丢失或数据不一致的潜在风险。
+
+
+
+
+-----------------------------------------------
+**28 | 主题管理知多少?** 
+
+
+**I.主题日常管理**
+增删改查
+
+Java API 的方式来运维 Kafka 集群
+
+**II.创建:主题topic**
+Kafka 提供了自带的 kafka-topics 脚本，用于帮助用户创建主题  。
+
+bin/kafka-topics.sh --bootstrap-server broker_host:port --create --topic my_topic_name  --partitions 1 --replication-factor 1
+partitions 和 replication factor 分别设置了主题的分区数以及每个分区下的副本数。
+
+
+推荐用 --bootstrap-server 参数替换 --zookeeper 参数
+
+--zookeeper 会绕过 Kafka 的安全体系
+--bootstrap-server 与集群进行交互，越来越成为使用 Kafka 的标准姿势。
+
+
+**II.查询:主题topic**
+全部主题topic
+bin/kafka-topics.sh --bootstrap-server broker_host:port --list
+
+查询单个topic主题
+bin/kafka-topics.sh --bootstrap-server broker_host:port --describe --topic <topic_name>
+
+describe 命令不指定具体的主题名称，那么 Kafka 默认会返回所有“可见”主题的详细数据给你。
+
+这里的“可见”，是指发起这个命令的用户能够看到的 Kafka 主题 
+
+
+**II.修改:主题topic**
+
+1. 修改主题分区。 只能加不能减
+   
+其实就是增加分区，目前 Kafka 不允许减少某个主题的分区数。你可以使用 kafka-topics 脚本，结合 --alter 参数来增加某个主题的分区数，命令如下：
+
+bin/kafka-topics.sh --bootstrap-server broker_host:port --alter --topic <topic_name> --partitions < 新分区数 >
+
+分区数一定要比原有分区数大，否则 Kafka 会抛出 InvalidPartitionsException 异常。 
+
+
+2. 修改主题级别参数
+   修改max.message.bytes
+bin/kafka-configs.sh --zookeeper zookeeper_host:port --entity-type topics --entity-name <topic_name> --alter --add-config max.message.bytes=10485760
+
+
+
+3. 变更副本数。 
+
+使用自带的 kafka-reassign-partitions 脚本，帮助我们增加主题的副本数。
+
+这里先留个悬念，稍后我会拿 Kafka 内部主题 __consumer_offsets 来演示如何增加主题副本数。 
+
+
+4. 修改主题限速。
+   Leader 副本和 Follower 副本使用的带宽：不得占用超过 100MBps 的带宽
+
+Broker 端参数 leader.replication.throttled.rate 和 follower.replication.throttled.rate，命令如下
+bin/kafka-configs.sh --zookeeper zookeeper_host:port --alter --add-config 'leader.replication.throttled.rate=104857600,follower.replication.throttled.rate=104857600' --entity-type brokers --entity-name 0
+
+--entity-name 就是 Broker ID。倘若该主题的副本分别在 0、1、2、3 多个 Broker 上，那么你还要依次为 Broker 1、2、3 执行这条命令。
+
+bin/kafka-configs.sh --zookeeper zookeeper_host:port --alter --add-config 'leader.replication.throttled.replicas=*,follower.replication.throttled.replicas=*' --entity-type topics --entity-name test
+
+
+5. 主题分区迁移。  
+
+
+
+**II.删除:主题topic**
+
+bin/kafka-topics.sh --bootstrap-server broker_host:port --delete  --topic <topic_name>
+
+关键是删除操作是异步的，执行完这条命令不代表主题立即就被删除了。它仅仅是被标记成“已删除”状态而已。Kafka 会在后台默默地开启主题删除操作。因此，通常情况下，你都需要耐心地等待一段时间。 
+
+
+
+
+
+
+**特殊主题的管理与运维** 
+
+
+
+**常见主题错误处理** 
+
+常见错误 1：主题删除失败。 
+
+实际上，造成主题删除失败的原因有很多，最常见的原因有两个：
+副本所在的 Broker 宕机了；
+待删除主题的部分分区依然在执行迁移过程。 
+
+不管什么原因，一旦你碰到主题无法删除的问题，可以采用这样的方法： 
+
+第 1 步，手动删除 ZooKeeper 节点 /admin/delete_topics 下以待删除主题为名的 znode。
+
+第 2 步，手动删除该主题在磁盘上的分区目录。
+
+第 3 步，在 ZooKeeper 中执行 rmr /controller，触发 Controller 重选举，刷新 Controller 缓存。 
+
+
+常见错误 2：__consumer_offsets 占用太多的磁盘。  
+
+
+
+
+-------------------------------------------------------------
+**29 | Kafka 的动态 Broker 参数配置**
+29 | Kafka动态配置了解下？ 
+
+
+Kafka动态配置:修改参数值后，无需重启 Broker 就能立即生效
+
+包括但不限于以下几种：
+
+
+• 动态调整 Broker 端各种线程池大小，实时应对突发流量。
+• 动态调整 Broker 端连接信息或安全配置信息。
+• 动态更新 SSL Keystore 有效期。
+• 动态调整 Broker 端 Compact 操作性能。
+• 实时变更 JMX 指标收集器 (JMX Metrics Reporter)。 
+
+zookeeper
+/config/*
+/changes 是用来实时监测动态参数变更的，不会保存参数值
+/topics 是用来保存 Kafka 主题级别参数的
+
+
+---------------------------------------------------------------
+**30 | 怎么重设消费者组位移？** 
+两种重置方法:
+7个规则策略:
+
+
+
+Kafka 的消费者读取消息是可以重演的（replayable）。
+
+
+像 RabbitMQ 或 ActiveMQ 这样的传统消息中间件，它们处理和响应消息的方式是破坏性的（destructive），即一旦消息被成功处理，就会被从 Broker 上删除。 
+
+基于日志结构（log-based）的消息引擎，消费者在消费消息时，仅仅是从磁盘文件上读取数据而已，是只读的操作，因此消费者不会删除消息数据。
+
+位移数据是由消费者控制的，因此它能够很容易地修改位移的值，实现重复消费历史数据的功能。 
+
+
+**传统的消息中间件，还是使用 Kafka 呢**
+消息处理逻辑非常复杂，处理代价很高，同时你又不关心消息之间的顺序，那么传统的消息中间件是比较合适的；
+反之，如果你的场景需要较高的吞吐量，但每条消息的处理时间很短，同时你又很在意消息的顺序，此时，Kafka 就是你的首选。 
+
+
+
+**重设位移策略**
+两个维度来进行:
+1. 位移维度。这是指根据位移值来重设。也就是说，直接把消费者的位移值重设成我们给定的位移值。
+2. 时间维度。我们可以给定一个时间，让消费者把位移调整成大于该时间的最小位移；也可以给出一段时间间隔，比如 30 分钟前，然后让消费者直接将位移调回 30 分钟之前的位移值。 
+
+**位移维度:**
+Earliest:将位移调整到主题当前最早位移处。 不一定就是 0
+如果你想要重新消费主题的所有消息，那么可以使用 Earliest 策略  。
+
+Latest 策略:位移重设成最新末端位移。
+跳过所有历史消息，打算从最新的消息处开始消费的话，可以使用 Latest 策略。
+
+Current 策略:位移调整成消费者当前提交的最新位移。
+
+Specified-Offset 策略:消费者把位移值调整到你指定的位移处。
+这个策略的典型使用场景是，消费者程序在处理某条错误消息时，你可以手动地“跳过”此消息的处理  。
+
+
+
+**时间维度:**
+
+DateTime : 允许你指定一个时间，然后将位移重置到该时间之后的最早位移处。
+
+Duration 策略:
+给定相对的时间间隔，然后将位移调整到距离当前给定时间间隔的位移处，具体格式是 PnDTnHnMnS。
+
+
+
+**重设位移的方法**
+
+1.通过消费者 API 来实现。
+2.通过 kafka-consumer-groups 命令行脚本来实现。 
+
+
+
+**消费者 API 方式设置:**
+Java API 的方式来实现重设策略的主要入口方法，就是 seek 方法  。
+
+KafkaConsumer
+void seek(TopicPartition partition, long offset);
+void seek(TopicPartition partition, OffsetAndMetadata offsetAndMetadata);
+void seekToBeginning(Collection<TopicPartition> partitions);
+void seekToEnd(Collection<TopicPartition> partitions);
+
+
+Properties consumerProperties = new Properties();
+consumerProperties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+consumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, groupID);
+consumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+consumerProperties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+consumerProperties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+consumerProperties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList);
+
+
+
+**通过 kafka-consumer-groups 脚本**
+
+Earliest 策略直接指定 –to-earliest  
+bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-earliest –execute
+
+Latest 策略直接指定 –to-latest  。
+bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --all-topics --to-latest --execute
+
+DateTime 策略直接指定 –to-datetime  。
+bin/kafka-consumer-groups.sh --bootstrap-server kafka-host:port --group test-group --reset-offsets --to-datetime 2019-06-20T20:00:00.000 --execute
+
+
+
+-----------------------------------------
+**31 | 常见工具脚本大汇总** 
+
+kafka-consumer-perf-test。它们分别是生产者和消费者的性能测试工具，非常实用，稍后我会重点介绍。 
+
+kafka-consumer-groups 命令，我在介绍重设消费者组位移时稍有涉及，后面我们来聊聊该脚本的其他用法。 
+ 
+kafka-delegation-tokens 脚本可能不太为人所知，它是管理 Delegation Token 的。基于 Delegation Token 的认证是一种轻量级的认证机制，补充了现有的 SASL 认证机制。
+
+kafka-delete-records 脚本用于删除 Kafka 的分区消息。鉴于 Kafka 本身有自己的自动消息删除策略，这个脚本的实际出场率并不高。
+
+kafka-dump-log 脚本可谓是非常实用的脚本。它能查看 Kafka 消息文件的内容，包括消息的各种元数据信息，甚至是消息体本身。
+
+kafka-log-dirs 脚本是比较新的脚本，可以帮助查询各个 Broker 上的各个日志路径的磁盘占用情况。
+
+kafka-mirror-maker 脚本是帮助你实现 Kafka 集群间的消息同步的。在专栏后面，我会单独用一讲的内容来讨论它的用法。
+
+kafka-preferred-replica-election 脚本是执行 Preferred Leader 选举的。它可以为指定的主题执行“换 Leader”的操作。
+
+kafka-reassign-partitions 脚本用于执行分区副本迁移以及副本文件路径迁移。
+
+kafka-topics 脚本你应该很熟悉了，所有的主题管理操作，都是由该脚本来实现的。
+
+kafka-run-class 脚本则颇为神秘，你可以用这个脚本执行任何带 main 方法的 Kafka 类。在 Kafka 早期的发展阶段，很多工具类都没有自己专属的 SHELL 脚本，比如刚才提到的 kafka-dump-log，你只能通过运行 kafka-run-class kafka.tools.DumpLogSegments 的方式来间接实现。如果你用文本编辑器打开 kafka-dump-log.sh，你会发现它实际上调用的就是这条命令。后来社区逐渐为这些重要的工具类都添加了专属的命令行脚本，现在 kafka-run-class 脚本的出场率大大降低了。在实际工作中，你几乎遇不上要直接使用这个脚本的场景了。
+
+对于 kafka-server-start 和 kafka-server-stop 脚本，你应该不会感到陌生，它们是用于启动和停止 Kafka Broker 进程的。
+
+kafka-streams-application-reset 脚本用来给 Kafka Streams 应用程序重设位移，以便重新消费数据。如果你没有用到 Kafka Streams 组件，这个脚本对你来说是没有用的。
+
+kafka-verifiable-producer 和 kafka-verifiable-consumer 脚本是用来测试生产者和消费者功能的。它们是很“古老”的脚本了，你几乎用不到它们。另外，前面提到的 Console Producer 和 Console Consumer 完全可以替代它们。 
+
+
+**重点脚本操作** 
+
+
+1.生产消息 :
+$ bin/kafka-console-producer.sh --broker-list kafka-host:port --topic test-topic --request-required-acks -1 --producer-property compression.type=lz4
+
+
+2.消费消息 :
+$ bin/kafka-console-consumer.sh --bootstrap-server kafka-host:port --topic test-topic --group test-group --from-beginning --consumer-property enable.auto.commit=false 
+
+注意，在这段命令中，我们指定了 group 信息。如果没有指定的话，每次运行 Console Consumer，它都会自动生成一个新的消费者组来消费。久而久之，你会发现你的集群中有大量的以 console-consumer 开头的消费者组。通常情况下，你最好还是加上 group。
+另外，from-beginning 等同于将 Consumer 端参数 auto.offset.reset 设置成 earliest，表明我想从头开始消费主题。如果不指定的话，它会默认从最新位移读取消息。如果此时没有任何新消息，那么该命令的输出为空，你什么都看不到。
+最后，我在命令中禁掉了自动提交位移。通常情况下，让 Console Consumer 提交位移是没有意义的，毕竟我们只是用它做一些简单的测试。 
+
+测试生产者性能
+kafka-producer-perf-test
+
+测试消费者性能
+kafka-consumer-perf-test
+
+
+查看主题消息总数
+$ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list kafka-host:port --time -2 --topic test-topic
+$ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list kafka-host:port --time -1 --topic test-topic
+
+
+
+
+
+**32 | KafkaAdminClient：Kafka的运维利器** 
+
+
+功能
+
+鉴于社区还在不断地完善 AdminClient 的功能，所以你需要时刻关注不同版本的发布说明（Release Notes），看看是否有新的运维操作被加入进来。在最新的 2.3 版本中，AdminClient 提供的功能有 9 大类。
+1. 主题管理：包括主题的创建、删除和查询。
+2. 权限管理：包括具体权限的配置与删除。
+3. 配置参数管理：包括 Kafka 各种资源的参数设置、详情查询。所谓的 Kafka 资源，主要有 Broker、主题、用户、Client-id 等。
+4. 副本日志管理：包括副本底层日志路径的变更和详情查询。
+5. 分区管理：即创建额外的主题分区。
+6. 消息删除：即删除指定位移之前的分区消息。
+7. Delegation Token 管理：包括 Delegation Token 的创建、更新、过期和详情查询。
+8. 消费者组管理：包括消费者组的查询、位移查询和删除。
+9. Preferred 领导者选举：推选指定主题分区的 Preferred Broker 为领导者。 
+
+
+
+
+**33 | Kafka认证机制用哪家？** 
+
+
+第 1 步：创建用户 
+
+
+**35 | 跨集群备份解决方案MirrorMaker** 
+
+
+
+
+**36 | 你应该怎么监控Kafka？** 
+
+
+**主机监控**
+常见的主机监控指标包括但不限于以下几种：
+• 机器负载（Load）
+• CPU 使用率
+• 内存使用率，包括空闲内存（Free Memory）和已使用内存（Used Memory）
+• 磁盘 I/O 使用率，包括读使用率和写使用率
+• 网络 I/O 使用率
+• TCP 连接数
+• 打开文件数
+• inode 使用情况 
+
+
+
+
+**JVM 监控** 
+
+Broker GC 日志，即以 kafkaServer-gc.log 开头的文件 
+
+
+**集群监控** 
+1. 查看 Broker 进程是否启动，端口是否建立。  
+2. 查看 Broker 端关键日志。  
+3. 查看 Broker 端关键线程的运行状态。  
+4. 查看 Broker 端的关键 JMX 指标。  
+5. 监控 Kafka 客户端。  
+   网络往返时延  
+
+
+
+
+--------------------------------------
+
+**37 | 主流的Kafka监控框架** 
+
+JMXTool 工具 
+
+
+
+Kafka Manager 有页面
+是雅虎公司于 2015 年开源的一个 Kafka 监控框架。这个框架用 Scala 语言开发而成，主要用于管理和监控 Kafka 集群。 
+
+
+其实，除了今天我介绍的 Kafka Manager、Burrow、Grafana 和 Control Center 之外，
+市面上还散落着很多开源的 Kafka 监控框架，
+比如 Kafka Monitor、Kafka Offset Monitor 等。
+不过，这些框架基本上已经停止更新了，有的框架甚至好几年都没有人维护了，因此我就不详细展开了。
+如果你是一名开源爱好者，可以试着到开源社区中贡献代码，帮助它们重新焕发活力。 
+
+
+
+
+-----------------------------------------------
+**38 | 调优Kafka，你做到了吗？** 
+
+
+**调优目标**
+指吞吐量和延时。
+
+
+
+
+**优化漏斗**
+第 1 层：应用程序层  :效果最大
+第 2 层：框架层
+第 3 层：JVM 层  
+第 4 层：操作系统层 
+
+
+基础性调优 :
+
+操作系统调优
+挂载（Mount）文件系统时禁掉 atime 更新
+文件系统，我建议你至少选择 ext4 或 XFS。尤其是 XFS 文件系统，它具有高性能、高伸缩性等特点，特别适用于生产服务器。
+swap 空间的设置
+ulimit -n 和 vm.max_map_count
+
+
+JVM 层调优:
+
+1. 设置堆大小。
+2.GC 收集器的选择。
+   我强烈建议你使用 G1 收集器，主要原因是方便省事，至少比 CMS 收集器的优化难度小得多  
+
+
+**Broker 端调优** 
+
+即尽力保持客户端版本和 Broker 端版本一致  。
+
+
+
+**应用层调优**
+不要频繁地创建 Producer 和 Consumer 对象实例  。
+用完及时关闭  
+合理利用多线程来改善性能 
+
+
+
+
+
+
+
+-------------------------------------------------------
+**39 | 从0搭建基于Kafka的企业级实时日志流处理平台** 
+
+
+
+流处理架构 :
+Flume+Kafka+(Storm、Spark Streaming 或 Flink)
+
+
+技术栈是 Kafka Connect+Kafka Core+Kafka Streams 的组合
+
+
+**Kafka Connect 组件**
+收集数据 :常见的外部数据源包括数据库、KV 存储、搜索系统或文件系统等。 
+
+
+启动 Kafka Connect
+添加 File Connector
+
+$ curl -H "Content-Type:application/json" -H "Accept:application/json" http://localhost:8083/connectors -X POST 
+--data '{"name":"file-connector","config":{"connector.class":"org.apache.kafka.connect.file.FileStreamSourceConnector",
+"file":"/var/log/access.log","tasks.max":"1","topic":"access_log"}}'
+{"name":"file-connector","config":{"connector.class":"org.apache.kafka.connect.file.FileStreamSourceConnector","file":"/var/log/access.log","tasks.max":"1","topic":"access_log","name":"file-connector"},"tasks":[],"type":"source"}
+
+
+$ curl http://localhost:8083/connectors
+["file-connector"]
+
+
+
+**Kafka Streams 组件** 
+消费处理 日志
+
+
+
+
+---------------------------------------------
+**40 | Kafka Streams与其他流处理平台的差异在哪里？** 
+
+Apache Samza、Apache Storm，以及这两年火爆的 Spark 以及 Flink 等。 
+
+
+**流处理平台（Streaming System）**
+是处理无限数据集（Unbounded Dataset）的数据处理引擎，而流处理是与批处理（Batch Processing）相对应的。 
+
+
+数据永远没有尽头。
+
+流处理和批处理的区别。
+
+
+目前难以实现正确性是流处理取代批处理的最大障碍 
+
+这里的精确一次是流处理平台能提供的一类一致性保障。常见的一致性保障有三类：
+• 至多一次（At most once）语义：消息或事件对应用状态的影响最多只有一次。
+• 至少一次（At least once）语义：消息或事件对应用状态的影响最少一次。
+• 精确一次（Exactly once）语义：消息或事件对应用状态的影响有且只有一次。 
+
+
+
+Kafka Streams 目前只支持从 Kafka 读数据以及向 Kafka 写数据 
+
+
+
+
+
+**42 | Kafka Streams在金融领域的应用** 
+
+
+实现客户生命周期内价值（Custom Lifecycle Value, CLV）的最大化。 
+
+用户画像 
+
+
+ID 映射（ID Mapping） 
 
 
 
