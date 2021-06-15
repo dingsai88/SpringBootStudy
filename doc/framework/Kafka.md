@@ -463,8 +463,7 @@ II.有限度的持久化保证
 **I.“消息丢失”案例**
 案例 1：生产者程序丢失数据 
 
-Kafka Producer 是异步发送消息的。
-producer.send(msg) 这个 API，那么它通常会立即返回
+Kafka Producer 是异步发送消息的。producer.send(msg) 这个 API，那么它通常会立即返回
 
 
 要使用 producer.send(msg, callback) 
@@ -479,7 +478,7 @@ Consumer 端要消费的消息不见了
 真实消费。
 
 问题现象:
-先挪动标签，再真实消费，但是消费中断了，下次启动的时候，就丢消息了。
+先挪动消费者位移，再真实消费，但是消费中断了，下次启动的时候，就丢消息了。
 
 问题解决:
 先真实消费，再挪动标签
@@ -491,6 +490,50 @@ Consumer 端要消费的消息不见了
 **丢失情况2**
 Consumer 程序从 Kafka 获取到消息后开启了多个线程异步处理消息，
 而 Consumer 程序自动地向前更新位移。
+
+多线程异步处理消费消息，不开启自动提交位移，而是要应用程序手动提交位移 。
+
+
+**最佳实践**
+1.Client.Producer: 不要使用 producer.send(msg)，而要使用 producer.send(msg, callback)。记住，一定要使用带有回调通知的 send 方法。
+
+2.Client.Producer: 设置 acks = all。acks 是 Producer 的一个参数，代表了你对“已提交”消息的定义。
+如果设置成 all，则表明所有副本 Broker 都要接收到消息，该消息才算是“已提交”。这是最高等级的“已提交”定义。
+
+3.Client.Producer: 设置 retries 为一个较大的值。
+这里的 retries 同样是 Producer 的参数，对应前面提到的 Producer 自动重试。
+当出现网络的瞬时抖动时，消息发送可能会失败，此时配置了 retries > 0 的 Producer 能够自动重试消息发送，避免消息丢失。
+
+4.Broker参数:设置 unclean.leader.election.enable = false。这是 Broker 端的参数，它控制的是哪些 Broker 有资格竞选分区的 Leader。
+如果一个 Broker 落后原先的 Leader 太多，那么它一旦成为新的 Leader，必然会造成消息的丢失。
+故一般都要将该参数设置成 false，即不允许这种情况的发生。
+
+In-sync Replicas（ISR）同步副本非同步
+ISR同步副本，非ISR同步副本不能竞选分区Leader
+
+5.Broker:设置 replication.factor >= 3。这也是 Broker 端的参数。其实这里想表述的是，最好将消息多保存几份，毕竟目前防止消息丢失的主要机制就是冗余。
+
+
+6.Broker:设置 min.insync.replicas > 1。这依然是 Broker 端参数，控制的是消息至少要被写入到多少个副本才算是“已提交”。
+设置成大于 1 可以提升消息持久性。在实际环境中千万不要使用默认值 1。
+
+至少写入几个副本是“已提交”
+
+7.Broker:确保 replication.factor > min.insync.replicas。如果两者相等，那么只要有一个副本挂机，整个分区就无法正常工作了 。
+我们不仅要改善消息的持久性，防止数据丢失，还要在不降低可用性的基础上完成。推荐设置成 replication.factor = min.insync.replicas + 1。
+
+
+8.Client.Consumer:确保消息消费完成再提交。 
+Consumer 端有个参数 enable.auto.commit，最好把它设置成 false，并采用手动提交位移的方式。 就像前面说的，这对于单 Consumer 多线程处理的场景而言是至关重要的。
+
+
+
+
+
+
+
+
+
 
 
 
@@ -522,14 +565,14 @@ Apache Kafka 的所有通信都是基于 TCP 的，而不是基于 HTTP 或其�
 
 Kafka 的 Java 生产者 API 主要的对象就是 KafkaProducer。
 
-第 1 步：构造生产者对象所需的参数对象。
-第 2 步：利用第 1 步的参数对象，创建 KafkaProducer 对象实例。
+第 1 步：构造参数对象。
+第 2 步：利用参数对象创建 KafkaProducer 对象。已创建连接(启动 Sender 的线程)
 第 3 步：使用 KafkaProducer 的 send 方法发送消息。
 第 4 步：调用 KafkaProducer 的 close 方法关闭生产者并释放各种系统资源。 
 
 
 
-I.何时创建 TCP 连接？
+I.何时创建TCP连接？
 Producer<String, String> producer = new KafkaProducer<>(props);  已创建连接
 producer.send(new ProducerRecord<String, String>(……), callback);
 
@@ -545,6 +588,8 @@ Producer 发现尚不存在与目标 Broker 的连接，也会创建一个。
 
 **Producer 设计合理性**
 有着 1000 台 Broker 的集群中,Producer会建立1000个tcp连接，不管用不用。
+默认向集群的所有 Broker 都创建 TCP 连接不管是否真的需要传输请求。
+Kafka 还支持强制将空闲的 TCP 连接资源关闭，这就更显得多此一举了。
 
 
 
@@ -580,15 +625,18 @@ Kafka 对 Producer 和 Consumer 消息交付可靠性保障(默认至少一次)
 
 
 **精确一次（exactly once）实现:**
-幂等性（Idempotence）和事务（Transaction）
+Producer幂等性（Idempotence）和Producer事务（Transaction）
 
 幂等性:某些操作或函数能够被执行多次，但每次得到的结果都是不变的。
 幂等性有很多好处，  其最大的优势在于我们可以安全地重试任何幂等性操作，反正它们也不会破坏我们的系统状态  。
 
+Client.Producer幂等、Producer事务
 
 II.Producer幂等性:
 Producer 默认不是幂等性的。打开属性即可
-props.put(“enable.idempotence”, ture)，(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG， true)。 
+props.put(“enable.idempotence"”", ture)，(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG， true)。
+enable.idempotence=ture;
+ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG=ture
 
 当 Producer 发送了具有相同字段值的消息后，Broker 能够自动知晓这些消息已经重复了，于是可以在后台默默地把它们“丢弃”掉。
 
@@ -652,7 +700,7 @@ Consumer Group 是 Kafka 提供的可扩展且具有容错性的消费者机制
 3. Consumer Group 下所有实例订阅的主题的单个分区，只能分配给组内的某个 Consumer 实例消费。这个分区当然也可以被其他的 Group 消费。 
 
 
-点对点模型和发布(消费队列) / 订阅模型 
+点对点消息队列模型(消息队列)和发布 / 订阅模型 
 
 国内很多文章都习惯把消息中间件这类框架统称为消息队列，我在这里不评价这种提法是否准确，只是想提醒你注意这里所说的消息队列，特指经典的消息引擎模型。 
 
@@ -662,7 +710,7 @@ Consumer Group 是 Kafka 提供的可扩展且具有容错性的消费者机制
 伸缩性（scalability）很差
 下游的多个 Consumer 都要“抢”这个共享消息队列的消息。
 
-**发布 / 订阅模型**  每个都要消费全部。
+**发布、订阅模型**  每个节点要消费全部。
 允许消息被多个 Consumer 消费。
 伸缩性（scalability）很差，**每个订阅者都必须要订阅主题的所有分区**。
 
@@ -686,7 +734,7 @@ Broker 端的消息留存机制，Kafka 的 Consumer Group 完美地规避了上
 如果所有实例分别属于不同的 Group，那么它实现的就是发布 / 订阅模型。 
 
 **Consumer Group实例个数**
-Consumer 实例的数量应该等于该 Group 订阅主题的分区总数。 
+Consumer实例的数量应该等于该 Group 订阅主题的分区总数。 
 
 
 三个topic A、B、C:  A1个分片、B有2个分片 、C有3个分片
@@ -700,13 +748,11 @@ Consumer 实例的数量应该等于该 Group 订阅主题的分区总数。
 
 
 **Consumer Group 管理位移（Offset）**
-对于 Consumer Group 而言 位移Offset 是一组 KV 对。
-Key 是分区，V 对应 Consumer 消费该分区的最新位移
+Consumer Group 的位移Offset 是一组 KV 对。Key是分区，V 对应 Consumer消费该分区的最新位移
 
 老版本的 Consumer Group 把位移保存在 ZooKeeper 中.不适合进行频繁的写更新
 
-新版本的 Consumer Group 保存在 Kafka Broker端 内部主题。 
-__consumer_offsets
+新版本的 Consumer Group 保存在 Kafka Broker端 内部主题。__consumer_offsets
 
 
 
@@ -796,7 +842,7 @@ Kafka 提供了专门的后台线程定期地巡检待 Compact 的主题，看�
 
 
 
-Coordinator协调者：
+Coordinator协调者：它驻留在 Broker 端的内存中
 它专门为 Consumer Group 服务，负责为 Group 执行 Rebalance 以及提供位移管理和组成员管理等。 
 
 
@@ -823,7 +869,8 @@ Rebalance 的弊端:
 2.2 Consumer 实际消费能力对 Rebalance 的影响:max.poll.interval.ms  默认值是 5 分钟
 它限定了 Consumer 端应用程序两次调用 poll 方法的最大时间间隔。
 
-
+Consumer发送心跳请求间隔过长
+Consumer消费时间超长:5分钟
 
 第一类非必要 Rebalance 是因为未能及时发送心跳，导致 Consumer 被“踢出”Group 而引发的  。
 设置 session.timeout.ms 和 heartbeat.interval.ms  的值
@@ -911,7 +958,7 @@ Consumer 客户端在提交位移时出现了错误或异常，而且还是那�
 
 
 场景一  单条消费时间过长
-1.缩短单条消息处理的时间  。
+1.缩短单条消息处理的时间 。
 2.增加 Consumer 端允许下游系统消费一批消息的最大时长  。
 3.减少下游系统一次性消费的消息总数  
 4.下游系统使用多线程来加速消费  。
@@ -946,6 +993,22 @@ Consumer 客户端在提交位移时出现了错误或异常，而且还是那�
 和生产者不同的是，构建 KafkaConsumer 实例时是不会创建任何 TCP 连接的
 
 new KafkaConsumer(properties) 不会建立连接，和生产者不一样!
+
+
+第 1 步：构造参数对象。
+
+第 2 步：利用参数对象创建 KafkaProducer 对象。 
+
+KafkaConsumer.poll
+第 4 步：调用 KafkaConsumer  的 close 方法关闭生产者并释放各种系统资源。
+
+1. 确定协调者和获取集群元数据。
+2. 连接协调者，令其执行组成员管理操作。
+3. 执行实际的消息获取。
+
+
+1. 发起 FindCoordinator 请求时  。
+
 
 
 TCP 连接是在调用 KafkaConsumer.poll 方法时被创建的  
@@ -1246,6 +1309,9 @@ B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费to
 后边跟异常离开一样
 
 
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/broker重平衡流程_1新成员.png)
+
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/broker重平衡流程_2成员离开.png)
 
 --------------------------------------------------
 **26 | 你一定不能错过的Kafka控制器**  选举
