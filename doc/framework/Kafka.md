@@ -1111,7 +1111,7 @@ Lag 越大的话，Lead 就越小，反之也是同理  。
 
 Apache Kafka 只能提供数据冗余1。
 
-主题>多个分区>每个分区有副本
+主题>多个分区>每个分区有多个副本(领导者、追随者)
 
 所谓副本（Replica），本质就是一个只能追加写消息的提交日志  
 
@@ -1200,7 +1200,7 @@ Reactor(Acceptor线程[分发线程Dispatcher])
 多个client>Broker
  
 1.分发 Broker
-SocketServer 组件:作Dispatcher分发
+SocketServer 组件:作Dispatcher调度分发
 Acceptor 线程和网络线程池
 
 Broker 默认有: 3 个网络线程池
@@ -1213,21 +1213,25 @@ Dispatcher 只是用于请求分发而不负责响应回传。
 
 
 3.流程
-client(produce生产、fetch出售，消费)  >> SocketServer 组件(3个网络线程池分发) 
-SocketServer 组件(3个网络线程池分发) >>网络线程(收到转发请求)
+client(produce生产、fetch出售，消费)  >>Broker端的SocketServer 组件(3个网络线程分发) 
+SocketServer 组件(3个网络线程分发) >>网络线程(收到转发请求)
 网络线程(收到转发请求)>>共享请求队列>> IO 线程池默认8线程(从队列中取出来请求) num.io.threads 
 
-IO 线程池:(操作(produce生产写入磁盘、fetch请求磁盘缓存读数据))
+IO 线程池:(操作(produce生产请求写入磁盘、fetch消费请求磁盘缓存读数据))
 
 IO 线程池处理完成>>网络线程池响应队列
-IO 线程池处理完成>>网络线程池响应队列
+ 
 
 
 Purgatory 的组件:缓存延时请求  （Delayed Request）
 未满足条件不能立刻处理的请求
+例:acks=all 每个分区领导和追随者都存储成功。
 
 
-**请求队列响应队列区别**
+对应的网络线程负责将 Response 返还给客户端
+
+
+**请求队列、响应队列区别**
 请求队列是所有网络线程共享的，而响应队列则是每个网络线程专属的 
 
 
@@ -1242,6 +1246,7 @@ LeaderAndIsr、StopReplica
 
 
 
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/Broker处理请求流程.png)
 ----------------------------------------------------------------
 **25 | 消费者组重平衡全流程解析** 
 
@@ -1259,6 +1264,19 @@ LeaderAndIsr、StopReplica
 消费者端的心跳线程（Heartbeat Thread）
 
 
+Empty空:无成员、可存在已提交位移
+Dead死:无成员、组信息被删
+PreparingRebalance准备:所有成员都要重新请求加入组
+CompletingRebalance完成:成员都已入组，等待分配方案
+Stable稳定:都在正常消费
+
+
+
+
+加入组(JoinGroup 请求)和等待领导者方案(SyncGroup 请求)
+
+
+
 消费者定期>>发送心跳请求（Heartbeat Request）>>Broker 端的协调者
 
 当协调者决定开启新一轮重平衡后:
@@ -1267,7 +1285,7 @@ Broker 端的协调者>> 响应内容增加 rebalance_in_progress响应中
 
 **消费者端重平衡流程**  
 
-两个步骤:
+两个步骤:加入组、等待领导者消费者（Leader Consumer）分配方案
 1.JoinGroup 请求加入组(第一个加入者就是领导者)
 2.SyncGroup 请求 等待领导者消费者（Leader Consumer）分配方案
 3.LeaveGroup 请求 离开组请求
@@ -1317,7 +1335,7 @@ B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费to
 **26 | 你一定不能错过的Kafka控制器**  选举
 
 
-控制器组件（Controller）:管理和协调整个 Kafka 集群
+控制器组件（Controller）:管理和协调整个Kafka 集群
 
 集群中任意一台 Broker 都能充当控制器的角色。
 
@@ -1328,6 +1346,7 @@ B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费to
 是一个提供高可靠性的分布式协调服务框架  
 集群成员管理、分布式锁、领导者选举
 
+Apache ZooKeeper:高可靠性框架
 
  znode节点:保存一些元数据协调信息。 
 
@@ -1335,8 +1354,8 @@ B (非领导者null)SyncGroup>Broker协调者 (B你消费topic2)> B(B你消费to
 临时 znode: 会话绑定，会话结束，该节点会被自动删除。 
 
 **zookeeper Watch 通知功能**
-客户端监控 znode 变更的能力
 
+  Watch 通知功能:客户端监控znode变更的能力
 znode 节点被创建、删除，子节点数量发生变化、数据变更
 
 通过节点变更监听器 (ChangeHandler) 的方式显式通知客户端。 
@@ -1344,20 +1363,20 @@ znode 节点被创建、删除，子节点数量发生变化、数据变更
 
 **kafka在zookeeper 各个节点**
 
-II./brokers/ids:目录下创建临时节点znode。
+II./brokers/ids:临时节点znode。
 Broker 宕机或主动关闭后，该 Broker 与 ZooKeeper 的会话结束，这个 znode 会被自动删除。
 机制将这一变更推送给控制器
 /brokers/topic
 
-II./controller:控制器节点，先到先得，第一个就是控制器
-Broker 在启动时，尝试去 ZooKeeper 中创建 /controller 节点
+II./controller:控制器节点，先到先得，第一个请求的就是broker控制器
+Broker在启动时，尝试去 ZooKeeper 中创建 /controller 节点
 第一个成功创建 /controller 节点的 Broker 会被指定为控制器  。 
 
 
 II./consumers:记录消费者组信息
-/consumer_group_name消费者组名/offset 位移
-/consumer_group_name消费者组名/ids 组内多少个消费者
-/consumer_group_name消费者组名/owners   消费者leader 负责重平衡分配
+/consumer_group_name消费者组名/offset位移
+/consumer_group_name消费者组名/ids组内多少个消费者
+/consumer_group_name消费者组名/owners消费者leader负责重平衡分配
 
 
 
@@ -1372,7 +1391,7 @@ II./admin
 
 **Broker控制器controller如何被选出**
 
-Broker 在启动时尝试创建  /controller 节点 :临时节点
+Broker启动时尝试在zk创建/controller 节点:临时节点
 
 第一个成功创建 /controller 节点的 Broker 会被指定为控制器  。
 
@@ -1387,7 +1406,7 @@ kafka-topics 脚本
 kafka-reassign-partitions 脚本
    对已有主题分区进行细粒度的分配功能。这部分功能也是控制器实现的
 
-3.  Preferred 领导者选举较喜欢
+3.  Preferred (较喜欢)领导者选举
     Kafka 为了避免部分 Broker 负载过重而提供的一种换 Leader 的方案
 
 是控制器的职责范围就可以了。 
@@ -1473,7 +1492,7 @@ ZooKeeper 中手动删除 /controller 节点。  具体命令是 rmr /controller
 1. 定义消息可见性，即用来标识分区下的哪些消息是可以被消费者消费的。
 2. 帮助 Kafka 完成副本同步。
 
-已提交消息 >> 消费者位移 >= 高水位值 >> 未提交消息 >> 日志末端位移LEO
+已提交消息 >> 消费者位移 >= 高水位值 >> 未提交消息 >> 日志末端位移:LSO（Log Stable Offset）
 
 
 
@@ -1674,7 +1693,7 @@ Kafka 的消费者读取消息是可以重演的（replayable）。
 Earliest:将位移调整到主题当前最早位移处。 不一定就是 0
 如果你想要重新消费主题的所有消息，那么可以使用 Earliest 策略  。
 
-Latest 策略:位移重设成最新末端位移。
+Latest 策略:位移重设成最新末端位移。跳过所有历史消息
 跳过所有历史消息，打算从最新的消息处开始消费的话，可以使用 Latest 策略。
 
 Current 策略:位移调整成消费者当前提交的最新位移。
