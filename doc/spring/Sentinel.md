@@ -23,7 +23,7 @@ https://github.com/alibaba/spring-cloud-alibaba/wiki/Sentinel
 
 
 
-
+https://github.com/alibaba/Sentinel/wiki/如何使用
 
 
 **I.spring-cloud-alibaba**
