@@ -135,6 +135,10 @@ GET /_cat/nodes
 GET /_cat/nodes?v
 /usr/bin/curl http://xxx:9200/_cat/nodes?v
 
+查询索引结构 -建表语句
+
+GET yxxxx_data_20210625/_mapping
+
 
 **I.Logstash安装**
 
