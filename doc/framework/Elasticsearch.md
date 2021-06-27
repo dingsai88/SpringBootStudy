@@ -1860,3 +1860,51 @@ POST /_sql?format=json
 "query": "select * from geonames     limit 11"
 }
 
+
+
+POST /_sql?format=txt
+{
+"query": "select user_id,age  from aaaaa limit 200"
+}
+
+
+
+POST /_sql?format=json
+{
+"query": "select user_id from bbbbbb where user_id in (12) limit  5000  "
+}
+
+
+
+/usr/bin/curl  aaaaaa:9200/_sql?format=txt -X POST  -H 'Content-Type:application/json'   -d '{"query":"   select user_id from bbbbbbb "}'  
+
+
+
+
+游标
+
+POST /_sql?format=json
+{
+"cursor": "sDXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAAEWYUpOYklQMHhRUEtld3RsNnFtYU1hQQ==:BAFmBGRhdGUBZgVsaWtlcwFzB21lc3NhZ2UBZgR1c2Vy9f///w8="
+}
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
