@@ -1,6 +1,10 @@
 package com.ding.study.nowcoder.a1Link_ReverseList;
 
 /**
+ *
+ * 新建一个result节点，把head 节点一个一个复制过去。
+ * head越来越短.
+ *
  * @author daniel 2021-1-4 0004.
  *         int val;
  *         ListNode next = null;
@@ -11,16 +15,16 @@ package com.ding.study.nowcoder.a1Link_ReverseList;
  */
 public class Solution {
     public static ListNode ReverseList(ListNode head) {
-        ListNode pre=null;
+        ListNode result=null;
         ListNode next=null;
         while(head!=null){
             next=head.next;
-            head.next=pre;
-            pre=head;
+            head.next=result;
+            result=head;
             head=next;
         }
 
-        return pre;
+        return   result;
     }
 
 

@@ -1875,8 +1875,13 @@ POST /_sql?format=json
 }
 
 
-
+I.查询
 /usr/bin/curl  aaaaaa:9200/_sql?format=txt -X POST  -H 'Content-Type:application/json'   -d '{"query":"   select user_id from bbbbbbb "}'  
+
+
+
+I.写入插入
+/usr/bin/curl -X POST "exxxxxx:9200/yrcf_bbbbbb/_doc/?pretty" -H 'Content-Type: application/json' -d '{"user_id":8099001,"medal_10_dengyu90":"1","phone":"MTU5MDEyMjkxNjY=","name":"测试","org_reg_chnl_cd":"2"}'
 
 
 
