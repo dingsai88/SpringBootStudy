@@ -417,7 +417,7 @@ POST users/_doc/1/_update?pretty
 # 删除文档
 DELETE users/_doc/1
 
-
+curl -XDELETE "http://xxxxx5:9200/users/_doc/1"
 
 
 **Bulk API 一次网络请求多次API操作**  都没使出来
