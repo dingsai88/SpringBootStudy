@@ -418,8 +418,8 @@ POST users/_doc/1/_update?pretty
 DELETE users/_doc/1
 
 curl -XDELETE "http://xxxxx5:9200/users/_doc/1"
-
-
+索引
+curl -XDELETE http://10.aa.aa.aa:9200/geonames
 **Bulk API 一次网络请求多次API操作**  都没使出来
 
 
@@ -648,6 +648,17 @@ GET /movies/_search?q=title:2012&sort=year:desc&from=0&size=10&timeout=1s
 "profile":"true"
 }
 
+https://www.elastic.co/guide/en/elasticsearch/reference/7.13/sql-rest-fields.html
+timeout
+request_timeout
+
+
+
+开始超时时间
+POST /_sql?format=json
+{
+"query": "select user_id,age  from bbbb  ","fetch_size": "5000","request_timeout": "1s"
+}
 
 #指定字段  只查询title字段里包含2012的数据，返回2行
 GET /movies/_search?q=title:2012
