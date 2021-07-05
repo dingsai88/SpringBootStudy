@@ -16,8 +16,10 @@ public class ThreeOrdersMain {
     List<Integer> mid = new ArrayList<>();
     List<Integer> back = new ArrayList<>();
 
-
-    //前序遍历
+    /**
+     * 先序遍历  先根，根在第一个
+     * @param root
+     */
     public void PreorderTraversal(TreeNode root) {
         if (root == null)
             return;
@@ -26,7 +28,11 @@ public class ThreeOrdersMain {
         PreorderTraversal(root.right);
     }
 
-    //中序遍历
+
+    /**
+     * 中序遍历  根在中间
+     * @param root
+     */
     public void InorderTraversal(TreeNode root) {
         if (root == null)
             return;
@@ -35,7 +41,10 @@ public class ThreeOrdersMain {
         InorderTraversal(root.right);
     }
 
-    //后序遍历
+    /**
+     * 后序遍历， 根在最后
+     * @param root
+     */
     public void PostorderTraversal(TreeNode root) {
         if (root == null)
             return;
