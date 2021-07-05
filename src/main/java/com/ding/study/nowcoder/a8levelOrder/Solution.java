@@ -35,10 +35,34 @@ public class Solution {
         if (root == null) {
             return result;
         }
-        count(root, 0);
-
+        count2(root, 0);
         return result;
     }
+
+    public void count2(TreeNode root,Integer i){
+        if(result.size()==i){
+            result.add(new ArrayList<>());
+        }
+        ArrayList data=result.get(i);
+        data.add(root.val);
+        if(root.left!=null){
+            count2(root.left,i+1);
+        }
+
+        if(root.right!=null){
+            count2(root.right,i+1);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
 
     public void count(TreeNode root, int level) {
         if (level == result.size()) {

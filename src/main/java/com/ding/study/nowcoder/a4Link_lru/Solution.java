@@ -46,8 +46,6 @@ public class Solution {
        // int[][] input = new int[][]{{1, 4, 4},{1, 1, 1}, {1, 2, 2},{2, 2}, {1, 3, 3}, {2, 1},  {2, 2},  {2, 4},  {2, 4},  {2, 4}};
         int[][] input = new int[][]{ {1, 1, 1}, {1, 2, 2}, {1, 3, 2},   {2, 1}, {1,4,4},{2,2}};
         System.out.println(JsonUtils.convertObjToJsonString(solution.LRU(input, 3)));
-
-
     }
 
 
