@@ -12,6 +12,7 @@ import java.util.LinkedList;
 public class TestMain {
 
     public static void main(String args[]) {
+/*
 
         LinkedList<Integer> linkedList1 = new LinkedList<>();
         LinkedList<Integer> linkedList2 = new LinkedList<>();
@@ -30,10 +31,35 @@ public class TestMain {
         LocalDateTime ldt = LocalDateTime.parse("2021-02-08T00:00:00.000+0800",df);
         System.out.println("LocalDateTime转成String类型的时间："+ldt);
 
+*/
 
+        for(int i=1;i<6;i++){
+            for(int j=1;j<6;j++){
+                System.out.println(getNub(i)+"排"+getNub(j)+"列");
+            }
+        }
 
     }
 
+
+    private static String getNub(int i){
+        if(i==1){
+            return "一";
+        }
+        if(i==2){
+            return "二";
+        }
+        if(i==3){
+            return "三";
+        }
+        if(i==4){
+            return "四";
+        }
+        if(i==5){
+            return "五";
+        }
+        return "";
+    }
     /**
      * 合并排序链表
      * @param list1

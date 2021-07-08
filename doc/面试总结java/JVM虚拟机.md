@@ -261,7 +261,7 @@ jdk6之前 Parallel Scavenge + Serial Old
 jdk6、7、8 Parallel Scavenge + Parallel Old
 jdk9 G1(Garbage First) 整理上看基于标记整理，局部Region之间基于复制算法实现；没有空间碎片
 
-Eden区，两个Survivor(色外ver)区的内存空间比例为：8:1:1
+Eden区，两个 Survivor(色外ver)区的内存空间比例为：8:1:1
 
 II.新生代young收集器
 1.Serial连续的（单个CPU效率最高，client模式下）：复制算法；STW(StopTheWorld)后单线程收集
@@ -280,7 +280,7 @@ CMS:始标(STW)>并发标(并发)>重标(STW)>并发清除
  
 
 II.G1（面向服务端的收集器）新老都用（低停顿）jdk7时开始提供：
-Region分类:Eden、Survivor、Old、Humongous
+Region分类:Eden、Survivor、Old、Humongous巨大
 
 跨代问题:CardTable  跨Region: RememberedSet
 
