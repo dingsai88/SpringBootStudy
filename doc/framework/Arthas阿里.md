@@ -3,12 +3,18 @@
 **I.安装和启动arthas**
 https://arthas.aliyun.com/doc/quick-start.html
 
-
 curl -O https://arthas.aliyun.com/arthas-boot.jar
+
+curl  -x 代理:8000 -O https://arthas.aliyun.com/arthas-boot.jar
+
+pip3 --proxy="http://代理:8000"   install esrally
+wget –no-check-certificate https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-linux-x86_64.tar.gz  -e use_proxy=yes -e https_proxy=代理:8000
+
+**可用:**
+java -jar arthas-boot.jar --repo-mirror aliyun --use-http
 java -jar arthas-boot.jar
 
-可用:
-java -jar arthas-boot.jar --repo-mirror aliyun --use-http
+java -Dhttp.proxyHost=squid.jishu.idc -Dhttp.proxyPort=8000 -Dhttps.proxyHost=squid.jishu.idc -Dhttps.proxyPort=8000 -jar arthas-boot.jar --repo-mirror aliyun --use-http
 
 
 执行该程序的用户需要和目标进程具有相同的权限。
