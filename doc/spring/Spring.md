@@ -4386,3 +4386,195 @@ barista-service
 
 
 
+
+
+
+
+I.Spring cache缓存 本地缓存
+https://blog.csdn.net/clementad/article/details/53009899
+
+1、引入依赖： 
+<!-- local cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+
+
+2、配置：
+有两种方法：
+- application.yml配置文件中配置：
+    - 优点：简单
+    - 缺点：无法针对每个cache配置不同的参数，比如过期时长、最大容量
+- 配置类中配置
+    - 优点：可以针对每个cache配置不同的参数，比如过期时长、最大容量
+    - 缺点：要写一点代码
+ 
+
+
+
+2.1、配置文件中直接配置：
+
+    spring:
+      cache:
+        type: CAFFEINE
+        cache-names:
+          - getPersonById
+          - name2
+        caffeine:
+          spec: maximumSize=500,expireAfterWrite=5s
+
+
+spring:
+cache:
+type: CAFFEINE
+cache-names:
+- getIndexName
+- getMainDataVersion
+caffeine:
+spec: maximumSize=500,expireAfterWrite=50s
+
+  
+
+然后还要在主类中加上@EnableCaching注解：
+
+    @SpringBootApplication
+    @EnableScheduling
+    @EnableCaching
+    public class MySpringBootApplication
+
+
+
+
+2.2、另外一种更灵活的方法是在配置类中配置：
+
+    package com.xjj.config;
+     
+    import java.util.ArrayList;
+    import java.util.concurrent.TimeUnit;
+     
+    import org.springframework.cache.CacheManager;
+    import org.springframework.cache.annotation.EnableCaching;
+    import org.springframework.cache.caffeine.CaffeineCache;
+    import org.springframework.cache.support.SimpleCacheManager;
+    import org.springframework.context.annotation.Bean;
+    import org.springframework.context.annotation.Configuration;
+    import org.springframework.context.annotation.Primary;
+     
+    import com.github.benmanes.caffeine.cache.Caffeine;
+     
+     
+    /**
+     * Cache配置類，用于缓存数据
+     * @author XuJijun
+     *
+     */
+    @Configuration
+    @EnableCaching
+    public class CacheConfig {
+     
+    	public static final int DEFAULT_MAXSIZE = 50000;
+    	public static final int DEFAULT_TTL = 10;
+    	
+    	/**
+    	 * 定義cache名稱、超時時長（秒）、最大容量
+    	 * 每个cache缺省：10秒超时、最多缓存50000条数据，需要修改可以在构造方法的参数中指定。
+    	 */
+    	public enum Caches{
+    		getPersonById(5), //有效期5秒
+    		getSomething, //缺省10秒
+    		getOtherthing(300, 1000), //5分钟，最大容量1000
+    		;
+    		
+    		Caches() {
+    		}
+     
+    		Caches(int ttl) {
+    			this.ttl = ttl;
+    		}
+     
+    		Caches(int ttl, int maxSize) {
+    			this.ttl = ttl;
+    			this.maxSize = maxSize;
+    		}
+    		
+    		private int maxSize=DEFAULT_MAXSIZE;	//最大數量
+    		private int ttl=DEFAULT_TTL;		//过期时间（秒）
+    		
+    		public int getMaxSize() {
+    			return maxSize;
+    		}
+    		public int getTtl() {
+    			return ttl;
+    		}
+    	}
+    	
+    	/**
+    	 * 创建基于Caffeine的Cache Manager
+    	 * @return
+    	 */
+    	@Bean
+    	@Primary
+    	public CacheManager caffeineCacheManager() {
+    		SimpleCacheManager cacheManager = new SimpleCacheManager();
+    		
+    		ArrayList<CaffeineCache> caches = new ArrayList<CaffeineCache>();
+    		for(Caches c : Caches.values()){
+    			caches.add(new CaffeineCache(c.name(), 
+    				Caffeine.newBuilder().recordStats()
+    				.expireAfterWrite(c.getTtl(), TimeUnit.SECONDS)
+    				.maximumSize(c.getMaxSize())
+    				.build())
+    			);
+    		}
+    		
+    		cacheManager.setCaches(caches);
+     
+    		return cacheManager;
+    	}
+    	
+    }
+
+
+
+
+3、代码中使用：
+
+    package com.xjj.service;
+     
+    import org.slf4j.Logger;
+    import org.slf4j.LoggerFactory;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.cache.annotation.Cacheable;
+    import org.springframework.stereotype.Service;
+     
+    import com.xjj.dao.PersonDAO;
+    import com.xjj.entity.Person;
+     
+    @Service
+    public class PersonService {
+    	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    	
+    	@Autowired
+    	private PersonDAO personDao;
+    	
+     
+    	/**
+    	 * 根据id获取Person对象，使用缓存
+    	 * @param id
+    	 * @return Person对象
+    	 */
+    	@Cacheable(value="getPersonById", sync=true)
+    	public Person getPersonById(int id){
+    		logger.debug("getting data from database, personId={}", id);
+    		return personDao.getPersonById(id);
+    	}
+    	
+    }
+ 
+
+
