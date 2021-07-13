@@ -702,7 +702,8 @@ OOM产生的原因多种多样，有些程序未必产生OOM，不断FGC(CPU飙�
   打印TLAB的使用情况
 * -XX:TLABSize
   设置TLAB大小
-* -XX:+DisableExplictGC
+* -XX:+DisableExplicitGC
+  
   System.gc()不管用 ，FGC
 * -XX:+PrintGC
 * -XX:+PrintGCDetails
