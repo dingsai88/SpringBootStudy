@@ -57,6 +57,8 @@ public class Solution_Stack_isValid {
 
     public static void main(String[] args) {
 
+
+
         System.out.println(new SolutionIsValidKuoHao().isValid("[](){}"));
         //这样不合法，不是你理解的那样，只需要配对就行  :返回false
         System.out.println(new SolutionIsValidKuoHao().isValid("[(]){}"));

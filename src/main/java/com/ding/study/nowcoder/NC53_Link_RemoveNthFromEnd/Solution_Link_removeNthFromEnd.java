@@ -31,6 +31,7 @@ public class Solution_Link_removeNthFromEnd {
             i++;
             count = count.next;
         }
+
         if (n == i) {
             return del.next;
         }

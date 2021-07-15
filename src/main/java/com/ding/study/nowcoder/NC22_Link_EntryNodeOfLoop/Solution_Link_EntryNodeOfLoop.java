@@ -65,7 +65,7 @@ public class Solution_Link_EntryNodeOfLoop {
         listNode7.next = listNode6;
         listNode6.next = listNode5;
         listNode5.next=listNode7;
-
+       // System.out.println("--------------:"+ JsonUtils.convertObjToJsonString(listNode9));
         System.out.println("--------987657  ------:");
         ListNode temp2 = new Solution_Link_EntryNodeOfLoop().EntryNodeOfLoop(listNode9);
         System.out.println("--------------:222");
