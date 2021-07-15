@@ -3,7 +3,7 @@ package com.ding.study.nowcoder.NC14_Tree_zigzagLevelOrder;
 import java.util.ArrayList;
 
 /**
- * NC14 二叉树的之字形层序遍历
+ * NC14 二叉树的之字形层序遍历          之字
  * <p>
  * <p>
  * 描述
