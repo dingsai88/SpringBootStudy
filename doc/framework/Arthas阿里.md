@@ -159,3 +159,31 @@ https://arthas.aliyun.com/doc/advanced-use.html
 
 
 
+
+
+
+
+I.问题 skywalking和arthas兼容问题
+watch等功能不能使用
+
+https://arthas.aliyun.com/doc/faq.html
+https://github.com/apache/skywalking/blob/master/docs/en/FAQ/Compatible-with-other-javaagent-bytecode-processing.md
+
+java.lang.ClassFormatError: null、skywalking arthas 兼容使用
+
+当出现这个错误日志java.lang.ClassFormatError: null,通常情况下都是被其他字节码工具修改过与arthas修改字节码不兼容。
+
+比如: 使用 skywalking V8.1.0 以下版本 无法trace、watch 被skywalking agent 增强过的类, V8.1.0 以上版本可以兼容使用,更多参考skywalking配置 skywalking compatible with other javaagent bytecode processing。
+
+
+启动参数增加:
+-Dskywalking.agent.is_cache_enhanced_class=true -Dskywalking.agent.class_cache_mode=MEMORY
+
+
+
+
+
+
+
+
+ 
