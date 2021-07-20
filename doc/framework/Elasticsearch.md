@@ -302,7 +302,7 @@ Schema(DataBase数据库)==Mapping
 增删改查
 GET users/_doc/1
 
-###  Index & Update
+###  Index & Update 修改 更新
 #Update 指定 ID  (先删除，在写入)  两次调用版本号会增加
 PUT users/_doc/1
 {
