@@ -970,7 +970,7 @@ Hoxton.SR8>2.2.5.RELEASE
 
 
 II.用法1:
-
+https://github.com/alibaba/Sentinel/wiki/熔断降级
 熔断 配置
 @PostConstruct
 public static void initDegradeRuleStudy() {
@@ -978,13 +978,49 @@ log.info("ZStudyController.initDegradeRuleStudy");
 List<DegradeRule> rules = new ArrayList<>();
 DegradeRule rule = new DegradeRule();
 rule.setResource("HelloWorldDegradeRule");
-// set threshold RT, 10 ms
+// set threshold RT, 10 ms  慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
 rule.setCount(10);
+//熔断策略，支持慢调用比例/异常比例/异常数策略 
 rule.setGrade(RuleConstant.DEGRADE_GRADE_RT);
 rule.setTimeWindow(10);
 rules.add(rule);
 DegradeRuleManager.loadRules(rules);
 }*
+
+
+熔断2 
+        List<DegradeRule> rules = new ArrayList<>();
+        //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+        double count=1500;
+        //熔断时长，单位为 s
+        int timeWindow=30;
+      // 慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）  Circuit breaker opens when slow request ratio > 60%   :5%
+        double slowRatioThreshold=0.05;
+        //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+        int minRequestAmount=10;
+       //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）  2分钟
+        int statIntervalMs=2*60*1000;
+
+        DegradeRule ruleSearchUserTag = new DegradeRule(searchUserTag_Sentinel)
+                .setGrade(CircuitBreakerStrategy.SLOW_REQUEST_RATIO.getType())
+                //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+                .setCount(count)
+                // Retry timeout (in second) 熔断时长，单位为 s
+                .setTimeWindow(timeWindow)
+                // Circuit breaker opens when slow request ratio > 60%  慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）
+                .setSlowRatioThreshold(slowRatioThreshold)
+                //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+                .setMinRequestAmount(minRequestAmount)
+                //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）
+                .setStatIntervalMs(statIntervalMs);
+        rules.add(ruleSearchUserTag);
+
+        DegradeRuleManager.loadRules(rules);
+
+
+
+
+
 
 
 限流  配置
