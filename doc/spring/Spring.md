@@ -424,7 +424,7 @@ java8 ide lombak
 
 
 
-JPA 为对象关系映射提供了⼀种基于 POJO 的持久化模型
+JPA 为对象关系映射提供了一种基于 POJO 的持久化模型
 简化数据持久化代码的开发⼯作
 为 Java 社区屏蔽不同持久化 API 的差异
 
@@ -433,7 +433,7 @@ JPA 为对象关系映射提供了⼀种基于 POJO 的持久化模型
 
 **Spring Data**
 
-在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+在保留底层存储特性的同时，提供相对一致的、基于 Spring 的编程模型
 
 
 主要模块：
@@ -496,14 +496,14 @@ private Money price;
 
 
 18 - 通过Spring Data JPA操作数据库
-在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+在保留底层存储特性的同时，提供相对一致的、基于 Spring 的编程模型
 
-JPA 为对象关系映射提供了⼀种基于 POJO 的持久化模型
+JPA 为对象关系映射提供了一种基于 POJO 的持久化模型
 • 简化数据持久化代码的开发⼯作
 • 为 Java 社区屏蔽不同持久化 API 的差异
 
 **Spring Data**
-在保留底层存储特性的同时，提供相对⼀致的、基于 Spring 的编程模型
+在保留底层存储特性的同时，提供相对一致的、基于 Spring 的编程模型
 主要模块
 • Spring Data Commons
 • Spring Data JDBC
@@ -558,7 +558,7 @@ Repository<T, ID> 接⼝
 
 
 Project Lombok
-Project Lombok 能够⾃动嵌⼊ IDE 和构建⼯具，提升开发效率
+Project Lombok 能够自动嵌⼊ IDE 和构建⼯具，提升开发效率
 常⽤功能
 • @Getter / @Setter
 • @ToString
@@ -583,7 +583,7 @@ Repository<T, ID> 接⼝
 
 **定义查询**
 
-根据⽅法名定义查询
+根据方法名定义查询
 • find…By… / read…By… / query…By… / get…By…
 • count…By…
 • …OrderBy…[Asc / Desc]
@@ -643,11 +643,11 @@ JpaRepositoryFactory.getTargetRepository
 
 
 
-**接⼝中的⽅法是如何被解释的**
+**接⼝中的方法是如何被解释的**
 RepositoryFactorySupport.getRepository 添加了Advice
 • DefaultMethodInvokingMethodInterceptor
 • QueryExecutorMethodInterceptor
-AbstractJpaQuery.execute 执⾏具体的查询
+AbstractJpaQuery.execute 执行具体的查询
 语法解析在 Part 中
 
 
@@ -666,7 +666,7 @@ AbstractJpaQuery.execute 执⾏具体的查询
 
 认识 MyBatis
 MyBatis（https://github.com/mybatis/mybatis-3）
-• ⼀款优秀的持久层框架
+• 一款优秀的持久层框架
 • ⽀持定制化 SQL、存储过程和⾼级映射
 
 
@@ -709,8 +709,8 @@ MyBatis Generator（http://www.mybatis.org/generator/）
 • SQL Map XML
 
 
-**运⾏ MyBatis Generator**
-**I.命令⾏   我自己用的方式**
+**运行 MyBatis Generator**
+**I.命令行   我自己用的方式**
 • java -jar mybatis-generator-core-x.x.x.jar -configfile generatorConfig.xml
 
 
@@ -743,7 +743,7 @@ context
 
 MyBatis PageHepler（https://pagehelper.github.io）
 • ⽀持多种数据库
-• ⽀持多种分⻚⽅式
+• ⽀持多种分⻚方式
 • SpringBoot ⽀持（https://github.com/pagehelper/pagehelper-spring-boot ）
 • pagehelper-spring-boot-starter
 
@@ -785,7 +785,7 @@ MyBatis PageHepler（https://pagehelper.github.io）
 docker run 的常⽤选项
 docker run [OPTIONS] IMAGE [COMMAND] [ARG…]
 选项说明
-• -d，后台运⾏容器
+• -d，后台运行容器
 • -e，设置环境变量
 • --expose / -p 宿主端⼝:容器端⼝
 • --name，指定容器名称
@@ -797,9 +797,9 @@ docker run [OPTIONS] IMAGE [COMMAND] [ARG…]
 **国内 Docker 镜像配置**
 
 
-官⽅ Docker Hub
+官方 Docker Hub
 • https://hub.docker.com
-官⽅镜像
+官方镜像
 • 镜像 https://www.docker-cn.com/registry-mirror
 • 下载 https://www.docker-cn.com/get-docker
 阿⾥云镜像
@@ -810,11 +810,11 @@ docker run [OPTIONS] IMAGE [COMMAND] [ARG…]
 
 
 通过 Docker 启动 MongoDB
-官⽅指引
+官方指引
 • https://hub.docker.com/_/mongo
 获取镜像
 • docker pull mongo
-运⾏ MongoDB 镜像
+运行 MongoDB 镜像
 • docker run --name mongo -p 27017:27017 -v ~/dockerdata/mongo:/data/db -e MONGO_INITDB_ROOT_USERNAME=admin
 -e MONGO_INITDB_ROOT_PASSWORD=admin -d mongo 
 
@@ -838,7 +838,7 @@ https://gitee.com/geektime-geekbang/geektime-spring-family/tree/master/Chapter%2
 
 在 Spring 中访问 MongoDB
 
-MongoDB 是⼀款开源的⽂档型数据库
+MongoDB 是一款开源的⽂档型数据库
 • https://www.mongodb.com
 Spring 对 MongoDB 的⽀持
 • Spring Data MongoDB
@@ -887,7 +887,7 @@ Spring Data MongoDB 的 Repository
 在 Spring 中访问 Redis
 
 
-Redis 是⼀款开源的内存 KV 存储，⽀持多种数据结构
+Redis 是一款开源的内存 KV 存储，⽀持多种数据结构
 • https://redis.io
 Spring 对 Redis 的⽀持
 • Spring Data Redis
@@ -899,13 +899,13 @@ Spring 对 Redis 的⽀持
 Jedis 客户端的简单使⽤
 • Jedis 不是线程安全的
 • 通过 JedisPool 获得 Jedis 实例
-• 直接使⽤ Jedis 中的⽅法
+• 直接使⽤ Jedis 中的方法
 
 
 
 **通过 Docker 启动 Redis**
 
-官⽅指引
+官方指引
 • https://hub.docker.com/_/redis
 获取镜像
 • docker pull redis
@@ -919,8 +919,8 @@ Redis 的哨兵与集群模式
 
 
 **Redis 的哨兵模式**
-Redis Sentinel 是 Redis 的⼀种⾼可⽤⽅案
-• 监控、通知、⾃动故障转移、服务发现
+Redis Sentinel 是 Redis 的一种⾼可⽤方案
+• 监控、通知、自动故障转移、服务发现
 
 
 JedisSentinelPool 
@@ -929,10 +929,10 @@ JedisSentinelPool
 **Redis 的集群模式**
 
 Redis Cluster
-• 数据⾃动分⽚（分成16384个 Hash Slot ）
-• 在部分节点失效时有⼀定可⽤性
+• 数据自动分⽚（分成16384个 Hash Slot ）
+• 在部分节点失效时有一定可⽤性
 JedisCluster
-• Jedis 只从 Master 读数据，如果想要⾃动读写分离，可以定制
+• Jedis 只从 Master 读数据，如果想要自动读写分离，可以定制
 
 
 了解 Spring 的缓存抽象
@@ -944,8 +944,8 @@ JedisCluster
 
 
 
-为不同的缓存提供⼀层抽象
-• 为 Java ⽅法增加缓存，缓存执⾏结果
+为不同的缓存提供一层抽象
+• 为 Java 方法增加缓存，缓存执行结果
 • ⽀持ConcurrentMap、EhCache、Caffeine、JCache（JSR-107）
 • 接⼝
 • org.springframework.cache.Cache
@@ -1052,9 +1052,9 @@ StringRedisTemplate
 **31 - Project Reactor 介绍（上）**
 
 “在计算机中，响应式编程或反应式编程（英语：Reactive
-Programming）是⼀种⾯向数据流和变化传播的编程范式。这
-意味着可以在编程语⾔中很⽅便地表达静态或动态的数据流，
-⽽相关的计算模型会⾃动将变化的值通过数据流进⾏传播。
+Programming）是一种面向数据流和变化传播的编程范式。这
+意味着可以在编程语⾔中很方便地表达静态或动态的数据流，
+⽽相关的计算模型会自动将变化的值通过数据流进行传播。
 
 
 33 - 通过 Reactive 的方式访问 Redis
@@ -1062,18 +1062,18 @@ Programming）是⼀种⾯向数据流和变化传播的编程范式。这
 Spring Data Redis
 
 
-Lettuce 能够⽀持 Reactive ⽅式
+Lettuce 能够⽀持 Reactive 方式
 Spring Data Redis 中主要的⽀持
 • ReactiveRedisConnection
 • ReactiveRedisConnectionFactory
 • ReactiveRedisTemplate
 • opsForXxx()
 
-通过 Reactive 的⽅式访问数据
+通过 Reactive 的方式访问数据
 MongoDB
 
 Spring Data MongoDB
-MongoDB 官⽅提供了⽀持 Reactive 的驱动
+MongoDB 官方提供了⽀持 Reactive 的驱动
 • mongodb-driver-reactivestreams
 Spring Data MongoDB 中主要的⽀持
 • ReactiveMongoClientFactoryBean
@@ -1082,7 +1082,7 @@ Spring Data MongoDB 中主要的⽀持
 
 
 
-通过 Reactive 的⽅式访问数据
+通过 Reactive 的方式访问数据
 RDBMS
 
 R2DBC （https://spring.io/projects/spring-data-r2dbc）
@@ -1093,7 +1093,7 @@ R2DBC （https://spring.io/projects/spring-data-r2dbc）
 • Microsoft SQL Server（io.r2dbc:r2dbc-mssql）
 
 
-⼀些主要的类
+一些主要的类
 • ConnectionFactory
 • DatabaseClient
 • execute().sql(SQL)
@@ -1103,11 +1103,11 @@ R2DBC （https://spring.io/projects/spring-data-r2dbc）
 
 
 
-⼀些主要的类
+一些主要的类
 • @EnableR2dbcRepositories
 • ReactiveCrudRepository<T, ID>
 • @Table / @Id
-• 其中的⽅法返回都是 Mono 或者 Flux
+• 其中的方法返回都是 Mono 或者 Flux
 • ⾃定义查询需要⾃⼰写 @Query
 
 
@@ -1116,16 +1116,16 @@ R2DBC （https://spring.io/projects/spring-data-r2dbc）
 
 通过 AOP 打印数据访问层摘要
 
-**Spring AOP 的⼀些核⼼概念**
+**Spring AOP 的一些核心概念**
 概念 含义
-Aspect 切⾯
-Join Point 连接点，Spring AOP⾥总是代表⼀次⽅法执⾏
-Advice 通知，在连接点执⾏的动作
+Aspect 切面
+Join Point 连接点，Spring AOP⾥总是代表一次方法执行
+Advice 通知，在连接点执行的动作
 Pointcut 切⼊点，说明如何匹配连接点
-Introduction 引⼊，为现有类型声明额外的⽅法和属性
+Introduction 引⼊，为现有类型声明额外的方法和属性
 Target object ⽬标对象
 AOP proxy AOP 代理对象，可以是 JDK 动态代理，也可以是 CGLIB 代理
-Weaving 织⼊，连接切⾯与⽬标对象或类型创建代理的过程
+Weaving 织⼊，连接切面与⽬标对象或类型创建代理的过程
 
 
 
@@ -1150,7 +1150,7 @@ HikariCP:本身不支持
 
 Alibaba Druid
 • 内置 SQL 输出
-• https://github.com/alibaba/druid/wiki/Druid中使⽤log4j2进⾏⽇志输出
+• https://github.com/alibaba/druid/wiki/Druid中使⽤log4j2进行⽇志输出
 
 
 
@@ -1213,15 +1213,15 @@ I. WebApplicationContext
 
 
 
-⼀个请求的⼤致处理流程
-绑定⼀些 Attribute
+一个请求的大致处理流程
+绑定一些 Attribute
 • WebApplicationContext / LocaleResolver / ThemeResolver
 
 处理 Multipart
 • 如果是，则将请求转为 MultipartHttpServletRequest
 
 Handler 处理
-• 如果找到对应 Handler，执⾏ Controller 及前后置处理器逻辑
+• 如果找到对应 Handler，执行 Controller 及前后置处理器逻辑
 
 处理返回的Model ，呈现视图
 
@@ -1229,27 +1229,27 @@ Handler 处理
 
 
 
-如何定义处理⽅法
+如何定义处理方法
 
 
 定义映射关系
 @Controller
 @RequestMapping
-• path / method 指定映射路径与⽅法
+• path / method 指定映射路径与方法
 • params / headers 限定映射范围
 • consumes / produces 限定请求与响应格式
-⼀些快捷⽅式
+一些快捷方式
 • @RestController
 • @GetMapping / @PostMapping / @PutMapping / @DeleteMapping / @PatchMapping
 
 
-定义处理⽅法
+定义处理方法
 • @RequestBody / @ResponseBody / @ResponseStatus
 • @PathVariable / @RequestParam / @RequestHeader
 • HttpEntity / ResponseEntity
 
 
-定义处理⽅法
+定义处理方法
 详细参数
 • https://docs.spring.io/spring/docs/5.1.5.RELEASE/spring-frameworkreference/web.html#mvc-ann-arguments
 详细返回
@@ -1262,7 +1262,7 @@ Handler 处理
 
 定义类型转换
 ⾃⼰实现 WebMvcConfigurer
-• Spring Boot 在 WebMvcAutoConfiguration 中实现了⼀个
+• Spring Boot 在 WebMvcAutoConfiguration 中实现了一个
 • 添加⾃定义的 Converter  转换器
 • 添加⾃定义的 Formatter 格式化程序
 
@@ -1271,7 +1271,7 @@ Handler 处理
 
 
 定义校验
-• 通过 Validator 对绑定结果进⾏校验
+• 通过 Validator 对绑定结果进行校验
 •• Hibernate Validator
 • @Valid 注解
 • BindingResult 
@@ -1280,7 +1280,7 @@ Handler 处理
 
 Multipart 上传
 • 配置 MultipartResolver
-• Spring Boot ⾃动配置 MultipartAutoConfiguration
+• Spring Boot 自动配置 MultipartAutoConfiguration
 • ⽀持类型 multipart/form-data
 • MultipartFile 类型
 
@@ -1350,7 +1350,7 @@ Thymeleaf
 
 配置 MessageConverter
 • 通过 WebMvcConfigurer 的 configureMessageConverters()
-• Spring Boot ⾃动查找 HttpMessageConverters 进⾏注
+• Spring Boot 自动查找 HttpMessageConverters 进行注
 
 Spring Boot 对 Jackson 的⽀持
 • JacksonAutoConfiguration
@@ -1365,13 +1365,13 @@ Spring Boot 对 Jackson 的⽀持
 使⽤ Thymeleaf
 添加 Thymeleaf 依赖
 • org.springframework.boot:spring-boot-starter-thymeleaf
-Spring Boot 的⾃动配置
+Spring Boot 的自动配置
 • ThymeleafAutoConfiguration
 • ThymeleafViewResolver
 
 
 
-Thymeleaf 的⼀些默认配置
+Thymeleaf 的一些默认配置
 • spring.thymeleaf.cache=true
 • spring.thymeleaf.check-template=true
 • spring.thymeleaf.check-template-location=true
@@ -1386,7 +1386,7 @@ Thymeleaf 的⼀些默认配置
 **48 - 静态资源与缓存**
 
 Spring Boot 中的静态资源配置
-核⼼逻辑
+核心逻辑
 • WebMvcConfigurer.addResourceHandlers()
 常⽤配置
 • spring.mvc.static-path-pattern=/**
@@ -1415,7 +1415,7 @@ resources/,classpath:/resources/,classpath:/static/,classpath:/public/
 
 
 Spring MVC 的异常解析
-核⼼接⼝
+核心接⼝
 • HandlerExceptionResolver
 实现类
 • SimpleMappingExceptionResolver
@@ -1426,8 +1426,8 @@ Spring MVC 的异常解析
 
 
 
-异常处理⽅法
-处理⽅法
+异常处理方法
+处理方法
 • @ExceptionHandler
 添加位置
 • @Controller / @RestController
@@ -1441,7 +1441,7 @@ Spring MVC 的异常解析
 
 
 Spring MVC 的拦截器
-核⼼接⼝
+核心接⼝
 HandlerInteceptor
 • boolean preHandle()
 • void postHandle()
@@ -1459,10 +1459,10 @@ HandlerInteceptor
 
 
 
-常规⽅法
+常规方法
 • WebMvcConfigurer.addInterceptors()
 Spring Boot 中的配置
-• 创建⼀个带 @Configuration 的 WebMvcConfigurer 配置类
+• 创建一个带 @Configuration 的 WebMvcConfigurer 配置类
 • 不能带 @EnableWebMvc（想彻底⾃⼰控制 MVC 配置除外）
 
 
@@ -1481,12 +1481,12 @@ https://docs.spring.io/spring-framework/docs/5.1.5.RELEASE/spring-framework-refe
 
 
 Spring Boot 中的 RestTemplate
-• Spring Boot 中没有⾃动配置 RestTemplate
+• Spring Boot 中没有自动配置 RestTemplate
 • Spring Boot 提供了 RestTemplateBuilder
 • RestTemplateBuilder.build()
 
 
-常⽤⽅法
+常⽤方法
 GET 请求
 • getForObject() / getForEntity()
 POST 请求
@@ -1641,7 +1641,7 @@ SSL校验
 
 
 WebClient
-• ⼀个以 Reactive ⽅式处理 HTTP 请求的⾮阻塞式的客户端
+• 一个以 Reactive 方式处理 HTTP 请求的⾮阻塞式的客户端
 ⽀持的底层 HTTP 库
 • Reactor Netty - ReactorClientHttpConnector
 • Jetty ReactiveStream HttpClient - JettyClientHttpConnector
@@ -1673,7 +1673,7 @@ WebClient 的基本⽤法
 **58 - 设计好的 RESTful Web Service（上）**
 
 
-“REST提供了⼀组架构约束，当作为⼀个整体来应⽤时，强调组件交互的
+“REST提供了一组架构约束，当作为一个整体来应⽤时，强调组件交互的
 可伸缩性、接⼝的通⽤性、组件的独⽴部署、以及⽤来减少交互延迟、增
 强安全性、封装遗留系统的中间组件。”
 
@@ -1683,7 +1683,7 @@ WebClient 的基本⽤法
 • 识别资源
 • 选择合适的资源粒度
 • 设计URI
-• 选择合适的HTTP⽅法和返回码
+• 选择合适的HTTP方法和返回码
 • 设计资源的表述
 
 
@@ -1716,7 +1716,7 @@ WebClient 的基本⽤法
 
 
 构建更好的 URI
-• 使⽤域及⼦域对资源进⾏合理的分组或划分
+• 使⽤域及⼦域对资源进行合理的分组或划分
 • 在 URI 的路径部分使⽤斜杠分隔符 ( / ) 来表示资源之间的层次关系
 • 在 URI 的路径部分使⽤逗号 ( , ) 和分号 ( ; ) 来表示⾮层次元素
 • 使⽤连字符 ( - ) 和下划线 ( _ ) 来改善⻓路径中名称的可读性
@@ -1726,14 +1726,14 @@ WebClient 的基本⽤法
 
 
 
-认识 HTTP ⽅法
+认识 HTTP 方法
 动作 安全/幂等 ⽤途
 GET Y / Y 信息获取
-POST N / N 该⽅法⽤途⼴泛，可⽤于创建、更新或⼀次性对多个资源进⾏修改
+POST N / N 该方法⽤途⼴泛，可⽤于创建、更新或一次性对多个资源进行修改
 DELETE N / Y 删除资源
-PUT N / Y 更新或者完全替换⼀个资源
-HEAD Y / Y 获取与GET⼀样的HTTP头信息，但没有响应体
-OPTIONS Y / Y 获取资源⽀持的HTTP⽅法列表
+PUT N / Y 更新或者完全替换一个资源
+HEAD Y / Y 获取与GET一样的HTTP头信息，但没有响应体
+OPTIONS Y / Y 获取资源⽀持的HTTP方法列表
 TRACE Y / Y 让服务器返回其收到的HTTP头
 
 
@@ -1743,8 +1743,8 @@ TRACE Y / Y 让服务器返回其收到的HTTP头
 
 
 
-URI 与 HTTP ⽅法的组合
-URI HTTP⽅法 含义
+URI 与 HTTP 方法的组合
+URI HTTP方法 含义
 /coffee/ GET 获取全部咖啡信息
 /coffee/ POST 添加新的咖啡信息
 /coffee/{id} GET 获取特定咖啡信息
@@ -1793,7 +1793,7 @@ Richardson 成熟度模型
 • Level 3 - Hypermedia Controls
 HATEOAS
 • Hybermedia As The Engine Of Application State
-• REST 统⼀接⼝的必要组成部分
+• REST 统一接⼝的必要组成部分
 
 
 HATEOAS v.s. WSDL
@@ -1811,14 +1811,14 @@ HATEOAS
 http://www.iana.org/assignments/link-relations/link-relations.xhtml
 REL 描述
 self 指向当前资源本身的链接
-edit 指向⼀个可以编辑当前资源的链接
+edit 指向一个可以编辑当前资源的链接
 collection 如果当前资源包含在某个集合中，指向该集合的链接
-search 指向⼀个可以搜索当前资源与其相关资源的链接
-related 指向⼀个与当前资源相关的链接
-first 集合遍历相关的类型，指向第⼀个资源的链接
-last 集合遍历相关的类型，指向最后⼀个资源的链接
-previous 集合遍历相关的类型，指向上⼀个资源的链接
-next 集合遍历相关的类型，指向下⼀个资源的链接
+search 指向一个可以搜索当前资源与其相关资源的链接
+related 指向一个与当前资源相关的链接
+first 集合遍历相关的类型，指向第一个资源的链接
+last 集合遍历相关的类型，指向最后一个资源的链接
+previous 集合遍历相关的类型，指向上一个资源的链接
+next 集合遍历相关的类型，指向下一个资源的链接
 
 
 
@@ -1832,7 +1832,7 @@ next 集合遍历相关的类型，指向下⼀个资源的链接
 认识 HAL
 HAL
 • Hypertext Application Language
-• HAL 是⼀种简单的格式，为 API 中的资源提供简单⼀致的链接
+• HAL 是一种简单的格式，为 API 中的资源提供简单一致的链接
 HAL 模型
 • 链接
 • 内嵌资源
@@ -1863,7 +1863,7 @@ Spring Boot 依赖
 **63 - 分布式环境中如何解决 Session 的问题**
 
 
-常⻅的会话解决⽅案
+常⻅的会话解决方案
 • 粘性会话 Sticky Session    ：永远请求到一台机器
 • 会话复制 Session Replication ：会话复制 每台都有全量（数据同步问题）
 • 集中会话 Centralized Session  ：JDBC redis集中存储会话信息
@@ -1875,7 +1875,7 @@ Spring Boot 依赖
 **认识 Spring Session**
 Spring Session (集中会话 Centralized Session)
 • 简化集群中的⽤户会话管理
-• ⽆需绑定容器特定解决⽅案
+• ⽆需绑定容器特定解决方案
 ⽀持的存储
 • Redis
 • MongoDB
@@ -1925,7 +1925,7 @@ application.properties
 认识 WebFlux
 什么是 WebFlux
 • ⽤于构建基于 Reactive 技术栈之上的 Web 应⽤程序
-• 基于 Reactive Streams API ，运⾏在⾮阻塞服务器上
+• 基于 Reactive Streams API ，运行在⾮阻塞服务器上
 为什么会有 WebFlux
 • 对于⾮阻塞 Web 应⽤的需要
 • 函数式编程
@@ -1935,15 +1935,15 @@ application.properties
 
 认识 WebFlux
 关于 WebFlux 的性能
-• 请求的耗时并不会有很⼤的改善
+• 请求的耗时并不会有很大的改善
 • 仅需少量固定数量的线程和较少的内存即可实现扩展
 
 
 
 
 WebMVC v.s. WebFlux
-• 已有 Spring MVC 应⽤，运⾏正常，就别改了
-• 依赖了⼤量阻塞式持久化 API 和⽹络 API，建议使⽤ Spring MVC
+• 已有 Spring MVC 应⽤，运行正常，就别改了
+• 依赖了大量阻塞式持久化 API 和⽹络 API，建议使⽤ Spring MVC
 • 已经使⽤了⾮阻塞技术栈，可以考虑使⽤ WebFlux
 • 想要使⽤ Java 8 Lambda 结合轻量级函数式框架，可以考虑 WebFlux
 
@@ -1987,36 +1987,35 @@ Spring Boot 不是什么
 
 
 Spring Boot 的特性
-• ⽅便地创建可独⽴运⾏的 Spring 应⽤程序
+• 方便地创建可独⽴运行的 Spring 应⽤程序
 • 直接内嵌 Tomcat、Jetty 或 Undertow
 • 简化了项⽬的构建配置
-• 为 Spring 及第三⽅库提供⾃动配置
+• 为 Spring 及第三方库提供自动配置
 • 提供⽣产级特性
-• ⽆需⽣成代码或进⾏ XML 配置
+• ⽆需⽣成代码或进行 XML 配置
 
 
-
-
-**Spring Boot 的四⼤核⼼**
-• ⾃动配置 - Auto Configuration   
+ 
+**Spring Boot 的四大核心**
+• 自动配置 - Auto Configuration   
 • 起步依赖 - Starter Dependency  
-• 命令⾏界⾯ - Spring Boot CLI   
+• 命令行界面 - Spring Boot CLI   
 • Actuator 运行时生产特性
 
 
 
 
 **68 - 了解自动配置的实现原理**
-了解⾃动配置的实现原理
+了解自动配置的实现原理
 
-了解⾃动配置
+了解自动配置
 
 
-⾃动配置
-• 基于添加的 JAR 依赖⾃动对 Spring Boot 应⽤程序进⾏配置
+自动配置
+• 基于添加的 JAR 依赖自动对 Spring Boot 应⽤程序进行配置
 • spring-boot-autoconfiguration
 
-开启⾃动配置
+开启自动配置
 • @EnableAutoConfiguration
 ••  exclude = Class<?>[]
 • @SpringBootApplication
@@ -2025,14 +2024,14 @@ Spring Boot 的特性
 
 
 
-⾃动配置的实现原理
+自动配置的实现原理
 @EnableAutoConfiguration
 • AutoConfigurationImportSelector
 • META-INF/spring.factories
 • org.springframework.boot.autoconfigure.EnableAutoConfiguration
 
 
-⾃动配置的实现原理
+自动配置的实现原理
 条件注解
 • @Conditional
 • @ConditionalOnClass
@@ -2042,8 +2041,8 @@ Spring Boot 的特性
 
 
 
-了解⾃动配置的情况
-观察⾃动配置的判断结果
+了解自动配置的情况
+观察自动配置的判断结果
 • --debug
 ConditionEvaluationReportLoggingListener
 • Positive matches
@@ -2055,7 +2054,7 @@ ConditionEvaluationReportLoggingListener
 
 69 - 动手实现自己的自动配置
 
-动⼿实现⾃⼰的⾃动配置
+动⼿实现⾃⼰的自动配置
 
 主要⼯作内容
 编写 Java Config
@@ -2065,12 +2064,12 @@ ConditionEvaluationReportLoggingListener
 • @Conditional
 
 
-定位⾃动配置
+定位自动配置
 • META-INF/spring.factories
 
 
 
-条件注解⼤家庭
+条件注解大家庭
 条件注解
 • @Conditional
 类条件
@@ -2098,7 +2097,7 @@ Web 应⽤条件
 • @ConditionalOnJndi
 
 
-执⾏顺序
+执行顺序
 • @AutoConfigureBefore
 • @AutoConfigureAfter
 • @AutoConfigureOrder
@@ -2112,13 +2111,13 @@ Web 应⽤条件
 
 
 需求与问题
-核⼼的诉求
+核心的诉求
 • 现存系统，不打算重构
 • Spring 版本3.x，不打算升级版本和引⼊ Spring Boot
-• 期望能够在少改代码的前提下实现⼀些功能增强
-⾯临的问题
+• 期望能够在少改代码的前提下实现一些功能增强
+面临的问题
 • 3.x 的 Spring 没有条件注解
-• ⽆法⾃动定位需要加载的⾃动配置
+• ⽆法自动定位需要加载的自动配置
 
 
 
@@ -2126,9 +2125,9 @@ Web 应⽤条件
 
 
 
-核⼼解决思路
+核心解决思路
 条件判断
-• 通过 BeanFactoryPostProcessor 进⾏判断
+• 通过 BeanFactoryPostProcessor 进行判断
 配置加载
 • 编写 Java Config 类
 • 引⼊配置类
@@ -2144,12 +2143,12 @@ BeanPostProcessor
 BeanFactoryPostProcessor
 • 针对 Bean 定义
 • 在容器创建 Bean 前获取配置元数据
-• Java Config 中需要定义为 static ⽅法
+• Java Config 中需要定义为 static 方法
 
 
 
 
-关于 Bean 的⼀些定制
+关于 Bean 的一些定制
 Lifecycle Callback
 • InitializingBean / @PostConstruct / init-method
 • DisposableBean / @PreDestroy / destroy-method
@@ -2160,7 +2159,7 @@ XxxAware 接⼝
 
 
 
-⼀些常⽤操作
+一些常⽤操作
 判断类是否存在
 • ClassUtils.isPresent()
 判断 Bean 是否已定义
@@ -2180,13 +2179,13 @@ XxxAware 接⼝
 
 很久以前……
 • 你能记得多少 Maven 依赖
-• 要实现⼀个功能，需要引⼊哪些依赖
+• 要实现一个功能，需要引⼊哪些依赖
 • 多个依赖项⽬之间是否会有兼容问题
 
 
 
 
-关于 Maven 依赖管理的⼀些⼩技巧
+关于 Maven 依赖管理的一些⼩技巧
 了解你的依赖
 • mvn dependency:tree
 • IDEA Maven Helper 插件
@@ -2194,7 +2193,7 @@ XxxAware 接⼝
 排除特定依赖
 • exclusion
 
-统⼀管理依赖
+统一管理依赖
 • dependencyManagement
 • Bill of Materials - bom
 
@@ -2203,9 +2202,9 @@ XxxAware 接⼝
 
 Spring Boot 的起步依赖
 Starter Dependencies 依靠，依赖; 附属国; 附属地
-• 直接⾯向功能
-• ⼀站获得所有相关依赖，不再复制粘贴
-官⽅的 Starters
+• 直接面向功能
+• 一站获得所有相关依赖，不再复制粘贴
+官方的 Starters
 • spring-boot-starter-* 
 
 https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot.html#using-boot-running-with-the-maven-plugin
@@ -2223,15 +2222,15 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot
 
 你的 Starter
 主要内容
-• autoconfigure 模块，包含⾃动配置代码
-• starter 模块，包含指向⾃动配置模块的依赖及其他相关依赖
+• autoconfigure 模块，包含自动配置代码
+• starter 模块，包含指向自动配置模块的依赖及其他相关依赖
 
-命名⽅式
+命名方式
 • xxx-spring-boot-autoconfigure
 • xxx-spring-boot-starter
 
 
-⼀些注意事项
+一些注意事项
 • 不要使⽤ spring-boot 作为依赖的前缀
 • 不要使⽤ spring-boot 的配置命名空间
 • starter 中仅添加必要的依赖
@@ -2251,7 +2250,7 @@ https://docs.spring.io/spring-boot/docs/current/reference/html/using-spring-boot
 • 开启 DevTools 时，~/.spring-boot-devtools.properties
 • 测试类上的 @TestPropertySource 注解
 • @SpringBootTest#properties 属性
-• 命令⾏参数（ --server.port=9000 ）
+• 命令行参数（ --server.port=9000 ）
 • SPRING_APPLICATION_JSON 中的属性
 • ServletConfig 初始化参数
 • ServletContext 初始化参数
@@ -2295,10 +2294,10 @@ YAML ⽂件
 geektime.spring-boot.first-demo
 驼峰式 geektime.springBoot.firstDemo
 下划线分隔 geektime.spring_boot.first_demo
-全⼤写，下划线分隔 环境变量 GEEKTIME_SPRINGBOOT_FIRSTDEMO
+全大写，下划线分隔 环境变量 GEEKTIME_SPRINGBOOT_FIRSTDEMO
 
 
-短划线分隔、驼峰式、下划线分隔、全⼤写下划线分隔
+短划线分隔、驼峰式、下划线分隔、全大写下划线分隔
 
 
 
@@ -2357,7 +2356,7 @@ Spring Boot 中的 @ConfigurationProperties
 **75 - 认识 Spring Boot 的各类 Actuator Endpoint**
 
 
-运⾏中的 Spring Boot
+运行中的 Spring Boot
 
 
 认识 Spring Boot 的各类 Actuator Endpoint
@@ -2366,7 +2365,7 @@ Spring Boot 中的 @ConfigurationProperties
 Actuator
 ⽬的
 • 监控并管理应⽤程序
-访问⽅式
+访问方式
 • HTTP
 • JMX
 依赖
@@ -2375,7 +2374,7 @@ Actuator
 
 
 
-⼀些常⽤ Endpoint
+一些常⽤ Endpoint
 ID 说明 默认开启 默认 HTTP 默认 JMX
 beans 显示容器中的 Bean 列表 Y N Y
 caches 显示应⽤中的缓存 Y N Y
@@ -2391,14 +2390,14 @@ info 显示设置好的应⽤信息 Y Y Y
 
 
 
-⼀些常⽤ Endpoint
+一些常⽤ Endpoint
 ID 说明 默认开启 默认 HTTP 默认 JMX
 loggers 显示并更新⽇志配置 Y N Y
 metrics 显示应⽤的度量信息 Y N Y
 mappings 显示所有的 @RequestMapping 信息 Y N Y
 scheduledtasks 显示应⽤的调度任务信息 Y N Y
 shutdown 优雅地关闭应⽤程序 N N Y
-threaddump 执⾏ Thread Dump Y N Y
+threaddump 执行 Thread Dump Y N Y
 heapdump 返回 Heap Dump ⽂件，格式为 HPROF Y N N/A
 prometheus 返回可供 Prometheus 抓取的信息 Y N N/A
 
@@ -2437,7 +2436,7 @@ HTTP 访问
 
 Spring Boot ⾃带的 Health Indicator
 ⽬的
-• 检查应⽤程序的运⾏状态
+• 检查应⽤程序的运行状态
 状态
 • DOWN - 503
 • OUT_OF_SERVICE - 503
@@ -2471,7 +2470,7 @@ DataSourceHealthIndicator MailHealthIndicator RedisHealthIndicator
 
 
 ⾃定义 Health Indicator
-⽅法
+方法
 • 实现 HealthIndicator 接⼝
 • 根据⾃定义检查逻辑返回对应 Health 状态
 • Health 中包含状态和详细描述信息
@@ -2490,7 +2489,7 @@ Micrometer(给监控提供度量)
 • 多维度度量
 •• ⽀持 Tag
 
-• 预置⼤量探针
+• 预置大量探针
 •• 缓存、类加载器、GC、CPU 利⽤率、线程池……
 
 • 与 Spring 深度整合
@@ -2512,8 +2511,8 @@ StatsD, Wavefront
 
 
 
-⼀些核⼼度量指标
-核⼼接⼝
+一些核心度量指标
+核心接⼝
 • Meter
 内置实现
 • Gauge, TimeGauge
@@ -2526,17 +2525,17 @@ StatsD, Wavefront
 
 
 Micrometer in Spring Boot 2.x
-⼀些 URL
+一些 URL
 • /actuator/metrics
 • /actuator/prometheus
-⼀些配置项
+一些配置项
 • management.metrics.export.*
 • management.metrics.tags.*
 • management.metrics.enable.*
 • management.metrics.distribution.*
 • management.metrics.web.server.auto-time-requests   web请求的耗时监控
 
-核⼼度量项
+核心度量项
 • JVM、CPU、⽂件句柄数、⽇志、启动时间
 其他度量项
 • Spring MVC、Spring WebFlux
@@ -2553,8 +2552,8 @@ Datadog
 
 ⾃定义度量指标
 • 通过 MeterRegistry 注册 Meter
-• 提供 MeterBinder Bean 让 Spring Boot ⾃动绑定
-• 通过 MeterFilter 进⾏定制
+• 提供 MeterBinder Bean 让 Spring Boot 自动绑定
+• 通过 MeterFilter 进行定制
 
 
 
@@ -2562,7 +2561,7 @@ Datadog
 
 Spring Boot Admin（后台管理Actuator监控）
 ⽬的
-• 为 Spring Boot 应⽤程序提供⼀套管理界⾯
+• 为 Spring Boot 应⽤程序提供一套管理界面
 主要功能
 • 集中展示应⽤程序 Actuator 相关的内容
 • 变更通知
@@ -2650,7 +2649,7 @@ Tomcat 特定配置
 
 
 修改容器配置
-编程⽅式
+编程方式
 • WebServerFactoryCustomizer<T>
 • TomcatServletWebServerFactory
 • JettyServletWebServerFactory
@@ -2665,7 +2664,7 @@ Tomcat 特定配置
 **80 - 如何配置容器支持 HTTP-2（上）**
 
 配置 HTTPS ⽀持
-通过参数进⾏配置
+通过参数进行配置
 • server.port=8443
 • server.ssl.*
 • server.ssl.key-store
@@ -2725,16 +2724,16 @@ RestTemplate 配置
 关闭 Web 容器
 控制依赖
 • 不添加 Web 相关依赖
-配置⽅式
+配置方式
 • spring.main.web-application-type=none
 
 
-编程⽅式
+编程方式
 • SpringApplication
 • setWebApplicationType()
 • SpringApplicationBuilder
 • web()
-• 在调⽤ SpringApplication 的 run() ⽅法前
+• 在调⽤ SpringApplication 的 run() 方法前
 设置 WebApplicationType
 
 
@@ -2751,10 +2750,10 @@ RestTemplate 配置
 
 **83 - 了解可执行 Jar 背后的秘密**
 
-了解可执⾏ Jar 背后的秘密
+了解可执行 Jar 背后的秘密
 
 
-认识可执⾏ Jar
+认识可执行 Jar
 其中包含
 • Jar 描述，META-INF/MANIFEST.MF
 • Spring Boot Loader，org/springframework/boot/loader
@@ -2774,17 +2773,17 @@ Jar 的启动类
 • MANIFEST.MF
 • Start-Class: xxx.yyy.zzz
 
-再进⼀步：可直接运⾏的 Jar
-如何创建可直接执⾏的 Jar
-• 打包后的 Jar 可直接运⾏，⽆需 java 命令
+再进一步：可直接运行的 Jar
+如何创建可直接执行的 Jar
+• 打包后的 Jar 可直接运行，⽆需 java 命令
 • 可以在 .conf 的同名⽂件中配置参数
 
 
-默认脚本中的⼀些配置项
+默认脚本中的一些配置项
 配置项 说明 备注
 CONF_FOLDER 放置 .conf 的⽬录位置 只能放环境变量中
 JAVA_OPTS JVM 启动时的参数 ⽐如 JVM 的内存和 GC
-RUN_ARGS 传给程序执⾏的参数
+RUN_ARGS 传给程序执行的参数
 
 
 
@@ -2809,15 +2808,15 @@ Dockerfile
 指令 作⽤ 格式举例
 FROM 基于哪个镜像 FROM <image>[:<tag>] [AS <name>]
 LABEL 设置标签 LABEL maintainer=“Geektime"
-RUN 运⾏安装命令 RUN ["executable", "param1", "param2"]
+RUN 运行安装命令 RUN ["executable", "param1", "param2"]
 CMD 容器启动时的命令 CMD ["executable","param1","param2"]
 ENTRYPOINT 容器启动后的命令 ENTRYPOINT ["executable", "param1", "param2"]
 VOLUME 挂载⽬录 VOLUME ["/data"]
 EXPOSE 容器要监听的端⼝ EXPOSE <port> [<port>/<protocol>...]
 ENV 设置环境变量 ENV <key> <value>
 ADD 添加⽂件 ADD [--chown=<user>:<group>] <src>... <dest>
-WORKDIR 设置运⾏的⼯作⽬录 WORKDIR /path/to/workdir
-USER 设置运⾏的⽤户 USER <user>[:<group>]
+WORKDIR 设置运行的⼯作⽬录 WORKDIR /path/to/workdir
+USER 设置运行的⽤户 USER <user>[:<group>]
 
 
 
@@ -2825,9 +2824,9 @@ USER 设置运⾏的⽤户 USER <user>[:<group>]
 
 通过 Maven 构建 Docker 镜像
 准备⼯作
-• 提供⼀个 Dockerfile
+• 提供一个 Dockerfile
 • 配置 dockerfile-maven-plugin 插件
-执⾏构建
+执行构建
 • mvn package
 • mvn dockerfile:build
 检查结果
@@ -2845,14 +2844,14 @@ Spring Cloud 及 Cloud Native 概述
 
 
 简单理解微服务
-“微服务就是⼀些协同⼯作的⼩⽽⾃治的服务。”
+“微服务就是一些协同⼯作的⼩⽽⾃治的服务。”
 
 
 
 微服务的优点
 异构性• 语⾔、存储……
 
-弹性• ⼀个组件不可⽤，不会导致级联故障
+弹性• 一个组件不可⽤，不会导致级联故障
 
 扩展• 单体服务不易扩展，多个较⼩的服务可以按需扩展
 
@@ -2876,18 +2875,18 @@ Spring Cloud 及 Cloud Native 概述
 **87 - 如何理解云原生(Cloud Native)**
 
 
-“云原⽣技术有利于各组织在公有云、私有云和混合云等新型动态环境中，构建和运⾏可弹性扩展的应⽤。”
+“云原⽣技术有利于各组织在公有云、私有云和混合云等新型动态环境中，构建和运行可弹性扩展的应⽤。”
 
 
 云原⽣应⽤要求……
 DevOps(开发运维高品质软件服务)
-• 开发与运维⼀同致⼒于交付⾼品质的软件服务于客户
+• 开发与运维一同致⼒于交付⾼品质的软件服务于客户
 
 持续交付
 • 软件的构建、测试和发布，要更快、更频繁、更稳定
 
 微服务
-• 以⼀组⼩型服务的形式来部署应⽤
+• 以一组⼩型服务的形式来部署应⽤
 
 容器
 • 提供⽐传统虚拟机更⾼的效率
@@ -2906,14 +2905,14 @@ Factor App-云原生(Cloud Native) 的实践
 
 THE TWELVE-FACTOR APP
 ⽬的
-• 为构建 SaaS 应⽤提供⾏之有效的⽅法论
+• 为构建 SaaS 应⽤提供行之有效的方法论
 • 适⽤于任意语⾔和后端服务的开发的应⽤程序
 • https://12factor.net/zh_cn/
 
 
 
 了解 12-Factors
-基准代码（Codebase）:• ⼀份基准代码，多份部署
+基准代码（Codebase）:• 一份基准代码，多份部署
 
 依赖（Dependencies）:• 显式声明依赖关系
 
@@ -2922,54 +2921,54 @@ THE TWELVE-FACTOR APP
 后端服务（Backing services）:• 把后端服务当作附加资源
 
  
-构建，发布，运⾏（Build, release, run）:• 严格分离构建和运⾏
+构建，发布，运行（Build, release, run）:• 严格分离构建和运行
 
-进程（Processes）:• 以⼀个或多个⽆状态进程运⾏应⽤
+进程（Processes）:• 以一个或多个⽆状态进程运行应⽤
 
 端⼝绑定（Port Binding）:• 通过端⼝绑定提供服务
 
-并发（Concurrency）:• 通过进程模型进⾏扩展
+并发（Concurrency）:• 通过进程模型进行扩展
 
  
-易处理（Disposability）:• 快速启动和优雅终⽌可最⼤化健壮性
+易处理（Disposability）:• 快速启动和优雅终⽌可最大化健壮性
 
 开发环境与线上环境等价（Dev / Prod parity）:• 尽可能的保持开发，预发布，线上环境相同
 
 ⽇志（Logs）:• 把⽇志当作事件流
 
-管理进程（Admin processes）:• 后台管理任务当作⼀次性进程运⾏
+管理进程（Admin processes）:• 后台管理任务当作一次性进程运行
 
 
-⼀份基准代码，多份部署
+一份基准代码，多份部署
 • 使⽤版本控制系统加以管理
-• 基准代码与应⽤保持⼀⼀对应的关系
-• 尽管每个应⽤只对应⼀份基准代码，但可以同时存在多份部署
+• 基准代码与应⽤保持一一对应的关系
+• 尽管每个应⽤只对应一份基准代码，但可以同时存在多份部署
 
 
 
 显式声明依赖关系
 • 12-Factor 的应⽤程序不会隐式依赖系统级的类库
-• 它⼀定通过依赖清单，确切地声明所有依赖项
-• 在运⾏过程中，通过依赖隔离⼯具来确保程序不会调⽤系统中存
+• 它一定通过依赖清单，确切地声明所有依赖项
+• 在运行过程中，通过依赖隔离⼯具来确保程序不会调⽤系统中存
 在但清单中未声明的依赖项
 
 
 
-严格分离构建和运⾏
-• 12-Facfor 应⽤严格区分构建、发布、运⾏三个步骤
+严格分离构建和运行
+• 12-Facfor 应⽤严格区分构建、发布、运行三个步骤
 • 部署⼯具通常都提供了发布管理⼯具
-• 每⼀个发布版本必须对应⼀个唯⼀的发布 ID
+• 每一个发布版本必须对应一个唯一的发布 ID
 
 
-以⼀个或多个⽆状态进程运⾏应⽤
+以一个或多个⽆状态进程运行应⽤
 • 12-Factor 应⽤的进程必须⽆状态且⽆共享
 • 任何需要持久化的数据都要存储在后端服务内
 
 
-快速启动和优雅终⽌可最⼤化健壮性
+快速启动和优雅终⽌可最大化健壮性
 • 进程应当追求最⼩启动时间
-• 进程⼀旦接收终⽌信号就会优雅的终⽌
-• 进程应当在⾯对突然死亡时保持健壮
+• 进程一旦接收终⽌信号就会优雅的终⽌
+• 进程应当在面对突然死亡时保持健壮
 
 
 尽可能的保持开发，预发布，线上环境相同
@@ -3001,7 +3000,7 @@ Spring Cloud 的主要功能
 
 
 Spring Cloud 的版本号规则
-• Spring Cloud 是个⼤⼯程，其中包含多个独⽴项⽬
+• Spring Cloud 是个大⼯程，其中包含多个独⽴项⽬
 • BOM - Release Train
 • London Tube Stations
 • 字⺟序排列
@@ -3025,7 +3024,7 @@ Spring 对 Netflix 套件的⽀持
 • Spring Cloud Netflix
 
 
-在本地启动⼀个简单的 Eureka 服务
+在本地启动一个简单的 Eureka 服务
 Starter
 • spring-cloud-dependencies
 • spring-cloud-starter-netflix-eureka-starter
@@ -3041,7 +3040,7 @@ Starter
 声明
 • @EnableDiscoveryClient
 • @EnableEurekaClient
-⼀些配置项
+一些配置项
 • eureka.client.service-url.default-zone
 • eureka.client.instance.prefer-ip-address
 
@@ -3053,7 +3052,7 @@ Bootstrap 属性
 • spring.cloud.bootstrap.name=bootstrap
 常⽤配置
 • spring.application.name=应⽤名
-• 配置中⼼相关
+• 配置中心相关
 
 
 
@@ -3132,7 +3131,7 @@ Feign 的简单使⽤
 
 
 
-Feign 的⼀些其他配置
+Feign 的一些其他配置
 • feign.okhttp.enabled=true
 • feign.httpclient.enabled=true
 • feign.compression.response.enabled=true
@@ -3164,11 +3163,11 @@ Spring Cloud Commons 提供的抽象
 
 
 
-⾃动向 Eureka 服务端注册
+自动向 Eureka 服务端注册
 ServiceRegistry
 • EurekaServiceRegistry
 • EurekaRegistration
-⾃动配置
+自动配置
 • EurekaClientAutoConfiguration
 • EurekaAutoServiceRegistration
 • SmartLifecycle
@@ -3192,7 +3191,7 @@ Zookeeper
 • 快
 
 
-使⽤ Zookeeper 作为注册中⼼
+使⽤ Zookeeper 作为注册中心
 Spring Cloud Zookeeper
 • spring-cloud-starter-zookeeper-discovery
 • Apache Curator
@@ -3206,23 +3205,23 @@ Spring Cloud Zookeeper
 
 
 
-使⽤ Zookeeper 作为注册中⼼的问题
+使⽤ Zookeeper 作为注册中心的问题
 两篇⽂章值得阅读
 • 《阿⾥巴巴为什么不⽤ Zookeeper 做服务发现》
 • 《Eureka! Why You Shouldn’t Use ZooKeeper for Service Discovery》
 
-核⼼思想
-• 在实践中，注册中⼼不能因为⾃身的任何原因破坏服务之间本身的可连通性
-• 注册中⼼需要 AP，⽽ Zookeeper 是 CP
-• CAP - ⼀致性、可⽤性、分区容忍性
+核心思想
+• 在实践中，注册中心不能因为⾃身的任何原因破坏服务之间本身的可连通性
+• 注册中心需要 AP，⽽ Zookeeper 是 CP
+• CAP - 一致性、可⽤性、分区容忍性
 
 
 通过 Docker 启动 Zookeeper
-官⽅指引
+官方指引
 • https://hub.docker.com/_/zookeeper
 获取镜像
 • docker pull zookeeper:3.5
-运⾏ Zookeeper 镜像
+运行 Zookeeper 镜像
 • docker run --name zookeeper -p 2181:2181 -d zookeeper:3.5
 
 
@@ -3253,7 +3252,7 @@ Consul
 • 服务发现
 • 健康检查
 • KV 存储
-• 多数据中⼼⽀持
+• 多数据中心⽀持
 • 安全的服务间通信
 
 
@@ -3272,7 +3271,7 @@ other services
 
 
 
-使⽤ Consul 作为注册中⼼
+使⽤ Consul 作为注册中心
 Spring Cloud Consul
 • spring-cloud-starter-consul-discovery
 简单配置
@@ -3285,14 +3284,14 @@ Spring Cloud Consul
 
 
 通过 Docker 启动 Consul
-官⽅指引
+官方指引
 • https://hub.docker.com/_/consul
 
 获取镜像
 • docker pull consul
 
 
-运⾏ Consul 镜像
+运行 Consul 镜像
 • docker run --name consul -d -p 8500:8500 -p 8600:8600/udp consul
 
 
@@ -3302,7 +3301,7 @@ Spring Cloud Consul
 
 认识 Nacos(阿里巴巴)
 Nacos
-• ⼀个更易于构建云原⽣应⽤的动态服务发现、配置管理和服务管理平台。
+• 一个更易于构建云原⽣应⽤的动态服务发现、配置管理和服务管理平台。
 • https://nacos.io/zh-cn/index.html
 
 功能
@@ -3314,7 +3313,7 @@ Nacos
 
 
 
-使⽤ Nacos 作为注册中⼼
+使⽤ Nacos 作为注册中心
 Spring Cloud Alibaba
 • spring-cloud-alibaba-dependencies
 • spring-cloud-starter-alibaba-nacos-discovery
@@ -3326,11 +3325,11 @@ Spring Cloud Alibaba
 
 
 通过 Docker 启动 Nacos
-官⽅指引
+官方指引
 • https://hub.docker.com/r/nacos/nacos-server
 获取镜像
 • docker pull nacos/nacos-server
-运⾏ Nacos 镜像
+运行 Nacos 镜像
 • docker run --name nacos -d -p 8848:8848 -e MODE=standalone
 nacos/nacos-server
 • ⽤户名密码为 nacos
@@ -3375,7 +3374,7 @@ LoadBalancerClient
 需要做的：
 • 实现⾃⼰的 ServerList<T extends Server>
 • Ribbon 提供了 AbstractServerList<T extends Server>
-• 提供⼀个配置类，声明 ServerList Bean 实例
+• 提供一个配置类，声明 ServerList Bean 实例
 
 
 
@@ -3387,11 +3386,11 @@ LoadBalancerClient
 
 
 
-各种服务注册中⼼
+各种服务注册中心
 • Eureka、Zookeeper、Consul、Nacos
 
 
-**如何在服务间进⾏负载均衡**
+**如何在服务间进行负载均衡**
 • Ribbon(RestTemplat、WebClient)、OpenFeign
 
 
@@ -3435,10 +3434,10 @@ Spring Cloud 的服务注册与发现机制
 
 
 
-**核⼼思想**
-• 在断路器对象中封装受保护的⽅法调⽤
+**核心思想**
+• 在断路器对象中封装受保护的方法调⽤
 • 该对象监控调⽤和断路情况
-• 调⽤失败触发阈值后，后续调⽤直接由断路器返回错误，不再执⾏实际调⽤
+• 调⽤失败触发阈值后，后续调⽤直接由断路器返回错误，不再执行实际调⽤
 
 断路器
 1.前几次服务之间调用都是超时
@@ -3496,7 +3495,7 @@ Netflix Hystrix
 
 看监控
 • 主动向监控系统埋点，上报熔断情况
-• 提供与熔断相关的 Endpoint，让第三⽅系统来拉取信息
+• 提供与熔断相关的 Endpoint，让第三方系统来拉取信息
 
 
 
@@ -3537,20 +3536,20 @@ Hystrix 以外的选择
 
 
 Hystrix
-• Netflix 停⽌维护，给了官⽅推荐
+• Netflix 停⽌维护，给了官方推荐
 
 Resilience4j
 • https://github.com/resilience4j/resilience4j
-• ⼀款受 Hystrix 启发的轻量级且易于使⽤的容错库
+• 一款受 Hystrix 启发的轻量级且易于使⽤的容错库
 • 针对 Java 8 与函数式编程设计
 
 
-核⼼组件
+核心组件
 组件名称 功能
 resilience4j-circuitbreaker Circuit breaking
 resilience4j-ratelimiter 频率控制
 resilience4j-bulkhead 依赖隔离&负载保护
-resilience4j-retry ⾃动重试
+resilience4j-retry 自动重试
 resilience4j-cache 应答缓存
 resilience4j-timelimiter 超时控制
 
@@ -3583,7 +3582,7 @@ resilience4j-feign Feign 适配器
 
 
 断路器
-注解⽅式
+注解方式
 • @CircuitBreaker(name = "名称")
 配置
 • CircuitBreakerProperties
@@ -3622,7 +3621,7 @@ Bulkhead
 
 RateLimiter
 ⽬的
-• 限制特定时间段内的执⾏次数
+• 限制特定时间段内的执行次数
 ⽤法
 • RateLimiterRegistry / RateLimiterConfig
 • @RateLimiter(name = "名称")
@@ -3671,7 +3670,7 @@ RateLimiter
 
 
 
-基于 Git 的配置中⼼
+基于 Git 的配置中心
 
 
 
@@ -3720,7 +3719,7 @@ Spring Cloud Config Client
 
 
 
-发现配置中⼼
+发现配置中心
 • bootstrap.properties | yml
 • spring.cloud.config.fail-fast=true
 • 通过配置
@@ -3732,7 +3731,7 @@ Spring Cloud Config Client
 Spring Cloud Config Client
 
 
-发现配置中⼼
+发现配置中心
 • bootstrap.properties | yml
 • 通过服务发现
 • spring.cloud.config.discovery.enabled=true
@@ -3901,7 +3900,7 @@ Consul 中的数据怎么存
 
 
 配置项变更
-⾃动刷新配置
+自动刷新配置
 • spring.cloud.consul.config.watch.enabled=true
 • spring.cloud.consul.config.watch.delay=1000
 
@@ -3950,7 +3949,7 @@ Nacos 中的数据怎么存
 
 
 本章⼩结
-**⼏种不同的配置中⼼**
+**⼏种不同的配置中心**
 • Spring Cloud Config Server(springcloud bus自己广播修改)
 •• Git / SVN / RDBMS / Vault ： 需要刷新自己的加东西
 
@@ -3964,7 +3963,7 @@ SpringBucks 进度⼩结
 waiter-service
 • 增加了订单⾦额与折扣
 • 增加了 Waiter 名称
-• 使⽤了不同的配置中⼼
+• 使⽤了不同的配置中心
 • Spring Cloud Config Client
 •• 使⽤ Zookeeper
 •• 使⽤ Consul
@@ -3975,11 +3974,11 @@ waiter-service
 
 配置中心
 携程 Apollo
-官⽅地址
+官方地址
 • https://github.com/ctripcorp/apollo
 
 特性
-• 统⼀管理不同环境、不同集群的配置
+• 统一管理不同环境、不同集群的配置
 • 配置修改实时⽣效（热发布）
 • 版本发布管理
 • 灰度发布
@@ -4002,7 +4001,7 @@ waiter-service
 
 
 Spring Cloud Stream 是什么
-• ⼀款⽤于构建消息驱动的微服务应⽤程序的轻量级框架
+• 一款⽤于构建消息驱动的微服务应⽤程序的轻量级框架
 
 
 **特性**
@@ -4015,7 +4014,7 @@ Spring Cloud Stream 是什么
 •• RabbitMQ、Kafka 
 
 
-**Spring Cloud Stream 的⼀些核⼼概念**
+**Spring Cloud Stream 的一些核心概念**
 
 
 Binder
@@ -4035,7 +4034,7 @@ Binder
 
 
 **I.消费组**
-• 对同⼀消息，每个组中都会有⼀个消费者收到消息
+• 对同一消息，每个组中都会有一个消费者收到消息
 
 
 **I.如何发送与接收消息**
@@ -4079,14 +4078,14 @@ Binder
 
 
 通过 Docker 启动 RabbitMQ
-官⽅指引
+官方指引
 • https://hub.docker.com/_/rabbitmq
 
 获取镜像
 • docker pull rabbitmq
 • docker pull rabbitmq:3.7-management
 
-运⾏ RabbitMQ 镜像
+运行 RabbitMQ 镜像
 • docker run --name rabbitmq -d -p 5672:5672 -p 15672:15672
 -e RABBITMQ_DEFAULT_USER=spring -e RABBITMQ_DEFAULT_PASS=spring
 rabbitmq:3.7-management
@@ -4097,7 +4096,7 @@ rabbitmq:3.7-management
 
 认识 Apache Kafka
 什么是 Kafka
-• 诞⽣之初被⽤作消息队列，现已发展为强⼤的分布式事件流平台
+• 诞⽣之初被⽤作消息队列，现已发展为强大的分布式事件流平台
 • LinkedIn 在 2011 年开源
 
 
@@ -4116,11 +4115,11 @@ Spring Cloud Stream 对 Kafka 的⽀持
 
 通过 Docker 启动 Kafka
 
-官⽅指引
+官方指引
 • https://hub.docker.com/r/confluentinc/cp-kafka
 • https://docs.confluent.io/current/quickstart/cos-docker-quickstart.html
 
-运⾏镜像
+运行镜像
 • https://github.com/confluentinc/cp-docker-images
 •• kafka-single-node/docker-compose.yml
 
@@ -4171,7 +4170,7 @@ Spring Cloud Stream
 
 
 
-Spring 的⼀些机制
+Spring 的一些机制
 • 上下⽂中的事件机制
 • 定时任务
 
@@ -4211,13 +4210,13 @@ barista-service
 我们在关注什么？
 • 系统中都有哪些服务
 • 服务之间的依赖关系是什么样的
-• ⼀个常⻅请求具体的执⾏路径是什么样的
-• 请求每个环节的执⾏是否正常与耗时情况
+• 一个常⻅请求具体的执行路径是什么样的
+• 请求每个环节的执行是否正常与耗时情况
 
 
-Google Dapper 的⼀些术语
+Google Dapper 的一些术语
 • Span - 基本的⼯作单元
-• Trace - 由⼀组 Span 构成的树形结构
+• Trace - 由一组 Span 构成的树形结构
 • Annotation - ⽤于及时记录事件
 • cs - Client Sent
 • sr - Server Received
@@ -4268,14 +4267,14 @@ Spring Cloud 提供的服务治理功能
 
 通过 Docker 启动 Zipkin
 
-官⽅指引
+官方指引
 • https://hub.docker.com/r/openzipkin/zipkin
 • https://github.com/openzipkin/docker-zipkin
 
 获取镜像
 • docker pull openzipkin/zipkin
 
-运⾏ Zipkin 镜像
+运行 Zipkin 镜像
 • docker run --name zipkin -d -p 9411:9411 openzipkin/zipkin
 
 
@@ -4297,7 +4296,7 @@ Spring Cloud 提供的服务治理功能
 
 
 配置
-• 如使⽤ HTTP 埋点，则与追踪 HTTP 服务完全⼀致
+• 如使⽤ HTTP 埋点，则与追踪 HTTP 服务完全一致
 • spring.zipkin.sender.type=rabbit
 • spring.zipkin.rabbitmq.queue=zipkin
 • spring.rabbitmq.*
@@ -4314,7 +4313,7 @@ Spring Cloud 提供的服务治理功能
 • RABBIT_USER / RABBIT_PASSWORD
 • https://github.com/apache/incubator-zipkin/tree/master/zipkin-collector/rabbitmq
 
-运⾏ Zipkin 镜像
+运行 Zipkin 镜像
 • docker run --name rabbit-zipkin -d -p 9411:9411
 --link rabbitmq -e RABBIT_ADDRESSES=rabbitmq:5672
 -e RABBIT_USER=spring -e RABBIT_PASSWORD=spring openzipkin/
@@ -4328,21 +4327,21 @@ zipkin
 **121 - 除了链路还要治理什么**
 除了链路还要追踪什么
 
-服务治理关⼼什么才好
+服务治理关心什么才好
 
 我们已经看过了
 • 简单服务之间的依赖关系
-• ⼀个请求的同步、异步链路
+• 一个请求的同步、异步链路
 
 我们还需要关注
 • 很多……很多……
 
-“⼀个企业实施的⽤以保障事情正确完成的流程，即遵循最佳
+“一个企业实施的⽤以保障事情正确完成的流程，即遵循最佳
 实践，体系架构原则，治理条例，法律和其他决定因素。SOA
 治理是指⽤于管理SOA的采⽤和实现的流程。”
 
 
-**服务治理关⼼什么才好**
+**服务治理关心什么才好**
 
 **宏观上**
 • 架构设计是否合理
@@ -4351,9 +4350,9 @@ zipkin
 • 对系统变更的管理与审计
 
 **微观上**
-• ⼀个系统都依赖了什么
-• ⼀个系统都有哪些配置
-• ⼀个系统的主观与客观质量
+• 一个系统都依赖了什么
+• 一个系统都有哪些配置
+• 一个系统的主观与客观质量
 
 
 
@@ -4371,7 +4370,7 @@ Spring Cloud 的服务治理功能
 ••• Web
 ••• RabbitMQ
 
-• 我们应该关⼼更多
+• 我们应该关心更多
 
 
 SpringBucks 进度⼩结
@@ -4382,7 +4381,7 @@ barista-service
 • 增加基于 MQ 向 Zipkin 埋点功能
 
 最终的成品
-• 通过 Docker 运⾏整个 SpringBucks
+• 通过 Docker 运行整个 SpringBucks
 
 
 
