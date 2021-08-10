@@ -49,7 +49,7 @@ BeanFactory和 ApplicationContext容器级别和引导的
 
 
 
-2. Resources 资源
+2. Resources 资源(IO加载)
 
 2.2. Resource接口
 IO用 url用
@@ -201,7 +201,7 @@ proxyTargetClass:true如果要代理目标类，而不是目标类的接口。�
 
 
 
-7. Null-safety
+7. Null-safety 空值安全
    @Nullable: 表示特定参数、返回值或字段的注解可以是null.
 
 @NonNull: 用于指示特定参数、返回值或字段不能为的注释null（参数/返回值和字段 where@NonNullApi和@NonNullFieldsapply 分别不需要）。
@@ -222,7 +222,7 @@ DataBufferUtils 提供数据缓冲区的实用方法。
 编解码器：将流数据缓冲区流解码或编码为更高级别的对象。Encoder、Decoder
 
 
-9. Logging  记录
+9. Logging  日志
    Log4j 2.x 或 Logback（或其他 SLF4J 提供程序）
    
 
@@ -238,7 +238,7 @@ Spring Framework提高 JDK基线
 
 AspectJ 切面
 
-##  II.控制反转 (IoC) 容器 又称依赖注入。
+##  II.控制反转 (IoC) 容器 又称依赖注入。Inversion of Control (IoC)  也称为  dependency injection 依赖注入 (DI)
 
 Spring 的控制反转 (IoC) 容器。
 

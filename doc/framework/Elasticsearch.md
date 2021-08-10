@@ -319,6 +319,16 @@ POST users/_update/1/
 }
 }
 
+查询并删除 数据
+
+POST /yrcf_tag_data_20210810/_delete_by_query
+{
+"query": {
+"term": {"phone":"15901229166"}
+     }
+}
+
+
 **I.常用命令**
 
 
