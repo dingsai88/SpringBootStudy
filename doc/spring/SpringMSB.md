@@ -391,7 +391,7 @@ schema-based approach 和@AspectJ annotation style
 
 III. AOP 代理
 Spring AOP 默认为 AOP 代理使用标准的 JDK 动态代理。这允许代理任何接口（或接口集）。
-Spring AOP 使用 JDK 动态代理或 CGLIB 为给定的目标对象创建代理。
+Spring AOP 使用 JDK 动态代理或 CGLIB (底层ASM)为给定的目标对象创建代理。
 
 
 

@@ -930,6 +930,44 @@ http://bank-finance.167.test.yirendai.com/sentinel/slow
 
 
 
+I.熔断 问题发现 minRequestAmount 设置问题
+
+com.alibaba.csp.sentinel.slots.DefaultSlotChainBuilder
+
+com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager#newCircuitBreakerFrom
+
+com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.ResponseTimeCircuitBreaker
+
+com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.ResponseTimeCircuitBreaker#handleStateChangeWhenThresholdExceeded
+
+        List<DegradeRule> rules = new ArrayList<>();
+        //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+        double count=1500;
+        //熔断时长，单位为 s
+        int timeWindow=30;
+      // 慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）  Circuit breaker opens when slow request ratio > 60%   :5%
+        double slowRatioThreshold=0.05;
+        //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+        int minRequestAmount=20;
+       //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）  2分钟
+        int statIntervalMs=2*60*1000;
+
+        DegradeRule ruleSearchUserTag = new DegradeRule(searchUserTag_Sentinel)
+                .setGrade(CircuitBreakerStrategy.SLOW_REQUEST_RATIO.getType())
+                //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+                .setCount(count)
+                // Retry timeout (in second) 熔断时长，单位为 s
+                .setTimeWindow(timeWindow)
+                // Circuit breaker opens when slow request ratio > 60%  慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）
+                .setSlowRatioThreshold(slowRatioThreshold)
+                //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+                .setMinRequestAmount(minRequestAmount)
+                //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）
+                .setStatIntervalMs(statIntervalMs);
+        rules.add(ruleSearchUserTag);
+
+
+
 
 
 --------------------------------------------------20210531介入--------------------------------------------------------------------------------------
