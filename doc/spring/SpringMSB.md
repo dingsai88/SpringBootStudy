@@ -473,8 +473,11 @@ java.lang.reflect InvocationHandler
 2.无接口的类使用 AspectJ 切面J 实现(ASM)
 
 -------------------------------------javaagent java探针Java代理(虚拟机层面)------------------------------------------------------------
-# **I.javaagent java探针代理**
-I.javaagent java探针代理
+# **I.javaagent java探针(代理)**  jvm加载class文件时对字节码进行修改增强
+Instrumentation仪器 相当于一个JVM级别的AOP
+
+
+**I.javaagent java探针、代理**
 https://www.cnblogs.com/rickiyang/p/11368932.html
 JavaAgent 是JDK 1.5 以后引入的，也可以叫做Java代理(JVM级别虚拟机级别的代理)。
 在JVM 加载class文件的时候 对class进行修改
@@ -499,7 +502,7 @@ Can-Retransform-Classes: true
 4.启动参数
 -Xms1024M -javaagent://opt/yrd_soft/skywalking-agent/skywalking-agent.jar  -Xms1024M 
 
-**II.javaagent探针原理**
+**II.javaagent代理实现原理**
 
 **1.premain方法会先于main方法执行。全部用户类加载都在探针之后。**
 
@@ -517,10 +520,10 @@ MyAgent1.premain -> MyAgent2.premain -> MyProgram.main
 **2.javaagent 探针 +结合字节码 可以对各个加载类进行修改。**
 
 第三方的字节码编译工具，比如ASM，javassist，cglib等等来改写实现类。
+ASM、javassist、byteBuddy
 
 
-
-------------------------------java agent探针2----------------------------------------------------------------
+------------------------------java agent代理 Instrumentation仪器  JVM的Attach机制----------------------------------------------------------------
 **Instrumentation仪器** :虚拟机JVM级别的代理。代码无感知 : JVM字节码加载的时候，对字节码进行修改。
 
 可以用独立于应用程序之外的代理（agent）程序来监测和协助运行在JVM上的应用程序。
@@ -536,9 +539,34 @@ JDK1.6之后提供了attach机制，工具类都处于com.sun.tools.attach包下
 VirtualMachine.attach方法attach到指定JVM进程上
 
 
+JVM的Attach机制
 
-
-
+----------------------------字节码增强------------------------------------------
+# I.字节码增强
+**I.字节码增强**
 https://www.cnblogs.com/jackion5/p/10771609.html
+https://github.com/dingsai88/SpringBootStudy/blob/master/img/AopAsmCglibAspectJ.png
+Instrumentation java代理(JVM级别) 在类加载时修改class :可以使用字节码增强技术
+
+ASM(cglib)、javassist帮助、byteBuddy、java proxy反射、Javassist
+
+**II.ASM(CGLIB) 汇编语言** 创建class时字节码指令级别修改
+Spring AOP 无接口代理类时用CGLIB基于ASM
+
+
+不过ASM在创建class字节码的过程中，操纵的级别是底层JVM的汇编指令级别，这要求ASM使用者要对class组织结构和JVM汇编指令有一定的了解。
+
+**II.javassist 任意时间都能对字节码进行增强**
+可动态生成增强class
+
+https://zhuanlan.zhihu.com/p/141449080
+
+
+**II.AspectJ** 
+
+https://www.jianshu.com/p/2e8409bc8c3b
+
+
+
 
 
