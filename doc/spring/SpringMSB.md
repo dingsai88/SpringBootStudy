@@ -445,3 +445,100 @@ II.在main premain > main
 
 我理解的skywalking是通过javaagent+bytebuddy+plugins方式实现的。
 
+
+
+
+-----------------------------------------------------------------------------------------------------------
+
+# I.动态代理、静态代理
+
+**II.静态代理**
+代理模式可以在不修改被代理对象的基础上，通过扩展代理类，进行一些功能的附加与增强。
+值得注意的是，**代理类和被代理类应该共同实现一个接口，或者是共同继承某个类。**
+
+
+**II.动态代理**
+使用反射的方式利用 InvocationHandler类，实现invoke方法
+java.lang.reflect Proxy
+java.lang.reflect InvocationHandler
+比如日志系统、事务、拦截器、权限控制等。这也就是AOP(面向切面编程)的基本原理。
+
+-------------------------------------------------------------------------------------------------------
+
+**Spring AOP**  
+1.默认接口实现使用java动态代理
+java.lang.reflect Proxy
+java.lang.reflect InvocationHandler
+
+2.无接口的类使用 AspectJ 切面J 实现(ASM)
+
+-------------------------------------javaagent java探针Java代理(虚拟机层面)------------------------------------------------------------
+# **I.javaagent java探针代理**
+I.javaagent java探针代理
+https://www.cnblogs.com/rickiyang/p/11368932.html
+JavaAgent 是JDK 1.5 以后引入的，也可以叫做Java代理(JVM级别虚拟机级别的代理)。
+在JVM 加载class文件的时候 对class进行修改
+
+**II.使用 javaagent 需要几个步骤：**
+    1.定义一个 MANIFEST.MF 文件，必须包含 Premain-Class 选项，通常也会加入Can-Redefine-Classes 和 Can-Retransform-Classes 选项。
+    2.创建一个Premain-Class 指定的类，类中包含 premain 方法，方法逻辑由用户自己确定。
+    3.将 premain 的类和 MANIFEST.MF 文件打成 jar 包。
+    4.使用参数 -javaagent: jar包路径 启动要代理的方法。
+
+例skywalking
+
+1.skywalking-agent.jar//META-INF//MANIFEST.MF
+Premain-Class: org.apache.skywalking.apm.agent.SkyWalkingAgent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+
+2.SkywalkingAgent.premain()
+
+3.skywalking-agent.jar
+
+4.启动参数
+-Xms1024M -javaagent://opt/yrd_soft/skywalking-agent/skywalking-agent.jar  -Xms1024M 
+
+**II.javaagent探针原理**
+
+**1.premain方法会先于main方法执行。全部用户类加载都在探针之后。**
+
+JVM 会先执行 premain 方法，大部分类加载都会通过该方法，**注意：是大部分，不是所有**。
+当然，遗漏的主要是系统类，因为很多系统类先于 agent 执行，而用户类的加载肯定是会被拦截的。
+java -javaagent:agent1.jar -javaagent:agent2.jar -jar MyProgram.jar
+
+public static void premain(String agentArgs, Instrumentation inst) 带有Instrumentation优先级更高，成功以后就执行下边的方法
+public static void premain(String agentArgs)
+
+
+程序执行的顺序将会是：
+MyAgent1.premain -> MyAgent2.premain -> MyProgram.main
+
+**2.javaagent 探针 +结合字节码 可以对各个加载类进行修改。**
+
+第三方的字节码编译工具，比如ASM，javassist，cglib等等来改写实现类。
+
+
+
+------------------------------java agent探针2----------------------------------------------------------------
+**Instrumentation仪器** :虚拟机JVM级别的代理。代码无感知 : JVM字节码加载的时候，对字节码进行修改。
+
+可以用独立于应用程序之外的代理（agent）程序来监测和协助运行在JVM上的应用程序。
+
+**JDK1.5 Instrumentation仪器 探针用只能main启动前用**
+Instrumentation仪器仪表 1.5新增，支持在main方法启动之前启动，相当于系统级jvm的代理。
+但是在实际的很多的情况下，我们没有办法在虚拟机启动之时就为其设定代理，这样实际上限制了instrument的应用
+
+在JDK6中，针对这点做了改进，开发者可以在main开始执行以后，再开启自己的Instrucment程序
+
+**JDK1.6 Instrumentation仪器 探针可以在 main启动后使用**  arthas 阿里巴巴 原理
+JDK1.6之后提供了attach机制，工具类都处于com.sun.tools.attach包下，
+VirtualMachine.attach方法attach到指定JVM进程上
+
+
+
+
+
+https://www.cnblogs.com/jackion5/p/10771609.html
+
+
