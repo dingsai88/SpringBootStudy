@@ -443,10 +443,10 @@ II.在main premain > main
 3.Instrumentation接口加入addTransformer 在类加载前后做 一些操作。
 
 
-我理解的skywalking是通过javaagent+bytebuddy+plugins方式实现的。
+我理解的skywalking是通过 javaagent+bytebuddy+plugins方式实现的。
 
 
-
+javaagent(Instrumentation)+bytebuddy
 
 -----------------------------------------------------------------------------------------------------------
 
@@ -470,7 +470,7 @@ java.lang.reflect InvocationHandler
 java.lang.reflect Proxy
 java.lang.reflect InvocationHandler
 
-2.无接口的类使用 AspectJ 切面J 实现(ASM)
+2.无接口的类使用 AspectJ 切面J 
 
 -------------------------------------javaagent java探针Java代理(虚拟机层面)------------------------------------------------------------
 # **I.javaagent java探针(代理)**  jvm加载class文件时对字节码进行修改增强
@@ -519,8 +519,8 @@ MyAgent1.premain -> MyAgent2.premain -> MyProgram.main
 
 **2.javaagent 探针 +结合字节码 可以对各个加载类进行修改。**
 
-第三方的字节码编译工具，比如ASM，javassist，cglib等等来改写实现类。
-ASM、javassist、byteBuddy
+第三方的字节码编译工具，javassist，cglib(ASM)、javassist、byteBuddy等等来改写实现类。
+
 
 
 ------------------------------java agent代理 Instrumentation仪器  JVM的Attach机制----------------------------------------------------------------
@@ -550,21 +550,56 @@ Instrumentation java代理(JVM级别) 在类加载时修改class :可以使用�
 
 ASM(cglib)、javassist帮助、byteBuddy、java proxy反射、Javassist
 
-**II.ASM(CGLIB) 汇编语言** 创建class时字节码指令级别修改
+**II.ASM(CGLIB) 字节码指令 动态修改字节码文件** 创建class时字节码指令级别修改。不能动态修改
 Spring AOP 无接口代理类时用CGLIB基于ASM
-
+https://asm.ow2.io/
 
 不过ASM在创建class字节码的过程中，操纵的级别是底层JVM的汇编指令级别，这要求ASM使用者要对class组织结构和JVM汇编指令有一定的了解。
 
-**II.javassist 任意时间都能对字节码进行增强**
+**II.javassist 任意时间都能对字节码进行增强**  小日本工具 不需要字节码指令就能修改
 可动态生成增强class
+修改方法内容，增加方法等
 
 https://zhuanlan.zhihu.com/p/141449080
+官网
+http://www.javassist.org/tutorial/tutorial.html
+
+1. ClassPool：javassist的类池，使用ClassPool 类可以跟踪和控制所操作的类，它的工作方式与 JVM 类装载器非常相似
+2. CtClass： CtClass提供了类的操作，如在类中动态添加新字段、方法和构造函数、以及改变类、父类和接口的方法。
+3. CtField：类的属性，通过它可以给类创建新的属性，还可以修改已有的属性的类型，访问修饰符等
+4. CtMethod：类中的方法，通过它可以给类创建新的方法，还可以修改返回类型，访问修饰符等， 甚至还可以修改方法体内容代码
+5. CtConstructor：与CtMethod类似
 
 
-**II.AspectJ** 
 
+**II.AspectJ** (Spring AOP [动态代理+CGLIB ASM] + AspectJ框架) 基于 apache BCEL框架汇编层
+https://www.eclipse.org/aspectj/
 https://www.jianshu.com/p/2e8409bc8c3b
+https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#aop-ataspectj
+
+Java 中流行的 AOP（aspect-oriented programming） 编程扩展框架，其内部使用的是 BCEL框架 来完成其功能。
+
+
+基于apache的BCEL(Byte Code Engineering Library)框架 汇编层
+
+
+
+Byte Code Engineering Library(BCEL)
+Apache Software Foundation 的 Jakarta 项目的一部分。
+BCEL 是 Java classworking 最广泛使用的一种框架,它可以让您深入 JVM 汇编语言进行类操作的细节。
+BCEL 与 Javassist 有不同的处理字节码方法，BCEL 在实际的 JVM 指令层次上进行操作(BCEL 拥有丰富的 JVM 指令级支持)
+而 Javassist 所强调的源代码级别的工作。
+
+横切关注点、切面（Aspect）、连接点（JoinPoint）、切入点（PointCut）、通知（Advice）
+
+
+**II.bytebuddy**
+
+获得甲骨文颁奖、基于ASM字节码指令级别
+
+
+
+
 
 
 
