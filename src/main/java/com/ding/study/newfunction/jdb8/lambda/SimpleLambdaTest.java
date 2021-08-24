@@ -1,7 +1,6 @@
 package com.ding.study.newfunction.jdb8.lambda;
 
 
-import com.ding.study.LambdaApple;
 import com.ding.study.util.JsonUtils;
 
 import java.util.*;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
  * @author daniel 2020-4-14 0014.
  */
 public class SimpleLambdaTest {
-    public static List<LambdaApple> list = new ArrayList<>();
+    public static List<MyString.LambdaApple> list = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -30,15 +29,15 @@ public class SimpleLambdaTest {
         new Thread(() -> System.out.println("2.bb"));
 
         //3 普通调用
-        LambdaApple red = new LambdaApple();
+        MyString.LambdaApple red = new MyString.LambdaApple();
         red.setColor("red");
         red.setWeight(10);
         list.add(red);
-        red = new LambdaApple();
+        red = new MyString.LambdaApple();
         red.setColor("red");
         red.setWeight(15);
         list.add(red);
-        red = new LambdaApple();
+        red = new MyString.LambdaApple();
         red.setColor("green");
         red.setWeight(20);
         list.add(red);
@@ -47,7 +46,7 @@ public class SimpleLambdaTest {
         System.out.println("3.获取苹果颜色" + JsonUtils.convertObjToJsonString(test.getAppleByColor("red")));
 
         //4 lambda 谓语Prodicate.test 做什么 提供一个布尔表达式
-        List<LambdaApple> r = test.getAppleProdicate(a -> a.getColor().equals("red"), list);
+        List<MyString.LambdaApple> r = test.getAppleProdicate(a -> a.getColor().equals("red"), list);
 
         System.out.println("4.Lambda.Prodicate调用color:" + JsonUtils.convertObjToJsonString(r));
         System.out.println("5.Lambda.Prodicate调用Weight:" + JsonUtils.convertObjToJsonString(test.getAppleProdicate(w -> w.getWeight() > 15, list)));
@@ -113,9 +112,9 @@ public class SimpleLambdaTest {
         //15 lambda应用排序1
         System.out.println("Lambda.排序前 :" + JsonUtils.convertObjToJsonString(list));
 
-        Collections.sort(list, new Comparator<LambdaApple>() {
+        Collections.sort(list, new Comparator<MyString.LambdaApple>() {
             @Override
-            public int compare(LambdaApple o1, LambdaApple o2) {
+            public int compare(MyString.LambdaApple o1, MyString.LambdaApple o2) {
                 return o2.getWeight() - o1.getWeight();
             }
         });
@@ -126,16 +125,18 @@ public class SimpleLambdaTest {
         System.out.println("Lambda.排序后2 :" + JsonUtils.convertObjToJsonString(list));
 
         //lambada排序3 返回新的是排序后集合
-        List<LambdaApple> listnew = list.stream().sorted((o1, o2) -> o2.getWeight() - o1.getWeight()).collect(Collectors.toList());
+        List<MyString.LambdaApple> listnew = list.stream().sorted((o1, o2) -> o2.getWeight() - o1.getWeight()).collect(Collectors.toList());
         System.out.println("Lambda.排序后3-原始 :" + JsonUtils.convertObjToJsonString(list));
         System.out.println("Lambda.排序后3-新返回 :" + JsonUtils.convertObjToJsonString(listnew));
 
         //16 lambda过滤 不要等于10的;返回的都是非10
+        listnew = list.stream().filter(filter1 -> !filter1.getWeight().equals(10)).collect(Collectors.toList());
+        System.out.println("Lambda.过滤后-新返回 1:" + JsonUtils.convertObjToJsonString(listnew));
         listnew = list.stream().filter(filter1 -> !filter1.getWeight().equals(10)).sorted((o1, o2) -> o2.getWeight() - o1.getWeight()).collect(Collectors.toList());
-        System.out.println("Lambda.过滤后-新返回 :" + JsonUtils.convertObjToJsonString(listnew));
+        System.out.println("Lambda.过滤后-新返回 2:" + JsonUtils.convertObjToJsonString(listnew));
 
         //16 lambda分组 不要等于10的;返回的都是非10
-        Map<Object, List<LambdaApple>> map = list.stream().sorted((o1, o2) -> o2.getWeight() - o1.getWeight()).collect(Collectors.groupingBy(zz -> zz.getColor()));
+        Map<Object, List<MyString.LambdaApple>> map = list.stream().sorted((o1, o2) -> o2.getWeight() - o1.getWeight()).collect(Collectors.groupingBy(zz -> zz.getColor()));
         System.out.println("Lambda.分组后返回 :" + JsonUtils.convertObjToJsonString(map));
 
         //17 lambda 遍历1  2
@@ -174,9 +175,9 @@ public class SimpleLambdaTest {
      * @param predicate
      * @return
      */
-    public List<LambdaApple> getAppleProdicate(Predicate<LambdaApple> predicate, List<LambdaApple> list2) {
-        List<LambdaApple> result = new ArrayList<>();
-        for (LambdaApple apple : list2) {
+    public List<MyString.LambdaApple> getAppleProdicate(Predicate<MyString.LambdaApple> predicate, List<MyString.LambdaApple> list2) {
+        List<MyString.LambdaApple> result = new ArrayList<>();
+        for (MyString.LambdaApple apple : list2) {
             if (predicate.test(apple)) {
                 result.add(apple);
             }
@@ -186,14 +187,46 @@ public class SimpleLambdaTest {
     }
 
 
-    public List<LambdaApple> getAppleByColor(String color) {
-        List<LambdaApple> result = new ArrayList<>();
-        for (LambdaApple apple : list) {
+    public List<MyString.LambdaApple> getAppleByColor(String color) {
+        List<MyString.LambdaApple> result = new ArrayList<>();
+        for (MyString.LambdaApple apple : list) {
             if (apple.getColor().equals(color)) {
                 result.add(apple);
             }
         }
         return result;
 
+    }
+
+    /**
+     * @see SimpleLambdaTest
+     * @author daniel 2020-4-14 0014.
+     */
+    public static class LambdaTest {
+        interface  Printer{
+           String print(String a1,String a2);
+        }
+
+        public String testPrint(String str1, String str2, Printer p){
+            return p.print(str1,str2);
+        }
+        public static void main(String[] args) throws Exception {
+            LambdaTest test=new LambdaTest();
+            String a1="11";
+            String a2="22";
+
+            String a3 = test.testPrint(a1, a2, new Printer() {
+                @Override
+                public String print(String a1, String a2) {
+                    System.out.println("内部输出:"+a1+a2);
+                    return a1+a2;
+                }
+            });
+            System.out.println("外部输出:"+a3);
+
+
+           // a3=  test.testPrint(a1,a2,()-> System.out.println("内部输出:"+a1+a2));
+
+        }
     }
 }
