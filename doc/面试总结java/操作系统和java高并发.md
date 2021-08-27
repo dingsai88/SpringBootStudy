@@ -215,12 +215,12 @@ CyclicBarrier主要解决一组线程之间互相等待(自动重置循环利用
 --------------------------------------------------------------------------------------------------------
  
 
-I.Executor与线程池
+I.Executor与线程池 ThreadPoolExecutor
 corePoolSize ：核心线程数量
 maximumPoolSize ：线程最大线程数
-workQueue ：阻塞队列，存储等待执行的任务 很重要 会对线程池运行产生重大影响
 keepAliveTime ：线程没有任务时最多保持多久时间终止
 unit ：keepAliveTime的时间单位
+workQueue ：阻塞队列，存储等待执行的任务 很重要 会对线程池运行产生重大影响
 threadFactory ：线程工厂，用来创建线程
 rejectHandler ：当拒绝处理任务时的策略
 
