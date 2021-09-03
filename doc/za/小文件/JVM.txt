@@ -1,8 +1,0 @@
-解语法糖、init和clinit、1+2=3
-类加载步骤:加载、连接Linking(验证、准备int给0;final赋值、)初始化clinit执行、使用、卸载。
-类加载器：启动、拓展、应用：重复加载、核心窜改。
-何时初始化:new、getstatic、putstatic：反射reflect，子先初始父、methodHandle7新反射轻量
-
-复制、标记清整：G1整体上标记整理，局部复制算发
-CMS:始标(STW)>并发标(并发)>重标(STW)>并发清除
-G1:初始标(需要STW)>并发标>最终标记》筛选回收

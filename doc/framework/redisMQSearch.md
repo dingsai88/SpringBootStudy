@@ -61,16 +61,8 @@ II.list,双向链表 : 压缩列表（ziplist）、双向循环链表  {消息�
 II.hash, 哈希表 : 压缩列表（ziplist）、散列表：自动扩容  {商品详情}
 II.set 不可重复(底层哈希表)交集并集 : 有序数组、基于散列表 {黑名单、共同好友交集、推荐好友差集}
 II.zset(sorted set)有序集合 : 压缩列表（ziplist）、跳表（Skip list）： 索引+原始链表  {排行榜}
-II. Bitmaps  {签到记录、布隆过滤器（第几位改成1）}  底层是String
-> setbit key 0 1
-(integer) 0
-> setbit key 100 1
-(integer) 0
-> bitcount key
-(integer) 2
-
-
-II. 海盆儿HyperLogLog  {UV去重显示KEY count}
+II. Bitmaps  {签到记录、布隆过滤器（判断值释放存在，限流）}  底层是String
+II.  HyperLogLog  {UV去重显示KEY count}海盆儿 :大数据基数统计
 II.Pub/Sub   消息的广播
 II.Geo 地理空间、计算距离等
 
@@ -91,11 +83,41 @@ I.内存淘汰机制:报错、最少使用key(过期的)、随机删key(过期�
 
 
 
-I.分布式锁:
-setnx  redis-setkey+超时时间-判断存在：缺点：只在一台生效。主从切换无效；setnx+失效时间，不原子
-红锁redlock:SET直接设置key和失效时间： 本地生成时间、挨个机器获取锁、异常了也都能释放。
 
-I.UV HyperLogLog
+
+I.set等基础命令
+II.set 设置 可选参数: EX过期秒、 PX 过期毫秒、NX是否存在、XX键存在才操作。
+SET key value [EX seconds] [PX milliseconds] [NX|XX] 
+II.set可选参数有对应的新命令SETEX、PSETEX、SETNX
+EX:SETEX(EXPIRE  second 失效时间 秒)
+PX:PSETEX(过期时间 毫秒 SET key value PX millisecond )
+NX:SETNX(SET if Not eXists如果不存在才设置)  key不存在返回1ture， key存在返回0false 
+XX:(只在键已经存在时，才对键进行设置操作。)
+
+**I.分布式锁单机:(官网建议)**
+http://www.redis.cn/topics/distlock.html
+
+II.单机redis 加锁 分布式锁 NX+ 过期时间:(只有key不存在才设置)
+1. SET key my_random_value NX PX 30000  :单独命令设置 :NX 如果不存在才设置 、PX 超时时间、随机value
+2. SETNX key my_random_value +  EXPIRE mykey 10
+3. spring redis实现
+bo = redisTemplate.opsForValue().setIfAbsent(jobNxKey,"1",REDIS_LOCK_EXPIRE_10MINUTES, TimeUnit.SECONDS);
+
+II.单机redis 删除锁:只删除本机随机生成value的key(A获得锁超时，B获得锁，A继续执行后删了B的锁)。
+  if( get key ==my_random_value){
+   del key;
+}
+
+**I.分布式锁集群:(官网建议)** 大于(N/2+1)节点 
+官网-分布式锁规范算法:
+思路和设计方案: 独享（相互排斥）、 无死锁(有锁崩溃不影响其他获得)、容错(redis大部分节点存活就可读写)
+
+redLock红锁思路:
+5个master，同时向5个节点获取锁，大于3(N/2+1)节点成功就成功.
+成功没大于3(N/2+1)，就全部节点释放锁。
+
+ 
+**I.UV HyperLogLog**
 pfadd key value4 value5 value6 value7  //新增多个元素
 pfcount key //统计该key去重后的元素个数
 
