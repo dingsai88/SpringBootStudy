@@ -63,7 +63,7 @@ Unix系统结构
 
 
 时间值:
-日历时间  19700101累计秒数。
+日历时间  1970-01-01累计秒数。
 
 进程时间 (CPU时间):时钟时间(wall clock time 进程运行总时间)、用户CPU时间、系统CPU时间
 time -p 
@@ -194,8 +194,7 @@ I. 文件IO
 打开文件:open、openat
 
 
-创建文件:creat函数
-open也可以创建
+创建文件:creat函数、open也可以创建
 
 
 打开文件设置偏移量lseek:
@@ -390,8 +389,7 @@ goto语句使用的就是上边的函数。
 
 # 第8章 进程控制
 
-I.进程标识
-进程ID
+I.进程标识:进程ID
 
 I.创建子进程:fork、vfork
 
@@ -677,6 +675,21 @@ ps -efj
 低速系统调用和其他
 
 低速系统调用:网络终端设备等调用可能永远阻塞
+某些文件类型(管道、终端设备、网络设备)数据不存在，读可能永远阻塞。
+如果数据不能被相同的文件类型立即接受(管道无空间、网络流控制)，写操作可能永远阻塞。
+某种条件下打开某些文件类型可能发生阻塞。
+强制性记录锁的文件进行读写。
+ioctl操作
+某些进程间通信函数
+
+
+对于一个描述符，两种方式指定非阻塞IO方法
+1.open获得描述符，指定 O_NONBLOCK 标志
+2.已打开的描述符调用 fcntl 由该函数打开O_NONBLOCK 文件状态标志。
+
+
+
+
 
 **记录锁(record locking):范围锁更准确 部分文件加锁**
 一个进程在读写文件某部分时，记录锁阻止其他进程修改同一文件区。
@@ -699,32 +712,335 @@ exec新程序可以继承原程序的锁。
 
 
 
-II.IO多路转接 IO多路复用
+**II.IO多路转接 IO多路复用**
+
+读取一个描述符写入到另外一个文件描述符
+while(n=read(stdin_fileno,buf,bufsiz)>0)
+   if(write(stdout_fileno,buf,n!=n))
+     err_sys("write error");
+
+问题:读取两个文件，写入到一个新文件怎么做。
+
+解决:一个进程，使用非阻塞IO读取数据。轮询多个文件
+
+1.两个输入A、B描述符都设置为非阻塞，
+2.对A发一个read,有数据就用，没有数据立刻返回。
+3.对B发一个read,有数据就用，没有数据立刻返回。
+4.等待若干时间，重复2、3操作。
+
+这种循环方式称为:轮询
+缺点:CPU浪费。
 
 
-select pselect函数:
-POSIX 兼容平台
+除了上述方式意外，还可以使用IO multiplexing
+调用poll、pselect、select函数
 
 
-poll函数:
-类似select 
+**poll、pselect、select函数:**
+
+**I.select函数**
+
+POSIX 兼容平台，select函数可以执行IO多路复用。
+
+select (int maxfdpl, fd_set *restrict readfs, fd_set *restrict writefds,fd_set *restrict exceptfds,
+struct timeval *restrict tvptr)
+
+II.maxfdpl 参数说明:
+最大文件描述符编号加1 。描述符集合里最大描述符+1。
+
+II.tvptr参数说明:
+null 永远等待
+0 不等待，测试所有指定的文件描述符立刻返回。
+!=0 等待指定的秒数、微妙数。 当指定的描述符之一准备好，或者已经超时立即返回。超时返回0
+
+
+
+II.readfs、writefds、exceptfds参数说明：
+描述符集指针。三个描述符集说明了，可读、可写、异常的描述符集合。
+
+fd_set结构体:
+存储了一批文件描述符各自是否有事件触发。
+
+II.函数返回值:
+-1出错
+0没有准备好的描述符
+大于0 已经准备好的描述符.是三个描述符集准备好的描述符之和。
+
+
+
+II.1024问题:
+1.最多监听1024个socket
+2.socket的文件描述符数值不能超出1024不然会数组越界
+
+
+
+
+
+一个描述符阻塞不影响select是否阻塞。
+
+文件描述符可以设置，阻塞非阻塞
+select 都是阻塞等待的.
+
+
+
+
+
+
+**pselect**
+POSIX 定义了一个select 变体:pselect
+区别:
+时间参数，支持秒和纳秒。  不是秒和微秒
+超时值定义成const,保证不可变
+可选信号屏蔽字
+
+
+**poll函数:**
+类似select ,SystemV引入，poll支持任何类型的文件描述符
+int poll(struct pollfd fdarray[], nfds_t nfds, int timeout);
+
+poll不是为每个条件(可读性、可写性、异常条件)构造一个描述集，
+而是构造一个pollfd结构的数组，每个数据元素指定一个描述符编号以及描述符条件。
+
+struct pollfd{
+int fd;
+short events;
+short revents;
+}
+
+
+
+应将每个数组元素的events成员设置所示中的一个或多个，
+通过这些值告诉内核我们关系的是每个描述符的那些事件。
+返回时，revents成员由内核设置，用于说明每个描述符
+发生了那些事件。
+
+timeout=-1永远等待
+timeout=0不等待。测试所有描述符立刻返回。这是轮训系统的方法，可以找到多个描述符状态而不阻塞poll函数。
+timeout>0
+
+理解文件尾端与挂断之间的区别是很重要的。如果我们正从终端输入数据，并键入文件结束符，
+那么就会打开POLLIN，于是我们就可以读文件结束指示read返回0. revents中得
+pollhub没有打开。如果正在读调至解调器，并电话线已挂断，我们将接到pollhub通知。
+
+
+
+select和poll的可中断性，
+终端的系统调用的自动重启是由,BSD引入的，但当时select函数是不重启的。
+这种特定在大多数系统中一直延续了下来，即使指定了sa_restart选项也是如此。但是，
+在SVR4上，如果指定了SA_RESTART,那么select和poll也是自动重启的。为了在将软件
+移植到SVR4派生的系统上时阻止这一点，如果信号有可能会中断select或poll就要使用
+signal_intr函数
+
+
+
+
 
 
 **异步IO:**
+异步I/O asynchronous I/O
+利用这种技术，进程告诉内核:当描述符准备好，可以进行IO时，用一个信号通知它。
+
+有两个问题，尽管一些系统提供了各自的异步IO，但POSIX采纳另一套标准。
+1.POSIX异步IO是 single UNIX Specification中可选设置。BSD:SIGIO、SystemV:SIGPOLL
+2.信号对每个进程而言只有一个(SIGPOLL、SIGIO)如果两个文件都用这个来标识，程序无法区分是哪个文件的。
+
+
+使用上一节说明的select和poll可以实现异步形式的通知。关于描述符的状态，系统并不主动
+告诉我们任何信息，我们需要进行查询(select或poll)。信号机构提供了一种
+以异步形式通知某些事件已发生的方法。由于BSD和SystemV派生的所有系统
+都提供了某些形式的异步IO，使用一个信号(Systemv SIGPOLL \ BSD SIGIO)通知进程，对某个
+描述符所关心的某个事件已经发生。我们在前面的章节中提到过，这些形式的异步IO是受限制的:
+我们并不能在所有的文件类型上，而且只能使用一个信号。如果要对一个以上描述符进行异步IO
+那么在进程接收到信号时并不知道这一信号对应于那一个描述符。
+
+SUSv4中将通用的异步IO机制从实时扩展部分调整到基本规范部分。这种机制解决了这些
+陈旧的异步IO设置存在的局限性。
+
+在我们了解使用异步IO的不同方法之前，需要先讨论一下陈本。在用异步IO的时候，要通过
+选择来灵活处理多个并发操作，这会使应用程序的设计复杂化。更简单的做法可能是使用多线程，
+使用同步模型来编写程序，并让这些线程以异步的方式运行。
+使用POSIX异步io接口，会带来下列麻烦。
+1。每个异步操作由3处可能产生错误的地方:1在操作提交的部分，1在操作本身结果，1在异步操作状态的函数中。
+2.与posix异步IO即可的传统方法项目，他们本身设计大量的额外设置和处理机制。
+3.从错误中回复可能会比较困难。举例来说，如果提交了多个异步写操作，其中一个失败了，下一步我们应该怎么做
+如果这些写操作是相关的，那么可能还需要撤销所有成功的写操作。
+
+
 SystemV 异步AT公司
 BSD异步
 POSIX异步:aio
+
+
+
+**SystemV 异步IO :**
+Unix System V 是正统的 AT&T Unix 操作系统，
+在systemv中 异步IO是 streams系统的一部分，它只对streams 设备部和 streams管道起作用。
+systemV的异步信号是 SIGpoll
+为了对一个streams设备启动异步IO，需要调用ioctl,将它的第二个参数request
+设置成i_setsic。第三个参数是由一个或多个常量构成的整型值。 这些常量是在 stropts.h中定义的。
+与streams机制相关的即可在susv4中已被标记为弃用，所以这里不讨论他们的任何细节。
+
+除了调用ioctl指定产生SIGPOLL信号的条件意外，还应为改信号建立信号处理程序。
+sigpoll默认动作是终止改进程，所以应当在调用ioctl之前建立信号处理程序。
+
+**BSD异步IO**
+在BSD派生的系统中，异步IO是信号 SIGIO和SIGurg的组合。 SIGio是通用异步IO信号，SIGURG则只用来通知
+进程网络连接上的带外数据已经到达。
+为了接收sigio信号，需执行以下3步。
+1。调用signal sigaction为 SIGIO信号建立信号处理程序。
+2。以命令 F_setown 调用fcntl来这是进程IO或者进程组ID，用于接收对于该描述符的信号。
+3。 以命令f_setfl调用fcntl设置 O_ASYNC文件状态标志，使在该描述符上可以进行异步IO
+
+第3步仅能对指向中断或网络的描述符执行，这是BSD异步IO设置的一个基本限制。
+对于SIGurg信号，只需执行第一步和2步。该信号仅对引用支持带外数据的网络连接描述符而产生，如TCP连接。
+
+**POSIX异步IO**
+posix异步io接口为对不同类型的文件进行异步IO提交了一套一直的方法。这些接口来自实时
+草案标准，该标准是single unix specification的可选项。在SUSV4中，这些接口被移到了基本部分中，
+所以现在所有的平台都被要求支持这些接口。
+  这些异步IO接口使用AIO控制块来描述IO操作。 aiocb结构定义了AIO控制块。该结构至少包括下面这些字段
+
+struct aiocb{
+int aio_files; //file descriptor 文件描述符  
+off_t aio_offset; // file offset for IO  读写从指定的偏移量开始
+volatile  void * aio_buf;  // buffer for IO  读操作数据会复制到缓冲区中，该缓冲区从 这个指定的地址开始。
+size_t  aio_nbytes;  //number of bytes to transfer  包含了要读写的字节数
+int aio_reqprio;   //priority  异步请求提示顺序
+struct sigevent  aio_sigevent; // signal information  IO事件完成后如何通知程序。
+int aio_lio_opcode;   // operation for list io  只能用于基于列表的异步IO
+}
+
+sigevent IO完成后如何通知程序
+
+struct sigevent{
+int sifev_notify;//通知的类型 三选一； 
+int sigev_signo;
+union sigval  sigev_value;
+void (*sigev_notify_function)(union sigval);
+pthread_attr_t * sigev_notify_attributes;
+
+}
+
+sifev_notify 控制通知类型 三选一
+1.SIGEV_NONE  异步IO请求完成后,不通知进程
+2.SIGEV_SIGNAL 异步IO请求完成后，产生由sigev_signo字段指定的信号。如果应用程序选择捕捉信号，
+且在建立信号处理程序的时候指定了SA_SIGINFO标志，那么该信号将被入队。信号处理程序会传送给
+一个siginfo结构，该结构的si_value字段被设置为sigev_value。
+3.SIGEV_THREAD  异步IO请求完成后，sigev_notify_function字段指定的函数被调用。
+sigev_value字段被传入作为它的唯一参数。除非sigev_notify_attributes字段被设定为pthread属性结构的地址，
+且该结构指定了一个另外的线程属性，否则该函数将在分离状态下的一个单独线程中执行。
+
+进行异步IO之前需要先初始化AIO控制块，调用aio_read函数来进行异步读操作，或者调用aio_write函数来进行异步写
+操作。
+
+当这些函数返回成功时，异步IO请求已经被操作系统放入等待处理的队列中了。这些返回值
+与实际IO操作的结果没有任何关系。IO操作在等待时，必须注意确保AIO控制块和数据库缓冲区保持稳定；
+他们下面对应的内存必须始终是合法的，除非IO操作完毕否则不能复用。
+
+要想强制所有等待中得异步操作不等待而写入持久化的存储中，可以设立一个AIO控制块并调用
+aio_fsync函数。
+
+AIO控制块中得AIO_fildes字段指定了其异步写操作被同步的文件。如果OP参数设定为O_DSYNC,
+那么操作执行起来就会像调用了fsync一样。
+
+像aio_read和aio_write函数一样，在安排了同步时，aio_fsync操作返回。在异步同步操作完成之前，数据不会被
+持久化。AIO控制块控制我们如何被通知，就像aio_read和aio_write函数一样。
+为了获知一个异步读写或者同步操作的完成状态，需要调用aio_error函数
+
+int aio_error(const struct aiocb *aiocb)
+返回值为下面4钟情况中得一种。
+0 异步操作成功完成。需要调用aio_return函数获取操作返回值     
+-1  对aio_error调用失败。这种情况下，errno会告诉我们为什么
+einprogress  异步读写或同步操作仍然在等待。
+其他情况  其他任何返回值是相关的异步操作失败返回的错误码。
+如果异步操作成功，可以调用aio return 函数来获取异步操作的返回值。
+
+ssize_t aio_return(const struct aiocb *aiocb);
+
+知道异步操作完成之前，都需要小心不要调用aio_return函数。操作完成之前的结果时未定义的。
+还需要小心对每个异步操作只调用一次aio_return.一旦调用该函数，操作系统就可以
+释放吊IO操作返回值的记录。
+
+  如果aio_return函数本身失败，返回-1 ，并设置errno 。其他情况下，它将返回异步操作的结果，
+会返回read write或者fsync 在被成功调用时可能返回的结果。
+
+  执行IO操作时，如果还有其他事务要处理而不想被IO操作阻塞，就可以使用异步IO 。然而，如果在完成了所有事务时，
+还有异步操作未完成时候，可以调用aio_suspend函数来阻塞进程，直到操作完成。
+
+int aio_suspend(const struct aiocb *const list[],int nent,
+  const struct timespec *timeout);
+
+返回三种情况中得一种。被一个信号中断，返回-1，设置errno为EINTR.
+没有任何io操作完成的情况下，阻塞的时间超过了函数中 可选的timeout参数指定的时间限制，
+那么aio_suspend返回-1 ,并将errno设置为 eagain。
+如果没有任何IO完成，aio_suspend返回0。  如果在我们调用aio_suspend操作时，所有的异步IO操作都已完成，
+那么aio_suspend将不再阻塞的情况下直接返回。
+
+list参数是一个指向aio控制块数组的指针，nent参数表明了数组中得条目数。
+数组中得空指针会被跳过，其他条目都必须指向已用于初始化异步IO操作的AIO控制块。
+
+当还有我们不想再完成的等待中得异步IO操作时，可以尝试使用aio_cancel函数来取消他们。
+
+init aio_cancel(int fd,struct aiocb *aiocb);
+fd 参数指定了那个未完成的异步IO操作的文件描述符。如果aiocb参数未NULL，系统将会尝试取消所有
+该文件上未完成的异步IO操作。其他情况下，系统将尝试取消有由aio控制块描述的单个异步IO操作。
+我们之所以说系统尝试取消操作，是因为无法保证系统能够取消正在进程中得任何操作。
+aio_cancel函数可能会返回4个值中得一个
+AIO_ALLDONE 所有操作在尝试取消它们之前已经完成。
+AIO_CANCELED  所有要求的操作已被取消
+AIO_NOTCANCELED 至少有一个要求的操作没有被取消。
+-1   对aio_cancel调用失败，错误码将被存储在errno中
+
+如果异步IO操作被成功取消，对响应的AIO控制块调用aio_error函数将会返回错误
+ecanceled.如果操作不能被取消，那么响应的AIO控制块不会因为对aio_cancel的调用而被修改。
+ 
+  还有一个函数也被包含在异步IO接口当中，尽管它既能以同步的方式来使用，又能以异步的方式来使用，
+这个函数就是lio_listio 该函数提交一系列由于一个AIO 控制块列表描述的io请求。
+
+int lio_listio (int mode ,struct aiocb *restrict const list [restrict], int newt,struct sigevent * restrict sigev)
+返回值0 -1
+
+mode决定是否异步。
+如被设定为LIO_WAIT,lio_listio函数将在列表IO操作完成后返回，sigev被忽略。
+
+如被设定为LIO_NOWAIT，lio_listio函数将在IO请求入队后立即返回。进程将在所有IO操作完成后，
+按照sigev参数指定的，被异步地通知。如果不想被通知，可以把sigen设定为null.
+
+list参数 指向AIO控制块列表，该列表指定了要运行的IO操作。nent参数指定了数组总的元素个数。
+    aio控制块可以包含NULL指针，这些条目将被忽略。
+
+每一个AIO控制块中，aio_lio_opcode字段指定了该操作是一个读操作lio_read lio_write lio_nop 读写忽略。
+读操作会按照对应AIO控制块被传给aio_read函数来处理。 类似地，写操作会按照对应的AIO控制块被传给了aio_write来处理。
+
+实现会限制我们不想完成的异步IO数量。这些限制都是运行时不变量
+
+sysconf函数 把name参数设置 成
+
+AIO_LISTIO_MAX  单个列表IO调用中得最大IO操作数
+AIO_MAX  未完成的异步IO操作的最大数目
+AIO_PRIO_DELTA_MAX  进程可以减少其异步IO优先级的最大值。
+
+
+
+
+
+
+
+
+
+
+
+
 
 aio_read
 aio_write
 
 aio_error 获取异步读写状态
-
 aio_return :操作完成前不能调用
 
 
 
-readv writev函数:
+**readv writev函数:**
 读写多个非连续缓冲区。撒布读scatter read 聚集写 gather write
 
 
@@ -736,9 +1052,38 @@ readv writev函数:
 
 
 
-存储映射IO:
+**存储映射IO:**
 memory mapped Io
-将磁盘文件映射到存储空间的一个缓冲区
+将磁盘文件映射到存储空间的一个缓冲区。
+
+当从缓冲区中取数据时，就相当于读文件中得相应字节。与此类似，将数据存入缓冲区时，
+响应字节就自动写入文件。这样就可以在不使用read和write情况下进行IO
+
+首先告诉内核将一个给定的文件映射到一个存储区域中，由mmap函数实现。
+
+void *mmap(void *addr, size_t len ,int prot ,int flag, int fd ,off_t off);
+
+addr 用于指定映射存储区的起始地址。通常为0，由系统选择该影射去的起始位置。
+此函数的返回值是该影射区的起始地址。
+
+fd 参数是指定要被影射文件的描述符。在文件映射到地址空间之前，必须先打开该文件。
+
+len 映射的字节数,
+
+off是要映射字节在文件中得起始偏移量
+
+prot 指定了映射存储区的保护要求
+(prot_read 客户  prot_write可写 prot_exec 可执行  prot_none 不可访问)
+
+flag 影响映射存储区的多种属性。
+map_fixed 返回值必须等于addr. 因为这不利于可移植性，不鼓励使用此标志。
+
+map_shared  本进程对映射区所进行的存储操作配置。存储操作修改映射文件。存储操作相当于对该文件write
+
+map_private  映射区存储操作导致创建该映射文件的一个私有副本。
+
+
+
 
 
 
@@ -747,8 +1092,22 @@ memory mapped Io
 
 # 第十五章 进程间通信
 
+进程间通信 InterProcess Communication IPC
+
+可以通过fork exec传送， 文件系统传送。
+
+管道(半双工[单向]、全双工[双向])
+XSI(消息队列、信号量、共享存储)
+消息队列、信号量、共享存储 
+套接字
 
 **管道**
+管道是UNIX系统IPC最古老形式，所有unix系统都提供此通信机制。
+
+局限性:
+1.半双工(数据只能在一个方向上流动)。现在某些系统提供全双工管道，但是为了移植性，我们不预设系统支持全双工。
+2.管道只能在具有公共祖先的两个进程之间使用。 父 fork 子 通信
+
 
 
 **函数popen pclose**
@@ -759,7 +1118,7 @@ memory mapped Io
 
 FIFO :命名管道
 
-XSI  IPC(进程间通信):消息队列、信号量、共享存储器
+XSI  IPC(拓展进程间通信):消息队列、信号量、共享存储器
 
 
 
@@ -807,6 +1166,18 @@ TCP将带外数据称为:紧急数据 urgent data.  TCP仅支持一个字节的�
 
 
 # 第十七章 高级进程间通信
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

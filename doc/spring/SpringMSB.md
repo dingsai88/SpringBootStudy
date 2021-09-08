@@ -524,7 +524,7 @@ MyAgent1.premain -> MyAgent2.premain -> MyProgram.main
 
 
 ------------------------------java agent代理 Instrumentation仪器  JVM的Attach机制----------------------------------------------------------------
-**Instrumentation仪器** :虚拟机JVM级别的代理。代码无感知 : JVM字节码加载的时候，对字节码进行修改。
+**Instrumentation 仪器** :虚拟机JVM级别的代理。代码无感知 : JVM字节码加载的时候，对字节码进行修改。
 
 可以用独立于应用程序之外的代理（agent）程序来监测和协助运行在JVM上的应用程序。
 
