@@ -94,7 +94,7 @@ PX:PSETEX(过期时间 毫秒 SET key value PX millisecond )
 NX:SETNX(SET if Not eXists如果不存在才设置)  key不存在返回1ture， key存在返回0false 
 XX:(只在键已经存在时，才对键进行设置操作。)
 
-**I.分布式锁单机:(官网建议)**
+**I.分布式锁单机:(官网建议)** Distributed locks
 http://www.redis.cn/topics/distlock.html
 
 II.单机redis 加锁 分布式锁 NX+ 过期时间:(只有key不存在才设置)
@@ -116,6 +116,16 @@ redLock红锁思路:
 5个master，同时向5个节点获取锁，大于3(N/2+1)节点成功就成功.
 成功没大于3(N/2+1)，就全部节点释放锁。
 
+**I.Redisson** java版本实现
+https://www.cnblogs.com/qdhxhz/p/11046905.html
+https://github.com/redisson/redisson
+https://github.com/redisson/redisson/wiki/Table-of-Content
+WatchDog  默认30 秒 每10秒看是否存活 -自动延期机制
+II.Fair Lock 公平锁
+II.读写锁:  ReadLock 所有者和仅一个 WriteLock
+II.Semaphore 信号量:
+II. CountDownLatch 加一减一
+II.Spin Lock 自旋锁
  
 **I.UV HyperLogLog**
 pfadd key value4 value5 value6 value7  //新增多个元素

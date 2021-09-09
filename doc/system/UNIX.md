@@ -81,7 +81,7 @@ I.第一章 UNIX标准及实现
 
 II.unix标准化
 
-III.ISO C
+**III.ISO C**
 提供C程序的可移植性，让C程序适用于大量不同操作系统。
 
 定义了C的语法、语义、标准库。
@@ -113,7 +113,7 @@ wchar 扩充字符
 wctype  宽字符分类和映射支持
 
 
-III.IEEE POSIX
+**III.IEEE POSIX**
 
 POSIX:指的是可移植操作系统接口(Portable Operating System Interfacc)。
 
@@ -122,6 +122,9 @@ IEEE 1003.1标准:
 
 四种：必须头文件、XSI可选头文件、可选头文件、可选接口组合选项码
 数:23页
+
+XSI :X/Open System Interface
+只有遵循XSI的实现才能称为UNIX操作系统。
 
 **POSIX 标准必须头文件:**
 
@@ -148,8 +151,13 @@ sys/shm.h    XSI共享存储
 sys/uio.h    矢量操作
 
 
-III.Single UNIX specification (SUS ,单一unix规范)
+**III.Single UNIX specification (SUS ,单一unix规范)**
 是POSIX.1标准的超集(拓展)
+
+定义了一些附加接口拓展了POSIX规范提供的功能。
+XSI :X/Open System Interface
+只有遵循XSI的实现才能称为UNIX操作系统。
+XSI  XSI conforming规范
 
 
 II.unix系统实现
@@ -1095,6 +1103,7 @@ map_private  映射区存储操作导致创建该映射文件的一个私有副�
 进程间通信 InterProcess Communication IPC
 
 可以通过fork exec传送， 文件系统传送。
+四种方式:
 
 管道(半双工[单向]、全双工[双向])
 XSI(消息队列、信号量、共享存储)
@@ -1114,54 +1123,418 @@ XSI(消息队列、信号量、共享存储)
 创建连接进程的管道
 
 
-协同进程 coprocess:
-
-FIFO :命名管道
-
-XSI  IPC(拓展进程间通信):消息队列、信号量、共享存储器
+**协同进程 coprocess:**
+unix系统过滤程序从标准输入读取数据，向标准输出写数据。
 
 
+**FIFO :命名管道 (First Input First Output)先进先出**
+未命名的管道只能在两个相关进程之间使用，相同祖先进程。
+FIO不想管的进程也能交换数据。
 
-信号量semaphore:
-计数器，用于为多个进程提供共享数据对象的范围。
-
-
-
-信号量、记录锁(范围锁)、互斥量
-
-
-
-POSIX信号量
+用途:
+1.shell命令使用FIFO数据从一条管道传送到另一条时，无需创建中间的临时文件。
+2.客户进程-服务进程应用中FIFO用作汇聚点，在客户进程和服务器进程二者之间传递数据
 
 
+**XSI  IPC(拓展进程间通信):**  XSI (X/Open System Interface )
+有三种称作XSI IPC的IPC ：消息队列、信号量、共享存储器
+
+内核中IPC结构(消息队列、信号量、共享存储器)都有一个整数标识符(identifier)加以引用。
+
+标识符是IPC对象的内部名。
+
+XSI IPC 权限结构:
+
+**消息队列**
+消息队列是消息的链接表，存储在内核中，由消息队列标识符标识。简称队列，标识符 队列ID
+
+创建、打开队列 msgget
+
+消息添加到队列尾部  msgsnd
 
 
-# 第十六章 网络IPC(进程间通信) :套接字
+速度:
+消息队列> 全双工管道 >UNIX域套接字
 
 
+
+
+
+
+
+
+**信号量 semaphore:**
+信号量与已经介绍过的IPC结构（管道、FIFO、消息队列）不同。
+
+信号量是一个计数器，用于为多个进程提供共享数据对象的范围。
+
+操作流程:
+1.测试控制资源的信号量
+2.此信号量是正，则进程使用该资源，进程将信号量减一。
+3.信号量为0，进程进入休眠状态，直至信号量大于0。进程被唤醒后返回步骤1。
+
+struct semid_ds{
+struct ipc_perm sem_perm;
+unsigned short  sem_nsems;
+time_t     sem_otime;
+time_t    sem_ctime;
+
+}
+
+
+
+
+
+
+**信号量、记录锁(范围锁)、互斥量 比较**
+多个进程之间共享一个资源，三种方式比较。
+
+信号量，创建一个包含一个成员的信号量集合，初始化为1。
+记录锁，创建一个空文件，该文件第一个字节作为锁字节。
+互斥量，所有进程将相同的文件映射到他们的地址空间里。
+
+linux中操作时间比较
+信号量  > 记录锁  > 互斥量 时间最短
+
+尽管对于这种平台来说，在共享存储中使用互斥量是一个更快的选择，但是我们依然使用记录锁，
+除非要特别考虑性能。 
+有两个原因，
+1。在多个进程间共享的内存中使用互斥量来回复一个终止的进程更难。
+2。进程共享的互斥量属性还没有得到普遍的支持。
+
+**共享存储**
+共享存储允许两个或多个进程共享一个给定的存储区。 因为数据不需要在客户进程和服务器
+进程之间复制，所以这是最快的IPC。
+
+通常，信号量用于同步共享存储访问。
+
+
+**POSIX信号量**
+
+posix信号量机制是三种IPC机制之一，3种IPC机制源于posix拓展。
+
+Single UNIX Specification 三种机制(消息队列、信号量、共享存储) 可选部分。
+
+SUSv4之前信号量在可选，SUSv4之后信号量是基本规范，消息队列和共享存储时可选。
+
+
+
+POSIX 信号量接口 在意解决 XSI 信号量接口的几个缺陷。
+1.和XSI接口比， POSXI 信号量更高性能。
+2. POSIX 信号量更简单：没有信号量集
+3. POSIX 信号量在删除时表现更完美。
+
+posix信号量有两种形式:
+命名和未命名
+差异是创建和销毁上。
+
+未命名只存在于内存中，要求信号量进程必须可以访问内存。
+命名可以通过名字访问，所有进程都可以访问。
+
+命名信号量:
+sem_t sem_open(const char *name ,int oflag, unsigned int value)
+
+int sem_unlink(const char *name);销毁信号量
+
+
+信号量减一 sem_trywait  、sem_wait
+int sem_trywait(sem_t *sem) 0不阻塞 ,返回-1。
+int sem_wait(sem_t *sem)  阻塞
+
+int sem_timedwait(sem_t *restrict sem, const struct timespec )阻塞一段时间
+
+
+信号量加1
+int sem_post(sem_ * sem)
+
+
+未命名:
+int sem_init (sem_t sem ,int pshared,unsigned int value)
+int sem_destroy(sem_t *sem)
+int sem_getvalue(sem_t restrict sem ,int restrict valp)检索值
+
+XSI信号量 和POSIX信号量比较
+
+POSIX信号量时间更短
+
+
+
+# 第十六章 网络IPC(进程间通信 :管道、FIFO、消息队列、信号量、共享存储 ) :套接字
+
+进程通信机制IPC: 管道、FIFO、消息队列、信号量、共享存储。
+
+网络进程通信:network IPC.
+即可用来计算机之间通信、也可用于计算机内通信。
+尽管协议不同，但是标准协议是TCPIP协议栈。
+
+**套接字描述符socket**
 socket 套接字是通信端点的抽象。
 
+创建:
+int socket(int domain ,int type ,int protocol);
 
-寻址:
-getnameinfo
+domain 确定通信特性， 地址格式  address family :
+AF_inet IP4、 AF_INET6 IP6 、AF_UNIX unix域、 AF_UPSPEC未指定.
 
-建立连接:
-connect
-listen
-accept
+type 确定套戒子类型
+SOCK_DGRAM  :固定长度的、无连接的、不可靠的
+SOCK_RAW  : IP协议的数据报接口
+SOCK_SEQPACKET : 固定长度、有序的、可靠的、面向连接的 SCTP
+SOCK_STREAM  :有序可靠、双向、面向连接的字节流
 
-数据传输:
-send
+protocal 通常是0 标识为给定的域和套接字选择默认协议。
+IPPROTO_IP
+IPPROTO_IPV6  ip6
+IPPROTO_ICMP  PING 因特网控制报文协议
+IPPROTO_RAW  原始IP数据报协议
+IPPROTO_TCP 传输控制协议
+IPPROTO_UDP   用户数据报协议
 
-带外数据( out of band data):
+
+
+**I.寻址:**
+标识一个目标通信进程。  
+进程标识有两部分组成:
+一部分是计算机网络地址。
+一部分是计算机端口号。
+
+
+字节序
+地址格式:
+一个地址标识一个特定通信域的套接字端点，地址格式与这个特定的通信域相关。
+struct sockaddr{
+sa_family_t sa_family;
+char    sa_data[];
+}
+
+地址查询:
+应用程序不需要了解一个套接字地址内部结构。
+域名系统Domain name system DNS 或者 网络信息服务 Network information services NIS
+
+gethostent 找到给定计算机系统的主机信息
+
+struct hostent *gethostent(void);
+
+struct hostent{
+char  *h_name;// name of host
+char ** h_aliases ;// pointer to alternate host name arry
+int h_addrtype ;  //address type
+int h_length;  // length in bytes of address
+char *h_addr_list;// pointer to array of network addresses
+}
+
+gethostent包含 gethostbyname、gethostbyaddr
+
+struct netent *gethostbyaddr(uint32_t net ,int type);
+struct netent *gethostbyname(const char *name);
+
+struct  netent{
+char *n_name; //network name
+char *n_aliases  //alternate network name array pointer
+int n_addritype  //address type
+uint32_t n_net  ;// network number
+
+}
+
+getnameinfo 、getaddrinfo 替代  gethostbyname、gethostbyaddr
+
+int getaddrinfo(const char * restrict host, const char * restrict service,
+const struct addrinfo *restrict hint,struct addrinof * restrict res);
+
+int getnameinfo(const struct sockaddr *restrict addr,socklen_t alen,
+char *restrict host,socklen_t hostlen,
+char *restrict service, socklen_t servlen, int flags);
+
+struct addrinfo{
+int ai_flags;   customize behavior 自定义行为
+int ai_family   address family
+int ai_socktype    
+int ai_protocol;  协议
+socklen_t  ai_addrlen;
+struct sockaddr  ai_addr;
+char   ai_canonname;       主机的规范名称canonical name of host
+struct addrinfo  ai_next;  next in list
+}
+
+
+**套接字socket与地址关联**
+对于服务器，服务器保留一个地址并注册在
+/etc/services或某个服务中.
+
+int bind(int sockfd,const struct sockaddr *addr, socklen_t len);
+
+限制:
+进程在计算机上，地址有效。不能指定其他机器地址
+地址必须和创建套接字地址族支持的格式匹配
+端口号不小于1024，除非特权。
+一般只能将一个套接字端点绑定到一个给定地址上。
+
+getsockname函数发现绑定到套接字上的地址:
+
+int getsockname
+
+如果已连接，可以调用getpeername 函数来找到对方的地址
+
+int getpeername;
+
+
+ 
+
+**建立连接:**
+
+
+connect(int sockfd,const struct sockaddr * addr, socklen_t len);
+对方计算机是打开，正在运行
+
+connect_retry : 指数补偿 exponential backoff算法
+调用connect失败，进程会休眠一段，下次循环再尝试、最大延迟2分钟
+
+
+
+listen函数:
+宣告它愿意接收连接请求
+int listen (int sockfd ,int backlog);
+
+backlog 提供一个提示，该进程所要入队的未完成连接请求数量。
+一旦队列满了系统会拒绝多余的请求连接。
+
+一旦服务器调用listen ,所用的套接字就能接收连接其你去。
+使用accept函数获得连接并建立连接。
+
+accept函数:
+int accept(int sockfd, struct sockaddr * restrict addr ,soklen_t *restrict len);
+
+accept返回的文件描述符是套接字描述符，该描述符连接到调用connect客户端。
+这个新的套接字描述符和原始套接字sockfd具有相同的套接字类型和地址族。
+
+如果服务器accept调用， 并没有连接请求，服务器会阻塞直到有请求来。
+服务器可以使用poll或者select来等待一个请求的到来。
+
+
+
+
+
+
+**数据传输:**
+既然一个套接字端点表示为一个文件描述符，那么只要建立连接，就可以使用read write来通过套接字通信。
+
+尽管可以通过read write交换数据，但是有专用的函数。
+套接字6个专属函数。 三个发数据，三个接收数据。
+
+send函数:
+
+ssize_t send(int sockfd ,const void *buf,size_t nbytes, init flags);
+类似write 使用send时套接字必须已经连接。
+
+flags:
+MSG_CONFIRM 提供链路层反馈以保持地址映射有效。
+MSG_dontroute  :数据包路由出本地网络
+MSG_DONTWAIT :允许非阻塞操作
+MSG_EOF  : 发送数据库关闭套接字的发送端。
+MSG_EOR  :协议支持，标记记录结束
+MSG_MORE  : 延迟发送数据包允许写更多数据
+MSG_NOSIGNAL :写无连接的套接字时不产生sigpipe信号
+MSG_OOB : 如果协议支持，发送带外数据
+
+send成功返回，也并不标识连接另一端进程就一定接收了数据。
+
+sentto 函数:可以在无连接的套接字上指定一个目标地址
+ssize_t sendto(int sockfd, const void * buf ,size_t nbytes ,int flags,
+const struct sockaddr * destaddr ,socklen_t destlen);
+
+sentmsg函数:带缓冲区
+ssize_t sendmsg(int sockfd ,const struct msghdr * msg,int flags);
+
+通过套接字发送数据时，还有一个选择。可以调用带有msghdr结构的sendmsg来指定多重缓冲区
+传输数据，这个和writev 相似
+
+
+**recv 函数:接收和read相似**
+
+ssize_t recv (int sockfd ,void *buf ,size_t nbytes ,int flags);
+
+
+**recvfrom函数 用于无连接的套接字**
+
+ssize_t recvfrom(int sockfd ,void *restrict buf,size_t len, int flags  struct sockaddr * restrict addr ,socklen_t *restrict addrlen);
+
+**recvmsg 接收带缓冲区**
+
+ssize_t recvmsg(int sockfd ,struct msghdr *msg ,int flags);
+
+
+
+**套接字选项**
+套接字提供两个套接字选项接口来控制套接字行为。
+一个接口用来设置选项
+一个接口可以查询选项状态。
+
+1.通用选项，工作在所有套接字上
+2.在套接字层次管理的选项，但是依赖于下层协议支持。
+3.特定于某协议的选项，每个协议独有的。
+
+int setsockopt(int sockfd ,int level,int option, const void *val, socklen_t len);
+
+level 标识了选项应用的协议，如果是通用套接字层选项，设置层 SOL_SOCKET.
+
+SO_ACCEPTCONN 返回信息知识该套接字是否能被监听
+SO_BROADCAST  广播数据报
+SO_DEBUG  网络驱动调试功能
+SO_SONTROUTE  绕过通常路由
+SO_ERROR    返回挂起的套接字错误并清除
+
+val 根据选项不同指向一个数据结构或整数，有时候是开关。
+
+lenp是一个指向整数的指针。
+
+
+
+
+**带外数据( out of band data):**  传输优先级
+是一些通信协议锁支持的可选功能。 
 对比普通数据，允许更高的优先级。TCP支持带外数据
 
 TCP将带外数据称为:紧急数据 urgent data.  TCP仅支持一个字节的紧急数据。
+UDP不支持带外数据
+如果通过套接字安排了信号的产生，那么紧急数据被接收时，会发送SIGURG信号。
 
 
-非阻塞和异步IO:
+
+
+
+**非阻塞和异步IO:**
+recv函数读没有数据时候会阻塞等待。
+输出没有空间时，send会阻塞。
+
+在套接字非阻塞模式下，行为会改变。
+非阻塞模式下，这些函数不会阻塞而是会失败，将error设置未ewouldblock或者 eagain。
+当这种情况发生时，可以使用poll或者select 判断能否接收或者传输数据。
+
+Single UNIX Specification包含异步IO。
+socket套接字有自己的异步处理IO方式。
+
+socket异步IO中，读取数据时候，或写队列中，安排发送信号 SIGIO.
+
+启用异步IO是两步骤过程：
+1。建立套接字所有权，这样信号可以被传递到合适的进程。
+2。通知套接字当IO操作不会阻塞时发信号。
+
+第一步三种方式:
+1.fcntl使用 F_SETOWN
+2. ioctl使用 FIOSETOWN
+3. ioctl 中使用 SIOCSPGRP
+
+第二部 2种方式
+1. fcntl使用 F_SETFL 
+2. ioctl 中使用 FIOASYNC
+
+
+
+
 
 上文中有IO异步机制。 套接字机制有自己的异步IO方式。
+
+异步和非阻塞的套接字。
 
 
 
