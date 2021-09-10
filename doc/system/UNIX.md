@@ -715,6 +715,61 @@ exec新程序可以继承原程序的锁。
 
 建议性锁和强制锁
 
+flock函数:
+早期 只支持 flock函数  全文件加锁
+
+fcntl记录锁
+
+int fcntl(int fd ,int cmd ,struct flock *flockptr );
+
+对于记录锁cmd是 F_GETLK、F_SETLK、F_SETLKW
+F_GETLK: 判断由flockptr所描述的锁释放会被另外一把锁排斥(阻塞.)。
+如果存在一把锁，它阻止创建由flockptr所描述的锁，则该现有锁的信息将重写flockptr
+指向的信息。如果不存在这种情况，则除了将l_type设置未F_UNLCK之外
+flockptr所指向的结构中其他信息不变
+
+F_SETLK:设置由于flockptr锁描述的锁。如果我们试图获得一把读锁或写锁 l_type= f_rdlck、f_wrlck
+而兼容性规则阻止系统给我们这把锁，那么fcntl会立刻返回错误，此时errno设置未EACCESS或者EAGAIIN
+
+F_SETLKW:这个命令是F_SETLK的阻塞版本，命令中的W表示等待wait。
+如果所有请求的读锁或写锁因一个进程当前已经对请求的区域某部分进行了加锁而不能被授予，
+那么调用进程会被设置为休眠。如果请求创建的锁已经可用，或者休眠由信号中断，则会被唤醒。
+
+
+flockptr指向flock结构的指针
+
+struct flock{
+short l_type; F_RDLCK共享读锁、F_WRLCK独占写锁、F_UNLCK解锁一个区域
+short l_whence;
+off_t l_start; 加锁解锁的起始偏移量
+off_t l_len;  区域的字节长度
+pid_t l_pid; 进程ID持有的锁能阻塞当前进程
+}
+
+flock结构说明
+l_type锁类型:F_RDLCK共享读锁、F_WRLCK独占写锁、F_UNLCK解锁一个区域
+加锁解锁的起始偏移量:l_start、l_whence
+区域的字节长度:l_len
+
+进程ID持有的锁能阻塞当前进程:l_pid
+
+不同进程：读读共享、读写阻塞。
+同进程：有写锁，可以再加读锁，会替换锁。
+
+
+死锁：两个进程互相等待对方的资源。
+
+锁隐含继承和释放:
+1.锁和进程和文件关联。进程终止全释放，文件描述符关闭锁释放。
+2.fork子进程不继承父锁。
+3. 执行exec新程序继承原程序的锁。
+
+记录锁的实现:
+
+文件尾端加锁：
+需要注意，因为是获得文件偏移量， 文件长度变化会影响加锁。
+
+建议锁和强制锁
 
 
 
@@ -750,8 +805,7 @@ while(n=read(stdin_fileno,buf,bufsiz)>0)
 
 POSIX 兼容平台，select函数可以执行IO多路复用。
 
-select (int maxfdpl, fd_set *restrict readfs, fd_set *restrict writefds,fd_set *restrict exceptfds,
-struct timeval *restrict tvptr)
+select (int maxfdpl, fd_set *restrict readfs, fd_set *restrict writefds,fd_set *restrict exceptfds,struct timeval *restrict tvptr)
 
 II.maxfdpl 参数说明:
 最大文件描述符编号加1 。描述符集合里最大描述符+1。
@@ -938,8 +992,7 @@ sifev_notify 控制通知类型 三选一
 sigev_value字段被传入作为它的唯一参数。除非sigev_notify_attributes字段被设定为pthread属性结构的地址，
 且该结构指定了一个另外的线程属性，否则该函数将在分离状态下的一个单独线程中执行。
 
-进行异步IO之前需要先初始化AIO控制块，调用aio_read函数来进行异步读操作，或者调用aio_write函数来进行异步写
-操作。
+进行异步IO之前需要先初始化AIO控制块，调用aio_read函数来进行异步读操作，或者调用aio_write函数来进行异步写 操作。
 
 当这些函数返回成功时，异步IO请求已经被操作系统放入等待处理的队列中了。这些返回值
 与实际IO操作的结果没有任何关系。IO操作在等待时，必须注意确保AIO控制块和数据库缓冲区保持稳定；
@@ -1048,12 +1101,12 @@ aio_return :操作完成前不能调用
 
 
 
-**readv writev函数:**
+**readv函数 writev函数:**
 读写多个非连续缓冲区。撒布读scatter read 聚集写 gather write
 
 
 
-**readn writen:**
+**readn函数 writen函数:**
 管道FIFO(网络终端)有两种性质
 一次read返回部分数据
 一次write返回部署数据
@@ -1119,7 +1172,7 @@ XSI(消息队列、信号量、共享存储)
 
 
 
-**函数popen pclose**
+**popen函数 pclose函数**
 创建连接进程的管道
 
 
@@ -1154,7 +1207,7 @@ XSI IPC 权限结构:
 
 
 速度:
-消息队列> 全双工管道 >UNIX域套接字
+最快: 消息队列> 全双工管道 >UNIX域套接字  最慢
 
 
 
@@ -1166,7 +1219,7 @@ XSI IPC 权限结构:
 **信号量 semaphore:**
 信号量与已经介绍过的IPC结构（管道、FIFO、消息队列）不同。
 
-信号量是一个计数器，用于为多个进程提供共享数据对象的范围。
+信号量是一个计数器，用于为多个进程提供共享数据对象的访问。
 
 操作流程:
 1.测试控制资源的信号量
@@ -1199,12 +1252,12 @@ linux中操作时间比较
 尽管对于这种平台来说，在共享存储中使用互斥量是一个更快的选择，但是我们依然使用记录锁，
 除非要特别考虑性能。 
 有两个原因，
-1。在多个进程间共享的内存中使用互斥量来回复一个终止的进程更难。
+1。在多个进程间共享的内存中使用互斥量来恢复一个终止的进程更难。
 2。进程共享的互斥量属性还没有得到普遍的支持。
 
 **共享存储**
-共享存储允许两个或多个进程共享一个给定的存储区。 因为数据不需要在客户进程和服务器
-进程之间复制，所以这是最快的IPC。
+共享存储允许两个或多个进程共享一个给定的存储区。 
+因为数据不需要在客户进程和服务器进程之间复制，所以这是最快的IPC。
 
 通常，信号量用于同步共享存储访问。
 
@@ -1217,7 +1270,7 @@ Single UNIX Specification 三种机制(消息队列、信号量、共享存储) 
 
 SUSv4之前信号量在可选，SUSv4之后信号量是基本规范，消息队列和共享存储时可选。
 
-
+SUSv4:信号量必选，消息队列和共享存储可选
 
 POSIX 信号量接口 在意解决 XSI 信号量接口的几个缺陷。
 1.和XSI接口比， POSXI 信号量更高性能。
@@ -1249,8 +1302,8 @@ int sem_post(sem_ * sem)
 
 
 未命名:
-int sem_init (sem_t sem ,int pshared,unsigned int value)
-int sem_destroy(sem_t *sem)
+创建:int sem_init (sem_t sem ,int pshared,unsigned int value)
+销毁:int sem_destroy(sem_t *sem)
 int sem_getvalue(sem_t restrict sem ,int restrict valp)检索值
 
 XSI信号量 和POSIX信号量比较
@@ -1261,7 +1314,7 @@ POSIX信号量时间更短
 
 # 第十六章 网络IPC(进程间通信 :管道、FIFO、消息队列、信号量、共享存储 ) :套接字
 
-进程通信机制IPC: 管道、FIFO、消息队列、信号量、共享存储。
+进程通信机制IPC: 管道、FIFO命名管道、消息队列、信号量、共享存储。
 
 网络进程通信:network IPC.
 即可用来计算机之间通信、也可用于计算机内通信。
@@ -1270,13 +1323,13 @@ POSIX信号量时间更短
 **套接字描述符socket**
 socket 套接字是通信端点的抽象。
 
-创建:
+创建:socket
 int socket(int domain ,int type ,int protocol);
 
 domain 确定通信特性， 地址格式  address family :
 AF_inet IP4、 AF_INET6 IP6 、AF_UNIX unix域、 AF_UPSPEC未指定.
 
-type 确定套戒子类型
+type 确定套接字类型
 SOCK_DGRAM  :固定长度的、无连接的、不可靠的
 SOCK_RAW  : IP协议的数据报接口
 SOCK_SEQPACKET : 固定长度、有序的、可靠的、面向连接的 SCTP
@@ -1358,8 +1411,7 @@ struct addrinfo  ai_next;  next in list
 
 
 **套接字socket与地址关联**
-对于服务器，服务器保留一个地址并注册在
-/etc/services或某个服务中.
+对于服务器，服务器保留一个地址并注册在/etc/services或某个服务中.
 
 int bind(int sockfd,const struct sockaddr *addr, socklen_t len);
 
@@ -1401,7 +1453,7 @@ backlog 提供一个提示，该进程所要入队的未完成连接请求数量
 一旦服务器调用listen ,所用的套接字就能接收连接其你去。
 使用accept函数获得连接并建立连接。
 
-accept函数:
+accept函数获得连接并建立连接:
 int accept(int sockfd, struct sockaddr * restrict addr ,soklen_t *restrict len);
 
 accept返回的文件描述符是套接字描述符，该描述符连接到调用connect客户端。
@@ -1475,8 +1527,12 @@ ssize_t recvmsg(int sockfd ,struct msghdr *msg ,int flags);
 
 int setsockopt(int sockfd ,int level,int option, const void *val, socklen_t len);
 
-level 标识了选项应用的协议，如果是通用套接字层选项，设置层 SOL_SOCKET.
+level 标识了选项应用的协议，
+如果是通用套接字层选项，设置层 SOL_SOCKET.
+tcp 设置: IPPROTO_TCP
+IP 设置: IPPROTO_OP
 
+val
 SO_ACCEPTCONN 返回信息知识该套接字是否能被监听
 SO_BROADCAST  广播数据报
 SO_DEBUG  网络驱动调试功能
@@ -1486,7 +1542,7 @@ SO_ERROR    返回挂起的套接字错误并清除
 val 根据选项不同指向一个数据结构或整数，有时候是开关。
 
 lenp是一个指向整数的指针。
-
+设置缓冲区长度，大于本值，就会被截断
 
 
 
@@ -1540,11 +1596,33 @@ socket异步IO中，读取数据时候，或写队列中，安排发送信号 SI
 
 # 第十七章 高级进程间通信
 
+UNIX域套接字机制，
+这种形式的IPC可以在同一计算机系统上运行的两个进程之间传送打开文件描述符。
+服务进程可以使它们的打开文件描述符与指定的名字相关联，
+同一系统上运行的客户进程可以使用这些名字和服务器进程汇聚。
+
+
+I.unix域套接字
+
+在同一台计算机上运行进程之间通信。
+虽然因特网套接字可用于同一目的，
+但是unix域套接字效率更高。unix域套接字仅仅复制数据，他们并不执行协议处理，
+不需要添加或删除网络报头，无需计算校验和，不要产生顺序号，无需发送确认报文。
+
+
+unix域套接字提供流和数据报两种接口。UNIX域数据报服务是可靠的，既不会丢失报文也不会传递出错。
+
+unix域套接字就像是套接字和管道的混合。 
+可以使用他们面向网络的域套接字接口或者使用socketpair函数来创建一对无命名的、互相连接的UNIX域套接字。
+
+
+int socketpair(int domain ,int type ,int protocal ,int sockfd);
+
+虽然接口足够通用，允许socketpair用于其他域，但一般来说操作系统仅对unix域提供支持。
 
 
 
-
-
+socketpair 函数能创建一对互相连接的套接字，但是每一个都没有名字。意味着无关进程都不能访问。
 
 
 
