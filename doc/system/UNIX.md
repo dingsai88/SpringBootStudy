@@ -200,6 +200,36 @@ I. 文件IO
 正整数,操作文件都会返回
 
 打开文件:open、openat
+int open(const char *path ,int oflag ,.../* mode_t mode*/);
+
+int openat(int fd ,const char *path ,int oflag ,.../* mode_t mode*/);
+
+path参数:要打开或者创建的文件名。
+
+oflag参数:以下多个常量或运算
+
+必选:
+O_RDONLY 只读
+O_WRONLY  只写打开
+O_RDWR   读、写打开
+O_EXEC  只执行打开
+O_SEARCH  只搜索打开:用于目录
+
+可选:
+O_APPEND  每次写时都追加到文件尾部.
+O_CLOEXEC  把FD_CLOEXEC常量设置为文件描述符标志。
+O_CREAT  此文件不存在则创建它。使用此选项时，open函数需同时说明第3个参数mode(openat函数需说明第4参数mode), 用mode指定该新文件访问权限位。
+O_DIRECTORY  如果path引用的不是目录，则出错。
+O_EXCL  同时指定O_CREAT,文件已存在，则出错。
+O_NOCTTY  如果path符号链接，则出错
+O_NONBLOCK  非阻塞方式如果path引用的是FIFO、块特殊文件、字符特殊文件 
+O_SYNC  每次write等地物理IO 操作完成，
+O_trunc  文件存储，只写或读  写成功打开，截断长度为0
+O_TTY_INIT   打开一个还未打开的终端设备， 设置非标准termios参数
+O_DSYNC   
+O_rsync
+
+
 
 
 创建文件:creat函数、open也可以创建
@@ -555,15 +585,24 @@ POSIX线程  phtread_create
 3.线程调用phtread_exit
 
 
-I.线程同步
+**I.线程同步**
 多个线程操作相同数据，
 
 线程同步解决数据不一致问题
 
 
-互斥量mutex:  互斥量mutex和信号量Semaphore
+**互斥量mutex:  互斥量mutex和信号量Semaphore**
 使用pthread互斥接口来保护数据，同一时间只有一个线程访问数据。
 互斥量mutex本质是一把锁
+初始化
+int pthread_mutex_init(pthread_mutex_t *restrict mutex, const pthread_mutexattr_t *restrict attr);
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+
+int phtread_mutex_lock(pthread_mutex_t *mutex);
+int phtread_mutex_trylock(pthread_mutex_t *mutex);
+int phtread_mutex_unlock(pthread_mutex_t *mutex);
+
+
 
 phtread_mutex_lock、phtread_mutex_trylock、phtread_mutex_unlock
 
@@ -576,13 +615,18 @@ phtread_mutex_timedlock:允许互斥量阻塞时间。
 愿意等待多久
 
 
-读写锁(reader-writer lock):与互斥量类似
+**读写锁(reader-writer lock):与互斥量类似**
 读模式状态、写模式状态、不加锁状态
 一次只有一个线程可以占有写模式，可以多个线程占有读模式。
 
 又叫 共享互斥锁  shared-exclusive lock
 
 pthread_rwlock_init、pthread_rwlock_destroy
+
+int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock);
+int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock);
+int pthread_rwlock_unlock(pthread_rwlock_t *rwlock);
+
 
 带超时时间读写锁: pthread_rwlock_timedrdlock、pthread_rwlock_timedwrlock
 
@@ -592,18 +636,83 @@ pthread_rwlock_init、pthread_rwlock_destroy
 pthread_condattr_init
 pthread_condattr_destroy
 
-自旋锁:
+允许线程以吴敬梓的方式等待特定的条件发生。
+
+条件是互斥量保护的。线程在改变条件之前先锁住互斥量。其他线程在获得互斥量之前
+不会察觉到这种改变，因为互斥量必须在锁定之后才能计算条件。
+
+pthread_cond_wait等待条件变量变为真，如果时间内不能满足，返回错误码。
+
+int pthread_cond_wait(pthread_cond_t * restrict cond, pthread_mutex_t * restrict mutex);
+
+int pthread_cond_timewait(pthread_cond_t * restrict cond, pthread_mutex_t * restrict mutex,
+const struct timespec *restrict tsptr);
+
+唤醒一个等待线程
+int pthread_cond_signal(pthread_con_t *cond);
+
+唤醒等待所有线程
+int pthread_cond_broadcast(pthread_con_t *cond);
+
+
+
+
+
+www.linuxidc.com
+
+**自旋锁:**
 自旋锁与互斥量类似，不是通过修改使进程阻塞，获取锁之前一直处于忙等阻塞状态。
 自旋浪费CPU资源。
 
+int pthread_spin_init(pthread_spinlock_t *lock ,int pshared);
+int pthread_spin_destroy(pthread_spinlock_t *lock);
 
-屏障(barrier):
-多用户协调多个线程并行工作的同步机制。
+int pthread_spin_lock(pthread_spinlock_t *lock);
+int pthread_spin_trylock(pthread_spinlock_t *lock);
+int pthread_spin_unlock(pthread_spinlock_t *lock);
+
+
+**屏障(barrier):和java不一样**  合作线程都到达某一点，然后继续执行 
+用户协调多个线程并行工作的同步机制。
+屏障允许每个线程等待，直到所有合作线程都到达某一点，然后继续执行
+
+
+
+
+int pthread_barrier_init(pthread_barrier_t *restrict barrier, const pthread_barrierattr_t *restrict attr, unsigned int count);
+
+int pthread_barrier_destroy(pthread_barrier_t *barrier);
+
+int pthread_barrier_wait(pthread_barrier_t *barrier);
 
 pthread_barrier_init
 pthread_barrier_destroy
 pthread_barrier_wait
 
+
+
+
+屏障属性:其他进程是否可以访问
+
+属性的初始化和反初始化
+int pthread_barrierattr_init(pthread_barrierattr_t * attr);
+int pthread_barrierattr_destroy(pthread_barrierattr_t * attr);
+
+
+目前定义的屏障属性只有  进程共享属性，
+它控制着屏障是可以被多进程的线程使用，
+还是只能被初始化屏障的进程内的多线程使用。
+
+int pthread_barrierattr_getpshared(const pthread_barrierattr_t * restrict attr, int * restrict pshared);
+int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared);
+
+
+
+
+
+
+
+多用户协调多个线程并行工作的同步机制。
 
 
 # 第十二章线程控制
@@ -778,6 +887,8 @@ l_type锁类型:F_RDLCK共享读锁、F_WRLCK独占写锁、F_UNLCK解锁一个�
 
 
 **II.IO多路转接 IO多路复用**
+https://blog.csdn.net/glpghz/article/details/107562004
+
 
 读取一个描述符写入到另外一个文件描述符
 while(n=read(stdin_fileno,buf,bufsiz)>0)
@@ -962,6 +1073,19 @@ sigpoll默认动作是终止改进程，所以应当在调用ioctl之前建立�
 posix异步io接口为对不同类型的文件进行异步IO提交了一套一直的方法。这些接口来自实时
 草案标准，该标准是single unix specification的可选项。在SUSV4中，这些接口被移到了基本部分中，
 所以现在所有的平台都被要求支持这些接口。
+
+linux提供了AIO库函数实现异步，但是用的很少。
+目前有很多开源的异步IO库，例如libevent、libev、libuv
+AIO函数使用很少，很多开源的异步IO库，例如libevent、libev、libuv
+
+int aio_read(struct aiocb *aiocb);
+
+int aio_write(struct aiocb *aiocb);
+
+
+
+
+
   这些异步IO接口使用AIO控制块来描述IO操作。 aiocb结构定义了AIO控制块。该结构至少包括下面这些字段
 
 struct aiocb{
@@ -1228,6 +1352,16 @@ XSI IPC 权限结构:
 2.此信号量是正，则进程使用该资源，进程将信号量减一。
 3.信号量为0，进程进入休眠状态，直至信号量大于0。进程被唤醒后返回步骤1。
 
+获取信号量
+int semget(key_t key ,int nsems ,int flag);
+
+删除信号量、初始化信号量
+int semctl(int semid, int semnum ,int cmd );
+
+信号量操作加、减
+int semop(int semid , struct sembuf semoparray[] ,size_t nops);
+
+
 struct semid_ds{
 struct ipc_perm sem_perm;
 unsigned short  sem_nsems;
@@ -1256,6 +1390,10 @@ linux中操作时间比较
 有两个原因，
 1。在多个进程间共享的内存中使用互斥量来恢复一个终止的进程更难。
 2。进程共享的互斥量属性还没有得到普遍的支持。
+
+
+https://www.cnblogs.com/webber1992/p/6550667.html
+
 
 **共享存储**
 共享存储允许两个或多个进程共享一个给定的存储区。 
@@ -1630,8 +1768,213 @@ socketpair 函数能创建一对互相连接的套接字，但是每一个都没
 
 
 
+用户线程一直等待(网络全部返回+内核复制到用户)
 
 
+用户不断访问(网络是否准备好error)+用户同步等待(内核复制到用户)
+
+用户进程调用了recvfrom这个系统接口 数据没准备好返回:error
+用户进程调用了recvfrom这个系统接口 数据准备好:阻塞
+将数据从内核中拷贝到用户内存
+然后内核返回结果，用户进程才解除block的状态，重新运行起来
+
+
+IO multiplexing（IO多路复用）
+
+阻塞等待select(内核帮你轮训)
+
+当用户进程调用了select，那么整个进程会被block
+内核会“监视”所有select负责的socket
+随意一个socket中的数据准备好了，select就会返回。
+用户进程再调用recvfrom操作，将数据从内核拷贝到用户进程
+
+
+使用两个系统调用（system call）: select 和 recvfrom
+
+对于每一个socket，一般都设置成为non-blocking
+
+整个用户的process是被select这个函数block，而不是被socket IO给block。
+
+只不过
+
+
+
+
+
+
+POSIX异步:aio
+
+用户进程发起aio_read调用后，立刻就可以开始去做其它的事
+
+内核收到一个asynchronous read之后，会立刻返回不会block用户进程
+内核会等待数据准备完成，然后将数据拷贝到用户内存
+
+全部完成后，内核发送信号给用户进程通知方式(不通知、发信号、调用指定函数)，告诉它read操作完成了
+
+
+epoll_create、epoll_ctl和epoll_wait
+
+
+
+www.linuxidc.com
+
+
+#epoll
+I.epoll
+https://www.cnblogs.com/justboy/articles/6704598.html
+https://www.cnblogs.com/wanghao-boke/p/12159553.html
+https://zhuanlan.zhihu.com/p/147549069
+
+
+epoll接口非常简单，一共就三个函数:
+
+ 
+**II. epoll_create** 创建句柄size监听数量
+int epoll_create(int size);
+创建一个epoll句柄,size 用来告诉内核这个监听的数目一共有多大。
+
+这个参数不同于select中得参数，给出最大监听的fd_1。
+需要注意的是，当创建好epoll句柄后，它就是会占用一个fd值，
+在linux下如果查询看/proc/进程ID/fd/  是能够看到这个fd,
+所以在使用完epoll后，必须调用close关闭,否则可能导致fd被耗尽。
+
+
+**II. epoll_ctl** 事件注册函数:要监听的socket注册进来
+int epoll_ctl(int epfd ,int op , int fd ,struct epoll_event *event);
+
+epoll事件注册函数,它不同于select()是在监听事件时告诉内核要监听什么类型的事件，而是在这里先注册要监听的事件类型。
+第一个参数是epoll_create()的返回值，
+第二个参数op表示动作，
+epoll_ctl_add:注册新的fd到epfd中;
+epoll_ctl_mod:修改已经注册的fd的监听事件；
+epoll_clt_edl:从epfd中删除一个fd;
+第三个参数fd是需要监听的fd;
+第四个参数event是告诉内核要监听什么事
+
+epoll_event结构:
+
+struct epoll_event{
+_uint32_t events;    //下有描述 events 是以下宏集合
+epoll_data_t data;  //epoll_data下有描述
+}
+
+typedef union epoll_data{
+  void *ptr;
+  int fd;
+  _uint32_t u32;
+  _uint64_t u64;
+}epoll_data_t;
+
+events 是以下宏集合
+epollin:对应的fd(文件描述符)可读（包括对端socket正常关闭）
+epollout:对应的fd(文件描述符)可写
+epollpri:fd紧急的数据可读：带外数据
+epollerr:fd发生错误
+epollhup:fd被挂断
+epollet:fd设置为边缘触发edge triggered模式,相对于水平触发level triggered来说
+epolloneshot:只监听一次事件，当监听完成这次事件后，还需要监听socket的话，需要在此把socket加入到epoll
+
+
+
+**II. epoll_wait**
+
+int epoll_wait(int epfd , struct epoll_event * events , int maxevents ,int timeout);
+等待事件产生，类似于select调用。
+
+epoll_wait等待事件产生:同步等待返回
+
+参数events 用来存内核得到事件集合
+maxevents 告知内核这个events有多少，maxevents不能大于创建的epoll_create的size
+timeout是超时时间 :0立刻返回 -1 不确定
+
+函数返回0表示已超时。
+
+
+**II. ET 、LT两种工作模式**
+可以得出这样的结论：
+ET模式仅当状态发生变化的时候才获得通知，这里所谓的状态的变化从不包括缓冲区
+中还有未处理的数据，也就是说，如果采用ET模式，需要一直read write直到出错为止，
+很多人反映为什么采用ET模式只接收了一部分数据就再也得不到通知了，大多因为这样，
+
+LT模式是只要有数据没有处理就会一直通知下去的。
+
+那么究竟如何来使用epoll呢，其实非常简答。
+通过在包含一个头文件
+include sys/epoll.h 以及几个简单API将可以大大的提高你的网络服务器的支持人数。
+
+首先通过create_epoll(int maxfds)来创建一个epoll的句柄，
+其中maxfds为你epoll所支持的最大句柄数。
+这个函数会返回一个新的epoll句柄，
+之后所有的操作将通过这个句柄来进程操作。
+在用完之后，记得用close()来关闭这个创建出来的epoll句柄。
+
+之后你的网络循环里，每一帧的调用 epoll_wait(int epfd ,epoll_event events, int max events, int timeout)
+
+来查询所有的网络接口，看哪一个可以读，哪一个可以写。 基本语法为:
+nfds=epoll_wait(kdpfd,events ,maxevents,-1);
+
+其中kdpfd为用epoll_create创建之后的句柄，events是一个epoll_event 指针，当epoll_wait这个函数操作成功之后，
+epoll_events里面将存储所有的读写事件。
+
+max_events是当前需要监听的所有socket句柄数。最后一个timeout是epoll_wait的超时，
+为0的时候表示马上返回，为-1的时候表示一直等下去，直到有事件范围，为任意正整数的时候表示等这么长时间，
+如果一直没事件，则返回。
+一般如果网络主循环单独线程，可以用-1来等，这样可以保证一些效率，
+如果是和主逻辑在同一个线程的话，则可以用0来保证住循环的效率。
+
+
+epoll_wait返回之后应该是一个循环，遍历所有的事件。
+
+
+int main(){
+//epfd epoll文件描述符； listenfd socket连接的文件描述符
+int epfd,listenfd;
+//声明epoll_event结构体的变量,ev用于注册事件,events数组用于回传要处理的事件
+struct epoll_event ev,events[20];
+
+//获得socket
+listenfd = socket(AF_INET, SOCK_STREAM, 0);
+//把socket设置为非阻塞方式 setnonblocking(listenfd);
+
+//设置与要处理的事件相关的文件描述符
+ev.data.fd=listenfd;
+//设置要处理的事件类型
+ev.events=EPOLLIN|EPOLLET;
+
+
+
+# 重要创建函数
+//生成用于处理accept的epoll专用的文件描述符
+epfd=epoll_create(256);
+
+# 重要注册函数
+//注册epoll事件 ;listenfd需要监听的socket  ;  ev 注册要监听的事件
+epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&ev);
+
+
+for ( ; ; ) {
+
+# 重要 同步等待函数
+//等待epoll事件的发生 
+ nfds=epoll_wait(epfd,events,20,500);
+
+for(i=0;i<nfds;++i)
+{
+// 返回的事件数组 events[i]
+
+
+if(events[i].data.fd==listenfd)//如果新监测到一个SOCKET用户连接到了绑定的SOCKET端口，建立新的连接。
+ {}
+else if(events[i].events&EPOLLIN)//如果是已经连接的用户，并且收到数据，那么进行读入。
+ {}
+else if(events[i].events&EPOLLOUT) // 如果有数据发送
+{ }
+
+}
+
+
+
+}
 
 
 
