@@ -1,14 +1,16 @@
 
 网络模式
-1.阻塞 I/O（blocking IO）BIO
-2.非阻塞 I/O（nonblocking IO）NIO
-3.I/O 多路复用（ IO multiplexing）非阻塞
+IO模型分两步：(网络全部返回+内核复制到用户)
+
+1.阻塞 I/O（blocking IO）BIO        (网络是否准备好一直等待)+用户同步等待(内核复制到用户)
+2.非阻塞 I/O（nonblocking IO）NIO   (网络是否准备好error)+用户同步等待(内核复制到用户)
+3.I/O 多路复用（ IO multiplexing）非阻塞   (网络是否准备好select、poll、epoll)+用户同步等待(内核复制到用户)
    3.1.select只支持1024个(每次都遍历)
-   3.2.poll和select没有区别于链表来存储的.没有个数限制(每次都遍历)：
-   3.3.epoll（注册—监听事件—处理—再注册） epoll只有触发监听才访问 ：（等待队列--有值时--就绪队列---调用方法）
-4.信号驱动 I/O（ signal driven IO）
-5.异步 I/O（asynchronous IO）
-epoll_create, epoll_ctl和epoll_wait。
+   3.2.poll和select 区别不大，基于事件、没有个数限制(每次都遍历)：
+   3.3.epoll（注册—监听事件—同步获取） epoll只有触发监听才访问 ：（等待队列--有值时--就绪队列---调用方法）epoll_create, epoll_ctl和epoll_wait。
+4.信号驱动 I/O（ signal driven IO）    (异步等待信号)+用户同步等待(内核复制到用户)
+5.异步 I/O（asynchronous IO）       (异步提交 内核复制到用户  异步回调:全异步)
+
 
    Java 1.4引NIO框架（java.nio 包）
 提供了Channel(socket)、Selector(单线程管理多个)、Buffer（容器）可以构建多路复用的、
@@ -21,6 +23,10 @@ java文件拷贝
 FileInputStream
 Files.copy
 NIO transferTo/From 的方式可能更快
+
+
+CPU只通过寄存器和内存交互，不直接和设备交互。
+IO设备和主机三种控制方式：CPU轮训、程序中断（完成多少字节,中断一次CPU ）、DMA
 
 **零拷贝**
 (磁盘>内核态空间>用户空间>内核空间>网卡  )

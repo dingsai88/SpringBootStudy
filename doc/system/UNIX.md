@@ -956,8 +956,24 @@ II.1024问题:
 文件描述符可以设置，阻塞非阻塞
 select 都是阻塞等待的.
 
+https://blog.csdn.net/leo115/article/details/8097143
 
+int main ()
+{
+     while(1)
+      {
+      ///监控函数
+        ret=select(keyboard+1,&readfd,NULL,NULL,&timeout);
+      //错误情况
+      if(ret == -1) {}
+      ////返回值大于0 有数据到来
+      else if(ret) {   
+            if(FD_ISSET(keyboard,&readfd))
+            { //读取数据
+                i=read(keyboard,&c,1);}
+          }
 
+}
 
 
 
@@ -1825,10 +1841,16 @@ https://www.cnblogs.com/justboy/articles/6704598.html
 https://www.cnblogs.com/wanghao-boke/p/12159553.html
 https://zhuanlan.zhihu.com/p/147549069
 
-
+https://time.geekbang.org/column/article/143245
+源码
+https://www.nowcoder.com/discuss/26226
 epoll接口非常简单，一共就三个函数:
 
- 
+https://blog.csdn.net/armlinuxww/article/details/92803381
+
+Linux高性能服务器编程.pdf
+
+
 **II. epoll_create** 创建句柄size监听数量
 int epoll_create(int size);
 创建一个epoll句柄,size 用来告诉内核这个监听的数目一共有多大。
@@ -1977,11 +1999,70 @@ else if(events[i].events&EPOLLOUT) // 如果有数据发送
 }
 
 
+I.epoll源码解析
+
+ 在深入了解epoll的实现之前, 先来了解内核的3个方面.
+
+ 1. 等待队列 waitqueue
+队列头(wait_queue_head_t)往往是资源生产者,
+队列成员(wait_queue_t)往往是资源消费者,
+
+当头的资源ready后, 会逐个执行每个成员指定的回调函数,
+来通知它们资源已经ready了, 等待队列大致就这个意思.
+
+2. 内核的poll机制
+被poll的fd，必须在实现上支持内核poll技术，
+比如fd是某个字符设备，或者socket它必须实现
+file_operations中的poll操作，这个poll是发起轮训的代码必须主动调用的，
+该函数必须调用poll_wait(),
+
+poll_wait会将发起者作为等待队列成员加入到socket的等待队列中去，
+这样socket发生状态变化时可以通过队列头逐个通知所有关心它的进程。
+这一点必须很清楚的理解，否则会想不明白epoll是如何得知fd的状态发生变化的.
+
+3. epollfd 本身也是个fd ,所以它本身也可以被epoll,可以猜测一下它是不是可以无限嵌套epoll下去。
 
 
 
+epoll只会对"活跃"的socket进行操作---这是因为在内核实现中epoll是根据每个fd上面的callback函数实现的
+只有"活跃"的socket才会主动的去调用 callback函数，其他idle状态socket则不会
+
+epoll注册等操作在for循环外边，不会每次都把全部对象复制到内核空间
 
 
+ 
+
+struct eventpoll {
+//自旋锁
+spinlock_t lock;
+
+/* 互斥量 添加, 修改或者删除监听fd的时候, 以及epoll_wait返回, 向用户空间
+* 传递数据时都会持有这个互斥锁, 所以在用户空间可以放心的在多个线程
+* 中同时执行epoll相关的操作, 内核级已经做了保护. */
+struct mutex mtx; 互斥量
+
+/* 调用epoll_wait()时, 我们就是"睡"在了这个等待队列上... */
+wait_queue_head_t wq;
+
+/* 这个用于epollfd本身被poll的时候... */
+wait_queue_head_t poll_wait;
+
+/* 所有已经ready的epitem都在这个链表里面 */
+struct list_head rdllist;
+
+
+/* 所有要监听的epitem都在这里 */
+struct rb_root rbr;
+
+/*
+这是一个单链表链接着所有的struct epitem当event转移到用户空间时:(   epitem 表示一个被监听的fd)
+*/
+struct epitem *ovflist;
+
+
+/* 这里保存了一些用户变量, 比如fd监听数量的最大值等等 */
+struct user_struct *user;
+};
 
 
 
