@@ -1022,7 +1022,44 @@ select和poll的可中断性，
 移植到SVR4派生的系统上时阻止这一点，如果信号有可能会中断select或poll就要使用
 signal_intr函数
 
+int main(void)
+{  
+  int read_ready;
+while (1)
+{
+   read_ready = poll(pollfd, vec_read_poll.size(), -1);
+// poll失败
+if (read_ready == -1)
+{
+   printf("文件描述符超出上限\n");
+   return -1;
+} else if (read_ready == 0)
+{    // 没有客户端连接
+     continue;
+} else if (vec_read_poll[0].revents & POLLIN)
+        {    // 客户端连接过来了
+            --read_ready; 
+            // 建立三次握手
+            connected_fd = accept4(listen_fd, (sockaddr *)&client_addr, &addr_len, SOCK_NONBLOCK | SOCK_CLOEXEC);
+ 
+}
 
+  
+ for (auto it = vec_read_poll.begin() + 1; it != vec_read_poll.end() && read_ready; it++)
+        {
+ // read_ready > 0 说明客户端发来信息了 遍历读事件
+            // 客户端发来了消息
+            if (it->revents & POLLIN)
+            {
+                --read_ready; 
+                char buf[1024] {};
+                ret = recv(it->fd, buf, sizeof(buf), 0);
+     
+            }
+        }
+    }
+    return 0;
+}
 
 
 
@@ -2065,5 +2102,9 @@ struct user_struct *user;
 };
 
 
+# Linux高性能服务器编程
+# 8.3 IO模型
 
+Reactor 模式 核反应堆
 
+Proactor 模式 前摄式
