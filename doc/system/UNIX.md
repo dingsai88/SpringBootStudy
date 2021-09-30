@@ -88,29 +88,31 @@ II.unix标准化
 
 IOS C库分成24个区 ：四种unix实现(FreeBSD、Linux、MaxOS、Solaris)都支持
 
+头文件	说明
 assert.h  验证程序断言
-coplex.h 复数算术支持
-ctype.h  字符分类和映射支持
-errno.h  出错码
-fenv.h  浮点环境
-float.h 浮点常量以及特性
+complex.h  复数算术支持
+ctype.h 字符分类和映射支持
+errno.h	出错码
+fenv.h 浮点环境
+float.h	浮点常量及特性
 inttypes.h 整型格式
-iso646.h  赋值、关系以及一元操作符
-limits.h 实现常量
-locale.h 本地化类别以及相关定义
-math.h  数学函数
-setjmp   非局部goto
-signal.h   信号
-stdarg.h 可变长度参数
-stdbool.h  布尔
-stddef.h   标准定义
-stdint.h  整型
-stdio.h  标准IO库
-string.h  字符串
-tgmath  通用类型数学
-time    时间和日期
-wchar 扩充字符
-wctype  宽字符分类和映射支持
+iso646.h
+limits.h	实现常量
+locale.h 赋值、关系以及一元操作符
+math.h
+setjmp.h
+signal.h	信号
+stdarg.h	可变长度参数表
+stdbool.h
+stddef.h	标准定义
+stdint.h
+stdio.h	标准 I/O 库
+stdlib.h	实用函数
+string.h	字符串操作
+tgmath.h  通用类型数学
+time.h	时间和日期
+wchar.h 扩充字符
+wctype.h 宽字符分类和映射支持
 
 
 **III.IEEE POSIX**
@@ -127,20 +129,47 @@ XSI :X/Open System Interface
 只有遵循XSI的实现才能称为UNIX操作系统。
 
 **POSIX 标准必须头文件:**
-
-aio.h  异步IO
+头文件	说明
+aio.h
+cpio.h
+dirent.h	目录项
+dlfcn.h
+fcntl.h	文件控制
+fnmatch.h
+glob.h
+grp.h
+iconv.h	代码集变换实用程序
+langinfo.h
+monetary.h
 netdb.h 网络数据库操作
-pthread.h 线程
-semaphore.h 信号量
+nl_types.h
+poll.h
+pthread.h	线程
+pwd.h	口令文件
+regex.h	正则表达式
+sched.h
+semaphore.h	信号量
+strings.h
+tar.h
 termios.h  终端IO
-arpa/inet.h  因特网定义
-net/if.h   套接字本地接口
+unistd.h	符号常量
+wordexp.h
+arpa/inet.h 因特网定义
+net/if.h 套接字本地接口
 netinet/in.h  因特网地址族
-netinet/tcp.h  传输控制协议定义
-sys/select.h  select函数
-sys/socket.h  套接字接口
-sys.stat.h  文件状态
-sys/wati.h   进程控制
+netient/tcp.h  传输控制协议定义
+sys/mman.h
+sys/select.h	select 函数
+sys/socket.h	套接字接口
+sys/stat.h  文件状态
+sys/statvfs.h
+sys/times.h
+sys/types.h
+sys/un.h	UNIX 域套接字定义
+sys/utsname.h
+sys/wait.h 进程控制
+
+
 
 XSI 可选头文件
 sys/ipc.h   IPC
