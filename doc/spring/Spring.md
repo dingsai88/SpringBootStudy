@@ -4392,6 +4392,8 @@ barista-service
 I.Spring cache缓存 本地缓存
 https://blog.csdn.net/clementad/article/details/53009899
 
+https://docs.spring.io/spring-framework/docs/current/reference/html/integration.html#cache-store-configuration-caffeine
+
 1、引入依赖： 
 <!-- local cache -->
 		<dependency>
