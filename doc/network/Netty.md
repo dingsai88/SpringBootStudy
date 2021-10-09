@@ -237,6 +237,8 @@ NIO 一定优于BIO 么？
 同步:数据就绪了自己去读
 异步:数据准备好了，回调使用者。
 
+09丨源码剖析：Netty对I-O模式的支持
+
 
 **Netty对这三种模式的支持**
 BIO、NIO、AIO
@@ -264,6 +266,8 @@ common在linux也是使用epoll为什么要单独实现Epoll?
 LT（level trigger默认）:模式是只要有数据没有处理就会一直通知下去的
 ET（edge trigger边缘）:仅当状态发生变化的时候才获得通知(数据处理一半，再次wait就不返回了，每次必须全部处理完)
 当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该事件。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。
+
+
 
 JDK NIO默认是Level Trigger水平触发
 Netty默认是 edge trigger 边缘触发，可自由切换。
@@ -487,7 +491,7 @@ CPU线程调度和切换
 prethread(提前创建线程)
 
 
-**19 | 单服务器高性能模式：Reactor与Proactor**
+**19 | 单服务器高性能模式：Reactor 与 Proactor **
 
 PPC、TPC连接结束进程、线程销毁，资源浪费。
 
@@ -672,18 +676,18 @@ Handler 完成业务处理，Handler也可以注册新的Handler到内核进程�
 
 
 # I. Reactor 单线程模式 netty
-EventLoopGroup eventGroup = new NioEventLoopGroup(1);
+EventLoopGroup eventGroup = new NioEventLoopGroup(1); // ## 这里设置1
 ServerBootstrap serverBootstrap = new ServerBootstrap();
 serverBootstrap.group(eventGroup);
 
 
 # I. 非主从Reactor 多线程模式  :如果不设置，根据CPU情况设置线程数量。
-EventLoopGroup eventGroup = new NioEventLoopGroup();
+EventLoopGroup eventGroup = new NioEventLoopGroup();  //根据CPU数量设置
 ServerBootstrap serverBootstrap = new ServerBootstrap();
 serverBootstrap.group(eventGroup);
 
 
-# I. 主从Reactor 多线程模式(多Reactor多线程)
+# I. 主从Reactor 多线程模式(多Reactor多线程) : 一个负责建立连接  -一个负责其他事件处理
 //主 负责监听连接事件
 EventLoopGroup bossGroup = new NioEventLoopGroup();
 //从 负责其他事件处理
