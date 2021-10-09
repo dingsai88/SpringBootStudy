@@ -375,7 +375,11 @@ Reactor模式 三种; 1V1  1vs  sVs
 
 **AIO 异步模型  对应Proactor模式**
 
-TPC  Thread-Per-Connection模式
+
+
+
+
+**TPC  Thread-Per-Connection模式**
 
 class Server implements Runnable{
    public void run(){
@@ -696,13 +700,14 @@ ServerBootstrap serverBootstrap = new ServerBootstrap();
 serverBootstrap.group(bossGroup, workerGroup);
 
 
+
 # 11丨源码剖析：Netty对Reactor的支持[更多课程qq 2949651508]
 
 解析Netty 对Reactor 模式支持的常见疑问
 
 • Netty 如何支持主从Reactor 模式的？
 • 为什么说Netty 的main reactor 大多并不能用到一个线程组，只能线程组里面的一个？
-• Netty 给Channel 分配NIO event loop 的规则是什么
+• Netty 给Channel 分配NIO event loop 的规则是什么:  根据不同情况 分配不同算法
 • 通用模式的NIO 实现多路复用器是怎么跨平台的
 
 
@@ -714,6 +719,69 @@ https://github.com/frohoff/jdk8u-jdk/blob/master/src/macosx/classes/sun/nio/ch/D
 
 
 io.netty.example.echo.EchoServer#main
+
+io.netty.example.echo.EchoServer
+
+**• Netty 如何支持主从Reactor 模式的？**
+ EventLoopGroup bossGroup = new NioEventLoopGroup();  // main Reactor
+EventLoopGroup workerGroup = new NioEventLoopGroup();
+ServerBootstrap b = new ServerBootstrap();
+b.group(bossGroup, workerGroup);
+
+
+
+**12丨TCP粘包-半包Netty全搞定**
+
+
+
+• 什么是粘包和半包？  1500 MTU : 一个消息不到 一个包，  一个消息装不下
+• 为什么TCP 应用中会出现粘包和半包现象？
+• 解决粘包和半包问题的几种常用方法
+• Netty 对三种常用封帧方式的支持
+• 解读Netty 处理粘包、半包的源码
+
+
+
+为什么TCP 应用中会出现粘包和半包现象？
+粘包的主要原因：
+• 发送方每次写入数据< 套接字缓冲区大小
+• 接收方读取套接字缓冲区数据不够及时
+
+
+
+半包的主要原因：
+• 发送方写入数据> 套接字缓冲区大小
+• 发送的数据大于协议的MTU（Maximum Transmission Unit，最大传输单元），必须拆包
+
+
+
+
+换个角度看：
+• 收发
+一个发送可能被多次接收，多个发送可能被一次接收
+• 传输
+一个发送可能占用多个传输包，多个发送可能公用一个传输包
+
+
+
+
+
+
+根本原因：
+TCP 是流式协议，消息无边界。
+UDP 每个包都有界限。(无粘包半包问题)
+
+提醒：UDP 像邮寄的包裹，虽然一次运输多个，但每个包裹都有“界限”，一个一个签收，
+所以无粘包、半包问题。
+
+
+
+
+
+
+
+
+
 
 
 
