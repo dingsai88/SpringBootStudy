@@ -1916,6 +1916,27 @@ https://blog.csdn.net/armlinuxww/article/details/92803381
 
 Linux高性能服务器编程.pdf
 
+glibc源码下载地址
+http://ftp.gnu.org/pub/gnu/glibc/
+http://www.gnu.org/software/libc/libc.html
+http://mirrors.nju.edu.cn/gnu/libc/
+http://ftp.ntu.edu.tw/gnu/glibc/
+http://mirrors.syringanetworks.net/gnu/libc/
+http://alpha.gnu.org/gnu/glibc/
+
+在线源码阅读
+https://code.woboq.org/userspace/glibc/
+https://elixir.bootlin.com/glibc/glibc-2.31/source
+
+
+
+推荐阅读“sys/epoll.h”代码，有助于理解epoll函数的用法。
+Browse the source code of glibc/sysdeps/unix/sysv/linux/sys/epoll.h
+
+https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/sys/
+https://code.woboq.org/userspace/glibc/sysdeps/unix/sysv/linux/sys/epoll.h.html
+
+
 
 **II. epoll_create** 创建句柄size监听数量
 int epoll_create(int size);
@@ -2129,6 +2150,37 @@ struct epitem *ovflist;
 /* 这里保存了一些用户变量, 比如fd监听数量的最大值等等 */
 struct user_struct *user;
 };
+
+II.linux glibc epoll在这里
+glibc 是gnu发布的libc库，也即c运行库。
+glibc是linux系统中最底层的api（应用程序开发接口），
+几乎其它任何的运行库都会依赖于glibc。
+
+## I.各种函数库标准
+
+**libc**   ISO C 表示 C Standard Library，也就是 C 标准库。
+（C standard library，缩写：libc）。标准函数库通常会随附在编译器上。windows系统和Linux系统下都可以尽情使用。是最基本的C函数库，也叫 ANSI C 函数库。总而言之，几乎在任何平台上的 C 语言 (包括非 UNIX 平台) 都支持此标准。
+
+**POSIX**
+Portable Operating System Interface(可移植操作系统接口) 的缩写，X表示UNIX，它是 ISO C 的延伸，明定了一个可移植的操作系统所应具备的种种条件，其范围不只有系统函数库而已。
+POSIX库 就是C POSIX library。C POSIX library是C语言的POSIX系统下的标准库。包含了一些在C语言标准库之外的函数。
+为了OS(比如windows 和 linux)之间的可移植性，POSIX标准规定了一些标准的API。而这些API标准的集合就是POSIX库。
+
+**glibc**
+
+GNU C Library，常简称为glibc,是一种按照LGPL许可协议发布的，自由的，公开源代码的函数库。
+既包含C标准库，也包含POSIX库。
+glibc和libc都是Linux下的C函数库，
+libc是Linux下的ANSI C的函数库；
+glibc是Linux下的GUN C的函数库；
+GNU C是一种ANSI C的扩展实现。
+glibc本身是GNU旗下的C标准库，后来逐渐成为了Linux的标准c库，而Linux下原来的标准c库Linux libc逐渐不再被维护。
+Linux下面的标准c库不仅有这一个，如uclibc、klibc，以及上面被提到的Linux libc，但是glibc无疑是用得最多的。glibc在/lib目录下的.so文件为libc.so.6
+
+
+
+
+
 
 
 # Linux高性能服务器编程

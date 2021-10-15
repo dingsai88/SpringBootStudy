@@ -734,7 +734,7 @@ b.group(bossGroup, workerGroup);
 
 
 
-• 什么是粘包和半包？  1500 MTU : 一个消息不到 一个包，  一个消息装不下
+• 什么是粘包和半包？  1500 MTU : 一个消息不到 一个包，  一个消息装不下  (最大传输单元（Maximum Transmission Unit，MTU）)
 • 为什么TCP 应用中会出现粘包和半包现象？
 • 解决粘包和半包问题的几种常用方法
 • Netty 对三种常用封帧方式的支持
@@ -775,6 +775,359 @@ UDP 每个包都有界限。(无粘包半包问题)
 所以无粘包、半包问题。
 
 
+**解决问题的根本手段：找出消息边界:**
+
+I.TCP改成短连接，一个请求一个连接。（不推荐）
+寻找边界方式: 建立连接到释放连接之间的信息是传输信息。
+优点:简单
+缺点:效率低下
+
+I.封装成帧Framing:固定长度 （不推荐）  FixedLengthFrameDecoder
+寻找边界方式: 满足固定长度即可
+优点:简单
+缺点:浪费空间
+
+
+I.封装成帧Framing:分隔符 （推荐） DelimiterBasedFrameDecoder
+寻找边界方式: 分隔符之间
+优点:空间不浪费、相对简单
+缺点:内容本身出现分隔符需要转义，所以需要扫描内容
+
+
+
+I.封装成帧Framing:固定长度字段存个内容的长度信息 （推荐+） LengthFieldBasedFrameDecoder
+寻找边界方式: 先解析固定长度的字段获取长度，然后读取后续内容
+优点:精确定位用户信息，内容也不用转义
+缺点:长度理论上有限制，需要提前阈值可能的最大长度，定义长度占用的字节数.
+
+
+
+I.封装成帧Framing:其他方式
+寻找边界方式: 例如Json找括号
+优点:
+缺点:
+衡量实际场景，很多是对现有协议的支持。
+
+
+
+Netty 对三种常用封帧方式的支持:
+
+封装成帧Framing(固定长度):FixedLengthFrameDecoder
+封装成帧Framing(分割符):DelimiterBasedFrameDecoder
+封装成帧Framing(固定长度字段存个内容的长度信息):LengthFieldBasedFrameDecoder:LengthFieldPrepender
+
+
+
+
+
+
+**13丨源码剖析：Netty对处理粘包-半包的支持**
+
+• 解码核心工作流程？
+• 解码中两种数据积累器（Cumulator）的区别?
+• 三种解码器的常用额外控制参数有哪些？
+
+
+
+
+
+
+io.netty.handler.codec.ByteToMessageDecoder 解码核心类  三种方式都继承本类 (固定 分割 内容长度)
+
+io.netty.handler.codec.ByteToMessageDecoder.channelRead
+
+public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+
+
+{@link DelimiterBasedFrameDecoder}, {@link FixedLengthFrameDecoder}, {@link LengthFieldBasedFrameDecoder},
+
+
+
+
+
+# **14丨常用的“二次”编解码方式**
+
+
+
+
+**常用的“二次”编解码方式**
+• 为什么需要“二次”解码？
+• 常用的“二次”编解码方式
+• 选择编解码方式的要点
+• Protobuf 简介与使用
+• 源码解读：Netty 对二次编解码的支持
+
+
+**为什么需要“二次”编解码？**
+假设我们把解决半包粘包问题的常用三种解码器叫一次解码器：
+
+
+
+封装成帧Framing(固定长度):
+解码:FixedLengthFrameDecoder
+编码:不内置
+
+封装成帧Framing(分割符):
+解码:DelimiterBasedFrameDecoder
+编码:不内置
+
+封装成帧Framing(固定长度字段存个内容的长度信息)::
+解码:LengthFieldBasedFrameDecoder
+编码:LengthFieldPrepender
+
+
+
+那么我们在项目中，除了可选的的压缩解压缩之外，还需要一层解码，因为一次解码的结
+果是字节，需要和项目中所使用的对象做转化，方便使用，这层解码器可以称为“二次解
+码器”，相应的，对应的编码器是为了将Java 对象转化成字节流方便存储或传输。
+
+
+
+
+**• 一次解码器：ByteToMessageDecoder**  解决粘包 半包
+• io.netty.buffer.ByteBuf （原始数据流）-> io.netty.buffer.ByteBuf （用户数据）
+
+
+
+**• 二次解码器：MessageToMessageDecoder<I>**
+io.netty.buffer.ByteBuf （用户数据）-> Java Object
+
+
+
+为什么需要“二次”编解码？   
+
+思考：是不是也可以一步到位？
+合并1 次解码（解决粘包、半包）和2 次解码（解决可操作问题）？可以，但是不建议：
+• 没有分层，不够清晰;
+• 耦合性高，不容易置换方案。
+
+
+
+
+
+• Java 序列化
+• Marshaling
+• XML
+• JSON
+• MessagePack
+• Protobuf
+• 其他
+
+
+选择编解码方式的要点
+• 空间：编码后占用空间
+需要比较不同的数据大小情况
+• 时间：编解码速度
+需要比较不同的数据大小情况
+• 是否追求可读性
+
+
+• 多语言（Java、C、Python 等）的支持：例如msgpack 的多语言支持：
+
+
+Google Protobuf 简介与使用
+
+• Protobuf 是一个灵活的、高效的用于序列化数据的协议。
+• 相比较XML 和JSON 格式，Protobuf 更小、更快、更便捷。
+• Protobuf 是跨语言的，并且自带了一个编译器（protoc），只需要用它进行编译，可以自动生成Java、python、C++ 等代码，不需要再写其他代码。
+ 
+byte[] bytes= person.toByteArray();
+ 
+Person person2=PersonOuterClass.Person.parseFrom(bytes);
+
+
+
+源码解读：Netty 对二次编解码的支持
+• Protobuf 编解码怎么使用及原理？
+• 自带哪些编解码？
+
+
+
+#  **16丨keepalive与idle监测**
+
+
+• 为什么需要keepalive ?
+• 怎么设计keepalive ？以TCP keepalive 为例
+• 为什么还需要应用层keepalive ?
+• Idle 监测是什么？
+• 如何在Netty 中开启TCP keepalive 和Idle 检测
+
+
+
+**为什么需要keepalive ?**
+
+
+生活场景:
+假设你开了一个饭店，别人电话来订餐，电话通了后，订餐的说了一堆订餐要求，说着说着，对方就不讲话了（可能忘记挂机/出去办事/线路故障等）。
+
+• 这个时候你会一直握着电话等么？
+不会
+
+• 如果不会，那你一般怎么去做？
+会确认一句“你还在么？”，如果对方没有回复，挂机。这套机制即“keepalive”
+
+https://www.zhihu.com/question/24437644
+
+**HTTP 的 Keep-Alive，**
+是由应用层（用户态） 实现的，称为 HTTP 长连接；
+
+**TCP 的 Keepalive，**
+是由 TCP 层（内核态） 实现的，称为 TCP 保活机制；
+
+
+**Tcp Keepalive存在的作用**
+ 1.探测连接的对端是否存活
+
+在应用交互的过程中，可能存在以下几种情况：
+（1）客户端或服务器意外断电，死机，崩溃，重启。
+（2）中间网络已经中断，而客户端与服务器并不知道。
+
+2.防止中间设备因超时删除连接相关的连接表
+
+中间设备如防火墙等，
+会为经过它的数据报文建立相关的连接信息表，
+并为其设置一个超时时间的定时器，
+如果超出预定时间，某连接无任何报文交互的话，
+中间设备会将该连接信息从表中删除，
+在删除后，再有应用报文过来时，
+中间设备将丢弃该报文，
+从而导致应用出现异常，这个交互的过程大致如下图所示：
+
+
+怎么设计keepalive ？以TCP keepalive 为例
+
+
+TCP keepalive 核心参数：
+# sysctl -a|grep tcp_keepalive
+
+net.ipv4.tcp_keepalive_time = 7200    没有数据多少秒后发keepalive消息
+net.ipv4.tcp_keepalive_intvl = 75     间隔多少秒重发
+net.ipv4.tcp_keepalive_probes = 9    重发多少次
+
+当启用（默认关闭）keepalive 时，TCP 在连接没有数据
+通过的7200秒后发送keepalive 消息，当探测没有确认时，
+按75秒的重试频率重发，一直发9 个探测包都没有确认，就认定连接失效。
+
+所以总耗时一般为：2 小时11 分钟(7200 秒+ 75 秒* 9 次)
+
+
+
+• 协议分层，各层关注点不同：
+• TCP 层的keepalive 默认关闭，且经过路由等中转设备keepalive 包可能会被丢弃。
+• TCP 层的keepalive 时间太长：
+默认> 2 小时，虽然可改，但属于系统参数，改动影响所有应用。
+
+
+
+
+提示：HTTP 属于应用层协议，但是常常听到名词“ HTTP Keep-Alive ”指的是对长连接和短连接的选择：
+• Connection : Keep-Alive 长连接（HTTP/1.1 默认长连接，不需要带这个header  HTTP1.0还需要特殊指定）
+• Connection : Close 短连接
+
+
+
+
+**Idle 监测是什么**
+
+Idle 监测，只是负责诊断，诊断后，做出不同的行为，决定Idle 监测的最终用途：
+
+AIX 	# no -a | grep keep
+tcp_keepcnt = 8
+tcp_keepidle = 14400
+tcp_keepintvl = 150
+
+Linux 	# sysctl -A | grep keep
+net.ipv4.tcp_keepalive_intvl = 75
+net.ipv4.tcp_keepalive_probes = 9
+net.ipv4.tcp_keepalive_time = 7200
+
+FreeBSD 	#sysctl -A | grep net.inet.tcp
+net.inet.tcp.keepidle=
+net.inet.tcp.keepintvl=
+
+
+Idle作用1: 发送keepalive :一般用来配合keepalive ，减少keepalive 消息。
+
+• V1：keepalive 消息与服务器正常消息交换完全不关联，定时就发送；
+• V2：有其他数据传输的时候，不发送keepalive ，无数据传输超过一定时间，判定 为Idle，再发keepalive 。
+
+Idle作用2:
+• 直接关闭连接：
+• 快速释放损坏的、恶意的、很久不用的连接，让系统时刻保持最好的状态。
+• 简单粗暴，客户端可能需要重连。
+实际应用中：结合起来使用。按需keepalive ，保证不会空闲，如果空闲，关闭连接。
+
+
+**如何在Netty 中开启TCP keepalive 和Idle 检测**
+
+
+开启keepalive：  默认是不开启的，是系统设置
+
+• Server 端开启TCP keepalive
+bootstrap.childOption(ChannelOption.SO_KEEPALIVE,true)
+bootstrap.childOption(NioChannelOption.of(StandardSocketOptions.SO_KEEPALIVE), true)
+提示：.option(ChannelOption.SO_KEEPALIVE,true) 存在但是无效
+
+开启不同的Idle Check:
+ch.pipeline().addLast(“idleCheckHandler", new IdleStateHandler(0, 20, 0, TimeUnit.SECONDS));
+io.netty.handler.timeout.IdleStateHandler#IdleStateHandler(long, long, long, java.util.concurrent.TimeUnit)
+
+
+**源码解读Netty 对TCP keepalive 和三种Idle 检测的支持**
+
+源码解读：
+• 设置TCP keepalive 怎么生效的？
+• 两种设置keepalive 的方式有什么区别？
+• Idle 检测类包（io.netty.handler.timeout）的功能浏览
+• 读Idle 检测的原理
+• 写Idle 检测原理和参数observeOutput 用途？
+
+
+
+
+**17丨源码剖析：Netty对keepalive与idle监测的支持**
+
+
+
+源码解读：
+• 设置TCP keepalive 怎么生效的？
+• 两种设置keepalive 的方式有什么区别？  普通channel模式  和NIOChannelOption
+• Idle 检测类包（io.netty.handler.timeout）的功能浏览
+• 读Idle 检测的原理
+• 写Idle 检测原理和参数observeOutput 用途？
+
+//两种设置keepalive风格
+.childOption(ChannelOption.SO_KEEPALIVE, true)
+.childOption(NioChannelOption.SO_KEEPALIVE, true)
+
+io.netty.example.echo.EchoServer#main
+
+
+
+ServerBootstrap b = new ServerBootstrap();
+b.group(bossGroup, workerGroup)
+.channel(NioServerSocketChannel.class)
+.option(ChannelOption.SO_BACKLOG, 100)
+.handler(new LoggingHandler(LogLevel.INFO))
+//两种设置keepalive风格
+.childOption(ChannelOption.SO_KEEPALIVE, true)
+.childOption(NioChannelOption.SO_KEEPALIVE, true)
+
+              //切换到unpooled的方式之一
+             .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
+                 @Override
+                 public void initChannel(SocketChannel ch) throws Exception {
+                     ChannelPipeline p = ch.pipeline();
+                     if (sslCtx != null) {
+                         p.addLast(sslCtx.newHandler(ch.alloc()));
+                     }
+                     p.addLast(new LoggingHandler(LogLevel.INFO));
+                     p.addLast(serverHandler);
+                 }
+             });
+
+io.netty.handler.timeout.IdleState
 
 
 
@@ -784,7 +1137,329 @@ UDP 每个包都有界限。(无粘包半包问题)
 
 
 
+**18丨Netty的那些“锁”事**
+I.
+# 
 
+I. 分析同步问题的核心三要素
+I. 锁的分类
+I. Netty 玩转锁的五个关键点：
+II. 在意锁的对象和范围-> 减少粒度
+II. 注意锁的对象本身大小-> 减少空间占用
+II. 注意锁的速度-> 提高速度
+II. 不同场景选择不同的并发类-> 因需而变
+II. 衡量好锁的价值-> 能不用则不用
+
+
+**分析同步问题的核心三要素**
+• 原子性：“并无一气呵成，岂能无懈可击”
+• 可见性：“你做的改变，别人看不见”
+• 有序性：“不按套路出牌”
+
+
+
+**锁的分类**
+• 对竞争的态度：乐观锁（java.util.concurrent 包中的原子类）与悲观锁（Synchronized)
+• 等待锁的人是否公平而言：公平锁new ReentrantLock (true)与非公平锁new ReentrantLock ()
+• 是否可以共享：共享锁与独享锁：ReadWriteLock ，其读锁是共享锁，其写锁是独享锁
+
+
+**II.在意锁的对象和范围-> 减少粒度**
+**II.注意锁的对象本身大小-> 减少空间占用**
+
+Atomic long VS long：
+
+前者是一个对象，包含对象头（object header）以用来保存hashcode、lock 等信息，32 位系统占用8字节；64 位系统占16 字节，所以在64 位系统情况下：
+
+• volatile long = 8 bytes
+• AtomicLong = 8 bytes （volatile long）+ 16bytes （对象头）+ 8 bytes (引用) = 32 bytes
+至少节约24 字节!
+
+
+结论：Atomic* objects -> Volatile primary type + Static Atomic*FieldUpdater
+
+
+
+
+
+**II.注意锁的速度-> 提高并发性**
+
+例1：记录内存分配字节数等功能用到的LongCounter
+（io.netty.util.internal.PlatformDependent#newLongCounter() ）
+
+高并发时：java.util.concurrent.atomic.AtomicLong -> java.util.concurrent.atomic.LongAdder (JDK1.8)
+
+结论： 及时衡量、使用JDK 最新的功能
+
+
+例2：曾经根据不同情况，选择不同的并发包实现：JDK < 1.8 考虑
+ConcurrentHashMapV8（ConcurrentHashMap 在JDK8 中的版本）
+
+jdk>=8时   LongAdder
+jdk老版本使用 AtomicLong
+
+
+
+
+**II.不同场景选择不同的并发包-> 因需而变**
+例1：关闭和等待关闭事件执行器（Event Executor）：
+
+Object.wait/notify -> CountDownLatch
+
+io.netty.util.concurrent.SingleThreadEventExecutor#threadLock：
+
+例2：Nio Event loop中负责存储task的Queue
+
+Jdk’s LinkedBlockingQueue (MPMC) -> jctools’ MPSC
+io.netty.util.internal.PlatformDependent.Mpsc#newMpscQueue(int)：
+
+
+**衡量好锁的价值-> 能不用则不用**
+
+生活场景：
+饭店提供了很多包厢，服务模式：
+• 一个服务员固定服务某几个包厢模式；          一个线程服务多个channel
+• 所有的服务员服务所有包厢的模式。            多个线程服务全部channel
+
+表面上看，效率后者高，但实际上它避免了服务员之间的沟通（上下文切换）等 开销，避免客人和服务员之间到处乱串，管理简单。
+
+
+局部串行：Channel 的I/O 请求处理 Pipeline 是串行的
+
+多个线程EventLoop 并行，  每个EventLoop服务多个Channel
+
+EventLoop(Thread) >>Channel 多个
+EventLoop(Thread) >>Channel 多个
+
+
+Netty 应用场景下： 对比
+局部串行(EventLoop>>Channel)+ 整体并行(多个EventLoop)   >>性能高于>>    一个队列+ 多个线程模式:
+• 降低用户开发难度、逻辑简单、提升处理性能
+• 避免锁带来的上下文切换和并发保护等额外开销
+
+
+避免用锁：用ThreadLocal 来避免资源争用，例如Netty 轻量级的线程池实现
+
+io.netty.util.Recycler#threadLocal
+
+
+小结
+• 分析同步问题的核心三要素：分析多线程问题的关键
+• 浏览了锁的分类
+• 结合代码分析了Netty 玩转锁的五个关键点，具有普适性
+
+
+
+
+
+**19丨Netty如何玩转内存使用**
+
+Netty 如何玩转内存使用
+
+
+• 内存使用技巧的目标
+• Netty 内存使用技巧- 减少对像本身大小
+• Netty 内存使用技巧- 对分配内存进行预估
+• Netty 内存使用技巧- Zero-Copy
+• Netty 内存使用技巧- 堆外内存
+• Netty 内存使用技巧- 内存池
+
+
+
+**内存使用技巧的目标**
+目标：
+• 内存占用少（空间）
+• 应用速度快（时间）
+对Java 而言：减少Full GC 的STW（Stop the world）时间
+
+
+**Netty 内存使用技巧- 减少对像本身大小 （空间）**
+
+例1：用基本类型就不要用包装类：
+
+
+例2: 应该定义成类变量的不要定义为实例变量：
+
+• 一个类-> 一个类变量
+• 一个实例-> 一个实例变量
+• 一个类-> 多个实例
+• 实例越多，浪费越多。
+
+
+例3: Netty 中结合前两者：
+io.netty.channel.ChannelOutboundBuffer#incrementPendingOutboundBytes(long, boolean)
+统计待写的请求的字节数
+
+AtomicLong -> volatile long + static AtomicLongFieldUpdater
+
+
+
+
+
+
+**Netty 内存使用技巧- 对分配内存进行预估**
+
+
+例1：对于已经可以预知固定size 的HashMap避免扩容
+可以提前计算好初始size或者直接使用
+com.google.common.collect.Maps#newHashMapWithExpectedSize
+
+
+例2：Netty 根据接受到的数据动态调整（guess）下个要分配的Buffer 的大小。可参考
+io.netty.channel.AdaptiveRecvByteBufAllocator
+
+
+**Netty 内存使用技巧- Zero-Copy** 零拷贝 
+ 
+例1：使用逻辑组合，代替实际复制。
+例如CompositeByteBuf：
+io.netty.handler.codec.ByteToMessageDecoder#COMPOSITE_CUMULATOR
+
+
+例2：使用包装，代替实际复制。
+
+byte[] bytes = data.getBytes();
+ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+
+
+
+例3：调用JDK 的Zero-Copy 接口。
+Netty 中也通过在DefaultFileRegion 中包装了NIO 的FileChannel.transferTo() 方法实
+现了零拷贝：io.netty.channel.DefaultFileRegion#transferTo
+
+
+
+
+**Netty 内存使用技巧- 堆外内存**
+
+堆外内存生活场景：
+
+I.夏日，小区周边的烧烤店铺，人满为患坐不下，店家常常怎么办？
+  解决思路：店铺门口摆很多桌子招待客人。
+
+II.店内-> JVM 内部-> 堆（heap) + 非堆（non heap）
+II.店外-> JVM 外部-> 堆外（off heap）
+
+• 优点：
+• 更广阔的“空间”，缓解店铺内压力-> 破除堆空间限制，减轻GC 压力
+• 减少“冗余”细节（假设烧烤过程为了气氛在室外进行：烤好直接上桌：vs 烤好还 要进店内）-> 避免复制
+
+
+• 缺点：
+• 需要搬桌子-> 创建速度稍慢
+• 受城管管、风险大-> 堆外内存受操作系统管理
+
+
+
+**Netty 内存使用技巧- 内存池**
+内存池生活场景：
+
+点菜单的演进：
+• 一张纸：一桌客人一张纸
+• 点菜平板：循环使用
+
+为什么引入对象池：
+• 创建对象开销大
+• 对象高频率创建且可复用
+• 支持并发又能保护系统
+• 维护、共享有限的资源
+
+如何实现对象池？
+• 开源实现：Apache Commons Pool
+• Netty 轻量级对象池实现io.netty.util.Recycler
+
+
+
+
+
+
+
+
+**20丨源码解析：Netty对堆外内存和内存池的支持**
+
+源码解读Netty 内存使用
+源码解读：
+问题1: 怎么从堆外内存切换堆内使用？以UnpooledByteBufAllocator为例
+• 方法1：参数设置
+io.netty.noPreferDirect = true;
+• 方法2：传入构造参数false
+ServerBootstrap serverBootStrap = new ServerBootstrap();
+UnpooledByteBufAllocator unpooledByteBufAllocator = new UnpooledByteBufAllocator(false);
+serverBootStrap.childOption(ChannelOption.ALLOCATOR, unpooledByteBufAllocator)
+
+
+
+
+问题2:堆外内存的分配本质？
+ByteBuffer.allocateDirect(initialCapacity)
+
+
+
+问题3:内存池/非内存池的默认选择及切换方式？
+io.netty.channel.DefaultChannelConfig#allocator
+
+默认选择：安卓平台-> 非pooled 实现，其他-> pooled 实现。
+• 参数设置：io.netty.allocator.type = unpooled;
+• 显示指定：serverBootStrap.childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT)
+
+
+
+
+
+问题4:内存池实现（以PooledDirectByteBuf 为例）
+io.netty.buffer.PooledDirectByteBuf
+核心要点：有借有还，避免遗忘。
+
+小结
+• 介绍内存使用技巧的目标。
+• Netty 内存五种使用技巧，也适用与其他Java 应用程序。
+
+
+
+
+
+# I. 21丨Netty代码编译与总览 
+
+
+编译Netty 常遇问题
+Netty 源码核心包速览
+
+
+
+
+
+# I. 22丨源码剖析：启动服务
+
+
+
+
+
+主线
+
+**our thread自己的线程**
+
+• 创建selector
+• 创建server socket channel
+• 初始化server socket channel
+• 给server socket channel 从boss group 中选择一个NioEventLoop
+
+
+**boss thread**
+
+• 将server socket channel 注册到选择的NioEventLoop 的selector
+• 绑定地址启动
+• 注册接受连接事件（OP_ACCEPT）到selector 上
+
+
+
+
+
+• 启动服务的本质：
+Selector selector = sun.nio.ch.SelectorProviderImpl.openSelector()
+ServerSocketChannel serverSocketChannel = provider.openServerSocketChannel()
+selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
+javaChannel().bind(localAddress, config.getBacklog());
+selectionKey.interestOps(OP_ACCEPT);
 
 
 
