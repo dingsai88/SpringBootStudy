@@ -17,7 +17,7 @@ public class CallableImpl implements Callable {
 
         System.out.println(Thread.currentThread().getName()+"-end");
         TestBean testBean = new TestBean();
-        testBean.setName("初始化:"+Thread.currentThread().getName());
+        testBean.setName("初始化:"+System.currentTimeMillis());
         return testBean;
     }
 }

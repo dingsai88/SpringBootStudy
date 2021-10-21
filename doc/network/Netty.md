@@ -1434,7 +1434,7 @@ Netty 源码核心包速览
 
 
 
-主线
+主线:自己的线程mainThread  + boss thread
 
 **our thread自己的线程**
 
@@ -1446,12 +1446,12 @@ Netty 源码核心包速览
 
 **boss thread**
 
-• 将server socket channel 注册到选择的NioEventLoop 的selector
+• 将server socket channel 注册到选择的NioEventLoop 的selector(上一步创建的selector)
 • 绑定地址启动
 • 注册接受连接事件（OP_ACCEPT）到selector 上
 
 
-
+自己创建 selector ，将selector 注册到 NioEventLoop 绑定地址启动。
 
 
 • 启动服务的本质：
@@ -1460,6 +1460,444 @@ ServerSocketChannel serverSocketChannel = provider.openServerSocketChannel()
 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
 javaChannel().bind(localAddress, config.getBacklog());
 selectionKey.interestOps(OP_ACCEPT);
+
+
+• Selector 是在new NioEventLoopGroup()（创建一批NioEventLoop）时创建。
+• 第一次Register 并不是监听OP_ACCEPT，而是0:
+selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this) 。
+
+• 最终监听OP_ACCEPT 是通过bind 完成后的fireChannelActive() 来触发的。
+• NioEventLoop 是通过Register 操作的执行来完成启动的。
+• 类似ChannelInitializer，一些Hander 可以设计成一次性的，用完就移除，例如授权。
+
+
+
+# 23丨源码剖析：构建连接
+
+• 主线
+• 源码演示
+• 知识点
+
+
+主线:boss thread + worker thread
+
+boss thread
+• NioEventLoop 中的selector 轮询创建连接事件（OP_ACCEPT）:
+• 创建socket channel
+• 初始化socket channel 并从worker group 中选择一个NioEventLoop
+
+
+worker thread
+• 将socket channel 注册到选择的NioEventLoop 的selector
+• 注册读事件（OP_READ）到selector 上
+
+
+
+
+• 接受连接本质：
+
+selector.select()/selectNow()/select(timeoutMillis) 发现OP_ACCEPT 事件，处理：
+• SocketChannel socketChannel = serverSocketChannel.accept()
+• selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
+• selectionKey.interestOps(OP_READ);
+
+
+• 创建连接的初始化和注册是通过pipeline.fireChannelRead 在ServerBootstrapAcceptor 中完成的。
+• 第一次Register 并不是监听OP_READ ，而是0 ：
+selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this) 。
+• 最终监听OP_READ 是通过“Register”完成后的fireChannelActive
+（io.netty.channel.AbstractChannel.AbstractUnsafe#register0中）来触发的
+• Worker’s NioEventLoop 是通过Register 操作执行来启动。
+• 接受连接的读操作，不会尝试读取更多次（16次）。
+
+
+
+
+# 24丨源码剖析：接收数据
+
+• 读数据技巧
+• 主线
+• 源码演示
+• 知识点
+
+1 自适应数据大小的分配器（AdaptiveRecvByteBufAllocator）：
+发放东西时，拿多大的桶去装？小了不够，大了浪费，所以会自己根据实际装的情况猜一猜下次情况， 从而决定下次带多大的桶。
+
+
+2 连续读（defaultMaxMessagesPerRead）：
+发放东西时，假设拿的桶装满了，这个时候，你会觉得可能还有东西发放，所以直接拿个新桶等着装，
+而不是回家，直到后面出现没有装上的情况或者装了很多次需要给别人一点机会等原因才停止，回家。
+
+
+
+主线
+
+• 多路复用器（ Selector ）接收到OP_READ 事件
+
+
+
+• 处理OP_READ 事件：NioSocketChannel.NioSocketChannelUnsafe.read()
+
+worker thread
+• 分配一个初始1024 字节的byte buffer 来接受数据
+• 从Channel 接受数据到byte buffer
+• 记录实际接受数据大小，调整下次分配byte buffer 大小
+• 触发pipeline.fireChannelRead(byteBuf) 把读取到的数据传播出去
+• 判断接受byte buffer 是否满载而归：是，尝试继续读取直到没有数据或满16 次；否，结束本轮读取，等待下次OP_READ 事件
+
+
+
+知识点
+• 读取数据本质：sun.nio.ch.SocketChannelImpl#read(java.nio.ByteBuffer)
+• NioSocketChannel read() 是读数据， NioServerSocketChannel read() 是创建连接
+• pipeline.fireChannelReadComplete(); 一次读事件处理完成
+pipeline.fireChannelRead(byteBuf); 一次读数据完成，一次读事件处理可能会包含多次读数据操作。
+• 为什么最多只尝试读取16 次？“雨露均沾”
+• AdaptiveRecvByteBufAllocator 对bytebuf 的猜测：放大果断，缩小谨慎（需要连续2 次判断）
+
+
+
+# 25丨源码剖析：业务处理 
+
+主线
+
+
+• 多路复用器（ Selector ）接收到OP_READ 事件
+• 处理OP_READ 事件：NioSocketChannel.NioSocketChannelUnsafe.read()
+• 分配一个初始1024 字节的byte buffer 来接受数据
+• 从Channel 接受数据到byte buffer
+• 记录实际接受数据大小，调整下次分配byte buffer 大小
+• 触发pipeline.fireChannelRead(byteBuf) 把读取到的数据传播出去
+• 判断接受byte buffer 是否满载而归：是，尝试继续读取直到没有数据或满16 次；否，结束本轮读取，等待下次OP_READ事件
+
+
+
+
+知识点
+• 处理业务本质：数据在pipeline 中所有的handler 的channelRead() 执行过程
+Handler 要实现io.netty.channel.ChannelInboundHandler#channelRead (ChannelHandlerContext ctx,
+Object msg)，且不能加注解@Skip 才能被执行到。
+中途可退出，不保证执行到Tail Handler。
+• 默认处理线程就是Channel 绑定的NioEventLoop 线程，也可以设置其他：
+pipeline.addLast(new UnorderedThreadPoolEventExecutor(10), serverHandler)
+
+
+
+#26丨源码剖析：发送数据
+
+源码剖析：发送数据
+• 写数据三种方式
+• 写数据要点
+• 主线
+• 源码演示
+• 知识点
+
+
+
+**写数据三种方式:write、flush、 writeAndFlush**
+揽收到仓库write：写到一个buffer
+从仓库发货flush: 把buffer 里的数据发送出去
+揽收到仓库并立马发货（加急件） writeAndFlush：写到buffer，立马发送
+
+
+
+揽收与发货之间有个缓冲的仓库Write 和Flush 之间有个 ChannelOutboundBuffer
+
+
+
+**写数据要点**
+
+1 对方仓库爆仓时，送不了的时候，会停止送，协商等电话通知什么时候好了，再送。
+Netty 写数据，写不进去时，会停止写，然后注册一个OP_WRITE 事件，来通知什么时候可以写进去了再写。
+
+
+2 发送快递时，对方仓库都直接收下，这个时候再发送快递时，可以尝试发送更多的快递试试，这样效果更好。
+Netty 批量写数据时，如果想写的都写进去了，接下来的尝试写更多（调整maxBytesPerGatheringWrite）
+
+3 发送快递时，发到某个地方的快递特别多，我们会连续发，但是快递车毕竟有限，也会考虑下其他地方。
+Netty 只要有数据要写，且能写的出去，则一直尝试，直到写不出去或者满16 次（writeSpinCount）。
+
+4 揽收太多，发送来不及时，爆仓，这个时候会出个告示牌：收不下了，最好过2 天再来邮寄吧。
+Netty 待写数据太多，超过一定的水位线（writeBufferWaterMark.high()），会将可写的标志位改成
+false ，让应用端自己做决定要不要发送数据了。
+
+
+
+• Write - 写数据到buffer ：
+ChannelOutboundBuffer#addMessage
+
+
+• Flush - 发送buffer 里面的数据：
+AbstractChannel.AbstractUnsafe#flush
+• 准备数据: ChannelOutboundBuffer#addFlush
+• 发送：NioSocketChannel#doWrite
+
+
+
+• 写的本质：
+• Single write: sun.nio.ch.SocketChannelImpl#write(java.nio.ByteBuffer)
+• gathering write：sun.nio.ch.SocketChannelImpl#write(java.nio.ByteBuffer[], int, int)
+
+
+• 写数据写不进去时，会停止写，注册一个OP_WRITE 事件，来通知什么时候可以写进去了。
+• OP_WRITE 不是说有数据可写，而是说可以写进去，所以正常情况，不能注册，否则一直触发。
+
+
+• 批量写数据时，如果尝试写的都写进去了，接下来会尝试写更多（maxBytesPerGatheringWrite）。
+• 只要有数据要写，且能写，则一直尝试，直到16 次（writeSpinCount），写16 次还没有写完，就直 接schedule 一个task 来继续写，而不是用注册写事件来触发，更简洁有力。
+• 待写数据太多，超过一定的水位线（writeBufferWaterMark.high()），会将可写的标志位改成false ， 让应用端自己做决定要不要继续写。
+• channelHandlerContext.channel().write() ：从TailContext 开始执行；
+channelHandlerContext.write() : 从当前的Context 开始。
+
+
+
+# 27丨源码剖析：断开连接 
+
+• 主线
+• 源码演示
+• 知识点
+
+
+I. 多路复用器（Selector）接收到OP_READ 事件:
+
+I. 处理OP_READ 事件：NioSocketChannel.NioSocketChannelUnsafe.read()：
+
+II.接受数据
+II. 判断接受的数据大小是否< 0 , 如果是，说明是关闭，开始执行关闭：
+III. 关闭channel（包含cancel 多路复用器的key）。
+III. 清理消息：不接受新信息，fail 掉所有queue 中消息。
+III. 触发fireChannelInactive 和fireChannelUnregistered 。
+
+• 关闭连接本质：
+• java.nio.channels.spi.AbstractInterruptibleChannel#close
+• java.nio.channels.SelectionKey#cancel
+
+
+• 要点：
+• 关闭连接，会触发OP_READ 方法。读取字节数是-1 代表关闭。
+• 数据读取进行时，强行关闭，触发IO Exception，进而执行关闭。
+• Channel 的关闭包含了SelectionKey 的cancel 。
+
+
+
+
+
+
+
+
+# 28丨源码剖析：关闭服务
+
+源码剖析：关闭服务
+
+bossGroup.shutdownGracefully();
+workerGroup.shutdownGracefully();
+
+关闭所有Group 中的NioEventLoop:
+
+
+• 修改NioEventLoop 的State 标志位
+• NioEventLoop 判断State 执行退出
+
+
+I.关闭服务本质：
+
+II.关闭所有连接及Selector ：
+
+III.java.nio.channels.Selector#keys
+• java.nio.channels.spi.AbstractInterruptibleChannel#close
+• java.nio.channels.SelectionKey#cancel
+III.selector.close()
+
+I.关闭所有线程：退出循环体for (;;)
+
+
+
+**• 关闭服务要点：**
+
+
+• 优雅（DEFAULT_SHUTDOWN_QUIET_PERIOD）
+• 可控（DEFAULT_SHUTDOWN_TIMEOUT）
+• 先不接活，后尽量干完手头的活（先关boss 后关worker：不是100%保证）
+
+
+
+
+
+# 29丨遍写网络应用程序的基本步骤
+
+I.需求分析
+I.定义业务数据结构
+I.实现业务逻辑
+
+
+I.选择传输协议
+
+I.定义传输信息结构
+I.选择编码器
+II.数据本身编解码
+II.压缩等编解码
+II.粘包半包处理编解码
+
+I.实现所有的编解码
+I.编写应用程序
+II.服务器
+II.客户端
+
+I.测试
+
+
+
+
+# 30丨案例介绍和数据结构设计
+
+
+31丨实现服务器端编解码 
+
+io.netty.example.study.server.Server
+
+
+
+**36丨Netty编码中易错点解析**
+
+
+• LengthFieldBasedFrameDecoder 中initialBytesToStrip 未考虑设置
+• ChannelHandler 顺序不正确
+• ChannelHandler 该共享不共享，不该共享却共享
+• 分配ByteBuf ：分配器直接用ByteBufAllocator.DEFAULT 等，而不是采用ChannelHandlerContext.alloc()
+• 未考虑ByteBuf 的释放
+• 错以为ChannelHandlerContext.write(msg) 就写出数据了
+• 乱用ChannelHandlerContext.channel().writeAndFlush(msg)
+
+
+
+
+**37丨调优参数：调整System参数夯实基础  linux参数**
+
+
+
+第五章：Netty 实战进阶把“玩具”变成产品
+
+
+I. Linux 系统参数
+例如：/proc/sys/net/ipv4/tcp_keepalive_time
+
+
+I. Netty 支持的系统参数：
+例如：serverBootstrap.option(ChannelOption.SO_BACKLOG, 1024);
+• SocketChannel -> .childOption
+• ServerSocketChannel -> .option
+
+I.Linux 系统参数
+• 进行TCP 连接时，系统为每个TCP 连接创建一个socket 句柄，也就是一个文件句柄，但是Linux
+对每个进程打开的文件句柄数量做了限制，如果超出：报错“Too many open file”。
+
+ulimit -n [xxx]
+
+注意：ulimit 命令修改的数值只对当前登录用户的目前使用环境有效，系统重启或者用户退出后就会失效，
+所以可以作为程序启动脚本一部分，让它程序启动前执行。
+
+
+**I. Netty 支持的系统参数(ChannelOption.[XXX] ) 讨论：**
+
+II.不考虑UDP :
+• IP_MULTICAST_TTL
+
+II.不考虑OIO 编程：
+• ChannelOption<Integer> SO_TIMEOUT = ("SO_TIMEOUT");
+
+
+**II.SocketChannel（7个： childOption）:**
+
+
+Netty系统相关参数     功能        默认值
+**SO_SNDBUF TCP**   
+数据发送缓冲区大小        /proc/sys/net/ipv4/tcp_wmem: 4K   [min, default, max]动态调整
+
+**SO_RCVBUF TCP**   
+数据接受缓冲区大小         /proc/sys/net/ipv4/tcp_rmem: 4K
+
+**SO_KEEPALIVE** 
+TCP 层keepalive              默认关闭
+
+
+**SO_REUSEADDR**
+
+地址重用，解决“Address already in use” 常用开启场景：多网卡（IP）绑定相同端口；让关闭连接释放的端 口更早可使用 默认不开启 
+澄清：不是让TCP 绑定完全相同IP + Port 来重复启动
+
+**SO_LINGER**    
+关闭Socket的延迟时间，默认禁用该功能，socket.close()方法立即返回          默认不开启
+
+**IP_TOS**
+设置IP 头部的Type-of-Service 字段，用于描述IP 包的优先级和QoS 选项。例如倾向于延时还是吞吐量？
+
+1000 - minimize delay
+0100 - maximize throughput
+0010 - maximize reliability
+0001 - minimize monetary cost
+0000 - normal service （默认值）
+The value of the socket option is a hint. An
+implementation may ignore the value, or ignore specific values.
+
+
+**TCP_NODELAY** 
+设置是否启用Nagle算法：用将小的碎片数据连接成更大的报文来提高发送效率。
+
+False:  如果需要发送一些较小的报文，则需要禁用该算法
+
+
+
+**II.ServerSocketChannel（3个： option ）:**
+
+Netty系统相关参数  功能   备注
+
+**SO_RCVBUF**  创建时就设置，
+为Accept 创建的socket channel 设置SO_RCVBUF：
+“Sets a default proposed value for the SO_RCVBUF option for sockets acceptedfrom this ServerSocket”
+
+为什么有SO_RCVBUF 而没有SO_SNDBUF ？
+
+
+**SO_REUSEADDR** 
+是否可以重用端口
+
+默认false
+
+**SO_BACKLOG**
+最大的等待连接数量
+
+Netty 在Linux下值的获取（io.netty.util.NetUtil）：
+• 先尝试：/proc/sys/net/core/somaxcon 配置文件
+• 然后尝试：sysctl
+• 最终没有取到，用默认：128
+
+使用方式：javaChannel().bind(localAddress, config.getBacklog());
+
+**IP_TOS**
+
+
+
+**I.调优参数： 权衡Netty 核心参数**
+
+II.参数调整要点：
+• option/childOption 傻傻分不清：不会报错，但是会不生效；
+• 不懂不要动，避免过早优化。
+• 可配置（动态配置更好）
+
+
+II.需要调整的参数：
+• 最大打开文件数
+（酌情处理）: TCP_NODELAY 是否启用Nagle算法、 SO_BACKLOG 最大的等待连接数量、 SO_REUSEADDR 是否可以重用端口
+
+
+
+
+II.ChannelOption
+• childOption(ChannelOption.[XXX], [YYY])
+• option(ChannelOption.[XXX], [YYY])
+
+II.System property
+• -Dio.netty.[XXX] = [YYY]
 
 
 
