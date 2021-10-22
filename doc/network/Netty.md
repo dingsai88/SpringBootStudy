@@ -1912,6 +1912,153 @@ II.System property
 
 
 
+# 40丨跟踪诊断：如何让应用易诊断？
+ 
+• 完善“线程名”
+• 完善“Handler ”名称
+• 使用好Netty 的日志
+
+
+**• 完善“线程名”**
+
+nioEventLoopGroup-2-1 bossGroup
+nioEventLoopGroup-3-1 workerGroup
+
+ //thread boss、 worker
+NioEventLoopGroup bossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("boss"));
+NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
+
+
+
+
+**• 完善“Handler ”名称**
+debegLog、ipFilter
+
+ ChannelPipeline pipeline = ch.pipeline();
+pipeline.addLast("debegLog", debugLogHandler);
+ pipeline.addLast("ipFilter", ruleBasedIpFilter);
+pipeline.addLast("tsHandler", globalTrafficShapingHandler);
+ pipeline.addLast("metricHandler", metricsHandler);
+pipeline.addLast("idleHandler", new ServerIdleCheckHandler());
+
+
+
+**使用好Netty的日志**
+
+
+
+
+# 41丨跟踪诊断：应用能可视，心理才有底
+
+
+• 演示如何做Netty 的可视化
+• Netty 值得可视化的数据
+
+
+**• Netty 可视化案例演示：**
+I. 实现一个小目标：统计并展示当前系统连接数
+• Console 日志定时输出 (控制台)
+• JMX 实时展示 (实时)
+• ELKK、TIG、etc
+
+自己写
+io.netty.example.study.server.handler.MetricsHandler
+
+
+
+JMX
+java8\bin\jmc.exe
+
+
+
+
+**Netty 值得可视化的数据–“外在”**
+
+可视化信息   来源   备注
+连接信息统计  channelActive/channelInactive
+收数据统计  channelRead
+发数据统计  write    ctx.write(msg).addListener() 更准确
+异常统计   exceptionCaught/ChannelFuture   ReadTimeoutException.INSTANCE
+
+
+**• Netty 值得可视化的数据–“内在”**
+
+可视化信息   来源    备注
+线程数   根据不同实现计算   例如：nioEventLoopGroup.executorCount();
+待处理任务   executor.pendingTasks()     例如：Nio Event Loop 的待处理任务
+积累的数据       channelOutboundBuffer.totalPendingSize       Channel 级别
+可写状态切换       channelWritabilityChanged
+触发事件统计       userEventTriggered           IdleStateEvent
+ByteBuf分配细节    Pooled/UnpooledByteBufAllocator.DEFAULT.metric()
+
+
+
+**42丨跟踪诊断：让应用内存不“泄露”？**
+
+
+• 本节的Netty 内存泄漏是指什么？
+• Netty 内存泄漏检测核心思路
+• Netty 内存泄漏检测的源码解析
+• 示例：用Netty 内存泄漏检测工具做检测
+
+
+**本节的Netty 内存泄漏是指什么？**
+I. 原因：“忘记”release
+ByteBuf buffer = ctx.alloc().buffer();
+buffer.release() / ReferenceCountUtil.release(buffer)
+
+
+I. 后果：资源未释放-> OOM
+• 堆外：未free（PlatformDependent.freeDirectBuffer(buffer)）；
+• 池化：未归还（recyclerHandle.recycle(this)）
+
+
+
+**Netty 内存泄漏检测核心思路：**  引用计数（buffer.refCnt()）+ 弱引用（Weak reference）
+• 引用计数
+• 判断历史人物到底功大于过，还是过大于功？
+
+功+1， 过-1， = 0 时：尘归尘，土归土，资源也该释放了
+
+• 那什么时候判断？“盖棺定论”时-> 对象被GC 后
+
+
+I. 强引用与弱引用
+• String 我是战斗英雄型强保镖= new String(我是主人));
+• WeakReference<String> 我是爱写作的弱保镖= new WeakReference<String>(new String(我是主人));
+只有一个爱写作的保镖（弱引用）守护（引用）时：刺客（GC）来袭，主人（referent）必挂（GC掉）。
+不过主人挂掉的（被GC 掉）时候，我还是可以发挥写作特长：把我自己记到“小本本”上去。
+
+• WeakReference<String> 我是爱写作的弱保镖= new WeakReference<String>(new String(我是主人)，我的小本本ReferenceQueue);
+
+
+
+
+Netty 内存泄漏检测核心思路:
+ByteBuf buffer = ctx.alloc().buffer() 引用计数+ 1 定义弱引用对象DefaultResourceLeak 加到list （#allLeaks ）里
+buffer.release() ： 引用计数– 1 减到0 时，自动执行释放资源操作，并将弱引用对象从list 里面移除
+
+• 判断依据： 弱引用对象在不在list 里面? 如果在，说明引用计数还没有到0 没有到0，说明没有执行释放
+• 判断时机： 弱引用指向对象被回收时，可以把弱引用放进指定ReferenceQueue 里面去，所以遍历queue 拿出所有弱引用来判断
+
+
+JAVA GC 回收堆外内存(本地方法栈NativeMethodStack) 的方法
+ **堆外内存回收的几种方法：**
+
+1.Full GC，一般发生在年老代垃圾回收以及调用System.gc的时候，但这样不一顶能满足我们的需求。 
+2.调用ByteBuffer的cleaner的clean()，内部还是调用System.gc(),所以一定不要-XX:+DisableExplicitGC
+
+
+如果我们的应用中使用了java nio中的direct memory，那么使用-XX:+DisableExplicitGC一定要小心，存在潜在的内存泄露风险。
+
+
+
+https://www.cnblogs.com/czwbig/p/11127124.html
+
+
+
+
+
 
 
 

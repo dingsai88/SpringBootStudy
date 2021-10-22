@@ -1,3 +1,5 @@
+https://www.cnblogs.com/czwbig/p/11127124.html
+
 
 第12章 Java内存模型与线程
    并发处理的广泛应用是使得amdahl定律代替默认定律成为计算机性能发展源动力的根
@@ -500,10 +502,104 @@ thread priorify idle
    关于高效并发这个话题，在本章中主要介绍了虚拟机如何实现并发，在第13章
 中，我们的主要关注点将是虚拟机如何实现高效，以及虚拟机对我们编写的并发代码提
 供了什么样的优化手段。
-    
-    
-    
-    
+
+
+
+
+ 
+
+ByteBuffer(direct 、heap)
+
+I.直接内存direct memory
+
+https://www.cnblogs.com/stevenczp/p/7506280.html
+https://blog.csdn.net/weixin_34198797/article/details/85833303
+https://www.cnblogs.com/czwbig/p/11127124.html
+https://www.cnblogs.com/duanxz/p/6089485.html
+
+
+ByteBuffer的源码中有这样一段注释：
+
+ A byte buffer is either direct or non-direct. Given a direct byte buffer, the Java virtual machine will make a best effort to perform native I/O operations directly upon it. That is, it will attempt to avoid copying the buffer's content to (or from) an intermediate buffer before (or after) each invocation of one of the underlying operating system's native I/O operations.
+大概意思是说ByteBuffer分为direct与heap两种，如果使用direct版本的ByteBuffer，JVM会尽可能的直接在这个ByteBuffer上做IO操作。从而省去了将数据在中间buffer上来回复制带来的开销。
+看到这里你当然是一头雾水了，不过不要慌，本文会详尽的分析direct memory与IO之间的关系。
+
+**进程的用户地址空间可以被分成两份：**  
+JVM数据区 + direct memory。
+
+ByteBuffer.allocateDirect()方法的调用流程：
+
+base = unsafe.allocateMemory(size);//申请内存
+unsafe.setMemory(base, size, (byte) 0);//初始化内存
+
+Unsafe的实际实现位于src/share/vm/prims/unsafe.cpp
+
+http://hg.openjdk.java.net/jdk8/jdk8/hotspot/file/87ee5ee27509/src/share/vm/prims/unsafe.cpp#l583
+http://hg.openjdk.java.net/jdk8/jdk8/hotspot/file/87ee5ee27509/src/share/vm/prims/unsafe.cpp#l629
+
+direct memory，其实就跟一般的c语言编程里一样，是直接用malloc方法申请的。
+JVM会将malloc方法的返回值（申请到的内存空间的首地址）转换成long类型的address变量，然后返还给Java应用程序。
+Java应用程序在需要操作direct memory的时候，会调用native方法将address传给JVM，然后JVM就能对这块内存为所欲为了。
+
+3. Java应用程序是如何访问direct memory的？
+以DirectByteBuffer.get()方法为例
+
+4. 为什么说direct memory更加适合IO操作？
+
+因为在JVM层面来看，所谓的direct memory就是在进程空间中申请的一段内存，而且指向direct memory的指针是固定不变的，因此可以直接用direct memory作为参数来执行各种系统调用，比方说read/pread/mmap等。
+而为什么heap memory不能直接用于系统IO呢，因为GC会移动heap memory里的对象的位置。如果强行用heap memory来搞系统IO的话，IO操作的中途出现的GC会导致缓冲区位置移动，然后程序就跑飞了。
+除非采用一定的手段将这个对象pin住，但是hotspot不提供单个对象层面的object pinning，一定要pin的话就只能暂时禁用gc了，也就是把整个Java堆都给pin住，这显然代价太高了。
+总结一下就是：heap memory不可能直接用于系统IO，数据只能先读到direct memory里去，然后再复制到heap memory。
+
+
+
+
+
+
+**Direct Memory的回收机制 ：**
+Direct Memory是受GC控制的，例如ByteBuffer bb = ByteBuffer.allocateDirect(1024)，这段代码的执行会在堆外占用1k的内存
+，Java堆内只会占用一个对象的指针引用的大小，堆外的这1k的空间只有当bb对象被回收时，才会被回收，
+这里会发现一个明显的不对称现象，就是堆外可能占用了很多，而堆内没占用多少，导致还没触发GC，
+那就很容易出现Direct Memory造成物理内存耗光。
+
+
+
+ByteBuffer(direct 、heap)
+
+
+
+
+**正确释放Unsafe分配的堆外内存**
+
+覆盖了finalize方法，手动释放分配的堆外内存。如果堆中的对象被回收，那么相应的也会释放占用的堆外内存。这里有一点需要注意下：
+
+unsafe.freeMemory(address);
+
+public class RevisedObjectInHeap
+{
+private long address = 0;
+	private Unsafe unsafe = GetUsafeInstance.getUnsafeInstance();
+	// 让对象占用堆内存,触发[Full GC
+	private byte[] bytes = null;
+	public RevisedObjectInHeap()
+	{	address = unsafe.allocateMemory(2 * 1024 * 1024);
+		bytes = new byte[1024 * 1024];
+	}
+	@Override
+	protected void finalize() throws Throwable
+	{		super.finalize();
+		System.out.println("finalize." + bytes.length);
+		unsafe.freeMemory(address);
+	}
+}
+
+
+
+
+
+
+
+
 
 
 
