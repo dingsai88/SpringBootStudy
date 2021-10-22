@@ -1903,6 +1903,16 @@ II.System property
 
 
 
+# 39丨调优参数：图解费脑的三个参数
+
+
+• SO_REUSEADDR 是让端口释放后立即就可以被再次使用。
+• SO_LINGER  这个选项在我以前带队改造haproxy的时候引出过一个reset（RST）客户端连接的bug。 
+• ALLOW_HALF_CLOSURE
+
+
+
+
 
 
 
