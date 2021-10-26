@@ -2007,6 +2007,9 @@ I. 原因：“忘记”release
 ByteBuf buffer = ctx.alloc().buffer();
 buffer.release() / ReferenceCountUtil.release(buffer)
 
+ByteBuf(netty对象) 并非 ByteBuffer(jdk对象):
+
+
 
 I. 后果：资源未释放-> OOM
 • 堆外：未free（PlatformDependent.freeDirectBuffer(buffer)）；
@@ -2015,12 +2018,12 @@ I. 后果：资源未释放-> OOM
 
 
 **Netty 内存泄漏检测核心思路：**  引用计数（buffer.refCnt()）+ 弱引用（Weak reference）
-• 引用计数
-• 判断历史人物到底功大于过，还是过大于功？
+I.引用计数
+II.判断历史人物到底功大于过，还是过大于功？
 
 功+1， 过-1， = 0 时：尘归尘，土归土，资源也该释放了
 
-• 那什么时候判断？“盖棺定论”时-> 对象被GC 后
+II.那什么时候判断？“盖棺定论”时-> 对象被GC 后
 
 
 I. 强引用与弱引用
@@ -2035,11 +2038,16 @@ I. 强引用与弱引用
 
 
 Netty 内存泄漏检测核心思路:
-ByteBuf buffer = ctx.alloc().buffer() 引用计数+ 1 定义弱引用对象DefaultResourceLeak 加到list （#allLeaks ）里
+ByteBuf buffer = ctx.alloc().buffer() 引用计数+ 1 定义弱引用对象 DefaultResourceLeak 加到list （#allLeaks ）里
 buffer.release() ： 引用计数– 1 减到0 时，自动执行释放资源操作，并将弱引用对象从list 里面移除
 
 • 判断依据： 弱引用对象在不在list 里面? 如果在，说明引用计数还没有到0 没有到0，说明没有执行释放
-• 判断时机： 弱引用指向对象被回收时，可以把弱引用放进指定ReferenceQueue 里面去，所以遍历queue 拿出所有弱引用来判断
+• 判断时机： 弱引用指向对象被回收时，可以把弱引用放进指定 ReferenceQueue 里面去，所以遍历queue 拿出所有弱引用来判断
+
+
+**检测流程**
+ByteBuf buffer = ctx.alloc().buffer() 分配内存时 加入到list
+
 
 
 JAVA GC 回收堆外内存(本地方法栈NativeMethodStack) 的方法
@@ -2054,6 +2062,14 @@ JAVA GC 回收堆外内存(本地方法栈NativeMethodStack) 的方法
 
 
 https://www.cnblogs.com/czwbig/p/11127124.html
+https://www.cnblogs.com/stevenczp/p/7506280.html
+https://blog.csdn.net/weixin_34198797/article/details/85833303
+
+
+
+
+
+
 
 
 

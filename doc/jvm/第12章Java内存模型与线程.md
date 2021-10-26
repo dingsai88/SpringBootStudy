@@ -528,6 +528,8 @@ ByteBuffer的源码中有这样一段注释：
 JVM数据区 + direct memory。
 
 ByteBuffer.allocateDirect()方法的调用流程：
+**分配内存**
+ByteBuffer.allocateDirect()
 
 base = unsafe.allocateMemory(size);//申请内存
 unsafe.setMemory(base, size, (byte) 0);//初始化内存
@@ -562,6 +564,9 @@ Direct Memory是受GC控制的，例如ByteBuffer bb = ByteBuffer.allocateDirect
 这里会发现一个明显的不对称现象，就是堆外可能占用了很多，而堆内没占用多少，导致还没触发GC，
 那就很容易出现Direct Memory造成物理内存耗光。
 
+垃圾回收:
+((DirectBuffer)byteBuffer).cleaner().clean();
+DirectBuffer.cleaner().clean();
 
 
 ByteBuffer(direct 、heap)
