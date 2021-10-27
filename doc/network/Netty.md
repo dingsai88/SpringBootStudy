@@ -2325,19 +2325,145 @@ io.netty.example.study.server.Server#main
 
 
 
+**48丨安全增强：设置“高低水位线”等保护好自己**
+
+
+• Netty OOM 的根本原因
+• Netty OOM – ChannelOutboundBuffer
+• Netty OOM – TrafficShapingHandler
+• Netty OOM 的对策
+
+
+
+**• Netty OOM 的根本原因：**
+
+I. 根源：进（读速度）大于出（写速度）
+I. 表象：
+II. 上游发送太快：任务重
+II. 自己：处理慢/不发或发的慢：处理能力有限，流量控制等原因
+II. 网速：卡
+II. 下游处理速度慢：导致不及时读取接受Buffer 数据，然后反馈到这边，发送速度降速
+
+
+
+
+**• Netty OOM – ChannelOutboundBuffer 原因**
+
+• 存的对象：Linked list 存ChannelOutboundBuffer.Entry
+• 解决方式：判断totalPendingSize > writeBufferWaterMark.high() 设置unwritable
+
+高水位不发
+ChannelOutboundBuffer:
+
+
+
+
+**Netty OOM – TrafficShapingHandler 原因– 以ChannelTrafficShapingHandler为例**
+• 存的对象：messagesQueue 存ChannelTrafficShapingHandler.ToSend
+• 解决方式：判断queueSize > maxWriteSize 或delay > maxWriteDelay 设置unwritable
+
+
+
+**• Netty OOM – 对策：**
+
+I.设置好参数：
+II.高低水位线（默认32K-64K）
+II.启用流量整形时才需要考虑：
+
+• maxwrite (默认4M)
+• maxGlobalWriteSize (默认400M)
+• maxWriteDelay (默认4s)
+
+
+
+
+**49丨安全增强：启用空闲监测**
+
+
+示例：实现一个小目标
+
+
+I.服务器加上read idle check – 服务器10s 接受不到channel 的请求就断掉连接
+• 保护自己、瘦身（及时清理空闲的连接）
+
+
+I.客户端加上write idle check + keepalive – 客户端5s 不发送数据就发一个keepalive
+
+• 避免连接被断
+• 启用不频繁的keepalive
+
+检测连接
+io.netty.example.study.server.handler.ServerIdleCheckHandler
+
+         pipeline.addLast("idleHandler", new ServerIdleCheckHandler());
+
+
+
+断开连接
+public ServerIdleCheckHandler() {
+super(10, 0, 0, TimeUnit.SECONDS);
+}
+
+
+if (evt == IdleStateEvent.FIRST_READER_IDLE_STATE_EVENT) {
+log.info("idle check happen, so close the connection");
+ctx.close();
+return;
+}
+
+
+
+**50丨安全增强：简单有效的黑白名单**
+
+• Netty 中的“cidrPrefix” 是什么？
+• Netty 地址过滤功能源码分析
+• 示例：使用黑名单增强安全
+
+
+**Netty 中的“cidrPrefix” 是什么？**
+
+
+Netty 地址过滤功能源码分析
+
+• 同一个IP 只能有一个连接
+• IP 地址过滤：黑名单、白名单
 
 
 
 
 
 
+示例：使用黑名单增强安全
+
+
+**51丨安全增强：少不了的自定义授权**
+
+**52丨安全增强：拿来即用的SSL-对话呈现表象**
+
+
+安全增强: 拿来即用的SSL - 对话呈现表象
+
+
+• SSL/TLS 协议在传输层之上封装了应用层数据，不需要修改应用层协议的前提下提供安全保障
+• TLS（传输层安全）是更为安全的升级版SSL
 
 
 
 
 
 
+• SSL 的抓包演示与解析： Wireshark （低版本需要安装Npcap ( https://wiki.wireshark.org/CaptureSetup/Loopback ) ）
 
+**• 抓包案例：**
+
+
+• io.netty.example.securechat.SecureChatClient：
+final SslContext sslCtx = SslContextBuilder.forClient()
+.trustManager(InsecureTrustManagerFactory.INSTANCE).ciphers(Arrays.asList("TLS_RSA_WITH_AES_256_CBC_SHA")).build();
+
+
+• io.netty.example.securechat.SecureChatServer：
+SelfSignedCertificate ssc = new SelfSignedCertificate(); System.out.println(ssc.privateKey());
 
 
 
