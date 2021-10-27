@@ -1,3 +1,4 @@
+https://netty.io/index.html
 
 
 # Netty源码剖析与实战
@@ -15,6 +16,8 @@ TCP 的keepalive
 对外内存
 锁
 
+作者 :Trustin Lee
+https://github.com/trustin
 
 韩国人 2004年开发
 本质:网络应用程序框架
@@ -298,7 +301,7 @@ KQueueSocketChannel
 
 
 
-**AIO阻塞IO  :Aio** Removed 删除
+**AIO阻塞IO  :Aio** Removed 删除  异步IO 删除
 AioEventLoopGroup
 AioEventLoop
 AioServerSocketChannel
@@ -308,8 +311,19 @@ windows下AIO实现成熟、但是很少用来做服务器
 Linux服务器但是AIO不成熟。
 Linux下AIO 比NIO性能提升不明显。
 
+netty为什么删掉异步IO  AIO
+https://github.com/netty/netty/issues/2515
+
+作者
+https://github.com/trustin
 
 
+显然，到目前为止，我们还没有将 Windows 视为一个严肃的平台，这就是为什么我们忽略了在 Windows 上使用 IOCP 实现的 NIO.2 AIO API。（在 Linux 上，它并没有更快，因为它使用相同的操作系统工具 - epoll。）
+有两种方法可以实现您的想法：
+使用 NIO.2 AIO API 实现新的传输（Channel 和 EventLoop impl）
+使用 JNI 实现新的传输
+如果您精通 Win32/C 编程，我会推荐第二种方法，因为拥有另一层抽象（NIO.2）没有多大意义。正如 netty-transport-native-epoll 所证明的那样，移除 Netty 和 OS 之间的抽象层会产生更好的性能。
+如果您倾向于第一个解决方案，您可以查看一些旧的预发布 Netty 版本，该版本提供 AIO 传输并从那里开始。在这种情况下，我有兴趣在合并之前比较 Windows 上的 NIO 传输和 AIO 传输之间的性能。
 
 
 NIO 比较BIO
@@ -2064,6 +2078,256 @@ JAVA GC 回收堆外内存(本地方法栈NativeMethodStack) 的方法
 https://www.cnblogs.com/czwbig/p/11127124.html
 https://www.cnblogs.com/stevenczp/p/7506280.html
 https://blog.csdn.net/weixin_34198797/article/details/85833303
+
+
+
+
+**Netty 内存泄漏检测的源码解析**  
+
+• 全样本？抽样？： PlatformDependent.threadLocalRandom().nextInt(samplingInterval)
+• 记录访问信息：new Record() : record extends Throwable
+• 级别/开关：io.netty.util.ResourceLeakDetector.Level  
+• 信息呈现：logger.error
+• 触发汇报时机： AbstractByteBufAllocator#buffer() ：io.netty.util.ResourceLeakDetector#track0
+
+
+
+
+**用Netty 内存泄漏检测工具做检测**  检测内存泄露的工具 ResourceLeakDetector
+https://netty.io/wiki/reference-counted-objects.html
+
+
+• 方法：-Dio.netty.leakDetection.level=PARANOID  默认ResourceLeakDetector.Level.SIMPLE
+• 注意：
+• 默认级别SIMPLE，不是每次都检测
+• GC 后，才有可能检测到
+• 注意日志级别
+• 上线前用最高级别，上线后用默认
+
+//禁用资源泄漏检测。
+DISABLED,
+
+//启用简单的采样资源泄漏检测，报告是否存在泄漏，
+SIMPLE,
+
+// 启用高级采样资源泄漏检测，报告泄漏对象的访问位置* 最近以高开销为代价。
+ADVANCED,
+
+// 启用偏执资源泄漏检测，报告最近访问泄漏对象的位置， 以尽可能高的开销为代价（仅用于测试目的）。
+PARANOID;
+
+测试代码
+io.netty.example.study.client.ClientV0
+
+
+
+
+
+
+**43丨优化使用：用好自带注解省点心**
+
+
+
+• @Sharable 共享 标识一个Handler
+• @Skip 跳过 标识一个Handler
+• @UnstableApi 不稳定 标识api慎用
+• @SuppressJava6Requirement 去除java6报警
+• @SuppressForbidden 去除禁用报警
+
+
+
+
+**44丨优化使用：“整改”线程模型让响应健步如飞**
+
+**业务的常用两种场景：**
+• CPU 密集型：运算型
+• IO 密集型：等待型
+
+
+io.netty.example.study.common.order.OrderOperation
+io.netty.example.study.server.Server
+io.netty.example.study.client.ClientV0
+
+**• CPU 密集型**
+I. 保持当前线程模型：
+• Runtime.getRuntime().availableProcessors() * 2  虚拟机可用处理器储量
+• io.netty.availableProcessors * 2
+• io.netty.eventLoopThreads
+
+**IO 密集型**
+I. 整改线程模型：独立出“线程池”来处理业务
+
+II. 在handler 内部使用JDK Executors
+II. 添加handler 时，指定1个：
+EventExecutorGroup eventExecutorGroup = new UnorderedThreadPoolEventExecutor(10);
+pipeline.addLast(eventExecutorGroup, serverHandler)
+为什么案例中不用new NioEventLoopGroup()？
+
+
+
+
+
+
+
+**45丨优化使用：增强写，延迟与吞吐量的抉择**
+
+
+
+• 写的“问题”
+• 改进方式1：channelReadComplete
+• 改进方式2：flushConsolidationHandler
+
+
+
+
+• 写的“问题” – 全部“加急式”快递
+ctx.writeAndFlush();
+
+
+• 改进方式1：利用channelReadComplete
+
+channelRead(){
+ctx.write(msg);
+}
+
+channelReadComplete(){
+ctx.flush();
+}
+
+• 缺点：
+• 不适合异步业务线程(不复用NIO event loop) 处理：
+channelRead 中的业务处理结果的write 很可能发生在channelReadComplete 之后
+
+• 不适合更精细的控制：例如连读16 次时，第16 次是flush，但是如果保持连续的次
+数不变，如何做到3 次就flush?
+
+
+• 改进方式2： flushConsolidationHandler
+• 源码分析
+• 使用
+
+
+
+
+
+**46丨优化使用：如何让应用丝般“平滑”？**  trafficShaping 流量整形
+
+
+优化使用：如何让应用丝般“平滑”
+
+**流量整形的用途**
+• 网盘限速（有意）
+• 景点限流（无奈）
+
+
+
+**Netty 内置的三种流量整形**
+
+
+Global级别
+GlobalTrafficShapingHandler （2）
+
+Channel级别
+ChannelTrafficShapingHandler （2）
+
+GlobalChannelTrafficShapingHandler （4）
+
+
+
+读限流  等待时间
+io.netty.handler.traffic.AbstractTrafficShapingHandler
+
+io.netty.handler.traffic.AbstractTrafficShapingHandler.channelRead
+
+
+// compute the number of ms to wait before reopening the channel
+long wait = trafficCounter.readTimeToWait(size, readLimit, maxTime, now);
+
+    if (config.isAutoRead() && isHandlerActive(ctx)) {
+                    //设置autoread标记，并且移除“读”兴趣
+                    config.setAutoRead(false);
+
+         //过wait时间后，重新打开“读”功能
+                    ctx.executor().schedule(reopenTask, wait, TimeUnit.MILLISECONDS);
+
+
+
+写 等待时间
+io.netty.handler.traffic.AbstractTrafficShapingHandler.write
+
+大于0 写暂停
+long size = calculateSize(msg);
+
+写等待
+submitWrite(ctx, msg, size, wait, now, promise);
+
+
+//注意这个地方delay是0，表示不等待
+submitWrite(ctx, msg, size, 0, now, promise);
+
+
+
+
+
+读写都用到的
+TrafficCounter
+io.netty.handler.traffic.GlobalChannelTrafficShapingHandler.createGlobalTrafficCounter
+
+
+固定窗口实现
+
+
+
+**Netty 流量整形的源码分析与总结**
+
+• 读写流控判断：按一定时间段checkInterval （1s） 来统计。writeLimit/readLimit 设置的值为 0时，表示关闭写整形/读整形
+
+• 等待时间范围控制：10ms （MINIMAL_WAIT） -> 15s （maxTime）
+
+• 读流控：取消读事件监听，让读缓存区满，然后对端写缓存区满，然后对端写不进去，对端对数 据进行丢弃或减缓发送。
+
+• 写流控：待发数据入Queue。等待超过4s (maxWriteDelay) || 单个channel 缓存的数据超过 4M(maxWriteSize) || 所有缓存数据超过400M (maxGlobalWriteSize)时修改写状态为不可写。
+
+
+
+**示例：流量整形的使用**
+
+• ChannelTrafficShapingHandler
+• GlobalTrafficShapingHandler： share
+• GlobalChannelTrafficShapingHandler: share
+
+
+trafficShaping 流量整形   限流
+
+
+
+io.netty.example.study.server.Server#main
+
+
+            //trafficShaping
+            GlobalTrafficShapingHandler globalTrafficShapingHandler = new GlobalTrafficShapingHandler(eventLoopGroupForTrafficShaping, 10 * 1024 * 1024, 10 * 1024 * 1024);
+
+         pipeline.addLast("tsHandler", globalTrafficShapingHandler);
+
+
+
+
+
+**47丨优化使用：为不同平台开启native**
+
+
+
+• 如何开启Native
+• 源码分析Native 库的加载逻辑
+• 常见问题
+
+
+
+
+
+
+
+
 
 
 
