@@ -4,6 +4,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * com.ding.study.util.ThreadPollExecutorUtil
+ *
+ *
+ */
 public class ThreadPoolExecutorTest  implements Runnable{
     Integer i;
     public ThreadPoolExecutorTest(Integer data){

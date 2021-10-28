@@ -3,6 +3,10 @@ package com.ding.study.concurrent.jkjuc.juc22Executor;
 import java.util.concurrent.*;
 
 /**
+ * 工具类
+ * com.ding.study.util.ThreadPollExecutorUtil
+ *
+ *
  * @author daniel 2019-10-25 0025.
  */
 public class ExecutorTest {

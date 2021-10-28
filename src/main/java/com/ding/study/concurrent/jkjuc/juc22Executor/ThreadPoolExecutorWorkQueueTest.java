@@ -4,6 +4,12 @@ import com.ding.study.concurrent.jkjuc.juc22Executor.workQueue.DelayQueueBean;
 
 import java.util.concurrent.*;
 
+/**
+ * com.ding.study.util.ThreadPollExecutorUtil
+ *
+ * 工具类
+ * @param <E>
+ */
 public class ThreadPoolExecutorWorkQueueTest<E> implements Runnable, Delayed {
     private long excuteTime;
     private long time;

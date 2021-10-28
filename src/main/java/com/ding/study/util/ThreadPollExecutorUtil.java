@@ -38,7 +38,7 @@ public class ThreadPollExecutorUtil {
      * SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：队列内部仅允许容纳一个元素。当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。
      */
     private static final ExecutorService pool =
-            new ThreadPoolExecutor(1, 1, 2, TimeUnit.SECONDS,
+            new ThreadPoolExecutor(5, 5, 2, TimeUnit.SECONDS,
                     new ArrayBlockingQueue<Runnable>(2),
                     new NewNameThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
@@ -85,10 +85,10 @@ public class ThreadPollExecutorUtil {
 
 
     public static void main(String[] arg) throws Exception {
-        System.out.println("error111:");
+        System.out.println("开始:");
             for (int i = 0; i < 20; i++) {
                 try {
-                execute(new Runnable() {
+                    ThreadPollExecutorUtil.execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -96,6 +96,7 @@ public class ThreadPollExecutorUtil {
                         } catch (InterruptedException e) {
                             System.out.println("InterruptedException:"+e);
                         }
+                        System.out.println("正常结束:");
                     }
                 });
             } catch(Exception e){
