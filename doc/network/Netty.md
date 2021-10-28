@@ -2470,4 +2470,151 @@ SelfSignedCertificate ssc = new SelfSignedCertificate(); System.out.println(ssc.
 
 
 
+**54丨安全增强：拿来即用的SSL-轻松融入案例**
+
+I. 在Netty 中使用SSL： io.netty.handler.ssl.SslHandler
+
+
+
+
+I. 在Netty 中使用SSL：单向认证
+• 服务器端准备证书：自签或购买
+• 服务器端加上SSL 功能
+• 导入证书到客户端
+• 客户端加入SSL 功能
+
+
+
+
+
+# 应用netty 开源软件
+
+**55丨Cassandra 如何使用Netty？**
+
+
+
+I. Cassandra 是什么？ 开源去中心化 nosql
+I. Cassandra 传输数据结构
+I. Cassandra 使用Netty 概况
+
+• 总览
+• Pipeline
+• 线程模型
+
+I. Cassandra 使用Netty 的一些技巧
+
+
+**I. Cassandra 是什么？**
+
+• Apache Cassandra 是一个开源的、分布式、去中心化、弹性可扩展、高可用性、容错、一致性可调、面向行的数据库；
+• 诞生于2007 年，于2008年开源；
+• 它最初由Facebook 创建，用于储存收件箱等简单格式数据。此后，由于扩展性良好，被Digg、Twitter 等知名网站所采纳，成为了一种流行的分布式结构化数据存储方案。
+
+数据库排名第10
+列式存储排名第1
+
+cassandra
+hbase
+
+
+**Cassandra 传输数据结构**
+
+version 
+flags
+stream
+opcode
+length
+data
+
+• select name from user where username = ‘tom’
+
+
+
+**56丨Dubbo如何使用Netty？**
+
+• 线程模型: Thread Pool 继承于io.netty.util.concurrent.EventExecutorGroup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**59丨如何给Netty贡献代码？** 
+
+
+如何给Netty 贡献代码？
+
+• 为什么要贡献代码？
+• 贡献代码难不难？
+• 贡献代码的7 个起点
+• 贡献代码的7 个准则
+
+
+• 利于他人
+• 提升自己
+ 与大师交流
+  改变视野
+• 满足个人成就感
+
+
+
+
+
+
+
+
+
+**60丨课程回顾与总结** 
+
+
+• 初识Netty（背景、现状与趋势）
+• Netty 源码（ 7 个领域知识点与7 个处理主线）
+• Netty 实战（ 15 个改进的手段）
+• 成长为Netty 的贡献者（ 3 个开源组件）
+
+
+
+
+**推荐书籍：**
+
+• 网络知识：《TCP/IP详解》、《图解TCP/IP》、《Wireshark网络分析就这么简单》
+
+
+• Java 网络编程：《Java 网络编程》、《Java TCP/IP Socket编程》
+
+
+• Netty 相关:
+《Netty权威指南》
+《Netty实战》（译自《Netty in action》: Norman Maurer）
+《Netty进阶之路：跟着案例学Netty》
+
+
+
+
+
+• 扩展学习/实践：
+
+传输层：UDP 编程
+应用层：Http、Websocket 及其他应用层协议编程
+研究实现细节：内存分配Jemalloc 等
+
+
+
+
+
+
+
+
+
+
+
 
