@@ -79,6 +79,10 @@ public class ThreadPollExecutorUtil {
         }
     }
 
+    /**
+     * 需要线程池启动的线程
+     * @param runnable
+     */
     public static void execute(Runnable runnable) {
         pool.execute(runnable);
     }

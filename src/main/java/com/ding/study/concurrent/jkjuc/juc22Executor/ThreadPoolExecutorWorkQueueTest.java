@@ -5,7 +5,7 @@ import com.ding.study.concurrent.jkjuc.juc22Executor.workQueue.DelayQueueBean;
 import java.util.concurrent.*;
 
 /**
- * com.ding.study.util.ThreadPollExecutorUtil
+ * @see  com.ding.study.util.ThreadPollExecutorUtil
  *
  * 工具类
  * @param <E>

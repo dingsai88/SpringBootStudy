@@ -4,7 +4,7 @@ import java.util.concurrent.*;
 
 /**
  * 工具类
- * com.ding.study.util.ThreadPollExecutorUtil
+ *@see com.ding.study.util.ThreadPollExecutorUtil
  *
  *
  * @author daniel 2019-10-25 0025.
