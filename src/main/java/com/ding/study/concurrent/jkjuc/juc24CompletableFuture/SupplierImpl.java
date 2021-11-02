@@ -16,17 +16,13 @@ public class SupplierImpl implements Supplier {
 
     }
 
-    public SupplierImpl(String t) {
-        test = t;
-    }
-
     @Override
     public Object get() {
         TestBean testBean = new TestBean();
         testBean.setName("SupplierImpl" + test);
         System.out.println("SupplierImpl:print:" + Thread.currentThread().getName() + " testBean:" + testBean.getName());
         try {
-            Thread.sleep((new Random()).nextInt(1002));
+            Thread.sleep((new Random()).nextInt(1001));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -38,5 +34,9 @@ public class SupplierImpl implements Supplier {
 
 
         return testBean;
+    }
+
+    public SupplierImpl(String t) {
+        test = t;
     }
 }

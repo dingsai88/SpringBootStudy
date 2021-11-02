@@ -1,8 +1,6 @@
-package com.ding.study.concurrent.jkjuc.juc25CompetionService;
+package com.ding.study.concurrent.jkjuc.juc25CompletionService;
 
 import com.ding.study.concurrent.jkjuc.juc23Future.TestBean;
-
-import java.util.Random;
 
 /**
  * @author daniel 2019-11-5 0005.

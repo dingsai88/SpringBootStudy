@@ -1,4 +1,4 @@
-package com.ding.study.concurrent.jkjuc.juc25CompetionService;
+package com.ding.study.concurrent.jkjuc.juc25CompletionService;
 
 import com.ding.study.concurrent.jkjuc.juc23Future.TestBean;
 
@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 /**
  * @author daniel 2019-11-5 0005.
  */
-public class CompetionServiceTest {
+public class CompletionServiceTest {
     public static void main(String[] args) throws Exception {
         System.out.println("开始:");
         CompletionService cs = new ExecutorCompletionService(Executors.newSingleThreadExecutor());

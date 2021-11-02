@@ -2504,7 +2504,7 @@ I. Cassandra 使用Netty 概况
 I. Cassandra 使用Netty 的一些技巧
 
 
-**I. Cassandra 是什么？**
+**I. Cassandra 是什么？**  卡桑德拉
 
 • Apache Cassandra 是一个开源的、分布式、去中心化、弹性可扩展、高可用性、容错、一致性可调、面向行的数据库；
 • 诞生于2007 年，于2008年开源；
@@ -2515,6 +2515,14 @@ I. Cassandra 使用Netty 的一些技巧
 
 cassandra
 hbase
+https://db-engines.com/en/ranking 
+https://db-engines.com/en/ranking/wide+column+store
+
+DB-Engines Ranking of Wide Column Stores
+列式存储
+1.	1.	1.	Cassandra detailed information	Wide column	119.28	+0.29	+0.18
+2.	2.	2.	HBase detailed information sponsor	Wide column	45.20	+0.14	-3.16
+3.	3.	3.	Microsoft Azure Cosmos DB detailed information	Multi-model info	40.29	+1.76	+8.28
 
 
 **Cassandra 传输数据结构**

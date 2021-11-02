@@ -21,13 +21,13 @@ public class ConsumerImpl  implements Consumer {
     @Override
     public void accept(Object o) {
         TestBean testBean=(TestBean) o;
-        System.out.println("ConsumerImpl:print1:"+Thread.currentThread().getName()+" testBean:"+testBean.getName()+":"+test);
+        System.out.println("ConsumerImpl:"+test+":"+Thread.currentThread().getName()+" :第一句 testBean:"+testBean.getName());
         try {
             Thread.sleep((new Random()).nextInt(100));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("ConsumerImpl:print2:"+Thread.currentThread().getName()+" testBean:"+testBean.getName()+":"+test);
+        System.out.println("ConsumerImpl:"+test+":"+Thread.currentThread().getName()+" :第二句 testBean:"+testBean.getName());
 
     }
 }
