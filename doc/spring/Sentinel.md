@@ -34,7 +34,7 @@ spring-cloud-alibaba:Nacos、sentinel、rocketmq、dubbo、seata版本对应关�
 https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E
 https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明
 
-II.一共两部分：
+II.一共两部分：  导入 引入项目
 
 		<dependency>
 			<groupId>com.alibaba.cloud</groupId>
