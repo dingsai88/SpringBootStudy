@@ -125,6 +125,10 @@ Netty 废弃5.0原因:没有发布正式版。  不要用alpha 版本
 2013 12 发布5.0.0.Alpha1
 2015 11废弃5.0.0
 
+•复杂
+•没有证明明显性能优势
+•维护不过来
+
 现有netty 后有 mina 
 
 Netty 和Mina 关系
@@ -248,7 +252,7 @@ BIO、NIO、AIO
 
 **BIO阻塞IO  :OIO** Deprecated 不建议使用
 连接数高的情况下:  阻塞>> 耗资源、效率低
-阻塞=等待=占用线程。
+阻塞=等待=占用线程
 
 
 Netty中的BIO叫 OIO(old io)Deprecated:
@@ -262,7 +266,7 @@ OioSocketChannel
 
 **NIO非阻塞IO  :Nio、Epoll、KQueue** 推荐使用
 
-为什么有多种实现NIO:(Common、epoll、kqueue):
+为什么有多种实现NIO:(Common、Linux、MacOS):
 common在linux也是使用epoll为什么要单独实现Epoll?
 
 因为更好:
@@ -509,7 +513,7 @@ CPU线程调度和切换
 prethread(提前创建线程)
 
 
-**19 | 单服务器高性能模式：Reactor 与 Proactor **
+**19 | 单服务器高性能模式：Reactor 与 Proactor**
 
 PPC、TPC连接结束进程、线程销毁，资源浪费。
 
@@ -562,13 +566,9 @@ C语言一般是Reactor单进程，没有必要在进程里多创建线程。
 
 缺点:
 只有一个进程，无法发挥多核 CPU 的性能；
-只能采取部署多个系统来利用多核 CPU，
-但这样会带来运维复杂度，本来只要维护一个系统，
-用这种方式需要在一台机器上维护多套系统。
+只能采取部署多个系统来利用多核 CPU，但这样会带来运维复杂度，本来只要维护一个系统，用这种方式需要在一台机器上维护多套系统。
 
-Handler 在处理某个连接上的业务时，
-整个进程无法处理其他连接的事件，
-很容易导致性能瓶颈。
+Handler 在处理某个连接上的业务时，整个进程无法处理其他连接的事件，很容易导致性能瓶颈。
 
 
 只适用于业务处理非常快速的场景。
@@ -630,11 +630,11 @@ Reactor监听各个连接上的事件然后进程分配，子进程与父进程�
 当有新的事件发生时，subReactor会调用连接对应的Handler来进程响应 handler  完成 read> 业务处理 > send的完整业务流程。
 
 
-多Reactor多线程、多进程的方案看起来 比单reactor多线程要复杂，单实际实现时反而更加简单，主要原因。
+多Reactor多线程、多进程的方案看起来 比单reactor多线程要复杂，但实际实现时反而更加简单，主要原因。
 
 父进程和子进程的职责非常明确，父进程只负责接收新连接，子进程负责完成行后续业务处理。
 
-父子进程交互很加单，父进程只需要把新链接传给子进程，子进程无需返回数据。
+父子进程交互很简单，父进程只需要把新链接传给子进程，子进程无需返回数据。
 
 子进程之间是互相独立的，无须同步共享之类的处理。
 
@@ -650,13 +650,13 @@ Nginx采用的是多Reactor多进程的模式，但方案与标准的多Reactor�
 **Proactor 前摄式**主动  异步IO
 Proactor 中文翻译为“前摄器”比较难理解，与其类似的单词是 proactive，含义为“主动的”。
 
-Reactor 是非阻塞同步网络模型，因为真正的read和send操作都需要用户进程同步操作。
+Reactor 是非阻塞+同步网络模型，因为真正的read和send操作都需要用户进程同步操作。
 
 这里的"同步"是指用户进程执行read和sent这类IO操作(内核态>用户态),如果把
 IO操作改为异步就能进一步提升性能，这就是异步网络模型 Proactor
 
-Reactor来事件我通知你，你处理。
-Proactor来事件我处理，处理完通知你。
+Reactor触发事件我通知你，你处理。
+Proactor触发事件我处理，处理完通知你。
 
 "我" 是内核
 "事件" 就是有新链接、有数据可读、有数据可写 这些事件。
@@ -681,7 +681,7 @@ Handler 完成业务处理，Handler也可以注册新的Handler到内核进程�
 让IO操作与计算重叠，但要实现真正的异步IO，操作系统需要做大量的工作。
 目前Windows下通过IOCP实现了真正的异步IO，而在Linux系统下的AIO
 
-</details>
+ 
 
 ##可折叠 结束
 
@@ -699,13 +699,13 @@ ServerBootstrap serverBootstrap = new ServerBootstrap();
 serverBootstrap.group(eventGroup);
 
 
-# I. 非主从Reactor 多线程模式  :如果不设置，根据CPU情况设置线程数量。
+# I.Reactor 多线程模式 ( 非主从) :如果不设置，根据CPU情况设置线程数量。
 EventLoopGroup eventGroup = new NioEventLoopGroup();  //根据CPU数量设置
 ServerBootstrap serverBootstrap = new ServerBootstrap();
 serverBootstrap.group(eventGroup);
 
 
-# I. 主从Reactor 多线程模式(多Reactor多线程) : 一个负责建立连接  -一个负责其他事件处理
+# I. Reactor 多线程模式(主从) : 一个负责建立连接  -一个负责其他事件处理
 //主 负责监听连接事件
 EventLoopGroup bossGroup = new NioEventLoopGroup();
 //从 负责其他事件处理
@@ -771,10 +771,8 @@ b.group(bossGroup, workerGroup);
 
 
 换个角度看：
-• 收发
-一个发送可能被多次接收，多个发送可能被一次接收
-• 传输
-一个发送可能占用多个传输包，多个发送可能公用一个传输包
+• 收发  :一个发送可能被多次接收，多个发送可能被一次接收
+• 传输  :一个发送可能占用多个传输包，多个发送可能公用一个传输包
 
 
 
@@ -785,8 +783,7 @@ b.group(bossGroup, workerGroup);
 TCP 是流式协议，消息无边界。
 UDP 每个包都有界限。(无粘包半包问题)
 
-提醒：UDP 像邮寄的包裹，虽然一次运输多个，但每个包裹都有“界限”，一个一个签收，
-所以无粘包、半包问题。
+提醒：UDP 像邮寄的包裹，虽然一次运输多个，但每个包裹都有“界限”，一个一个签收，所以无粘包、半包问题。
 
 
 **解决问题的根本手段：找出消息边界:**
@@ -824,7 +821,7 @@ I.封装成帧Framing:其他方式
 
 
 
-Netty 对三种常用封帧方式的支持:
+Netty对三种常用封帧方式的支持:
 
 封装成帧Framing(固定长度):FixedLengthFrameDecoder
 封装成帧Framing(分割符):DelimiterBasedFrameDecoder
@@ -842,7 +839,7 @@ Netty 对三种常用封帧方式的支持:
 • 三种解码器的常用额外控制参数有哪些？
 
 
-
+数据积累器Cumulator:
 
 
 
@@ -894,8 +891,9 @@ public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception 
 那么我们在项目中，除了可选的的压缩解压缩之外，还需要一层解码，因为一次解码的结
 果是字节，需要和项目中所使用的对象做转化，方便使用，这层解码器可以称为“二次解
 码器”，相应的，对应的编码器是为了将Java 对象转化成字节流方便存储或传输。
+一次解码的结果是字节
 
-
+二次解码器结果是对象:java字节流序列化
 
 
 **• 一次解码器：ByteToMessageDecoder**  解决粘包 半包
@@ -929,9 +927,12 @@ io.netty.buffer.ByteBuf （用户数据）-> Java Object
 
 
 选择编解码方式的要点
+
 • 空间：编码后占用空间
 需要比较不同的数据大小情况
+
 • 时间：编解码速度
+
 需要比较不同的数据大小情况
 • 是否追求可读性
 
@@ -954,6 +955,9 @@ Person person2=PersonOuterClass.Person.parseFrom(bytes);
 源码解读：Netty 对二次编解码的支持
 • Protobuf 编解码怎么使用及原理？
 • 自带哪些编解码？
+base64、bytes、compression、json、marshalling、Protobuf、serialization、string、xml
+
+
 
 
 
@@ -984,6 +988,12 @@ https://www.zhihu.com/question/24437644
 
 **HTTP 的 Keep-Alive，**
 是由应用层（用户态） 实现的，称为 HTTP 长连接；
+
+
+提示：HTTP 属于应用层协议，但是常常听到名词“ HTTP Keep-Alive ”指的是对长连接和短连接的选择：
+• Connection : Keep-Alive 长连接（HTTP/1.1 默认长连接，不需要带这个header  HTTP1.0还需要特殊指定）
+• Connection : Close 短连接
+
 
 **TCP 的 Keepalive，**
 是由 TCP 层（内核态） 实现的，称为 TCP 保活机制；
@@ -1034,10 +1044,6 @@ net.ipv4.tcp_keepalive_probes = 9    重发多少次
 
 
 
-提示：HTTP 属于应用层协议，但是常常听到名词“ HTTP Keep-Alive ”指的是对长连接和短连接的选择：
-• Connection : Keep-Alive 长连接（HTTP/1.1 默认长连接，不需要带这个header  HTTP1.0还需要特殊指定）
-• Connection : Close 短连接
-
 
 
 
@@ -1083,7 +1089,7 @@ bootstrap.childOption(NioChannelOption.of(StandardSocketOptions.SO_KEEPALIVE), t
 提示：.option(ChannelOption.SO_KEEPALIVE,true) 存在但是无效
 
 开启不同的Idle Check:
-ch.pipeline().addLast(“idleCheckHandler", new IdleStateHandler(0, 20, 0, TimeUnit.SECONDS));
+ch.pipeline().addLast("idleCheckHandler", new IdleStateHandler(0, 20, 0, TimeUnit.SECONDS));
 io.netty.handler.timeout.IdleStateHandler#IdleStateHandler(long, long, long, java.util.concurrent.TimeUnit)
 
 
@@ -1193,7 +1199,7 @@ Atomic long VS long：
 结论：Atomic* objects -> Volatile primary type + Static Atomic*FieldUpdater
 
 
-
+Atomic long 占用比 long 多24个字节 
 
 
 **II.注意锁的速度-> 提高并发性**
@@ -1203,11 +1209,15 @@ Atomic long VS long：
 
 高并发时：java.util.concurrent.atomic.AtomicLong -> java.util.concurrent.atomic.LongAdder (JDK1.8)
 
+AtomicLong >替换为 LongAdder (JDK1.8)
+
 结论： 及时衡量、使用JDK 最新的功能
 
 
 例2：曾经根据不同情况，选择不同的并发包实现：JDK < 1.8 考虑
 ConcurrentHashMapV8（ConcurrentHashMap 在JDK8 中的版本）
+
+
 
 jdk>=8时   LongAdder
 jdk老版本使用 AtomicLong
@@ -1224,7 +1234,7 @@ io.netty.util.concurrent.SingleThreadEventExecutor#threadLock：
 
 例2：Nio Event loop中负责存储task的Queue
 
-Jdk’s LinkedBlockingQueue (MPMC) -> jctools’ MPSC
+Jdk’s LinkedBlockingQueue (MPMC) -> jctools’ PlatformDependent.Mps
 io.netty.util.internal.PlatformDependent.Mpsc#newMpscQueue(int)：
 
 
@@ -1304,7 +1314,7 @@ Netty 如何玩转内存使用
 io.netty.channel.ChannelOutboundBuffer#incrementPendingOutboundBytes(long, boolean)
 统计待写的请求的字节数
 
-AtomicLong -> volatile long + static AtomicLongFieldUpdater
+AtomicLong -> 优化为volatile long + static AtomicLongFieldUpdater
 
 
 
@@ -1338,8 +1348,9 @@ ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
 
 
 例3：调用JDK 的Zero-Copy 接口。
-Netty 中也通过在DefaultFileRegion 中包装了NIO 的FileChannel.transferTo() 方法实
-现了零拷贝：io.netty.channel.DefaultFileRegion#transferTo
+Netty通过在DefaultFileRegion中NIO 的FileChannel.transferTo() 方法零拷贝：
+
+io.netty.channel.DefaultFileRegion#transferTo
 
 
 
@@ -1396,6 +1407,7 @@ II.店外-> JVM 外部-> 堆外（off heap）
 问题1: 怎么从堆外内存切换堆内使用？以UnpooledByteBufAllocator为例
 • 方法1：参数设置
 io.netty.noPreferDirect = true;
+
 • 方法2：传入构造参数false
 ServerBootstrap serverBootStrap = new ServerBootstrap();
 UnpooledByteBufAllocator unpooledByteBufAllocator = new UnpooledByteBufAllocator(false);
@@ -1835,7 +1847,6 @@ TCP 层keepalive              默认关闭
 
 
 **SO_REUSEADDR**
-
 地址重用，解决“Address already in use” 常用开启场景：多网卡（IP）绑定相同端口；让关闭连接释放的端 口更早可使用 默认不开启 
 澄清：不是让TCP 绑定完全相同IP + Port 来重复启动
 
@@ -1872,7 +1883,7 @@ Netty系统相关参数  功能   备注
 为什么有SO_RCVBUF 而没有SO_SNDBUF ？
 
 
-**SO_REUSEADDR** 
+**SO_REUSEADDR** 默认false
 是否可以重用端口
 
 默认false
@@ -1891,7 +1902,7 @@ Netty 在Linux下值的获取（io.netty.util.NetUtil）：
 
 
 
-**I.调优参数： 权衡Netty 核心参数**
+**I.调优参数：权衡Netty 核心参数**
 
 II.参数调整要点：
 • option/childOption 傻傻分不清：不会报错，但是会不生效；
@@ -1949,10 +1960,10 @@ NioEventLoopGroup workGroup = new NioEventLoopGroup(0, new DefaultThreadFactory(
 debegLog、ipFilter
 
  ChannelPipeline pipeline = ch.pipeline();
-pipeline.addLast("debegLog", debugLogHandler);
- pipeline.addLast("ipFilter", ruleBasedIpFilter);
+pipeline.addLast("debegLog", debugLogHandler); 
+pipeline.addLast("ipFilter", ruleBasedIpFilter);
 pipeline.addLast("tsHandler", globalTrafficShapingHandler);
- pipeline.addLast("metricHandler", metricsHandler);
+pipeline.addLast("metricHandler", metricsHandler);
 pipeline.addLast("idleHandler", new ServerIdleCheckHandler());
 
 
@@ -2020,7 +2031,6 @@ ByteBuf分配细节    Pooled/UnpooledByteBufAllocator.DEFAULT.metric()
 I. 原因：“忘记”release
 ByteBuf buffer = ctx.alloc().buffer();
 buffer.release() / ReferenceCountUtil.release(buffer)
-
 ByteBuf(netty对象) 并非 ByteBuffer(jdk对象):
 
 
@@ -2317,7 +2327,7 @@ io.netty.example.study.server.Server#main
 
 
 
-• 如何开启Native
+• 如何开启 Native
 • 源码分析Native 库的加载逻辑
 • 常见问题
 
@@ -2423,7 +2433,7 @@ return;
 **Netty 中的“cidrPrefix” 是什么？**
 
 
-Netty 地址过滤功能源码分析
+Netty 地址过滤功能源码分析: cidrPrefix
 
 • 同一个IP 只能有一个连接
 • IP 地址过滤：黑名单、白名单
@@ -2549,11 +2559,22 @@ data
 
 
 
+Hadoop 如何使用Netty？
+
+2004 年诞生，一套用于在大型集群上运行应用程序的框架。它实现了Map/Reduce 编程范型，计算任务会被分割成小任务并运行在不同的节点上。除此之外，它还提供了一款分布式文件系统（HDFS），用来存储相关的计算数据。
+
+• HDFS（数据存储: 分布式存储系统）
+• Mapreduce（数据处理：分布式并行计算）
 
 
+Hadoop VS JDK 的ForkJoinPool
+Hadoop 如何使用Netty 做http 服务器？
 
 
-
+（1）https：是否支持，由dfs.http.policy 决定，而细节由其他配置决定（例如：hadoop.ssl.require.client.cert）
+（2）过滤器（Filter）: dfs.datanode.httpserver.filter.handlers
+（3）Chucked Write： 8K: io.netty.handler.stream.ChunkedStream#DEFAULT_CHUNK_SIZE
+（4）URL Dispatcher
 
 
 **59丨如何给Netty贡献代码？** 
@@ -2575,9 +2596,42 @@ data
 
 
 
+贡献代码难不难？
 
 
 
+
+贡献代码的7 个起点
+• （1）项目需求 add support for closing either input or output part of a channel
+• （2）使用/测试发现问题
+• （3）难用
+• （4）源码研读: 例1：代码审阅、例2：IDE 报错
+• （5）Issues重要议题
+（6）TODO/FIXME
+（7）Labels
+
+
+
+贡献代码的7 个准则
+ 
+（1）风格
+例2 - 方法使用统一风格、toString()
+
+（2）全局观
+（3）容易使用
+
+
+（4）兼容性：打破用户行为 
+（5）证明它：单元测试、性能测试（假设需要）
+
+• （6）小步前进：尽量小而完整
+https://google.github.io/eng-practices/review/developer/small-cls.html
+
+（7）PR/Commit 规范- PR
+
+Motivation:  
+Modification : 
+Result:
 
 
 
