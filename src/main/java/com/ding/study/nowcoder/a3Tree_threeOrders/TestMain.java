@@ -5,6 +5,16 @@ import com.ding.study.util.JsonUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * https://www.nowcoder.com/practice/a9fec6c46a684ad5a3abd4e365a9d362?tpId=117&&tqId=37819&rp=1&ru=/activity/oj&qru=/ta/job-code-high/question-ranking
+ *
+ * NC45 实现二叉树先序，中序和后序遍历
+ *
+ * 先序遍历、中序遍历、后序遍历
+ *
+ * 先中后指的是:中间节点的位置
+ *
+ */
 public class TestMain {
 
     public static void main(String[] args) {

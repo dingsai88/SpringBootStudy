@@ -41,6 +41,8 @@ SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：
 
 
 创建线程的三个方法:Thread、Runnable.run、 Callable.call
+https://zhuanlan.zhihu.com/p/363283919
+
 
 
 I.获得线程返回内容(Callable.call  和 返回参数Runnable,T result)：

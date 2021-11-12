@@ -172,8 +172,26 @@ volatile变量规则volatile variable rule：对一个volatile变量的写操作
 
 
 ---------------------------------------------并发工具类-----------------------------------------------------------------------------
-I.创建线程的三个方法:Thread、Runnable.run、 Callable.call 三种方式实现多线程。
+I.创建线程的三个四个方法:Thread、Runnable.run、 Callable.call可返回异常 三种方式实现多线程。
+Thread.start启动线程。
+Thread继承了 Runnable接口，  Callable 最终实现也是通过for(true) Runable实现。
+
+
+
+官方说法两种:thread代码注释里
+继承 Thread 
+实现 Runable 接口
+
+通常情况下，我们选择用实现 Runnable 接口
+从性能角度：直接继承 Thread 每次都是新建一个线程，会有更多的损耗，用 Runnable 可以重复使用一个线程，如线程池就是这样应用的
+本质上是一样的，都是去实现 Runnable 接口。
+
+准确地讲，创建线程只有一种方式，那就是构建 Thread 类，而实现线程的执行单元有两种方式:
+    实现 Runnable 接口的 run 方法，并把 Runnable 实例传给 Thread 类
+    继承 Thread 类并重写 run 方法
+
 start 开启多线程 执行run方法
+https://zhuanlan.zhihu.com/p/363283919
 
 I.带返回值(Callable.call  和带返回参数的 Runnable, T result))：
 1.实现Callable.call方法 或 带返回参数的 Runnable, T result
