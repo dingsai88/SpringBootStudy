@@ -1,7 +1,6 @@
 package com.ding.study.collection;
 
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,5 +17,15 @@ public class TestConcurrentMain {
             concurrentHashMap.put("a" + i, "a" + i);
         }
         System.out.println(concurrentHashMap);
+
+        Map map=new HashMap<>();
+
+        Iterable iterable=new ArrayList<>();
+        Collection collection=new ArrayList<>();
+        Queue queue=new ArrayDeque<>();
+        List list=new ArrayList();
+        Set set=new HashSet();
+
+
     }
 }

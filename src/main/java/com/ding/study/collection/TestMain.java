@@ -1,5 +1,7 @@
 package com.ding.study.collection;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -21,6 +23,11 @@ public class TestMain {
         hm2.put("2","22");
         System.out.println(hm2.get("2"));
         System.out.println(hm.get("2"));
+
+        Collections.addAll(new ArrayList<>(),"");
+        Collections.frequency(new ArrayList<>(),"");
+        Collections.synchronizedList(new ArrayList<>());
+        Collections.unmodifiableList(new ArrayList<>());
 
     }
 

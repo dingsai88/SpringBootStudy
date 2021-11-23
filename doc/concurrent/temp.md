@@ -79,7 +79,7 @@ Executors.newWorkStealingPool();
 
 
 
-**I.AQS**
+**I.AQS** AbstractQueuedSynchronizer 类  抽象队列同步器
 
 独占锁(ReentrantLock)：即其他线程只有在占有锁的线程释放后才能竞争锁，有且只有一个线程能竞争成功（医生只有一个，一次只能看一个病人）
 

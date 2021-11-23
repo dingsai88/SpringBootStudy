@@ -13,13 +13,13 @@ public class TestCollectionQueueMain {
     private static SynchronousQueue synchronousQueue = new SynchronousQueue();
 
     public static void main(String[] args) throws Exception {
-    /*    ArrayDeque queue=new ArrayDeque(2);
+    ArrayDeque queue=new ArrayDeque(2);
         System.out.println(queue.add("1"));
         System.out.println(queue.element());
         System.out.println(queue.peek());
         System.out.println("element1:"+queue.peek());
         System.out.println(queue.poll());
-        System.out.println("element2:"+queue.peek());*/
+        System.out.println("element2:"+queue.peek());
         // System.out.println(queue.poll());
         //   System.out.println(queue.remove());
 
