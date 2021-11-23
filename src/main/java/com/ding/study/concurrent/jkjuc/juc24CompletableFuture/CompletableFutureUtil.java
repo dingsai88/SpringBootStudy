@@ -2,9 +2,7 @@ package com.ding.study.concurrent.jkjuc.juc24CompletableFuture;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author daniel 2021-11-1 0001.
@@ -96,6 +94,34 @@ cardHeadService.getFavorite(user, result, cardOfHeaderPO);
 
         System.out.println("future1: " + future1.isDone() + " future2: " + future2.isDone());
         System.out.println("future1 get: " + future1.get() + " future2 get: " + future2.get());
+
+
+
+         //TODO 以下是生产示例
+
+      //  ThreadPoolExecutor threadPoolTaskExecutor= Executors.newSingleThreadExecutor();
+        ExecutorService threadPoolTaskExecutor= Executors.newSingleThreadExecutor();
+        List<CompletableFuture> completableFutureList = new ArrayList<>();
+         Runnable runnable=new Runnable() {
+             @Override
+             public void run() {
+
+             }
+         };
+        completableFutureList.add(CompletableFuture.runAsync(runnable, threadPoolTaskExecutor));
+
+        //获取并行结果
+        CompletableFuture<Void> future = CompletableFuture.allOf(completableFutureList.toArray(new CompletableFuture[completableFutureList.size()]));
+        try {
+            future.get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            //log.error("异步查询信息失败", e);
+        } catch (InterruptedException e) {
+           // log.warn("Interrupted!", e);
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+          //  log.error("调用服务超时", e);
+        }
 
     }
 

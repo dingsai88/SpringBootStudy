@@ -15,21 +15,12 @@ public class FutureTest {
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.AbortPolicy());
 
-        ExecutorService executorService = Executors.newFixedThreadPool(1);
-
-
         TestBean testBean = new TestBean();
         testBean.setName("1");
-        Task task = new Task();
-        task.setBean(testBean);
-        System.out.println(testBean.getName());
-        //Runable方式调用
-        Future future = executorService.submit(task, testBean);
-        System.out.println(future.get());
-        System.out.println(testBean.getName() + "\n\n");
 
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-        ////////////////
+        //创建线程 实现Callable的call方法，可以返回异常和返回值
         CallableDemo callableDemo = new CallableDemo();
         callableDemo.setBean(testBean);
         //Callable方式调用
@@ -38,6 +29,22 @@ public class FutureTest {
         TestBean testBean3 = (TestBean) future2.get();
         System.out.println(testBean3.getName());
         System.out.println(testBean.getName());
+
+
+
+
+
+
+        Task task = new Task();
+        task.setBean(testBean);
+        System.out.println("线程启动前:"+testBean.getName());
+        //Runable方式调用
+        Future future = executorService.submit(task, testBean);
+        System.out.println("线程返回"+future.get());
+        System.out.println("原始对象"+testBean.getName() + "\n\n");
+
+
+
 
 
         //////////

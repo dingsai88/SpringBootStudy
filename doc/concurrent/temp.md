@@ -134,6 +134,44 @@ CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
 
 
+# Future 获得异步任务结果接口
+https://blog.csdn.net/u014209205/article/details/80598209
+
+
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/future接口.jpg)
+
+
+**I.Future接口 5个接口**
+
+尝试取消执行此任务。  
+boolean cancel(boolean mayInterruptIfRunning)
+
+等待计算完成，然后检索其结果。  
+V get()
+
+如果需要等待最多在给定的时间计算完成，然后检索其结果（如果可用）。  
+V get(long timeout, TimeUnit unit)
+
+如果此任务在正常完成之前被取消，则返回 true 。
+boolean isCancelled()
+
+返回 true如果任务已完成。
+boolean isDone()
+
+
+
+**II.RunnableFuture接口** 继承Runnable和继承Future异步获得结果
+这个接口同时继承Future接口和Runnable接口，在成功执行run（）方法后，可以通过Future访问执行结果。
+
+异步获得Runnable结果
+public interface RunnableFuture<V> extends Runnable, Future<V> {
+  void run();
+}
+
+**III.FutureTask类** 实现了RunnableFuture接口
+
+
+
 
 
 

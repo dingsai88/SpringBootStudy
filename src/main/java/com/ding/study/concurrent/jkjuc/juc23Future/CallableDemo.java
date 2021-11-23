@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 /**
  * @author daniel 2019-10-25 0025.
  */
-public class CallableDemo  implements Callable {
+public class CallableDemo implements Callable {
     private TestBean bean;
 
     public TestBean getBean() {
@@ -19,6 +19,9 @@ public class CallableDemo  implements Callable {
     @Override
     public Object call() throws Exception {
         bean.setName("aaa");
+        if (1 != 2) {
+           // throw new Exception("111");
+        }
         return bean;
     }
 }
