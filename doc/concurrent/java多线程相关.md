@@ -160,7 +160,7 @@ boolean isDone()
 
 
 
-**II.RunnableFuture接口** 继承Runnable和继承Future异步获得结果
+## **II.RunnableFuture接口** 继承Runnable和继承Future异步获得结果
 这个接口同时继承Future接口和Runnable接口，在成功执行run（）方法后，可以通过Future访问执行结果。
 
 异步获得Runnable结果
@@ -170,8 +170,40 @@ public interface RunnableFuture<V> extends Runnable, Future<V> {
 
 **III.FutureTask类** 实现了RunnableFuture接口
 
+ 
+java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask类 继承FutureTask 。是内部类
+
+
+## **II.ScheduledFuture 接口** 继承 Delayed 接口, Future接口  最终实现都是内部类
+        这个接口表示一个延时的行为可以被取消。通常一个安排好的future是定时任务SchedualedExecutorService的结果
+III.RunnableScheduledFuture
+RunnableScheduledFuture
+java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask类 继承FutureTask 。是内部类
 
 
 
+## **II.CompletableFuture 类**    继承 CompletionStage 接口和Future接口
 
+CompletionStage 接口(完成阶段)
+//TODO 有详细解释
+
+
+## **II.ForkJoinTask 抽象类**  分治思想，切模块进行
+
+RecursiveTask 抽象类继承 ForkJoinTask
+
+ForkJoinTask需要通过ForkJoinPool来执行。
+
+https://github.com/dingsai88/SpringBootStudy/blob/master/src/main/java/com/ding/study/concurrent/jkjuc/juc26ForkJoin/ForkJoinTest.java
+
+        //创建分治任务线程池
+        ForkJoinPool fjp = new ForkJoinPool(4);
+        //0，1，1，2，3，5，8，13，21，34
+        Fibonacci fib = new Fibonacci(9);
+         //启动分治任务
+        Integer result = fjp.invoke(fib);
+
+# I.线程池
+
+https://www.cnblogs.com/zeussbook/p/11895829.html
 

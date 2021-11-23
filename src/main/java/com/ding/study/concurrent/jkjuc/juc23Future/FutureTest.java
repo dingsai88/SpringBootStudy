@@ -10,10 +10,6 @@ public class FutureTest {
 
     public static void main(String[] args) throws Exception {
 
-        Executor executor = new ThreadPoolExecutor(2, 2, 0L,
-                TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(2),
-                Executors.defaultThreadFactory(),
-                new ThreadPoolExecutor.AbortPolicy());
 
         TestBean testBean = new TestBean();
         testBean.setName("1");
