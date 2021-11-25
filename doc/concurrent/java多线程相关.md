@@ -29,15 +29,6 @@ ExecutorService只能限定顺序
 
 
 
-II.Executors
-Executors.newSingleThreadExecutor();
-Executors.newCachedThreadPool();
-Executors.newFixedThreadPool(1);
-Executors.newScheduledThreadPool(2);
-Executors.newWorkStealingPool();
-
-
-
 
 
 **I.AQS** AbstractQueuedSynchronizer 类  抽象队列同步器
@@ -180,7 +171,7 @@ https://www.cnblogs.com/zeussbook/p/11895829.html
 这个成本就很高了，所以线程是一个重量级的对象，应该避免频繁创建和销毁。
 
 
-## Executor 接口
+## I.Executor 接口
 执行提交的对象Runnable任务
 
 该界面提供了一种将任务提交从每个任务的运行机制分解的方式，包括线程使用，调度等的Executor 。
@@ -381,6 +372,56 @@ schedule(task, date.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECOND
 
 网络时间同步协议、时钟漂移或其他因素的存在，因此相对延迟的期满日期不必与启用任务的当前 Date 相符。
 
+
+## I.CompletionService 接口 维护完成队列: 管理新线程 和 管理已完成任务 
+
+将生产新的异步任务与使用已完成任务的结果分离开来的服务。
+CompletionService当有多个任务时，可以返回一个处理一个。
+ExecutorService 只能future特定的线程。
+
+**生产者: submit 执行的任务**
+
+ **使用者: take (阻塞等待)** 完成队列，获取后移除
+ 已完成的任务，并按照完成这些任务的顺序处理它们的结果。
+ 获取并移除表示下一个已完成任务的 Future，如果目前不存在这样的任务，则等待。
+
+
+**使用者: poll() 没有返回null** 完成队列，获取后移除
+poll(long timeout, TimeUnit unit)
+
+
+
+通常，CompletionService 依赖于一个单独的 Executor 来实际执行任务，在这种情况下，
+CompletionService 只管理一个内部完成队列。
+ExecutorCompletionService 类提供了此方法的一个实现。 
+
+
+
+### II.ExecutorCompletionService 类
+
+    private final Executor executor;
+    private final AbstractExecutorService aes;
+    private final BlockingQueue<Future<V>> completionQueue;
+
+使用提供的 Executor 来执行任务的 CompletionService。此类将安排那些完成时提交的任务，把它们放置在可使用 take 访问的队列上。该类非常轻便，适合于在执行几组任务时临时使用。 
+
+多维护一个完成队列，当任务完成时。
+completionQueue.add(task)。加入到完成队列中。
+
+
+
+
+
+
+
+
+# I.Executors
+Executors  
+newCachedThreadPool() 可灵活回收空闲线程，若无可回收，则新建线程 1、无限、  0
+newFixedThreadPool 无界的工作队列 固定的 可控制线程最大并发数，超出的线程会在队列中等待  x、x、 无界
+newSingleThreadExecutor()  单独的 指定顺序(FIFO, LIFO, 优先级) 1、1、 无界
+newScheduledThreadPool 支持定时及周期性任务执行 定时延迟三秒执行
+newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理顺序
 
 
 
