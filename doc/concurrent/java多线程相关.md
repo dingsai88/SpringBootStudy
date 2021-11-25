@@ -1,45 +1,6 @@
+ 
 
-
-ThreadPoolExecutor
-
-
-
-1 	corePoolSize 	int 	核心线程池大小
-2 	maximumPoolSize 	int 	最大线程池大小
-3 	keepAliveTime 	long 	线程最大空闲时间
-4 	unit 	TimeUnit 	时间单位
-5 	workQueue 	BlockingQueue<Runnable> 	线程等待队列
-6 	threadFactory 	ThreadFactory 	线程创建工厂
-7 	handler 	RejectedExecutionHandler 	拒绝策略
-
-
-拒绝策略
-    AbortPolicy：让调用者抛出 RejectedExecutionException 异常，这是默认策略
-    CallerRunsPolicy：让调用者运行任务
-    DiscardPolicy：放弃本次任务
-    DiscardOldestPolicy：放弃队列中最早的任务，本任务取而代之
-
-
-
-
-字节填充 提高性能  排除cpu缓存行
-
-
-**I.workQueue**
-ArrayBlockingQueue(数组阻塞队列):有边界的阻塞队列，数组。初始化的时候指定它的容量大小，容量大小一旦指定就不可改变。
-LinkedBlockingQueue(链表阻塞队列,不设置默认最大):阻塞队列可选大小的，初始化时指定一个大小，它就是有边界的，如果不指定，它就是无边界的。说是无边界Integer.MAX_VALUE的容量 。
-DelayQueue(延迟多久+排序):阻塞的是其内部元素,元素必须实现 java.util.concurrent.Delayed接口，该接口只有一个方法就是long getDelay(TimeUnit unit)，返回值就是队列元素被释放前的保持时间，如果返回0或者一个负值，就意味着该元素已经到期需要被释放，此时DelayedQueue会通过其take()方法释放此对象，DelayQueue可应用于定时关闭连接、缓存对象，超时处理等各种场景；
-PriorityBlockingQueue(排序的队列)：是一个没有边界的队列，它的排序规则和 java.util.PriorityQueue一样。需要注意，PriorityBlockingQueue中允许插入null对象。所有插入PriorityBlockingQueue的对象必须实现 java.lang.Comparable接口，队列优先级的排序规则就是按照我们对这个接口的实现来定义的。
-SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：队列内部仅允许容纳一个元素。当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。
-
-当线程池中的线程数，超过核心线程数时。
-此时如果任务量下降，肯定会出现有一些线程处于无任务执行的空闲状态。
-那么如果这个线程的空闲时间超过了 keepAliveTime&unit 配置的时长后，就会被回收。
-
-
-当线程处于无任务执行的空闲状态，超过了设置时间就会被回收。
-
-
+# I.线程基础
 创建线程的三个方法:Thread、Runnable.run、 Callable.call
 https://zhuanlan.zhihu.com/p/363283919
 
@@ -134,14 +95,18 @@ CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
 
 
-# Future 获得异步任务结果接口
+
+
+
+
+# I.Future 获得异步任务结果接口
 https://blog.csdn.net/u014209205/article/details/80598209
 
 
 ![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/future接口.jpg)
 
 
-**I.Future接口 5个接口**
+** Future接口 5个接口**
 
 尝试取消执行此任务。  
 boolean cancel(boolean mayInterruptIfRunning)
@@ -203,7 +168,234 @@ https://github.com/dingsai88/SpringBootStudy/blob/master/src/main/java/com/ding/
          //启动分治任务
         Integer result = fjp.invoke(fib);
 
+
+
+
 # I.线程池
 
 https://www.cnblogs.com/zeussbook/p/11895829.html
+
+虽然在 Java 语言中创建线程看上去就像创建一个对象一样简单，只需要 new Thread() 就可以了，但实际上创建线程远不是创建一个对象那么简单。
+创建对象，仅仅是在 JVM 的堆里分配一块内存而已；而创建一个线程，却需要调用操作系统内核的 API，然后操作系统要为线程分配一系列的资源，
+这个成本就很高了，所以线程是一个重量级的对象，应该避免频繁创建和销毁。
+
+
+## Executor 接口
+执行提交的对象Runnable任务
+
+该界面提供了一种将任务提交从每个任务的运行机制分解的方式，包括线程使用，调度等的Executor 。
+通常使用Executor而不是显式创建线程。 
+
+简单的标准化接口，用于定义线程类自定义子系统，包括线程池，异步I / O和轻量级任务框架。
+
+在将来的某个时间执行给定的命令。
+void execute(Runnable command)
+
+
+
+### II.ExecutorService接口 继承 Executor 提供了一个更完整的异步任务执行框架。
+提供方法可以管理生成、终止方法，可以产生Future为跟踪一个或多个异步任务执行。
+
+ExecutorService可以关闭， 提供了两种不同的方法来关闭ExecutorService
+
+shutdown()方法将允许先前提交的任务在终止之前执行，
+shutdownNow()方法可以防止等待任务启动并尝试停止当前正在执行的任务。
+
+应关闭未使用的ExecutorService以允许资源的回收。
+submit延伸的基方法Executor.execute(Runnable)通过创建并返回一个Future可用于取消执行和/或等待完成。
+
+方法invokeAny和invokeAll执行invokeAll执行最常用的形式，执行任务集合，然后等待至少一个或全部完成。
+
+Executors类为此包中提供工厂方法。
+
+
+
+#### 方法
+awaitTermination(long timeout, TimeUnit unit)
+阻止所有任务在关闭请求完成后执行，或发生超时，或当前线程中断，以先到者为准。
+isShutdown()
+如果此执行者已关闭，则返回 true 。
+isTerminated()
+如果所有任务在关闭后完成，则返回 true 。
+shutdown()
+启动有序关闭，其中先前提交的任务将被执行，但不会接受任何新任务。
+shutdownNow()
+尝试停止所有主动执行的任务，停止等待任务的处理，并返回正在等待执行的任务列表。
+submit(Callable<T> task)
+提交值返回任务以执行，并返回代表任务待处理结果的Future。
+submit(Runnable task)
+提交一个可运行的任务执行，并返回一个表示该任务的未来。
+submit(Runnable task, T result)
+提交一个可运行的任务执行，并返回一个表示该任务的未来。
+
+
+### III.AbstractExecutorService抽象类 实现 ExecutorService接口
+
+
+
+
+
+
+
+
+#### IIII.ThreadPoolExceutor 类  继承AbstractExecutor抽象类   **重要**
+
+整体模式:生产者 - 消费者模式
+**生产者:线程池的使用方**
+**消费者:线程池本身是消费者**
+
+ 
+
+线程池解决两个不同问题:
+1.提升性能:由于减少了每个任务调用的开销，它们通常可以在执行大量异步任务时提供增强的性能，提供绑定和管理资源的方法
+2.统计信息:每个ThreadPoolExecutor保持一些基本的统计信息，例如完成的任务数量。
+
+ExecutorService.execute无返回值
+ExecutorService.submit有返回值
+
+
+workQueue.offer
+
+
+
+1 	corePoolSize 	int 	核心线程池大小
+2 	maximumPoolSize 	int 	最大线程池大小
+3 	keepAliveTime 	long 	线程最大空闲时间
+4 	unit 	TimeUnit 	时间单位
+5 	workQueue 	BlockingQueue<Runnable> 	线程等待队列
+6 	threadFactory 	ThreadFactory 	线程创建工厂
+7 	handler 	RejectedExecutionHandler 	拒绝策略
+
+
+**核心线程数和最大线程数** corePoolSize、 maximumPoolSize
+当新任务在方法 execute 中提交时，如果运行的线程少于 corePoolSize，则创建新线程来处理请求，即使其他辅助线程是空闲的。
+如果运行的线程多于 corePoolSize 而少于 maximumPoolSize，则仅当队列满时才创建新线程。
+设置的 corePoolSize 和 maximumPoolSize 相同，则创建了固定大小的线程池。
+如果将 maximumPoolSize 设置为基本的无界值（如 Integer.MAX_VALUE），则允许池适应任意数量的并发任务
+在大多数情况下，核心和最大池大小仅基于构造来设置，不过也可以使用 setCorePoolSize(int) 和 setMaximumPoolSize(int) 进行动态更改。
+
+**按需构造核心线程数，预先启动** 预先启动核心线程
+核心线程最初只是在新任务到达时才创建和启动的。
+prestartCoreThread()  预先启动一条核心线程
+prestartAllCoreThreads() 预先启动全部核心线程
+对其进行动态重写。如果构造带有非空队列的池，则可能希望预先启动线程。
+
+
+**创建新线程** ThreadFactory线程创建工厂 threadFactory
+使用 ThreadFactory接口 创建新线程。
+默认Executors.defaultThreadFactory()创建线程 。DefaultThreadFactory类是工厂类Executors内部类。
+
+可自定义ThreadFactory接口的实现
+
+**保持活动时间** keepAliveTime unit
+
+池中当前有多于 corePoolSize 的线程，则这些多出的线程在空闲时间超过 keepAliveTime 时将会终止。
+
+
+**队列** workQueue、 BlockingQueue<Runnable> 	线程等待队列
+
+所有 BlockingQueue 都可用于传输和保持提交的任务。可以使用此队列与池大小进行交互：
+
+1.队列和线程池大小**关系**:
+新增核心:线程少于 corePoolSize，则 Executor 始终首选添加新的线程，而不进行排队。
+多余核心放入队列：线程等于或多于 corePoolSize，则 Executor 始终首选将请求加入队列，而不添加新的线程。
+超过max拒绝策略:如果无法将请求加入队列，则创建新的线程，除非创建此线程超出 maximumPoolSize，在这种情况下，任务将被拒绝。
+
+2.官方三种通用策略:
+SynchronousQueue:直接提交，它将任务直接提交给线程而不保持它们。
+LinkedBlockingQueue:无界队列，不设置大小的link
+ArrayBlockingQueue:有界队列
+
+3.自己总结:
+ArrayBlockingQueue(数组阻塞队列):有边界的阻塞队列，数组。初始化的时候指定它的容量大小，容量大小一旦指定就不可改变。
+LinkedBlockingQueue(链表阻塞队列,不设置默认最大):阻塞队列可选大小的，初始化时指定一个大小，它就是有边界的，如果不指定，它就是无边界的。说是无边界Integer.MAX_VALUE的容量 。
+DelayQueue(延迟多久+排序):阻塞的是其内部元素,元素必须实现 java.util.concurrent.Delayed接口，该接口只有一个方法就是long getDelay(TimeUnit unit)，返回值就是队列元素被释放前的保持时间，如果返回0或者一个负值，就意味着该元素已经到期需要被释放，此时DelayedQueue会通过其take()方法释放此对象，DelayQueue可应用于定时关闭连接、缓存对象，超时处理等各种场景；
+PriorityBlockingQueue(排序的队列)：是一个没有边界的队列，它的排序规则和 java.util.PriorityQueue一样。需要注意，PriorityBlockingQueue中允许插入null对象。所有插入PriorityBlockingQueue的对象必须实现 java.lang.Comparable接口，队列优先级的排序规则就是按照我们对这个接口的实现来定义的。
+SynchronousQueue(没有容量直接new新线程Executors.newCachedThreadPool)：队列内部仅允许容纳一个元素。当一个线程插入一个元素后会被阻塞，除非这个元素被另一个线程消费。
+
+
+4. getQueue() 允许出于监控和调试目的而访问工作队列。
+remove(java.lang.Runnable) 和 purge() 这两种方法可用于在取消大量已排队任务时帮助进行存储回收。
+
+5.核心线程回收:
+allowCoreThreadTimeOut为true
+线程池中corePoolSize线程空闲时间达到keepAliveTime也将关闭
+
+
+**拒绝策略** handler 	RejectedExecutionHandler 	拒绝策略
+抛出 RejectedExecutionHandler
+
+1.在默认的 ThreadPoolExecutor.AbortPolicy 
+中，处理程序遭到拒绝将抛出运行时 RejectedExecutionException。
+
+2.在 ThreadPoolExecutor.CallerRunsPolicy 
+中，线程调用运行该任务的 execute 本身。此策略提供简单的反馈控制机制，能够减缓新任务的提交速度。
+
+3.在 ThreadPoolExecutor.DiscardPolicy 
+中，不能执行的任务将被删除。(放弃本次任务)
+
+4.在 ThreadPoolExecutor.DiscardOldestPolicy 中，
+位于工作队列头部的任务将被删除，然后重试执行程序（如果再次失败，则重复此过程）。放弃队列中最早的任务，本任务取而代之
+ 
+
+    
+
+**扩展钩子 (hook)**
+https://www.cnblogs.com/iuyy/p/13622154.html
+beforeExecute每次执行线程前执行
+afterExecute 每次执行线程后执行
+terminated只有shutdown线程池才执行:Executor 完全终止后需要完成的所有特殊处理
+
+
+重新初始化 ThreadLocal、搜集统计信息或添加日志条目。
+
+如果钩子 (hook) 或回调方法抛出异常，则内部辅助线程将依次失败并突然终止。
+
+
+
+**Worker内部类** 创建、运行、清理线程的方法 。继承AQS 带有锁功能
+ThreadPoolExecutor内部类Worker
+
+ThreadPoolExecutor内部有一个worker 集合
+private final HashSet<Worker> workers = new HashSet<Worker>();
+
+ThreadPoolExecutor.addWorker方法 **新增一个线程**:  <coreSize
+1）CAS操作来将线程数加1；
+2）新建一个线程并启用。
+
+
+ThreadPoolExecutor.runworker方法  **线程继续运行线程**  消耗队列里的线程
+当前任务不null或者队列返回不null线程就继续运行
+
+
+
+
+### III.ScheduledExecutorService接口 继承 ExecutorService接口
+
+可安排在给定的延迟后运行或定期执行的命令
+
+
+所有的 schedule 方法都接受相对 延迟和周期作为参数，而不是绝对的时间或日期。
+
+schedule(task, date.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+
+网络时间同步协议、时钟漂移或其他因素的存在，因此相对延迟的期满日期不必与启用任务的当前 Date 相符。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

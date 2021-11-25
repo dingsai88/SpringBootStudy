@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 工具类
  * @see com.ding.study.util.ThreadPollExecutorUtil
  *
  *
