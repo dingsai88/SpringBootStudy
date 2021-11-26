@@ -1,87 +1,32 @@
  
 
 # I.线程基础
-创建线程的三个方法:Thread、Runnable.run、 Callable.call
+I.创建线程的三个四个方法:Thread、Runnable.run、 Callable.call返异常和结果 三种方式实现多线程。
+Thread.start启动线程。
+Thread继承了 Runnable接口，  Callable接口能抛异常有返回值的线程
+
+
+
+官方说法两种:thread代码注释里
+继承 Thread
+实现 Runable 接口
+
+Callable.call返异常和结果
+
+准确地讲，创建线程只有一种方式，那就是构建 Thread 类，而实现线程的执行单元有两种方式:
+实现 Runnable 接口的 run 方法，并把 Runnable 实例传给 Thread 类
+继承 Thread 类并重写 run 方法
+
+start 开启多线程 执行run方法
 https://zhuanlan.zhihu.com/p/363283919
 
-
-
-I.获得线程返回内容(Callable.call  和 返回参数Runnable,T result)：
-I.获得线程返回内容（重新Callable.call  +  获得结果Future.get）
-1.实现Callable.call方法 或 带返回参数的 (Runnable, T result)
+**I.Callable.call接口方法**
+1.实现Callable.call方法 或 带返回参数的 Runnable, T result
 2.submit线程:ExecutorService.submit(Callable<T> task)
 3.Future.get获得阻塞返回值(可设置等待时间)+ Future.isDone(实时判断是否执行完成-不阻塞)
 
 
 
-I.Executor.execute(Runnable)(Executors)、ExecutorService（单个.拿返回值）、CompletionService（多个任务拿返回值ExecutorCompletionService）
-
-II.Executor.execute(Runnable);只有一个方法
-
-II.ExecutorService 带返回值的
-ExecutorService.submit(Callable<T> task)：是Executor子接口，新增了submit支持获得返回值
-ExecutorService.submit(Runnable task, T result); 变相拿返回值
-ExecutorService.shutdown();平滑的关闭线程池
-
-II.CompletionService 升级版本可提交多个任务(ExecutorService的升级版)
-CompletionService当有多个任务时，可以返回一个处理一个。
-ExecutorService只能限定顺序
-
-
-
-
-
-**I.AQS** AbstractQueuedSynchronizer 类  抽象队列同步器
-
-独占锁(ReentrantLock)：即其他线程只有在占有锁的线程释放后才能竞争锁，有且只有一个线程能竞争成功（医生只有一个，一次只能看一个病人）
-
-共享锁(ReadWriteLock, CountdownLatch)：即共享资源可以被多个线程同时占有，直到共享资源被占用完毕（多个医生，可以看多个病人），常见的有读写锁 ReadWriteLock, CountdownLatch
-
-
-管程组成:(互斥锁mutex) 、(状态condition一个或多个条件变量)、(共享变量及方法)
-I.volatile int state（代表共享资源） CAS
-I.FIFO线程等待队列（多线程争用资源被阻塞时会进入此队列）先进先出
-
-
-**II. AbstractQueuedSynchronizer包含：**
-:（Node类与ConditionObject类） + 属性 (头结点head，尾结点tail，状态state、自旋时间spinForTimeoutThreshold)
-
-https://www.cnblogs.com/leesf456/p/5350186.html
-
-**III.核心属性**
-头结点head，尾结点tail，状态state、自旋时间spinForTimeoutThreshold
-volatile int state;
-
-**III.内部类1:ConditionObject 实现 Condition接口:**
-主要作用：await（）等待、signal或singalAl唤醒
-
-**III.内部类2:Node类**
-主要作用：各个节点的数据
-
-**III.核心方法**
-AbstractQueuedSynchronizer模版方法: 独占锁(一个条件变量)  + 共享锁(多个条件变量)
-
-状态判断：getState()、setState()、compareAndSetState()
-isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。
-
-tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。
-tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。
-
-tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
-tryReleaseShared(int)：共享方式。尝试释放资源，成功则返回true，失败则返回false。
-
-
-
-**ReentrantLock 是独占锁**
-
-ReentrantLock.Sync(公平不公平的公共类) extends AbstractQueuedSynchronizer
-ReentrantLock.NonfairSync extends Sync(非公平锁)
-ReentrantLock.FairSync extends Sync(公平锁)
-
-
-**公平锁与非公平锁**
-非公平锁（NonfairSync）
-CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
 
 
@@ -124,7 +69,7 @@ public interface RunnableFuture<V> extends Runnable, Future<V> {
   void run();
 }
 
-**III.FutureTask类** 实现了RunnableFuture接口
+### **III.FutureTask类** 实现了RunnableFuture接口
 
  
 java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask类 继承FutureTask 。是内部类
@@ -373,7 +318,7 @@ schedule(task, date.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECOND
 网络时间同步协议、时钟漂移或其他因素的存在，因此相对延迟的期满日期不必与启用任务的当前 Date 相符。
 
 
-## I.CompletionService 接口 维护完成队列: 管理新线程 和 管理已完成任务 
+## I.CompletionService 接口 无父接口父类 维护完成队列: 管理新线程 和 管理已完成任务 
 
 将生产新的异步任务与使用已完成任务的结果分离开来的服务。
 CompletionService当有多个任务时，可以返回一个处理一个。
@@ -415,7 +360,7 @@ completionQueue.add(task)。加入到完成队列中。
 
 
 
-# I.Executors
+# I.Executors 工厂类
 Executors  
 newCachedThreadPool() 可灵活回收空闲线程，若无可回收，则新建线程 1、无限、  0
 newFixedThreadPool 无界的工作队列 固定的 可控制线程最大并发数，超出的线程会在队列中等待  x、x、 无界
@@ -428,6 +373,61 @@ newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理�
 
 
 
+
+
+
+
+# *I.AQS** AbstractQueuedSynchronizer 类  抽象队列同步器
+
+独占锁(ReentrantLock)：即其他线程只有在占有锁的线程释放后才能竞争锁，有且只有一个线程能竞争成功（医生只有一个，一次只能看一个病人）
+
+共享锁(ReadWriteLock, CountdownLatch)：即共享资源可以被多个线程同时占有，直到共享资源被占用完毕（多个医生，可以看多个病人），常见的有读写锁 ReadWriteLock, CountdownLatch
+
+
+管程组成:(互斥锁mutex) 、(状态condition一个或多个条件变量)、(共享变量及方法)
+I.volatile int state（代表共享资源） CAS
+I.FIFO线程等待队列（多线程争用资源被阻塞时会进入此队列）先进先出
+
+
+**II. AbstractQueuedSynchronizer包含：**
+:（Node类与ConditionObject类） + 属性 (头结点head，尾结点tail，状态state、自旋时间spinForTimeoutThreshold)
+
+https://www.cnblogs.com/leesf456/p/5350186.html
+
+**III.核心属性**
+头结点head，尾结点tail，状态state、自旋时间spinForTimeoutThreshold
+volatile int state;
+
+**III.内部类1:ConditionObject 实现 Condition接口:**
+主要作用：await（）等待、signal或singalAl唤醒
+
+**III.内部类2:Node类**
+主要作用：各个节点的数据
+
+**III.核心方法**
+AbstractQueuedSynchronizer模版方法: 独占锁(一个条件变量)  + 共享锁(多个条件变量)
+
+状态判断：getState()、setState()、compareAndSetState()
+isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。
+
+tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。
+tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。
+
+tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
+tryReleaseShared(int)：共享方式。尝试释放资源，成功则返回true，失败则返回false。
+
+
+
+**ReentrantLock 是独占锁**
+
+ReentrantLock.Sync(公平不公平的公共类) extends AbstractQueuedSynchronizer
+ReentrantLock.NonfairSync extends Sync(非公平锁)
+ReentrantLock.FairSync extends Sync(公平锁)
+
+
+**公平锁与非公平锁**
+非公平锁（NonfairSync）
+CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
 
 
