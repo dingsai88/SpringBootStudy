@@ -83,7 +83,7 @@ java.util.concurrent.ScheduledThreadPoolExecutor.ScheduledFutureTask类 继承Fu
 
 
 
-## **II.CompletableFuture 类**    继承 CompletionStage 接口和Future接口
+## **II.CompletableFuture 类老版本功能**    继承 CompletionStage 接口和Future接口
 
 CompletionStage 接口(完成阶段)
 //TODO 有详细解释
