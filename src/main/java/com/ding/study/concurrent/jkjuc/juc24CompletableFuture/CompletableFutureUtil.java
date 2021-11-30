@@ -80,6 +80,11 @@ cardHeadService.getFavorite(user, result, cardOfHeaderPO);
             return "future1 finished!";
         });
         CompletableFuture<String> future2 = CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             System.out.println("future2 finished!");
             return "future2 finished!";
         });
@@ -87,10 +92,18 @@ cardHeadService.getFavorite(user, result, cardOfHeaderPO);
 
         try {
             System.out.println("main 1");
-            System.out.println(" combindFuture.get();: " + combindFuture.get(100,TimeUnit.MILLISECONDS));
+            System.out.println(" combindFuture.get();: " + combindFuture.get(2,TimeUnit.SECONDS));
+            //超时报timeoutException
+        }catch (InterruptedException e) {
+            System.out.println("InterruptedException 1");
+            Thread.currentThread().interrupt();
+        } catch (TimeoutException e) {
+            System.out.println("TimeoutException 1");
+
         }catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("future1: 333333333333333");
 
         System.out.println("future1: " + future1.isDone() + " future2: " + future2.isDone());
         System.out.println("future1 get: " + future1.get() + " future2 get: " + future2.get());

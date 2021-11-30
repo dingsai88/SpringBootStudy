@@ -32,7 +32,7 @@ public class SupplierExceptionImpl implements Supplier {
         System.out.println("2SupplierExceptionImpl:print:" + Thread.currentThread().getName() + " testBean:" + testBean.getName());
 
         if (1 == 1) {
-            throw new RuntimeException();
+           throw new RuntimeException();
             //testBean.setName((7/0)+"");
         }
 

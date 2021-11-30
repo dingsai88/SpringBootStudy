@@ -1,10 +1,7 @@
 package com.ding.study.concurrent.jkjuc.juc24CompletableFuture;
 
 import java.util.Random;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -53,8 +50,8 @@ public class CompletableFutureException {
 
 
         System.out.println("\n\n主线程1已结束\n\n");
-        System.out.println(Thread.currentThread().getName() + ":thenCombine:bean.join:" + completableFuture1.join());
-        System.out.println(Thread.currentThread().getName() + ":thenCombine:bean.get:" + completableFuture1.get());
+    //    System.out.println(Thread.currentThread().getName() + ":thenCombine:bean.join:" + completableFuture1.join());
+        System.out.println(Thread.currentThread().getName() + ":thenCombine:bean.get:" + completableFuture1.get(2, TimeUnit.SECONDS));
         Thread.sleep(1111);
         System.out.println("\n\n主线程1已结束2\n\n");
     }
