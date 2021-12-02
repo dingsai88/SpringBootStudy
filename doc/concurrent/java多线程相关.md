@@ -1,10 +1,37 @@
  
 
 # I.线程基础
-I.创建线程的三个四个方法:Thread、Runnable.run、 Callable.call返异常和结果 三种方式实现多线程。
+
+**II.通用线程状态**
+1.初始状态:编程语言的状态，操作系统还不知道
+2.可运行状态:可以分配CPU执行
+3.运行状态
+4.休眠状态
+5.终止状态
+
+**II.java线程状态 Thread.State内部类**
+一个线程在给定的时间点只能处于一种状态。 这些状态是虚拟机状态，**不反映任何操作系统线程状态。**
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/Thread状态图.jpg)
+
+
+1.新建new:创建后尚未启动的线程处于这种状态 重写Thread.run或者实现Runnable接口:Start **(尚未启动的线程处于此状态)**
+2.运行runnable:runnable包括了操作系统线程状态中的running和ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间。**(Java 虚拟机中执行的线程处于此状态)**
+3.阻塞blocked :synchronized隐式锁转换为blocked **(一个线程被阻塞等待监视器锁处于这种状态)**
+4.无限期等待waiting：不会被分配CPU执行时间等待被其他线程显示的唤醒。Object.wait、Thread.join、LockSupport.park
+5.限期等待timed_waiting ：不会被分配CPU执行，无须等待被其他线程显示地唤醒，自动唤醒。Thread.sleep(long)、Object.wait(long)、Thread.join(long)、LockSupport.parkNanos()、LockSupport.parkUntil()
+6.结束terminated :已终止线程的线程状态，线程已经结束执行。**(已退出的线程处于此状态)**
+
+**阻塞和等待区别**
+只有synchronized会导致线程进入Blocked状态，
+Waiting状态只能进入Blocked状态，获取锁之后才能恢复执行。
+
+**I.创建线程的三个方法:**
+Thread、
+Runnable.run、 
+Callable.call 有 返异常和结果 。
+
 Thread.start启动线程。
 Thread继承了 Runnable接口，  Callable接口能抛异常有返回值的线程
-
 
 
 官方说法两种:thread代码注释里
@@ -428,6 +455,55 @@ ReentrantLock.FairSync extends Sync(公平锁)
 **公平锁与非公平锁**
 非公平锁（NonfairSync）
 CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
+
+
+
+
+# I.AQS
+java.util.concurrent.locks
+
+II.基础抽象类AbstractOwnableSynchronizer  非AQS 同步容器
+可以由线程以独占方式拥有的同步器。此类为创建锁和相关同步器（伴随着所有权的概念）提供了基础。
+
+II.AbstractQueuedSynchronizer
+
+为实现依赖于先进先出FIFO等待队列的阻塞锁和相关同步器(信号量、事件等)提供一个框架。
+
+此类的设计目标是称为依靠单个原子int值来表示状态的大多数同步器的一个有用基础。
+自雷必须定义更改此状态的受保护方法，并定义哪种状态对于此对象意味着被获取或释放。
+假定这些条件之后，此类中的其他方法就可以实现所有排队和阻塞机制。
+自雷可以维护其他状态字段，但只是为了获得同步而追踪使用getState setState和comparaAndSetState
+方法来操作以原子方式更新的int值。
+
+应该将自雷定义为非公共内部帮助器类，可用他们来实现其封闭类的同步属性。
+类AbstractQueueSynchronizer没有实现任何同步接口。而是定义了诸如
+acquireInterruptibly之类的一些方法，在适当的时候可以通过具体的锁和相关同步器来调用它们，
+以实现其公共方法。
+
+此类支持默认的 独占 和共享模式之一，或者二者都支持。
+处于独占模式下，其他线程试图获取该锁将无法获取成功。
+在共享模式下，多个线程获取某个锁可能会成功。
+此类并不了解这些不同，除了机械地意识到当在共享模式下成功获取某一锁时，
+下一个等待线程也必须确定自己是否可以成功获取该锁。
+处于不同模式下的等待线程可以共享相同的FIFO队列。通常，试下你自雷只
+支持其中一种模式，单两种模式都可以发挥作用ReadWriteLock  (独占和共享都有)。
+只支持独占模式或者只支持共享模式的子类不比定义支持未使用模式的方法。
+
+此类通过支持独占模式的子类定义了一个嵌套的 conditionObject类，可以将这个类用作
+condition实现。
+isHeldExclusively方法将报告同步对于当前线程是否是独占的。使用当前getstate调用
+release方法则可以完全释放次对象。如果给定保存的状态，
+那么acquire方法可以将次对象最终恢复为它以前获取的状态。
+没有别的aqs方法创建这样的条件，因此，如果无法满足约束，则不要使用它。
+condition行为取决于同步器实现语义。
+
+内部队列提供了检测、检查、监视方法，还为condition对象提供了类似方法。
+可以根据需要使用用于其同步机制的aqs 导出到类中。
+
+
+II.aqs使用
+
+
 
 
 
