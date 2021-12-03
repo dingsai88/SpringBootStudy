@@ -14,7 +14,7 @@
 ![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/Thread状态图.jpg)
 
 
-1.新建new:创建后尚未启动的线程处于这种状态 重写Thread.run或者实现Runnable接口:Start **(尚未启动的线程处于此状态)**
+1.新建new:创建后尚未启动的线程处于这种状态。 **(尚未启动的线程处于此状态)**
 2.运行runnable:runnable包括了操作系统线程状态中的running和ready，也就是处于此状态的线程有可能正在执行，也有可能正在等待着CPU为它分配执行时间。**(Java 虚拟机中执行的线程处于此状态)**
 3.阻塞blocked :synchronized隐式锁转换为blocked **(一个线程被阻塞等待监视器锁处于这种状态)**
 4.无限期等待waiting：不会被分配CPU执行时间等待被其他线程显示的唤醒。Object.wait、Thread.join、LockSupport.park
@@ -24,6 +24,53 @@
 **阻塞和等待区别**
 只有synchronized会导致线程进入Blocked状态，
 Waiting状态只能进入Blocked状态，获取锁之后才能恢复执行。
+
+**Interrupte中断** 可以中断本线程，也可以中断其他线程
+用法1:threadObj.interrupt()+InterruptedException
+用法2:threadObj.interrupt()+   while(!Thread.currentThread().isInterrupted())
+
+触发InterrupteException的方式
+1.Object.wait()
+2.ThreadO.join()、sleep()
+3.当interrupte的线程时被synchronized阻塞住，interrupte并不能触发异常。
+
+相关方法:
+obj.interrupted(); 中断obj线程
+obj.isInterrupted();判断是否中断
+Thread.interrupted(); 静态方法，清除当前线程中断标志
+
+
+
+**一、Object.wait、 notify** 必须和synchronized一起使用:wait(long), wait(long, int)
+没有同步方法单独用抛异常:IllegalMonitorStateException
+II.wait()方法:    调用线程block、将线程放入本对象的等待队列wait set
+1.执行必须持有当前对象的锁
+2.执行wait会释放synchronized的锁。 并将当前线程放入到本对象的waitset等待队列。
+3.等待notify、超时、Interrupte方法：会唤醒当前对象，随意唤醒等待队列中的一个。
+
+III.wait虚假唤醒:
+一个wait线程可以在没有被 notify、 超时、interrupte时唤醒。
+所以建议永远在循环里wait
+synchronized (obj) {
+        while (condition)
+            obj.wait(timeout);
+     }
+java.lang.Object.wait(long) 源码注释写的
+
+II.notify(), notifyAll()方法：
+1.执行必须持有当前对象的锁
+2.
+
+方法内锁本对象:
+synchronized(this){
+this.wait();
+}
+
+同步方法内:
+public synchronized void  waitTest() throws InterruptedException {
+this.wait();
+}
+
 
 **I.创建线程的三个方法:**
 Thread、
