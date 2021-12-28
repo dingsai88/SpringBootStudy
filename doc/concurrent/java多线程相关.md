@@ -447,8 +447,165 @@ newWorkStealingPool(int parallelism)，并行地处理任务，不保证处理�
 
 
 
+# * I.java.util.lock.*
+
+# *I.AOS使用 AbstractOwnableSynchronizer  独占方式拥有同步器
+让线程已独占的方式拥有同步器
+
+子类和工具可以使用适当维护的值帮助控制和监视访问以及提供诊断。
+
+II.getExclusiveOwnerThread():返回由 setExclusiveOwnerThread 最后设置的线程；如果从未设置，则返回 null。
+
+II.setExclusiveOwnerThread(Thread t) 设置当前拥有独占访问的线程。
 
 
+#I.AQS AbstractQueuedSynchronizer 类  抽象队列同步器 说明
+----------------------------------------------------AQS方法开始------------------------------------------------------------
+
+## II.Node 等待队列节点类.**
+Wait queue node class.
+
+## II.private transient volatile Node head;等待队列头节点**
+transient 不会序列化
+Head of the wait queue, lazily initialized.
+
+## II.private transient volatile Node tail; 等待队列尾节点**
+Tail of the wait queue, lazily initialized.
+
+## II.private volatile int state; 同步器状态**
+getState、setState、compareAndSetState
+
+
+## II.Queuing utilities 队列公用
+static final long spinForTimeoutThreshold = 1000L; 超时时间 100纳秒(小于这个值就不等待阻塞park,直接cas)
+
+III.enq放入队尾、或初始化;
+III.addWaiter 设置当前线程模式,放入队尾、或初始化:Node.SHARED共享、Node.EXCLUSIVE独占
+III.setHead 设置传入节点为头节点，并且弹出队列
+III.unparkSuccessor 唤醒后继节点
+
+III.doReleaseShared 释放共享
+III.setHeadAndPropagate 设置头并传播
+
+## II. Utilities for various versions of acquire  公共acquire获取方法(各种版本)
+
+
+III.cancelAcquire   取消尝试获取
+III.shouldParkAfterFailedAcquire  检查和更新未能accquire获取的节点的状态
+III.selfInterrupt 中断当前线程
+III.parkAndCheckInterrupt()  当前线程无限等待并且检查中断
+
+
+##　II.Various flavors of acquire, varying in exclusive/shared and control modes.  各种acquire获取，不同模式exclusive\shared独占共享
+
+
+III.acquireQueued　独占方式在队列中获取
+III.doAcquireInterruptibly 独占方式获取，中断则中止
+III.doAcquireNanos     独占时间模式获取
+III.doAcquireShared  共享模式获取
+III.doAcquireSharedInterruptibly 共享模式方式获取，中断则中止
+III.doAcquireSharedNanos 共享时间模式获取
+
+
+## II.Main exported methods 主要输出方法 (外部调用)
+tryAcquire 试图在独占模式下获取对象状态。
+tryRelease 释放独占模式下对象状态
+
+tryAcquireShared  试图在共享模式下获取对象状态
+tryReleaseShared  释放共享模式下对象状态
+
+isHeldExclusively 如果对于当前（正调用的）线程，同步是以独占方式进行的，则返回 true。
+
+acquire 以独占模式获取对象，忽略中断。
+acquireInterruptibly 以独占模式获取对象，如果被中断则中止。
+tryAcquireNanos   试图以独占模式获取对象，如果被中断则中止，如果到了给定超时时间，则会失败。
+release  以独占模式释放对象
+
+acquireShared 以共享模式获取对象，忽略中断。
+acquireSharedInterruptibly  以共享模式获取对象，如果被中断则中止。
+tryAcquireSharedNanos 试图以共享模式获取对象，如果被中断则中止，带超时。
+releaseShared  以共享模式释放对象
+
+
+## II。Queue inspection methods 队列检查方法
+
+hasQueuedThreads 查看队列中是否有线程
+hasContended   是否有竞争 head!=null
+getFirstQueuedThread 返回队列第一个线程
+fullGetFirstQueuedThread  返回队列第一个线程 实现方法
+isQueued(Thread thread)   线程在队列中 返回 true
+apparentlyFirstQueuedIsExclusive   独占模式，队列下一个值不为空返回true  ReentrantReadWriteLock用
+hasQueuedPredecessors   队列下一个值不等于空返回true
+
+
+## II.Instrumentation and monitoring methods  仪表盘和监视方法
+getQueueLength  返回等待的队列数量  非同步，不准确。
+getQueuedThreads 返回等待队列的线程集合
+getExclusiveQueuedThreads  返回等待队列里的  独占线程集合
+getSharedQueuedThreads     返回等待队列里的  共享线程集合
+
+
+##  II.Internal support methods for Conditions 条件的 内部支持方法
+isOnSyncQueue(Node node) 判断节点是否在同步队列中 https://blog.csdn.net/weixin_38106322/article/details/107192310
+findNodeFromTail(Node node) 从队尾找本节点，找到返回true
+transferForSignal(Node node)  将节点从条件队列转入到同步队列
+transferAfterCancelledWait   转移后取消等待
+fullyRelease 释放节点
+
+
+##   II. Instrumentation methods for conditions 条件的 仪表盘方法
+owns(ConditionObject condition) 查询给定的 ConditionObject 是否使用了此同步器作为其锁
+hasWaiters(ConditionObject condition) 查询是否有线程正在等待给定的、与此同步器相关的条件。
+getWaitQueueLength  返回正在等待与此同步器有关的给定条件的线程数估计值。
+getWaitingThreads  返回一个 集合 包含 正在等待与此同步器有关的给定条件的那些线程。
+
+## II.ConditionObject条件对象节点
+
+##  本地不安全的CAS相关
+
+compareAndSetHead 设置头 cas 方式，仅enq方法用
+compareAndSetTail 设置尾 cas 方式，仅enq方法用
+compareAndSetWaitStatus 设置WaitStatus
+compareAndSetNext 
+
+
+I.Node节点
+volatile int waitStatus;  0 初始、SIGNAL -1 、CONDITION -2、 PROPAGATE -3、CANCELLED 1
+volatile Node prev; 前节点
+volatile Node next; 
+volatile Thread thread;
+
+Node nextWaiter;  TODO 不知道干什么用的condition连接到下一节点、
+
+
+
+
+I.Condition接口  ： 相当于Ojbect的wait 、notify、synchronized
+Condition 将 Object 监视器方法（wait、notify 和 notifyAll）分解成截然不同的对象，
+以便通过将这些对象与任意 Lock 实现组合使用，为每个对象提供多个等待 set（wait-set）。
+
+其中，Lock 替代了 synchronized 方法和语句的使用，
+Condition 替代了 Object 监视器方法的使用。
+
+Object.wait  ==Condition.await() 、awaitNanos、awaitUninterruptibly()一直等
+Object.notify(notifyAll)==Condition.signal() 、signalAll()
+synchronized(Obj)===Condition.Lock();
+
+
+I.ConditionObject 节点类
+await() :实现不可中断的条件等待。
+await(long time, TimeUnit unit)实现定时的条件等待。
+awaitNanos(long nanosTimeout)实现定时的条件等待。
+awaitUninterruptibly()实现不可中断的条件等待。
+awaitUntil(Date deadline)实现绝对定时条件等待。
+getWaitingThreads()返回包含那些可能正在等待此条件的线程 collection。
+getWaitQueueLength()返回正在等待此条件的线程数估计值。
+hasWaiters()查询是否有正在等待此条件的任何线程。
+signal()将等待时间最长的线程（如果存在）从此条件的等待队列中移动到拥有锁的等待队列。
+signal()将等待时间最长的线程（如果存在）从此条件的等待队列中移动到拥有锁的等待队列。
+
+
+----------------------------------------------------AQS方法结束------------------------------------------------------------
 
 
 # *I.AQS** AbstractQueuedSynchronizer 类  抽象队列同步器
@@ -505,54 +662,7 @@ CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
 
 
-
-# I.AQS
-java.util.concurrent.locks
-
-II.基础抽象类AbstractOwnableSynchronizer  非AQS 同步容器
-可以由线程以独占方式拥有的同步器。此类为创建锁和相关同步器（伴随着所有权的概念）提供了基础。
-
-II.AbstractQueuedSynchronizer
-
-为实现依赖于先进先出FIFO等待队列的阻塞锁和相关同步器(信号量、事件等)提供一个框架。
-
-此类的设计目标是称为依靠单个原子int值来表示状态的大多数同步器的一个有用基础。
-自雷必须定义更改此状态的受保护方法，并定义哪种状态对于此对象意味着被获取或释放。
-假定这些条件之后，此类中的其他方法就可以实现所有排队和阻塞机制。
-自雷可以维护其他状态字段，但只是为了获得同步而追踪使用getState setState和comparaAndSetState
-方法来操作以原子方式更新的int值。
-
-应该将自雷定义为非公共内部帮助器类，可用他们来实现其封闭类的同步属性。
-类AbstractQueueSynchronizer没有实现任何同步接口。而是定义了诸如
-acquireInterruptibly之类的一些方法，在适当的时候可以通过具体的锁和相关同步器来调用它们，
-以实现其公共方法。
-
-此类支持默认的 独占 和共享模式之一，或者二者都支持。
-处于独占模式下，其他线程试图获取该锁将无法获取成功。
-在共享模式下，多个线程获取某个锁可能会成功。
-此类并不了解这些不同，除了机械地意识到当在共享模式下成功获取某一锁时，
-下一个等待线程也必须确定自己是否可以成功获取该锁。
-处于不同模式下的等待线程可以共享相同的FIFO队列。通常，试下你自雷只
-支持其中一种模式，单两种模式都可以发挥作用ReadWriteLock  (独占和共享都有)。
-只支持独占模式或者只支持共享模式的子类不比定义支持未使用模式的方法。
-
-此类通过支持独占模式的子类定义了一个嵌套的 conditionObject类，可以将这个类用作
-condition实现。
-isHeldExclusively方法将报告同步对于当前线程是否是独占的。使用当前getstate调用
-release方法则可以完全释放次对象。如果给定保存的状态，
-那么acquire方法可以将次对象最终恢复为它以前获取的状态。
-没有别的aqs方法创建这样的条件，因此，如果无法满足约束，则不要使用它。
-condition行为取决于同步器实现语义。
-
-内部队列提供了检测、检查、监视方法，还为condition对象提供了类似方法。
-可以根据需要使用用于其同步机制的aqs 导出到类中。
-
-
-II.aqs使用
-
-
-
-
+ 
 
 
 
