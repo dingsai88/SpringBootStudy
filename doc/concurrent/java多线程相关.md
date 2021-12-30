@@ -462,7 +462,7 @@ II.setExclusiveOwnerThread(Thread t) 设置当前拥有独占访问的线程。
 #I.AQS AbstractQueuedSynchronizer 类  抽象队列同步器 说明
 ----------------------------------------------------AQS方法开始------------------------------------------------------------
 
-## II.Node 等待队列节点类.**
+## II.Node类 等待队列节点类.**
 Wait queue node class.
 
 ## II.private transient volatile Node head;等待队列头节点**
@@ -476,11 +476,11 @@ Tail of the wait queue, lazily initialized.
 getState、setState、compareAndSetState
 
 
-## II.Queuing utilities 队列公用
+## II.Queuing utilities 队列共用
 static final long spinForTimeoutThreshold = 1000L; 超时时间 100纳秒(小于这个值就不等待阻塞park,直接cas)
 
-III.enq放入队尾、或初始化;
-III.addWaiter 设置当前线程模式,放入队尾、或初始化:Node.SHARED共享、Node.EXCLUSIVE独占
+III.enq(final Node node)放入队尾、或初始化;
+III.addWaiter(Node mode) 设置当前线程模式,放入队尾、或初始化:Node.SHARED共享、Node.EXCLUSIVE独占
 III.setHead 设置传入节点为头节点，并且弹出队列
 III.unparkSuccessor 唤醒后继节点
 
@@ -508,7 +508,7 @@ III.doAcquireSharedNanos 共享时间模式获取
 
 
 ## II.Main exported methods 主要输出方法 (外部调用)
-tryAcquire 试图在独占模式下获取对象状态。
+tryAcquire 试图在独占模式下获取对象状态
 tryRelease 释放独占模式下对象状态
 
 tryAcquireShared  试图在共享模式下获取对象状态
@@ -517,8 +517,8 @@ tryReleaseShared  释放共享模式下对象状态
 isHeldExclusively 如果对于当前（正调用的）线程，同步是以独占方式进行的，则返回 true。
 
 acquire 以独占模式获取对象，忽略中断。
-acquireInterruptibly 以独占模式获取对象，如果被中断则中止。
-tryAcquireNanos   试图以独占模式获取对象，如果被中断则中止，如果到了给定超时时间，则会失败。
+acquireInterruptibly 以独占模式获取对象，如果被中断则中止
+tryAcquireNanos   试图以独占模式获取对象，如果被中断则中止，如果到了给定超时时间，则会失败
 release  以独占模式释放对象
 
 acquireShared 以共享模式获取对象，忽略中断。
@@ -545,7 +545,7 @@ getExclusiveQueuedThreads  返回等待队列里的  独占线程集合
 getSharedQueuedThreads     返回等待队列里的  共享线程集合
 
 
-##  II.Internal support methods for Conditions 条件的 内部支持方法
+##  II.Internal support methods for Conditions 条件Conditions的 内部支持方法
 isOnSyncQueue(Node node) 判断节点是否在同步队列中 https://blog.csdn.net/weixin_38106322/article/details/107192310
 findNodeFromTail(Node node) 从队尾找本节点，找到返回true
 transferForSignal(Node node)  将节点从条件队列转入到同步队列
