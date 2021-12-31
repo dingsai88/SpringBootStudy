@@ -1,5 +1,11 @@
  
 
+openJDK下载
+http://hg.openjdk.java.net/jdk8u/jdk8u-jfr-incubator/jdk/file/09e4378b52da
+http://hg.openjdk.java.net/jdk8u/jdk8u-jfr-incubator/jdk/archive/09e4378b52da.zip
+在线源码
+http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/7fcf35286d52
+
 # I.线程基础
 
 **II.通用线程状态**
@@ -649,7 +655,7 @@ tryReleaseShared(int)：共享方式。尝试释放资源，成功则返回true�
 
 
 
-**ReentrantLock 是独占锁**
+**I.ReentrantLock 是独占锁**
 
 ReentrantLock.Sync(公平不公平的公共类) extends AbstractQueuedSynchronizer
 ReentrantLock.NonfairSync extends Sync(非公平锁)
@@ -660,8 +666,12 @@ ReentrantLock.FairSync extends Sync(公平锁)
 非公平锁（NonfairSync）
 CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
+不公平:state=0 时， 直接 (compareAndSetState(0, acquires)) 
+公平锁:state=0 时， 先判断队列是否为空：!hasQueuedPredecessors() && compareAndSetState(0, acquires)
 
 
+
+semaphores
  
 
 

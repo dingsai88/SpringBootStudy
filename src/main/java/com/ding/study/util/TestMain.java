@@ -22,22 +22,23 @@ import java.util.*;
  * 散列存储
  * 索引存储
  *com.ding.study.util.TestMain
+ * -server
  * @author daniel 2019-6-27 0027.
  */
 public class TestMain {
 
 
     public static void main(String[] args) {
-        for (int i = 0; i < 1000000; i++) {
+        List<String> list = new ArrayList();
+        for (int j = 0; j < 11000; j++) {
             try {
-                t();
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (null != e.getStackTrace() && e.getStackTrace().length <= 0) {
-                    e.printStackTrace();
-                }
+                list.get(-1);
+            } catch (Exception ex) {
+                int length = ex.getStackTrace().length;
+                System.out.println(String.format("报错异常 :: %s, 堆栈长度 :: %s   %s", ex, length,j));
             }
         }
+
     }
 
     public static void t() {
