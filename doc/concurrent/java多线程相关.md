@@ -106,12 +106,30 @@ https://zhuanlan.zhihu.com/p/363283919
 3.Future.get获得阻塞返回值(可设置等待时间)+ Future.isDone(实时判断是否执行完成-不阻塞)
 
 
+I.Synchronized 同步详解
+Mutex Lock
+II.管程、监视器（Monitor)
+monitorenter、monitorexit
+Monitor 是由 ObjectMonitor 实现 c++ ObjectMonitor.hpp
+因 Monitor 是依赖于底层的操作系统实现，存在用户态与内核态之间的切换，所以增加了性能开销。
+之后会被阻塞在 _WaitSet 队列中
+
+Object Monitor区域和工作过程
+https://www.pianshen.com/article/96261121846/
+https://www.cnblogs.com/webor2006/p/11442551.html
+https://www.cnblogs.com/hongdada/p/14513036.html
+1.Entry set待进入集合 : synchronized(Object) 还没进入代码块
+2.Owner 对象权限拥有者: 1个
+3.Wait set 待授权集合：wait等方法释放操作权，但是没有离开同步块。notify等唤醒
 
 
 
 
 
+II.对象头
+偏向锁、轻量级锁、重量级锁
 
+轻量级锁 -XX:PreBlockSpin //参数修改默认的自旋次数。JDK1.7后，去掉此参数，由jvm控制
 
 
 
@@ -653,6 +671,69 @@ tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失�
 tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
 tryReleaseShared(int)：共享方式。尝试释放资源，成功则返回true，失败则返回false。
 
+----------------------------------------AQS方法结束2----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+**I.Lock接口 和Condition 接口**
+
+ synchronized+(Object.wait、 notify) =Lock(lock、unlock)   + Condition(await() 、signal()) 
+
+Lock+Condition 比synchronized允许更灵活的结构，可以具有差别很大的属性。
+https://docs.oracle.com/javase/specs/jls/se7/html/jls-17.html#jls-17.4
+
+II.lock() 获取锁，获得锁之前，该线程将一直处于休眠状态。
+II.lockInterruptibly() 如果当前线程未被中断，则获取锁。 可中断
+II.tryLock(long time,TimeUnit unit)可用，并立即返回值 true。如果锁不可用，立即返回值 false。 可中断
+II.unlock() 释放
+II.newCondition();返回绑定到此 Lock 实例的新 Condition 实例。 
+
+
+**I.condition接口  有例子**
+
+
+II.await() (long time, TimeUnit unit) (long nanosTimeout) awaitUninterruptibly() awaitUntil(Date deadline)
+
+II.signal() signalAll() 
+
+ private Lock lock = new ReentrantLock();
+ private Condition producer = lock.newCondition();
+private Condition consumer = lock.newCondition();
+
+
+put(){
+  lock.lock();
+  while(lists.size() == MAX) { //想想为什么用while而不是用if？
+    producer.await();
+  } 
+   // add(t);
+   consumer.signalAll();
+   lock.unlock();
+}
+
+get(){
+  lock.lock();
+  while(lists.size() == 0) {
+    consumer.await();
+  }
+   //xx
+   producer.signalAll();  
+   lock.unlock();
+}
+
+
+
+**I.ReadWriteLock接口**
+一个用于只读操作，另一个用于写入操作。只要没有 writer，读取锁可以由多个 reader 线程同时保持。写入锁是独占的。
+
+readLock
+writeLock
 
 
 **I.ReentrantLock 是独占锁**
@@ -666,13 +747,91 @@ ReentrantLock.FairSync extends Sync(公平锁)
 非公平锁（NonfairSync）
 CAS 来获取 state 资源  setExclusiveOwnerThread(Thread.currentThread());
 
-不公平:state=0 时， 直接 (compareAndSetState(0, acquires)) 
+不公平:state=0 时， 直接 (compareAndSetState(0, acquires))
 公平锁:state=0 时， 先判断队列是否为空：!hasQueuedPredecessors() && compareAndSetState(0, acquires)
 
+**可重入**
+lock和trylock方法 最终都有调用tryAcquire方法
+都有类似的判断
+else if (current == getExclusiveOwnerThread()) {
+int nextc = c + acquires;
+if (nextc < 0)
+setState(nextc);
+
+此锁最多支持同一个线程发起的 2147483648 个递归锁
 
 
-semaphores
- 
+**I.ReentrantReadWriteLock**读写锁
+
+private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+private final Lock r = rwl.readLock();
+private final Lock w = rwl.writeLock();
+
+**锁降级**
+重入还允许从写入锁降级为读取锁，其实现方式是：先获取写入锁，然后获取读取锁，最后释放写入锁。但是，从读取锁升级到写入锁是不可能的。 
+
+**左移右移**
+例:1 << 16
+1的二进制，向左移动16位。
+二进制初始值:1
+向左移动16位的二进制:10000000000000000
+向左移动16位的二进制:65536
+
+>>：带符号右移。正数右移高位补0，负数右移高位补1
+>>>：无符号右移。无论是正数还是负数，高位通通补0。
+
+对于正数而言，>>和>>>没区别。
+
+获取写锁，必须没有读取
+
+II.FairSync 公平
+II.NonfairSync 不公平
+II.ReadLock
+II.WriteLock
+II.Sync extends AbstractQueuedSynchronizer
+
+没看懂 
+sharedCount(int c)    { return c >>> SHARED_SHIFT; }
+exclusiveCount(int c) { return c & EXCLUSIVE_MASK; }
+
+
+**I.StampedLock 邮戳，读写锁升级，和AQS无关**  不支持重入
+II.ReadLockView类
+II.ReadWriteLockView类
+II.WNode类
+II.WriteLockView类
+
+比读写锁新增乐观读。
+StampedLock 实现了乐观读锁、悲观读锁和写锁，都是为了降低锁的竞争，促使系统的并发性能达到最佳。
+
+StampLock不支持重入，不支持条件变量，线程被中断时可能导致CPU暴涨
+
+
+**I.CountDownLatch**
+II.Sync extends AbstractQueuedSynchronizer
+
+sync.releaseShared(1);
+sync.acquireSharedInterruptibly(1);
+
+
+**I.CyclicBarrier**
+public static CyclicBarrier cyclicBarrier = new CyclicBarrier(2, new Runnable() {};
+cyclicBarrier.await();
+
+await() 到了次数，就执行new时候的线程。
+
+II.ReentrantLock lock = new ReentrantLock();
+II.Condition trip = lock.newCondition();
+II.final Runnable barrierCommand;
+II.private int count;
+
+
+**I.Semaphore** 控制连接池，多线程数量
+II.FairSync公平
+II.NonfairSync非公平
+II.Sync extends AbstractQueuedSynchronizer
+
+acquire()、release() 
 
 
 

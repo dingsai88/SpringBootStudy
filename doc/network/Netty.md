@@ -922,8 +922,29 @@ io.netty.buffer.ByteBuf （用户数据）-> Java Object
 • XML
 • JSON
 • MessagePack
-• Protobuf
+• ProtoBuf
 • 其他
+
+
+**I.java序列化**
+
+**II.Java序列化的缺陷**
+1.无法跨语言
+
+2.易被攻击
+Java官网安全编码指导方针中说明：“对不信任数据的反序列化，从本质上来说是危险的，应该予以避免”。可见Java序列化是不安全的。
+
+Java反序列化漏洞可以实现攻击
+
+3.序列化后的流太大
+Java序列化实现的二进制编码完成的二进制数组大小，比ByteBuffer实现的二进制编码完成的二进制数组大小要大上几倍。
+
+4.序列化性能太差
+Java序列化中的编码耗时要比ByteBuffer长很多。
+
+**II.使用Protobuf序列化替换Java序列化**
+
+
 
 
 选择编解码方式的要点

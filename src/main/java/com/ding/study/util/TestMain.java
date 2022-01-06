@@ -21,27 +21,50 @@ import java.util.*;
  * 链表存储
  * 散列存储
  * 索引存储
- *com.ding.study.util.TestMain
+ * com.ding.study.util.TestMain
  * -server
+ *
  * @author daniel 2019-6-27 0027.
  */
 public class TestMain {
 
 
     public static void main(String[] args) {
+
+        System.out.println("SHARED_UNIT:" + (1 << 16));
+        Integer t = Integer.valueOf("10000000000000000", 2);
+        System.out.println("SHARED_UNIT2 :" + t);
+        System.out.println("SHARED_UNIT65535 :" +5);
+        System.out.println("SHARED_UNIT2 :" + (1 & 65535));
+        System.out.println("SHARED_UNIT2 :" + (0 & 65535));
+        System.out.println("SHARED_UNIT2 :" + (3 & 65535));
+        System.out.println("SHARED_UNIT3 :" + (1 >>>16));
+        System.out.println("SHARED_UNIT4 0:" + (0>>>16));
+        System.out.println("SHARED_UNIT4 1:" + (1>>>16));
+        System.out.println("SHARED_UNIT4 2:" + (2>>>16));
+        binaryToDecimal ( 65536);
+        binaryToDecimal ( 65535);
+    }
+
+    public static void binaryToDecimal(int n) {
+        String result = Integer.toBinaryString(n);
+
+             System.out.println(result);
+    }
+
+    public static void t() {
+
+
         List<String> list = new ArrayList();
         for (int j = 0; j < 11000; j++) {
             try {
                 list.get(-1);
             } catch (Exception ex) {
                 int length = ex.getStackTrace().length;
-                System.out.println(String.format("报错异常 :: %s, 堆栈长度 :: %s   %s", ex, length,j));
+                System.out.println(String.format("报错异常 :: %s, 堆栈长度 :: %s   %s", ex, length, j));
             }
         }
 
-    }
-
-    public static void t() {
         int[] nums = new int[1];
         int m = nums[4];
 

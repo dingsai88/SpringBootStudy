@@ -70,6 +70,10 @@ invokestatic:调用类静态方法
 invokedynamic:动态解析出调用点限定符引用方法
 
 4.同步指令 synchronized关键字需要管程（monitor）monitorenter、monitorexit支持；同步方法内部出现异常也会执行monitorexit释放同步
+synchronized基于互斥量mutex(pthread_mutex_init、phtread_mutex_lock、phtread_mutex_unlock)
+
+openjdk:/share/vm/runtime/ObjectMonitor.hpp
+
 
 
 I.探针 Agent代理 :实现java字节码注入

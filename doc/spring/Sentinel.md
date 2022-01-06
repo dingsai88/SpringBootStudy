@@ -919,6 +919,24 @@ I.Constants:链路顺序  order = Constants.ORDER_LOG_SLOT
     public static final int ORDER_DEGRADE_SLOT = -1000;
 
 
+I.限流算法 --漏桶 Leaky bucket :不能处理瞬间流量
+
+* This strategy is an implement of <a href="https://en.wikipedia.org/wiki/Leaky_bucket">leaky bucket</a>.
+* It is used to handle the request at a stable rate and is often used in burst traffic (e.g. message handling).
+* When a large number of requests beyond the system’s capacity arrive
+* at the same time, the system using this strategy will handle requests and its
+* fixed rate until all the requests have been processed or time out.
+
+com.alibaba.csp.sentinel.slots.block.flow.FlowSlot
+
+II.限流算法
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/限流算法.png)
+III.计数器:(滑动窗口)
+III.漏桶算法(Leaky bucket)：入口宽，出口速率匀速，不能处理瞬间流量（当大于漏桶时就丢弃）。
+III.令牌桶算法(漏桶优化Token Bucket)：每隔1/N时间往桶里放一个令牌(可以处理瞬间大流量)
+
+
+
 
 
 
