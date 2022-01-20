@@ -4,13 +4,13 @@
 
 
 ## org.apache.catalina.Lifecycle 生命周期接口
-## org.apache.catalina.Container 容器接口继承 Lifecycle
+## org.apache.catalina.Container容器接口(继承 Lifecycle)
 
 
 
 
 
-II.Connector 连接器 绑定多个端口   port="8080" 、port="8081"
+II.Connector连接器(绑定端口port="8080" 、port="8081")可绑多个
 可配置多个
 
 
@@ -32,7 +32,7 @@ II.Engine整个tomcat引擎(指定默认的Host域名)
 II.Host 多个域名,不同域名下，走不同配置(默认localhost)
 
 
-II.Context 上下文 ： 对应webapps下的一个项目： yixin-data-platform-0.0.1-SNAPSHOT.war
+II.Context 上下文： 对应webapps下的一个项目： yixin-data-platform-0.0.1-SNAPSHOT.war
 context.xml 配置 /META-INF/context.xml
 
 
@@ -40,15 +40,18 @@ context.xml 配置 /META-INF/context.xml
 
 
 
+接口继承和容器类型
+
+
+请求解析流程和相关类
+
+
+连接池等配置
 
 
 
 
-
-
-
-
-II.Wrapper
+II.Wrapper包装纸(封装原始Servlet)
 
 List<Servlet>
 一个Servlet对应一个 Wrapper ,一个Wrapper对应多个 Servlet实例.
@@ -59,8 +62,8 @@ I.如何解析请求
 
 http://localhost"8080/HelloServelet/servletDemo
 
-Adapter组件 ：根据请求信息，生成request对象,找到该请求所对应的
-Host、Context、wrapper 等信息设置给request
+Adapter组件：根据请求信息，生成request对象。
+找到该请求所对应的Host、Context、wrapper 等信息设置给request
 
 II.coyote包中的Reques只是包含了解析出来的http协议的数据
 org.apache.coyote.Request
@@ -77,22 +80,21 @@ request=new Request();
 request.setHost(host);
 request.setContext(Context);
 request.setWrapper(wrapper);
-
 getEngine().getPipeline().getFirstValue().invoke(request);
 
 
-II.Valve  阀门 :可以在任何容器类型中
+II.Valve阀门 :可以在任何容器类型中
 Adapter组件
 
-StandardEngineValve  ：Pipeline
+III.StandardEngineValve  ：Pipeline 管道
 
-StandardHostValve  ：Pipeline
+III.StandardHostValve  ：Pipeline
 
-StandardContextValve  ：Pipeline
+III.StandardContextValve  ：Pipeline
 
-StandardWrapperValve (servlet类)    ：Pipeline
+III.StandardWrapperValve (servlet类)    ：Pipeline
 
-ApplicationFilterChain.doFilter
+IIII.ApplicationFilterChain.doFilter
 
 javax.servlet.http.HttpServlet.service(javax.servlet.ServletRequest, javax.servlet.ServletResponse)
 servlet.service(request, response);
@@ -101,8 +103,10 @@ if (method.equals(METHOD_GET)) {
 } else if (method.equals(METHOD_POST)) {
 } else if (method.equals(METHOD_OPTIONS)) {
 
+![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/pipeline和Valves.png)
 
-Servlet实例:service方法(request,response)
+
+IIII.Servlet实例:service方法(request,response)
 
 ![RUNOOB 图标](https://github.com/dingsai88/SpringBootStudy/blob/master/img/tomcat容器.png)
 
@@ -120,12 +124,13 @@ NIO、BIO默认配置
 org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory#DEFAULT_PROTOCOL
 
 
-
+Tomcat底层是通过TCP协议从Socket上获取数据
 
 我们先从获取字节流开始，Tomcat底层是通过TCP协议，也就是Socket来获取网络数据的，那么从Socket上获取数据，就涉及到IO模型，在Tomcat8以后，就同时支持了NIO和BIO。
 Connector
 
-在Tomcat中，有一个组件叫做 Connector ，他就是专门用来接收Socket连接的，在Connector内部有一个组件叫ProtocolHandler，它有好几种实现：
+在Tomcat中，有一个组件叫做 Connector ，他就是专门用来接收Socket连接的，
+在Connector 类内部有一个组件叫 ProtocolHandler接口，它有好几种实现：
 
 Http11Protocol
 
@@ -133,17 +138,41 @@ Http11NioProtocol
 
 Http11AprProtocol
 
-##　III.Http11Protocol（BIO）
+##　III.Http11Protocol（BIO）  tomcat默认模式性能较低
 
-在Http11Protocol中存在一个组件，叫JIoEndpoint，而在JIoEndpoint中存在一个组件，
-叫Acceptor，Acceptor是一个线程，这个线程会不停的从ServerSocket中获取Socket连接，每接收到一个Socket连接之后，
+在 Http11Protocol 中存在一个组件，叫 JIoEndpoint，而在JIoEndpoint中存在一个组件，
+叫 Acceptor ，Acceptor是一个线程，这个线程会不停的从ServerSocket中获取Socket连接，每接收到一个Socket连接之后，
 就会将这个Socket连接扔到一个线程池中，由线程池中的线程去处理Socket，包括从Socket中获取数据，将响应结果写到Socket中。
 
 所以，如果大家现在用的是Tomcat中的BIO模式，如果要进行性能调优，就可以调整该线程池的大小，默认10个核心线程，最大为200个线程。
 
+
+I.Connector连接器类
+II.ProtocolHandler接口
+III.Http11Protocol类实现类ProtocolHandler
+IIII.属性JIoEndpoint类
+
+内部类JIoEndpoint.Acceptor
+
+while (running) {
+socket = serverSocketFactory.acceptSocket(serverSocket);
+
+processSocket(Socket socket);
+SocketWrapper<Socket> wrapper = new SocketWrapper<>(socket);
+//线程池处理
+Executor.execute(new SocketProcessor(wrapper));
+
+}
+
+
+
+
+Connector 连接器类.ProtocolHandler接口(Http11Protocol实现类).JIoEndpoint类.内部类Acceptor：接收socket连接 > 线程池
+
+
 ##　III.Http11NioProtocol（NIO） springBoot默认
 
-再来看Http11NioProtocol，和Http11Protocol非常类似，在它的底层有一个NioEndpoint，NioEndpoint中也存在一个Acceptor线程，
+再来看 Http11NioProtocol ，和Http11Protocol非常类似，在它的底层有一个NioEndpoint，NioEndpoint中也存在一个Acceptor线程，
 但是需要注意的是，现在虽然是NIO模型，但是Acceptor线程在接收Socket连接时，并不是非阻塞的方式，仍然是通过阻塞的方式来接收Socket连接。
 
 Acceptor线程每接收到一个Socket连接后，就会将该Socket连接注册给一个Poller线程，后续就由这个Poller线程来负责处理该Socket上读写事件，
@@ -162,10 +191,64 @@ Poller线程负责接收读写事件
 所以，如果大家现在用的是Tomcat中的NIO模式，如果要进行性能调优，可以调整该Poller数组的大小，也可以调整线程池的大小。
 
 
+I.Connector 连接器类.ProtocolHandler接口(Http11NioProtocol实现类).NioEndpoint类
+II.NioEndpoint类内部类
+Acceptor接收器
+Poller轮询器implements Runnable
+
+Acceptor接收器{
+  while (running) {
+    SocketChannel socket = serverSock.accept();
+    setSocketOptions(socket){
+       Poller[*].register(channel);
+     }
+}
+
+
+Poller轮询器{
+  SynchronizedQueue<PollerEvent> events =new SynchronizedQueue<>();
+    run() {
+     //操作系统多路复用函数
+      Selector.selectNow();
+     //线程池处理socket
+     Executor.execute(Socket);
+     }
+}
+
+
+
+
+Acceptor接收socket连接 > Poller (数组，启动线程，内部轮训IO多路复用)  >线程池
+
+
+
 ##　相较于BIO模型的tomcat，NIO的优势分析：
 1、BIO中的流程应该是接收到请求之后直接把请求扔给线程池去做处理，在这个情况下一个连接即需要一个线程来处理，线程既需要读取数据还需要处理请求，线程占用时间长，很容易达到最大线程
 
 2、NIO的流程的不同点在于Poller类采用了多路复用模型，即Poller类只有检查到可读或者可写的连接时才把当前连接扔给线程池来处理，这样的好处是大大节省了连接还不能读写时的处理时间（如读取请求数据），也就是说NIO“读取socket并交给Worker中的线程”这个过程是非阻塞的，当socket在等待下一个请求或等待释放时，并不会占用工作线程，因此Tomcat可以同时处理的socket数目远大于最大线程数，并发性能大大提高。
+
+
+##　III.Http11AprProtocol（APR Apache Portable Runtime轻便运行 ）访问静态文件性能高  
+提高Tomcat对静态文件的处理性能。
+
+
+
+## III. Http11Nio2Protocol 
+
+
+I.Connector 连接器类.ProtocolHandler接口(Http11Nio2Protocol实现类).Nio2Endpoint类
+II.Nio2Endpoint类内部类
+Acceptor接收器
+Poller轮询器implements Runnable
+
+
+
+
+
+
+
+
+
 
 
 
@@ -225,6 +308,59 @@ StandardWrapperValve (servlet类)    ：Pipeline  》 》ApplicationFilterChain.
 调用Servlet实例对象的service()方法，并把HttpServletRequest对象当做入参
 
 从而就调用到Servlet所定义的逻辑。
+
+
+
+
+# I. tomcat 类加载器  自定义加载器作用隔离应用
+
+
+Test.java >Test.class  >类加载器> JVM方法区
+
+双亲委派， 加载一个类时，父类先加载，父类没有往下找
+
+BootstrapClassLoader  > ExtClassLoader  > applicationClassLoader
+
+热加载原理 》更换类加载器
+
+
+
+II.CommonClassloader
+
+应用1 >WebAppClassLoader1 实例
+
+应用2 >WebAppClassLoader2 实例
+
+
+
+
+# I.tomcat 长链接的底层原理与源码实现
+
+
+
+1.socket连接  
+2.操作系统 RecvBuf获取缓冲数据
+3.放入到InputBuffer[]字节数组中
+
+
+
+# I.启动流程
+org.apache.catalina.startup.Bootstrap.main
+
+
+Bootstrap.init()
+Catalina.setParentClassLoader
+Bootstrap.start()
+Catalina.start()
+Catalina.load()
+
+getServer().init();
+Server.init接口
+StandardServer.init实现类
+LifecycleBase.init
+LifecycleBase.initInternal
+Connector.initInternal()连接器
+
 
 
 
