@@ -97,6 +97,11 @@ public class SimpleLambdaTest {
 
         System.out.println("Lambda.构造方法2 :" + JsonUtils.convertObjToJsonString(supplier.get().sayHello("ddd")));
 
+        /**
+         * String > Long
+         *             List<Long> composeList = list.stream().filter(appAdVO -> appAdVO.getComposeType().equals(COMPOSE)).map(AppAdVO::getId).map(Long::parseLong).collect(Collectors.toList());
+         */
+
         //13. 方法里两个入参会分别调用，String里的非静态方法;没太懂， 非静态方法调用
         MyCompare myCompare = String::compareTo;
         MyCompare myCompare2 = test::getString;

@@ -4814,6 +4814,18 @@ II.查询优化器 Query Optimizer: USE INDEX建议 、force index强制
 
 
 
+--王刚 刚哥 
+
+CREATE TABLE `xxxxx` (
+`id` int(10) NOT NULL AUTO_INCREMENT,
+
+`create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+`update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+PRIMARY KEY (`id`),
+KEY `orderNumber` (`order_number`) USING BTREE,
+KEY `updateTime` (`update_time`) USING BTREE
+
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COMMENT='隐私弹窗';
 
 
 
