@@ -30,7 +30,9 @@ public class TestMain {
 
 
     public static void main(String[] args) {
-
+        System.out.println("\n\n\n开始");
+        Byte a=Byte.parseByte("2");
+        System.out.println(""+a);
         System.out.println("SHARED_UNIT:" + (1 << 16));
         Integer t = Integer.valueOf("10000000000000000", 2);
         System.out.println("SHARED_UNIT2 :" + t);

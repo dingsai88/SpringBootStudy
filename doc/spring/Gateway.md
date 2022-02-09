@@ -1,51 +1,6 @@
 
 
 
-I.网关
-
-http://gitlab.creditease.corp/fund-inner/gateway
-
-II.网关后台地址:
-http://gitlab.creditease.corp/fund-inner/fortune-gateway-mis
-
-
-http://fortune-gateway-mis.155.test.yirendai.com/login
-root/a
-
-http://fortune-gateway-mis.167.test.yirendai.com/login
-
-
-fortune-gateway-mis.167.test.yirendai.com
-
-
-
-
-I.后台mis系统和数据表对应关系
-fortune_gateway_interface_config:接口配置
-
-
-fortune_gateway_operation_log:操作日志--用户操作记录
-
-fortune_gateway_permission:不知道干啥 许可
-
-fortune_gateway_role:用户类型 ROLE_ROOT、ROLE_USER
-
-fortune_gateway_role_permission:描述角色拥有的权限
-fortune_gateway_route:路由查看  /activityController/**	http://yingApi.155.test.yirendai.com/activityController
-
-fortune_gateway_user：用户表
-fortune_gateway_user_role:描述用户所属的角色
-
-t_sys_config:系统配置页面
-
-
-
-
-
-
-100191111900286
-
-
 I.路由规则
 
 
@@ -85,10 +40,7 @@ predicates:
 C:\Program Files (x86)\Tencent
 
 
-
-
-http://gitlab.creditease.corp/architecture/GateWay
-
+ 
 
 
 ------------------------------------zuul过滤器-----------------------------------------
