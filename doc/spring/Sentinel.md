@@ -2,7 +2,6 @@
 
 **I.网关**
 
-http://gitlab.creditease.corp/fund-inner/gateway
 
 spring-cloud-dependencies 版本列表可查看：
 https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies
