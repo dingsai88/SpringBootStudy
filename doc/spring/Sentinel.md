@@ -1368,7 +1368,21 @@ InvestHeadSentinelUtil.initCoreFlowRules();
 */
 @SentinelResource(value = InvestHeadSentinelUtil.getFavorite, blockHandler = "getInvestCommonBlockHandler", blockHandlerClass = InvestHeadSentinelUtil.class, fallback = "getInvestCommoneFallback", fallbackClass = InvestHeadSentinelUtil.class)
 
+非public 方法 注解方式不太好用
 
+
+  @SentinelResource(value =ArticleSentinelUtil.GetCommentListStrategy)
+  @Override
+  protected Object operate(RequestVO requestVO, HttpServletRequest request, HttpServletResponse response) throws Exception {
+  logger.info(" GetCommentListStrategy.operate 评论列表 :{}" , JsonUtil.beanToJsonLog(requestVO));
+  try (Entry entry = SphU.entry(ArticleSentinelUtil.GetCommentListStrategy)) {
+  // Thread.sleep(1111);
+  return aaaa.bbbb(requestVO);
+  } catch (BlockException e1) {
+  logger.info( " GetCommentListStrategy.operate 熔断 限流 熔断限流触发 :{}" , JsonUtil.beanToJsonLog(requestVO));
+  throw new FinanceException(Constants.ResultCode.LOCK_FAILED, Constants.ResultCode.LOCK_FAILED.getMsg()+"限流");
+  }
+  }
 
 
 I.增加单元测试 单侧  单测
