@@ -1199,4 +1199,184 @@ response.getWriter().print(new Gson().toJson(errorResponse));
 
 
 
+---------------------------20220214新增--------------------------------------------
+
+本系统版本
+
+    <parent>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-parent</artifactId>
+        <version>Greenwich.SR1</version>
+        <relativePath/> 
+    </parent>
+
+
+
+I.新增引用
+-- <dependencies>
+
+        <!-- https://github.com/alibaba/spring-cloud-alibaba/wiki/版本说明 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <version>2.1.2.RELEASE</version>
+        </dependency>
+
+  --  </dependencies>
+
+
+I.新增引用2
+
+Spring Cloud Greenwich
+
+如果需要使用 Spring Cloud Greenwich 版本，请在 dependencyManagement 中添加如下内容
+
+
+ --   <dependencyManagement>
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>2.1.2.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+        </dependencies>
+
+  --  </dependencyManagement>
+
+
+I.初始化代码
+@PostConstruct
+public static void initCoreFlowRules() {
+log.info("InvestTabController.initFlowRulesStudy初始化并发配置");
+InvestHeadSentinelUtil.initCoreFlowRules();
+}
+
+
+
+
+
+
+    /**
+     *  @PostConstruct
+     */
+    public static void initCoreFlowRules() {
+        log.info("InvestHeadSentinelUtil.initCoreFlowRules");
+        List<DegradeRule> rules = new ArrayList<>();
+        //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+        double count=2000;
+        //熔断时长，单位为 s
+        int timeWindow=10;
+      // 慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）  Circuit breaker opens when slow request ratio > 60%   :5%
+        double slowRatioThreshold=0.05;
+        //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+        int minRequestAmount=400;
+       //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）  2分钟
+        int statIntervalMs=2*60*1000;
+
+        //TODO 上线一定要删 ，上线一定要删
+        boolean test=false;
+        //测试用，为了测试方便增加的，上线一定注释掉
+        if(test){
+            //500 毫秒  ，万分之五 就熔断  1次熔断
+            timeWindow=10;
+            count=5000;
+            slowRatioThreshold=5;
+            minRequestAmount=400;
+        }
+
+        List<String> initList=new ArrayList<>();
+        initList.add(getFavorite);
+        initList.add(getRecommend);
+        initList.add(getTarget);
+        initList.add(getBirthday);
+        initList.add(getWhiteboard);
+        initList.add(investProfitShow);
+
+        for(String str:initList){
+            //初始化降级规则
+            DegradeRule initDR = new DegradeRule(str)
+                    .setGrade(CircuitBreakerStrategy.SLOW_REQUEST_RATIO.getType())
+                    //毫秒 Max allowed response time 慢调用比例模式下为慢调用临界 RT（超出该值计为慢调用）；异常比例/异常数模式下为对应的阈值
+                    .setCount(count)
+                    // Retry timeout (in second) 熔断时长，单位为 s
+                    .setTimeWindow(timeWindow)
+                    // Circuit breaker opens when slow request ratio > 60%  慢调用比例阈值，仅慢调用比例模式有效（1.8.0 引入）
+                    .setSlowRatioThreshold(slowRatioThreshold)
+                    //熔断触发的最小请求数，请求数小于该值时即使异常比率超出阈值也不会熔断（1.7.0 引入）
+                    .setMinRequestAmount(minRequestAmount)
+                    //统计时长（单位为 ms），如 60*1000 代表分钟级（1.8.0 引入）
+                    .setStatIntervalMs(statIntervalMs);
+            rules.add(initDR);
+        }
+
+        DegradeRuleManager.loadRules(rules);
+
+    }
+
+    /**
+     * 接口限流
+     *公共不返回限流
+     */
+
+    public static  void getInvestCommonBlockHandler(P2puserBean user, InvestHeaderVo<InvestHeaderBeanVo> result, CardOfHeaderPO cardOfHeaderPO, BlockException ex) {
+        log.info("getFavorite 熔断 熔断1");
+        log.info("getFavorite 接口异常 熔断限流触发 {},{}",getBlockExceptionStr(ex), cardOfHeaderPO);
+    }
+
+
+
+
+    /**
+         * 获得异常类型
+         * @param e
+         * @return
+         */
+    public static String getBlockExceptionStr(BlockException e) {
+        String str = "未知异常";
+        try {
+            if (e == null) {
+                return str;
+            }
+            // 不同的异常返回不同的提示语
+            if (e instanceof FlowException) {
+                str = "被限流了";
+            } else if (e instanceof DegradeException) {
+                str = "服务降级了";
+            } else if (e instanceof ParamFlowException) {
+                str = "被限流了";
+            } else if (e instanceof SystemBlockException) {
+                str = "被系统保护了";
+            } else if (e instanceof AuthorityException) {
+                str = "授权被限制";
+            }
+        } catch (Exception ex) {
+            log.error("BlockException类型错误异常", e);
+        }
+        log.info(" 接口触发限流熔断:{}",str);
+        return str;
+    }
+
+
+
+
+
+
+/**
+* 一定要小心，后台配置的是searchUserTag_Sentinel不是自动的接口名；1.6以后blockHandler含有限流和降级,fallback1.6以后只有接口错误才会调用，没有降级。
+*/
+@SentinelResource(value = InvestHeadSentinelUtil.getFavorite, blockHandler = "getInvestCommonBlockHandler", blockHandlerClass = InvestHeadSentinelUtil.class, fallback = "getInvestCommoneFallback", fallbackClass = InvestHeadSentinelUtil.class)
+ 
+
+
+
+
+
+
+
+
+
+
+
 
