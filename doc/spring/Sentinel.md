@@ -1367,15 +1367,39 @@ InvestHeadSentinelUtil.initCoreFlowRules();
 * 一定要小心，后台配置的是searchUserTag_Sentinel不是自动的接口名；1.6以后blockHandler含有限流和降级,fallback1.6以后只有接口错误才会调用，没有降级。
 */
 @SentinelResource(value = InvestHeadSentinelUtil.getFavorite, blockHandler = "getInvestCommonBlockHandler", blockHandlerClass = InvestHeadSentinelUtil.class, fallback = "getInvestCommoneFallback", fallbackClass = InvestHeadSentinelUtil.class)
- 
 
 
 
 
+I.增加单元测试 单侧  单测
+
+     <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
 
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.*;
 
+
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = Application.class)
+public class GetCommentListStrategyTest {
+@Autowired
+private GetCommentListStrategy service;
+
+    @Test
+    public void operate() throws Exception {
+service.abc():
+}
 
 
 
