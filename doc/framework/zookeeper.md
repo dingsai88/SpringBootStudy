@@ -165,7 +165,7 @@ acceptor发送编号为N的prepare请求。
 如果响应中不包含任何value，那么V就由proposer自己决定。
 
 
-#Paxos(帕克索斯) 总结:  分布式一致性算法
+#Paxos(帕克索斯) 总结:  分布式一致性算法  理论
 https://www.jianshu.com/p/a7c6a9f4226a
 
 I.角色组成
@@ -277,5 +277,248 @@ C-A区间，请求A节点。
 
 **新增H节点，ABC正常**
 C-H区间，数据请求到H。 只有C节点会受影响
+
+
+
+
+
+
+# I.简述 raft 算法  （相当于paxos一种实现）       分布式一致性算法
+
+paxos没有leader
+raft先选一个leader
+
+官网
+https://raft.github.io/
+http://blog.itpub.net/31556438/viewspace-2637112/
+https://www.jianshu.com/p/8e4bbe7e276c
+
+II.角色
+在任何给定时间，每个服务器都处于以下三种状态之一，领导者（Leader），追随者（Follower）或候选人（Candidate）。 这几个状态见可以相互转换。
+
+
+**Leader：**
+处理所有客户端交互，日志复制等，一般一次只有一个Leader
+
+**Follower：**
+类似选民，完全被动
+
+**Candidate：候选人**
+类似Proposer律师，可以被选为一个新的领导人 
+
+
+II.选举Leader
+每次选举Term 都自增
+
+III.初始化时
+1.当服务器启动时，它们以Follower的身份开始， 随机超时，变成candidate，发起选举。
+2.服务器从Leader或Candidate接收到有效的RPC请求，服务器就会保持Follower状态。
+3.Leader向所有Follower发送定期心跳（不带日志条目的AppendEntries RPC）以保持其权限。
+4.如果一个Follower在称为选举超时的一段时间内没有接到任何通信，该Follower认为没有可行的领导者并开始选举新的Leader。
+
+
+
+III.Leader异常时选主：(流程和初始化一样)
+老leader复活时，自动降级为follower
+
+第几轮选举是有记录的，重新加入的 Leader 是第一轮选举 (Term 1) 选出来的，
+而现在的 Leader 则是 Term 2，所有原来的 Leader 会自觉降级为 Follower
+
+
+
+**II.日志复制（Log Replication）**
+
+Leader 接收来自客户端的请求并将其以日志条目的形式复制到集群中的其它节点，并且强制要求其它节点的日志和自己保持一致；
+
+数据状态:
+Uncommitted 未提交 未确认
+Committed    提交 确认
+
+**III.数据复制流程**
+Leader 1个
+Follower 3个
+
+正常数据复制流程：
+1. L(Leader)收到客户端请求 data(sally) , L写入本地日志，数据状态是Uncommitted。
+2.L给三个F(Follower)发送 AppendEntries请求, 三个F记录到本地日志并返回OK，数据状态是Uncommitted。
+3.L收到过半的OK(包含L自己和F)，L数据状态改为Committed状态，并返回客户端OK。
+4.当L再次给F发动AppendEntries请求， F数据状态修改成Committed。
+   
+
+数据分区时：
+以最终Leader数据为准，异常L保存的数据会删除。
+
+
+
+
+
+
+II.安全性（Safety） ：如果有任何的服务器节点已经应用了一个确定的日志条目到它的状态机中，那么其它服务器节点不能在同一个日志索引位置应用一个不同的指令。
+
+
+
+
+
+# I. ZAB:(  Zookeeper Atomic Broadcast :Zookeeper 原子广播)
+  
+ZAB 协议全称：Zookeeper Atomic Broadcast（Zookeeper 原子广播协议）。
+
+Zookeeper 是一个为分布式应用提供高效且可靠的分布式协调服务。在解决分布式一致性方面，Zookeeper 并没有使用 Paxos ，而是采用了 ZAB 协议。
+
+
+ZAB 协议定义：ZAB 协议是为分布式协调服务 Zookeeper 专门设计的一种支持 崩溃恢复 和 原子广播 协议。
+
+
+https://www.cnblogs.com/shuaiandjun/p/9383655.html
+https://zookeeper.apache.org/doc/r3.7.0/zookeeperAuditLogs.html
+https://dl.acm.org/doi/10.1145/1529974.1529978
+官网译文
+http://www.javashuo.com/article/p-ebqcodox-he.html
+https://www.cnblogs.com/j-well/p/7061091.html
+
+II.zab对比 raft请求
+raft leader 读写都能处理
+
+zab
+只处理写请求
+读取从节点，会先调用syn函数
+
+
+# II.zab节点的三种状态：
+following：服从leader的命令
+leading：负责协调事务
+election选举/looking：选举状态
+
+
+election epoch 选举时期:
+
+
+ 
+# **II。Zab协议包括两个模式：**
+恢复（recovery） 和广播（broadcast）
+启动和异常时处于：恢复模式
+ 
+
+# III.广播模式：
+二阶段提交（two-phase commit）
+广播协议使用FIFO（TCP）通道进行所有通信
+单调递增ID：zxid
+
+流程：Leader 生成zxid通过 FIFO通道 发送给 Follower
+
+1.leader 生成一个zxid 通过FIFO通道 发送给所有 follower
+2.follower 将zxid记入磁盘，并 通过FIFO通道 反馈给 leader ack
+3.Leader 收到大部分ack时 ，通过FIFO通道 发送commit指令，以后本地提交消息。
+4.Follower 收到COMMIT指令后也提交消息。
+
+# III.恢复（recovery）模式
+https://baijiahao.baidu.com/s?id=1666465070459184658&wfr=spider&for=pc
+
+**1.leader选取**
+
+ABC三个节点选举：
+
+A申请成为Leader:
+第一步：成员A告诉BC说我要成为老大，BC记录下来。（A成员广播）
+第二步：B回复可以，C回复不可以。（B成员广播）
+第三步：A和C收到B的消息，更新自己的记录表。
+此时A：2票，B：0票，C：0票。
+
+C申请成为Leader:
+第四步：C这时候不满意了，也要选举成为老大。而且还给自己投了一票。
+第五步：A回复可以，B回复可以。更新自己的记录表。
+第六步：C收到AB的回复，更新。
+此时A：0票，B：0，C：3票。于是确定C就是下一届组织老大了。
+
+**2.崩溃恢复**
+要求： 
+第一： 确保已经被leader提交的proposal必须最终被所有的follower服务器提交。 
+第二：确保丢弃已经被leader发出的但是没有被提交的proposal。
+
+
+第一步：选取当前取出最大的ZXID，代表当前的事件是最新的。
+第二步：新leader把这个事件proposal提交给其他的follower节点
+第三步：follower节点会根据leader的消息进行回退或者是数据同步操作。最终目的要保证集群中所有节点的数据副本保持一致。
+
+
+
+
+
+# I.zk选主
+
+https://www.cnblogs.com/shuaiandjun/p/9383655.html
+
+
+II.zookeeper 三种选主方式：
+ LeaderElection  
+ AuthFastLeaderElection
+ FastLeaderElection （最新默认）
+
+
+II.选举流程简述
+1、2、3、4、5依次启动 ：最终3为leader。
+刚启动都是Looking状态
+
+服务器1启动，给自己投票，然后发投票信息，由于其它机器还没有启动所以它收不到反馈信息，服务器1的状态一直属于Looking(选举状态)。
+服务器2启动，给自己投票，同时与之前启动的服务器1交换结果，由于服务器2的编号大所以服务器2胜出，但此时投票数没有大于半数，所以两个服务器的状态依然是LOOKING。
+服务器3启动，给自己投票，同时与之前启动的服务器1,2交换信息，由于服务器3的编号最大所以服务器3胜出，此时投票数正好大于半数，所以服务器3成为领导者，服务器1,2成为小弟。
+服务器4启动，给自己投票，同时与之前启动的服务器1,2,3交换信息，尽管服务器4的编号大，但之前服务器3已经胜出，所以服务器4只能成为小弟。
+服务器5启动，后面的逻辑同服务器4成为小弟
+
+
+II.名词
+
+
+1、Serverid：服务器ID
+比如有三台服务器，编号分别是1,2,3。
+编号越大在选择算法中的权重越大。
+
+2、Zxid：数据ID  64位
+服务器中存放的最大数据ID
+
+值越大说明数据越新，在选举算法中数据越新权重越大。
+
+前32位 leader自增ID + 后32位 事务ID 自增
+
+3、Epoch：逻辑时钟 ：投票的次数
+Epoch会随着选举轮数的增加而递增
+
+
+4、Server状态：选举状态
+
+LOOKING，竞选状态。
+FOLLOWING，随从状态，同步leader状态，参与投票。
+OBSERVING，观察状态,同步leader状态，不参与投票。
+LEADING，领导者状态。
+
+投票信息包含 ：Serverid(服务器ID)、 Zxid(数据ID)、Epoch(逻辑时钟)、Server状态
+  
+
+八、选举流程详述
+
+收到一个选主请求
+I.判断Epoch选主次数，
+II.收到的比本节点的大，
+1.判断Epoch投票次数，以大的为准()
+
+II.收到请求的节点是( LOOKING 状态)
+判断流程Epoch(逻辑时钟) >Zxid(数据ID) >相等> Serverid(服务器ID)
+
+
+II.收到请求的节点是( Following 、Leading状态)
+判断流程Epoch(逻辑时钟) 如果相等就保持
+
+如果不相等就把自身变为 LOOKING 状态 
+
+
+
+
+
+
+
+
+
+
+
 
 
