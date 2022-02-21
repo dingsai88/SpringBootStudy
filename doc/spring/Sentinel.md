@@ -1371,19 +1371,29 @@ InvestHeadSentinelUtil.initCoreFlowRules();
 非public 方法 注解方式不太好用
 
 
-  @SentinelResource(value =ArticleSentinelUtil.GetCommentListStrategy)
-  @Override
-  protected Object operate(RequestVO requestVO, HttpServletRequest request, HttpServletResponse response) throws Exception {
-  logger.info(" GetCommentListStrategy.operate 评论列表 :{}" , JsonUtil.beanToJsonLog(requestVO));
-  try (Entry entry = SphU.entry(ArticleSentinelUtil.GetCommentListStrategy)) {
-  // Thread.sleep(1111);
-  return aaaa.bbbb(requestVO);
-  } catch (BlockException e1) {
-  logger.info( " GetCommentListStrategy.operate 熔断 限流 熔断限流触发 :{}" , JsonUtil.beanToJsonLog(requestVO));
-  throw new FinanceException(Constants.ResultCode.LOCK_FAILED, Constants.ResultCode.LOCK_FAILED.getMsg()+"限流");
-  }
-  }
-
+    @SentinelResource(value =ArticleSentinelUtil.GetCommentListStrategy)
+    @Override
+    protected Object operate(RequestVO requestVO, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        logger.info(" GetCommentListStrategy.operate 评论列表 :{}" , JsonUtil.beanToJsonLog(requestVO));
+        Entry entry = null;
+        try  {
+            entry = SphU.entry(ArticleSentinelUtil.GetCommentListStrategy);
+            return xxx.xxxxx(requestVO);
+        } catch (BlockException e1) {
+            logger.info( " GetCommentListStrategy.operate 熔断 限流 熔断限流触发 :{}" , JsonUtil.beanToJsonLog(requestVO));
+            throw new FinanceException(Constants.ResultCode.LOCK_FAILED, Constants.ResultCode.LOCK_FAILED.getMsg()+"限流");
+        }catch (Exception ex) {
+            logger.info( " GetCommentListStrategy.operate 异常 :{}" , JsonUtil.beanToJsonLog(requestVO));
+            // 若需要配置降级规则，需要通过这种方式记录业务异常
+            Tracer.traceEntry(ex, entry);
+            throw new FinanceException(Constants.ResultCode.LOCK_FAILED, Constants.ResultCode.LOCK_FAILED.getMsg());
+        }finally {
+            // 务必保证 exit，务必保证每个 entry 与 exit 配对
+            if (entry != null) {
+                entry.exit();
+            }
+        }
+    }
 
 I.增加单元测试 单侧  单测
 

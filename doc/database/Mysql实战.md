@@ -1498,7 +1498,7 @@ insert into z select 1,1;
  
  
  start transaction;
-  SELECT * from z where b=3 for update;-- 锁定 a=5和[b(1-3)(3)(3-6),不含3和6]
+ SELECT * from z where b=3 for update;-- 锁定 a=5和[b(1-3)(3)(3-6),不含3和6]
  select * from z;
  
  被锁住

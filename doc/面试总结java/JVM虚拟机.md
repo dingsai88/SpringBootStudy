@@ -286,7 +286,9 @@ CMS:始标(STW)>并发标(并发)>重标(STW)>并发清除
 II.G1（面向服务端的收集器）新老都用（低停顿）jdk7时开始提供：
 Region分类:Eden、Survivor、Old、Humongous巨大
 
-跨代问题:CardTable  跨Region: RememberedSet
+跨代问题:CardTable 解决老年代到新生代的引用问题(清理年轻代时，用卡表判断是否和老年代有关系)
+跨Region: RememberedSet 用来记录外部指向本Region的所有引用，每个Region维护一个RememberedSet
+
 
 1.⽆需回收整个堆，⽽是选择⼀个Collection Set (CS)
 2.两种GC： Full young GC(只回收年轻代)、 Mixed GC(全部都回收)
