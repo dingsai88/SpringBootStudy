@@ -20,6 +20,9 @@ public class ZhuShiMainTest {
         set.add(a2);
         System.out.println("==a1:"+a1.hashCode());
         System.out.println("==a2:"+a2.hashCode());
+        int j=0;
+        for (int i = 0; i < 10; j+=i,i++){};
 
+        System.out.println("==a2:"+j);
     }
 }
