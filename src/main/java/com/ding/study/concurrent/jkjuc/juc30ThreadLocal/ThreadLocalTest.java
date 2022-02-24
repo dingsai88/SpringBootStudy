@@ -13,7 +13,6 @@ public class ThreadLocalTest {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat();
         threadLocal.get();
         simpleDateFormat.format(null);
-
     }
 
 
