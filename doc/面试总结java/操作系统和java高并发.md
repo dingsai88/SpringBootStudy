@@ -204,9 +204,14 @@ synchronized是只有一个条件变量的管程模型
 
 
 I.AQS 抽象队列同步器 -管程多条件 ：有独占锁的方法(一医一个病人)、共享锁(多医生多病人)的相关方法
-volatile int state(1有锁、0无锁)： lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg) 
+II.volatile int state(1有锁、0无锁)（代表共享资源） CAS： lock cmpxchg指令  (多个CPU 先锁定、在cmpxchg) 
+II.FIFO线程等待队列（多线程争用资源被阻塞时会进入此队列）先进先出
+内部类:
 ConditionObject 实现 Condition接口：await等待、signal或singalAl唤醒
+Node类 等待队列节点类(SHARED、EXCLUSIVE共享独占)
+
 核心模版方法:独占锁（tryAcquire、tryRelease）、共享锁(tryAcquireShared、tryReleaseShared)
+ 
 
 
 I.ReentrantLock(独占锁)
