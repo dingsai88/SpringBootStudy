@@ -6,6 +6,7 @@ package com.ding;
 import org.junit.Test;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * 根据包生成下面bean 的单测
+ */
 public class AutoCodeTest {
 
 
@@ -23,10 +27,36 @@ public class AutoCodeTest {
         List<String> classNames = getClassName(packageName, false);
         if (classNames != null) {
             for (String className : classNames) {
-                System.out.println(className);
+                //System.out.println(className);
+                //报下全部bean   不包含子包
+                setUp(className);
             }
         }
     }
+
+
+    public void setUp(String className) throws Exception {
+        Class cls= Class.forName(className);
+        //Class cls=bean.getClass();
+        Field[] field = cls.getDeclaredFields(); // 获取实体类的所有属性，返回Field数组
+        String clsName = cls.getSimpleName();
+        System.out.println(" \n\n\n ");
+        System.out.println("     @Test ");
+        System.out.println("        public void test" + clsName + "() { try { ");
+        System.out.println("  " + clsName + " bean = new  " + clsName + " (); ");
+        for (int j = 0; j < field.length; j++) { // 遍历所有属性
+            String name = field[j].getName(); // 获取属性的名字
+            name = name.substring(0, 1).toUpperCase() + name.substring(1); // 将属性的首字符大写，方便构造get，set方法
+            String type = field[j].getGenericType().toString(); // 获取属性的类型
+            System.out.println("bean.set" + name + "(null);");
+            System.out.println("bean.get" + name + "();");
+        }
+        System.out.println("      log.info(\"返回结果:{}\", bean);assertNotNull(bean); ");
+        System.out.println("     } catch (Exception e) { e.printStackTrace(); } } ");
+        System.out.println(" \n\n\n ");
+    }
+
+
 
     /**
      * 获取某包下（包括该包的所有子包）所有类
