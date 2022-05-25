@@ -1913,10 +1913,34 @@ POST /_sql?format=json
 {
 "cursor": "sDXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAAEWYUpOYklQMHhRUEtld3RsNnFtYU1hQQ==:BAFmBGRhdGUBZgVsaWtlcwFzB21lc3NhZ2UBZgR1c2Vy9f///w8="
 }
- 
 
 
 
+
+查询所有索引
+GET _cat/indices?v&s=index:asc
+
+查询转义 转译 波哥
+
+POST /_sql?format=json
+{
+"query": "select * from \"scrm-user-trace\" "
+}
+
+
+
+
+
+POST scrm-user-trace/_doc
+{
+"qwUserId": "1",
+"qwExternalUserid": "wmt0zCEAAA6Cdxp3yRHNTKQJXf5QqtnQ",
+"traceDate": "2022-05-12 12:54:03",
+"traceType": "联系记录",
+"traceOrder": 100,
+"traceCount": "1",
+"traceContent": "一起喝杯下午茶吧，聊聊工作dingsai"
+}
 
 
 

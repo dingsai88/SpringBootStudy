@@ -10,10 +10,18 @@ import java.util.Set;
  * @author daniel 2020-5-18 0018.
  */
 public class ZhuShiMainTest {
+    /**
+     * 测试注释
+     * @param args
+     */
     public static void main(String[] args) {
         String name = "沉默王二";
         // \u000d   name="沉默王三";
         System.out.println(name);
+
+
+
+
         String a1=new String("age1");
         String a2=new String("age1");
         System.out.println("==:"+a1==a2);
