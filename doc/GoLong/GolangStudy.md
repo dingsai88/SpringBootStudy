@@ -1131,6 +1131,106 @@ fmt.Printf( "Book book_id : %d\n", book.book_id)
 
 
 
+## II.Go 语言切片(Slice)  type、 make() 函数
+https://m.runoob.com/go/go-slice.html
+Go 语言切片是对数组的抽象。  
+
+Go 数组的长度不可改变，在特定场景中这样的集合就不太适用，Go 中提供了一种灵活，  
+功能强悍的内置类型切片("动态数组")，与数组相比切片的长度是不固定的，可以追加元素，在追加时可能使切片的容量增大。  
+
+
+
+**I.定义切片**
+你可以声明一个未指定大小的数组来定义切片：
+var identifier []type
+
+或使用 make() 函数来创建切片:
+var slice1 []type = make([]type, len)
+
+slice1 := make([]type, len)
+
+
+也可以指定容量，其中 capacity 为可选参数。
+make([]T, length, capacity)
+
+
+
+**I.切片初始化**
+
+s :=[] int {1,2,3 }   
+直接初始化切片，[] 表示是切片类型，{1,2,3} 初始化值依次是 1,2,3，其 cap=len=3。  
+
+
+
+s := arr[:]
+初始化切片 s，是数组 arr 的引用。  
+
+
+s := arr[startIndex:endIndex]   
+将 arr 中从下标 startIndex 到 endIndex-1 下的元素创建为一个新的切片。  
+
+
+
+
+s := arr[startIndex:]   
+将 arr 中从下标 startIndex 到 endIndex-1 下的元素创建为一个新的切片。
+
+
+**len() 和 cap() 函数**
+切片是可索引的，并且可以由 len() 方法获取长度。
+
+切片提供了计算容量的方法 cap() 可以测量切片最长可以达到多少。
+
+
+len()返回切片中的元素个数。 cap()返回切片中容量即切片可以容纳的元素个数
+
+
+var numbers = make([]int,3,5)
+
+make([]T, length, capacity)
+
+fmt.Printf("len=%d cap=%d slice=%v\n",len(x),cap(x),x)
+
+len=3 cap=5 slice=[0 0 0]
+
+
+**空(nil)切片**
+一个切片在未初始化之前默认为 nil，长度为 0，实例如下：
+
+
+**切片截取、数组截取**
+
+numbers := []int{0,1,2,3,4,5,6,7,8}  
+
+/* 打印子切片从索引1(包含) 到索引4(不包含)*/
+fmt.Println("numbers[1:4] ==", numbers[1:4])
+
+
+/* 默认下限为 0  》0 :3*/
+fmt.Println("numbers[:3] ==", numbers[:3])
+
+
+/* 默认上限为 len(s) 》  4: len(s) */
+fmt.Println("numbers[4:] ==", numbers[4:])
+
+
+**append() 和 copy(目标new,老数据old) 函数**
+
+	var numbers []int 
+
+	/* 允许追加空切片,9放到切片里，数组里 */
+	numbers = append(numbers, 9)
+
+	/* 同时添加多个元素 */
+	numbers = append(numbers, 2,3,4)
+
+
+	/* 创建切片 numbers1 是之前切片的两倍容量*/
+	numbers1 := make([]int, len(numbers), (cap(numbers))*2)
+
+	/* 拷贝 numbers 的内容到 numbers1 */
+	copy(numbers1,numbers)
+
 
 
 
