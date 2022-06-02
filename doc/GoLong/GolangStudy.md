@@ -787,20 +787,23 @@ https://github.com/dingsai88/GoStudy/blob/master/StudyFunction/GoFunctionStudy.g
 
 **函数作为实参**
 
-/* 声明函数变量 */
-getSquareRoot := func(x float64) float64 {
-return math.Sqrt(x)
+/* 声明函数变量 */  
+
+getSquareRoot := func(x float64) float64 {  
+  return math.Sqrt(x)  
 }
 
 /* 使用函数 */
 fmt.Println(getSquareRoot(9))
 
 
-**函数闭包:(不太好理解)**
 
-func getSequence() func() int {
-    i:=0
-  return func() int {
+**函数闭包:(不太好理解)可计数**  
+ 
+
+func getSequence() func() int {  
+    i:=0  
+  return func() int {  
     i+=1
   return i  
  }
@@ -808,6 +811,7 @@ func getSequence() func() int {
 
 func main(){
   /* nextNumber 为一个函数，函数 i 为 0 */
+
   nextNumber := getSequence()
 
   /* 调用 nextNumber 函数，i 变量自增 1 并返回 */
@@ -825,23 +829,305 @@ func main(){
 
 **函数方法:**
 
-Go 语言中同时有函数和方法。一个方法就是一个包含了接受者的函数，接受者可以是命名类型或者结构体类型的一个值或者是一个指针。所有给定类型的方法属于该类型的方法集。语法格式如下：
+Go 语言中同时有函数和方法。一个方法就是一个包含了接受者的函数，接受者可以是命名类型或者结构体类型的一个值或者是一个指针。  
+所有给定类型的方法属于该类型的方法集。  
+语法格式如下：  
 
 /* 定义结构体 */
-type Circle struct {
-radius float64
+type Circle struct {  
+  radius float64  
 }
 
-func main() {
-var c1 Circle
-c1.radius = 10.00
-fmt.Println("圆的面积 = ", c1.getArea())
+func main() {  
+  var c1 Circle  
+  c1.radius = 10.00  
+  fmt.Println("圆的面积 = ", c1.getArea())  
 }
 
-func (c Circle) getArea() float64 {
-//c.radius 即为 Circle 类型对象中的属性
-return 3.14 * c.radius * c.radius
+func (c Circle) getArea() float64 {  
+   //c.radius 即为 Circle 类型对象中的属性  
+   return 3.14 * c.radius * c.radius  
+}         
+
+
+
+## II.Go 语言变量作用域
+
+
+作用域为已声明标识符所表示的常量、类型、变量、函数或包在源代码中的作用范围。
+
+Go 语言中变量可以在三个地方声明：
+
+函数内定义的变量称为局部变量
+函数外定义的变量称为全局变量
+函数定义中的变量称为形式参数
+
+
+
+**局部变量**
+在函数体内声明的变量称之为局部变量，它们的作用域只在函数体内，参数和返回值变量也是局部变量。
+
+
+
+
+**全局变量**
+在函数体外声明的变量称之为全局变量，全局变量可以在整个包甚至外部包（被导出后）使用。
+ 
+
+Go 语言程序中全局变量与局部变量名称可以相同，但是函数内的局部变量会被优先考虑。实例如下：
+
+
+**形式参数**
+形式参数会作为函数的局部变量来使用。
+
+
+**初始化局部和全局变量**
+不同类型的局部和全局变量默认值为：
+
+数据类型	初始化默认值
+int	0
+float32	0
+pointer	nil
+
+
+## II.Go 语言数组
+
+Go 语言提供了数组类型的数据结构。
+
+数组是具有相同唯一类型的一组已编号且长度固定的数据项序列，这种类型可以是任意的原始类型例如整型、字符串或者自定义类型。
+
+相对于去声明 number0, number1, ..., number99 的变量，使用数组形式 numbers[0], numbers[1] ..., numbers[99] 更加方便且易于扩展。
+
+数组元素可以通过索引（位置）来读取（或者修改），索引从 0 开始，第一个元素索引为 0，第二个索引为 1，以此类推。
+
+
+**声明数组**
+Go 语言数组声明需要指定元素类型及元素个数，语法格式如下：  
+
+var variable_name [SIZE] variable_type  
+  
+以上为一维数组的定义方式。例如以下定义了数组 balance 长度为 10 类型为 float32：  
+
+var balance [10] float32
+
+
+
+**初始化数组**  
+以下演示了数组初始化：
+
+var balance = [5]float32{1000.0, 2.0, 3.4, 7.0, 50.0}   
+
+balance := [5]float32{1000.0, 2.0, 3.4, 7.0, 50.0}  
+
+
+I.数组长度不确定
+
+，可以使用 ... 代替数组的长度，编译器会根据元素个数自行推断数组的长度：
+
+
+var balance = [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
+或
+balance := [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
+
+
+I.初始化部分数组内容
+如果设置了数组的长度，我们还可以通过指定下标来初始化元素：
+
+
+//  将索引为 1 和 3 的元素初始化  
+balance := [5]float32{1:2.0,3:7.0}  
+
+
+
+**访问数组元素**
+
+数组元素可以通过索引（位置）来读取。格式为数组名后加中括号，中括号中为索引的值。例如：  
+
+var salary float32 = balance[9]  
+
+
+**语言多维数组**
+
+I.二维数组
+
+
+// Step 1: 创建数组
+values := [][]int{}
+
+var values  = [][]int{}
+
+
+row1 := []int{1, 2, 3}
+row2 := []int{4, 5, 6}
+values = append(values, row1)
+values = append(values, row2)
+
+
+I.初始化二维数组
+
+a := [3][4]int{  
+{0, 1, 2, 3} ,   /*  第一行索引为 0 */
+{4, 5, 6, 7} ,   /*  第二行索引为 1 */
+{8, 9, 10, 11},   /* 第三行索引为 2  最后一行必须有逗号，或者没有都有大括号往上一行 */
 }
+
+
+a := [3][4]int{  
+{0, 1, 2, 3} ,   /*  第一行索引为 0 */
+{4, 5, 6, 7} ,   /*  第二行索引为 1 */
+{8, 9, 10, 11}}   /* 第三行索引为 2 */
+
+
+I.访问二维数组
+
+val := a[2][3]
+或
+var value int = a[2][3]
+
+
+
+**Go 语言向函数传递数组**
+
+
+void myFunction(param [10]int)
+{
+}
+
+void myFunction(param []int)
+{
+}
+
+
+
+## II.Go 语言指针
+
+Go 语言中指针是很容易学习的，Go 语言中使用指针可以更简单的执行一些任务。
+
+接下来让我们来一步步学习 Go 语言指针。
+
+我们都知道，变量是一种使用方便的占位符，用于引用计算机内存地址。
+
+Go 语言的取地址符是 &，放到一个变量前使用就会返回相应变量的内存地址。
+
+
+
+I.什么是指针
+一个指针变量指向了一个值的内存地址。
+
+类似于变量和常量，在使用指针前你需要声明指针。指针声明格式如下：
+
+var ip *int        /* 指向整型*/
+var fp *float32    /* 指向浮点型 */
+
+
+I.如何使用指针
+
+指针使用流程：
+定义指针变量。
+为指针变量赋值。
+访问指针变量中指向地址的值。
+在指针类型前面加上 * 号（前缀）来获取指针所指向的内容。
+
+// 普通变量   
+var a int= 20    
+//变量地址    
+&a
+
+//int 指针  
+var ptrInt *int 
+
+//指针赋值
+ptrInt=&a
+
+指针地址返回:ptrInt
+指针指向的value 返回:*ptrInt
+
+用指针访问数据: *ptrInt
+
+I.Go 空指针
+当一个指针被定义后没有分配到任何变量时，它的值为 nil。
+
+nil 指针也称为空指针。
+
+nil在概念上和其它语言的null、None、nil、NULL一样，都指代零值或空值。
+
+一个指针变量通常缩写为 ptr。  
+
+
+空指针判断：
+
+if(ptr != nil)     /* ptr 不是空指针 */
+if(ptr == nil)    /* ptr 是空指针 */
+
+
+
+
+## II.Go 语言结构体
+
+Go 语言中数组可以存储同一类型的数据，但在结构体中我们可以为不同项定义不同的数据类型。
+
+结构体是由一系列具有相同类型或不同类型的数据构成的数据集合。
+
+I.定义结构体
+
+type Books struct {  
+title string
+author string
+subject string
+book_id int
+}  
+
+I.赋值
+构造函数
+fmt.Print(Books{"1", "2", "3",  5}," \n\n")
+
+单个字段
+fmt.Print(Books{title: "title",book_id: 3,author: "丁丁"}," \n\n")
+
+
+
+I.访问结构体成员
+var Book1 Books        /* 声明 Book1 为 Books 类型 */
+ 
+
+/* book 1 描述 */
+Book1.title = "Go 语言"
+Book1.author = "www. .com"
+Book1.subject = "Go  "
+Book1.book_id = 6495407
+
+
+I.结构体作为函数参数
+你可以像其他数据类型一样将结构体类型作为参数传递给函数。并以以上实例的方式访问结构体变量：  
+
+printBook(Book1)
+
+
+func printBook( book Books ) {
+fmt.Printf( "Book title : %s\n", book.title)
+fmt.Printf( "Book author : %s\n", book.author)
+fmt.Printf( "Book subject : %s\n", book.subject)
+fmt.Printf( "Book book_id : %d\n", book.book_id)
+}
+
+
+I.结构体指针  
+
+var struct_pointer *Books  
+
+
+/* 打印 Book1 信息 */
+printBook(&Book1)  
+
+
+
+func printBook( book *Books ) {
+fmt.Printf( "Book title : %s\n", book.title)
+fmt.Printf( "Book author : %s\n", book.author)
+fmt.Printf( "Book subject : %s\n", book.subject)
+fmt.Printf( "Book book_id : %d\n", book.book_id)
+}
+
 
 
 
