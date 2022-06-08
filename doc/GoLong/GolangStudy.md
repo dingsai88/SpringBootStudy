@@ -464,7 +464,8 @@ return_types：返回类型，函数返回一列值。return_types 是该列值�
 var retMax = max(111, 222)
 //占位符 fmt.Printf("function函数 方法测试 占位符: %d \n",retMax)
 
-/* 函数返回两个数的最大值 */ func max(num1, num2 int) int { /* 定义局部变量 */ var result int
+/* 函数返回两个数的最大值 */
+func max(num1, num2 int) int { /* 定义局部变量 */ var result int
 
 	if (num1 > num2) {
 		result = num1
