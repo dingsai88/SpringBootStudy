@@ -90,6 +90,12 @@ public class LiveMaterialsControllerTest {
             assertTrue(responseDataId.equals(userList.get(0).getId()));
 
 
+         JSONObject jsonObject = JSONObject.parseObject(resultJson);
+            JSONObject ja = jsonObject.getJSONObject("data");
+            ProductNotice pn = JSON.parseObject(ja.toJSONString(), ProductNotice.class);
+
+
+
             //用户ID为空的情况
             json = "{\"accountName\":\"啊啊\",\"activityId\":\"xxxx\"}";
              resultJson = mockMvc.perform(post("/liveMaterial/getAdvertInfoList").contentType(MediaType.APPLICATION_JSON_UTF8).content(json).session(mockHttpSession)
@@ -106,6 +112,11 @@ public class LiveMaterialsControllerTest {
 
 
 }
+
+
+
+
+
 
 
 
@@ -157,6 +168,66 @@ private YaoZhenKaController controller;
 
 
 
+
+##  II.POM
+
+
+   <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>2.0.0-RC.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>2.0.0-beta.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.0-beta.5</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.2.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>2.15.0</version>
+        </dependency>
+
+
+
+-------------------------------------------------------------------------
+
+
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-core</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>5.1.11.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 
 
 
