@@ -231,4 +231,138 @@ private YaoZhenKaController controller;
 
 
 
+-------------------------------------------------------------------------------------
+
+
+##  II. springboot 单测  带session 和 json、 form
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+https://blog.csdn.net/liu320yj/article/details/122290569
+
+
+
+
+
+
+package cn.creditease.fso.weixinplatform.api.thirdParty;
+
+import cn.creditease.fso.weixinplatform.mapper.model.WeixinUser;
+import cn.creditease.fso.weixinplatform.service.WeChatClient;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+/**
+* @author daniel
+* @date 2022/7/1 10:44
+  **/
+  @Slf4j
+  @RunWith(SpringJUnit4ClassRunner.class)
+  @SpringBootTest(classes = MockServletContext.class)
+  @WebAppConfiguration
+  public class WechatDataControllerTest {
+  private MockMvc mockMvc;
+  @InjectMocks
+  private WechatDataController controller;
+  @Mock
+  private WeChatClient wechatClient;
+  @Before
+  public void before() {
+  mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+  // when(liveMaterialsService.getLiveStreamingAdvertInfoList(anyInt(), anyInt(), anyString(), anyString(), anyInt(), anyInt(),anyString())).thenReturn(null);
+  }
+  @Test
+  public void testGetFansTencentInfo() {
+  try {
+  WeixinUser userDetial = new WeixinUser();
+  userDetial.setAge(1);
+  userDetial.setCountry("北京");
+  when(wechatClient.getUserDetial(anyString(), anyString(), anyInt())).thenReturn(userDetial);
+
+           log.info("开始");
+           MvcResult mvcResult = mockMvc.perform(
+                   MockMvcRequestBuilders.get("/weixinData/getFansTencentInfo")
+                           //.accept(MediaType.APPLICATION_FORM_URLENCODED)
+                           .accept(MediaType.parseMediaType("application/x-www-form-urlencoded;charset=UTF-8"))
+                           .param("poi", "poiv")
+                           .param("uoi", "uoivs").param("token", "specially"))
+                   .andExpect(MockMvcResultMatchers.status().isOk())
+                   .andDo(MockMvcResultHandlers.print()).andReturn();
+           log.info("返回 : \n {} ", mvcResult.getResponse().getContentAsString());
+
+
+           //正常可返回的流程
+           String json = "{\"advertId\":\"123455\",\"activityId\":\"123456\",\"userId\":\"12131354\"}";
+           MockHttpSession mockHttpSession = new MockHttpSession();
+           mockHttpSession.setAttribute("", "");
+           log.info(" request :{}", json);
+           String resultJson = mockMvc.perform(post("/liveMaterial/getAdvertInfoList").contentType(MediaType.APPLICATION_JSON_UTF8).content(json).session(mockHttpSession)
+                   .accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
+                   .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+           log.info(" 返回的resultJson = {}", resultJson);
+
+           JSONObject jsonObject = JSONObject.parseObject(resultJson);
+           JSONArray ja=  jsonObject.getJSONArray("data");
+           List<LiveStreamingImg> userList = JSON.parseArray(ja.toJSONString(),LiveStreamingImg.class);
+           log.info(" 返回的 LiveStreamingImg index 0 = {}", JsonUtils.toJson(userList.get(0)));
+           assertTrue(responseDataId.equals(userList.get(0).getId()));
+
+
+           assertTrue("aa" != null);
+       } catch (Exception e) {
+           log.error("testGetAdvertInfoList单测异常", e);
+       }
+  }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
