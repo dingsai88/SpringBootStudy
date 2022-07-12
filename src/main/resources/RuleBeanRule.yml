@@ -1,0 +1,68 @@
+
+
+---
+
+name: "set taskType "
+description: "查询用户机会来源"
+priority: 1
+condition: "ruleBean.userId !=null"
+actions:
+  - "ruleBean.setMethondTaskType(ruleBean.userId);"
+
+
+---
+name: "set kyc "
+description: "查询用户kyc"
+priority: 2
+condition: "ruleBean.userId !=null"
+actions:
+  - "ruleBean.setMethondKyc(ruleBean.userId);"
+
+
+
+---
+name: "set city "
+description: "查询用户理财师地区"
+priority: 3
+condition: "ruleBean.userId !=null"
+actions:
+  - "ruleBean.setMethondCityName(ruleBean.userId);"
+
+
+---
+name: "分享 +北京 +B级用户 奖品 "
+description: "中奖规则"
+priority: 4
+condition: "ruleBean.taskType =='1' && ruleBean.cityName =='北京'  && ruleBean.kycLevel =='B'"
+actions:
+  - "ruleBean.setMethondRewardType('3积分：牙刷');"
+
+
+
+---
+name: "实名 +上海 +A级用户 奖品 "
+description: "中奖规则"
+priority: 5
+condition: "ruleBean.taskType =='2' && ruleBean.cityName =='上海'  && ruleBean.kycLevel =='A'"
+actions:
+  - "ruleBean.setMethondRewardType('3积分：保时捷');"
+
+
+---
+name: " 兜底 "
+description: "兜底方案"
+priority: 6
+condition: "ruleBean.rewardType ==null"
+actions:
+  - "ruleBean.setMethondRewardType('1积分：兜底');"
+
+
+
+
+
+
+
+
+
+
+
