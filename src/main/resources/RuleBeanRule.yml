@@ -28,7 +28,6 @@ condition: "ruleBean.userId !=null"
 actions:
   - "ruleBean.setMethondCityName(ruleBean.userId);"
 
-
 ---
 name: "分享 +北京 +B级用户 奖品 "
 description: "中奖规则"
@@ -37,8 +36,6 @@ condition: "ruleBean.taskType =='1' && ruleBean.cityName =='北京'  && ruleBean
 actions:
   - "ruleBean.setMethondRewardType('3积分：牙刷');"
 
-
-
 ---
 name: "实名 +上海 +A级用户 奖品 "
 description: "中奖规则"
@@ -46,7 +43,6 @@ priority: 5
 condition: "ruleBean.taskType =='2' && ruleBean.cityName =='上海'  && ruleBean.kycLevel =='A'"
 actions:
   - "ruleBean.setMethondRewardType('3积分：保时捷');"
-
 
 ---
 name: " 兜底 "
