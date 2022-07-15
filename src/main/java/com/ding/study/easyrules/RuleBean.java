@@ -79,7 +79,7 @@ public class RuleBean {
 
 
     /**
-     * 设置用户地区
+     *
      * @param userId
      */
     public void setMethondTaskType(String userId) {
