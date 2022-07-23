@@ -355,7 +355,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 
-
+ResponseResult<TActivityAward> result=new ObjectMapper().readValue(resultJson,new TypeReference< ResponseResult<TActivityAward>>() {});
+         
 
 
 
