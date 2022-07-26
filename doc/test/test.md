@@ -353,7 +353,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 }
 
-
+序列化bean
+格式化bean   jsonToBean
 
 ResponseResult<TActivityAward> result=new ObjectMapper().readValue(resultJson,new TypeReference< ResponseResult<TActivityAward>>() {});
          
