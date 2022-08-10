@@ -6,6 +6,9 @@ https://ww2.mathworks.cn/help/matlab/ref/randi.html
 
 https://matlabacademy.mathworks.com/cn/details/matlab-onramp/gettingstarted
 
+https://matlab.mathworks.com/
+dingsai88@buaa.edu.cn
+
 # I.基础命令
 
 
