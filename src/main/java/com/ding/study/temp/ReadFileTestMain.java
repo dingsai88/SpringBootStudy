@@ -1,23 +1,30 @@
 package com.ding.study.temp;
 
+import com.ding.study.util.AESUtil;
 import com.google.common.base.Strings;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
+ * 营销获客 IC 文件读取 徐恒 直播
  * @author daniel 2019-7-3 0003.
  */
 public class ReadFileTestMain {
 
     public static void main(String[] args) throws Exception {
 
-        toArrayByFileReader1("C:\\Users\\Administrator.CE-20160511RDFS\\Desktop\\caipiao.txt");
+        toArrayByFileReader1("C:\\Users\\Administrator\\Desktop\\test.txt");
 
     }
 
+    /**
+     *
+     * @param name
+     */
     public static void toArrayByFileReader1(String name) {
         try {
             FileReader fr = new FileReader(name);
@@ -26,17 +33,18 @@ public class ReadFileTestMain {
             Map<String, Integer> map = new HashMap<String, Integer>();
             // 按行读取字符串
             while ((str = bf.readLine()) != null) {
-                System.out.println(str);
-                String[] array = str.split("\\s+");
+               // System.out.println(str+"   解密后:"+ AESUtil.aesDecrypt(URLDecoder.decode(str, "UTF-8"), "DmhzsbcNSDingSaizaMDRz5EJcZPQ=="));
+                System.out.println(AESUtil.aesDecrypt(URLDecoder.decode(str, "UTF-8"), "123456"));
+          /*           String[] array = str.split("\\s+");
                 for (String s : array) {
                     System.out.println("输出:"+s+";");
-                    if (map.containsKey(s)) {//查看字符是否在map的key中存在，如果存在
+               if (map.containsKey(s)) {//查看字符是否在map的key中存在，如果存在
                         Integer old = map.get(s);//通过key获取value的值
                         map.put(s, old + 1);//把字符放入map的key中，value设置为通过key获取value的值+1
                     } else {//查看字符是否在map的key中存在，如果不存，把字符放入map的key中，value默认设置为1
                         map.put(s, 1);
                     }
-                }
+                }*/
 
             }
             bf.close();
