@@ -30,6 +30,20 @@ public class TestMain {
 
 
     public static void main(String[] args) {
+        String s = new String("1");
+        System.out.println( s.intern());
+        String s2 = "1";
+        System.out.println(s==s2);
+
+
+
+
+        String s3 = new String("1") + new String("1");
+        s3.intern();
+        String s4 = "11";
+        System.out.println(s3==s4);
+
+        System.out.println("\n\n");
         System.out.println("\n\n\n开始");
         Byte a=Byte.parseByte("2");
         System.out.println(""+a);

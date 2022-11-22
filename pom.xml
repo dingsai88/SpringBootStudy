@@ -169,7 +169,11 @@
 			<artifactId>easy-rules-mvel</artifactId>
 			<version>3.3.0</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox-app</artifactId>
+			<version>2.0.25</version>
+		</dependency>
 
 	</dependencies>
 
