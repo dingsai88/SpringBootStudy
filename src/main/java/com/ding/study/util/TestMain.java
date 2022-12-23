@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 数据结构:逻辑关系
@@ -28,12 +29,34 @@ import java.util.*;
  */
 public class TestMain {
 
-
+    public static final List<String> QI_YAO_HUI_2_CARD_ALL = Arrays.asList("a","a");
     public static void main(String[] args) {
+
+        ReentrantLock rl=new ReentrantLock();
+        rl.lock();
+        rl.unlock();
+
         String s = new String("1");
-        System.out.println( s.intern());
+        System.out.println( "aaa:"+AESCommonUrlSafeUtil.getUserIdDesUrlSafe("88"));
+        System.out.println( "aaa2:"+AESCommonUrlSafeUtil.getUserIdDesUrlSafe("88"));
+
         String s2 = "1";
         System.out.println(s==s2);
+
+        if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+            System.out.println("a111111");
+        }else if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+            System.out.println("a222");
+        }
+
+        if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+            System.out.println("a111111");
+        }else if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+            System.out.println("a222");
+        }
+
+
+
 
 
 
