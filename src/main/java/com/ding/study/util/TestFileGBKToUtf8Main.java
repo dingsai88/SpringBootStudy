@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class TestFileGBKToUtf8Main {
     //要转换的目录--目标资源URL
-    public final static String targetFileUrl = "E:\\DingSai\\DingProjectAs_new\\SpringBootStudy\\src\\main\\java\\designpatterns";
+    public final static String targetFileUrl = "D:\\DingSai\\data";
 
     //遍历目录，将文件从GBK转换成UTF-8
     public static void fileList(File file) {

@@ -1,11 +1,12 @@
 package com.ding.study.util;
 
-import org.codehaus.groovy.util.StringUtil;
 import org.springframework.util.StringUtils;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,66 +30,141 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class TestMain {
 
-    public static final List<String> QI_YAO_HUI_2_CARD_ALL = Arrays.asList("a","a");
-    public static void main(String[] args) {
+    public static final List<String> QI_YAO_HUI_2_CARD_ALL = Arrays.asList("a", "a");
 
-        ReentrantLock rl=new ReentrantLock();
+    public static LocalDateTime timestamToDatetime(long timestamp) {
+        Instant instant = Instant.ofEpochMilli(timestamp);
+        return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    public static boolean isOldCust(TreeSet<Long> treeSet){
+        try {
+            if(treeSet==null||treeSet.size()==0){
+                return false;
+            }
+            Long oldTime=treeSet.pollFirst();
+            LocalDateTime time=  timestamToDatetime(oldTime);
+            System.out.println(" time  "+time +" oldTime "+oldTime);
+            Duration duration = Duration.between(time, LocalDateTime.now());
+            long minuts = duration.toMinutes();
+            long hours = duration.toHours();
+            System.out.println("1差距分钟:"+minuts);
+            System.out.println("1差距小时:"+hours);
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("11111:"+"111".compareTo("222"));
+        System.out.println("2222:"+"333".compareTo("222"));
+
+
+        TreeSet<Long> treeSet=new TreeSet<>();
+     /*   treeSet.add(1514187590000l);
+        treeSet.add(1454465614000l);
+        treeSet.add(1576031705000l);*/
+        treeSet.add(1673354244000l);
+         System.out.println(treeSet);
+        isOldCust(treeSet);
+        System.out.println(treeSet);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("", "");
+
+        LocalDateTime localDateTime = LocalDateTime.ofEpochSecond(Long.parseLong("573667200000")/1000, 0, ZoneOffset.ofHours(8));
+        System.out.println("aaa000:" + localDateTime);
+        LocalDate localDate =localDateTime.toLocalDate();
+        System.out.println("aaa000:" + localDate);
+        ReentrantLock rl = new ReentrantLock();
         rl.lock();
         rl.unlock();
 
         String s = new String("1");
-        System.out.println( "aaa:"+AESCommonUrlSafeUtil.getUserIdDesUrlSafe("88"));
-        System.out.println( "aaa2:"+AESCommonUrlSafeUtil.getUserIdDesUrlSafe("88"));
+        System.out.println("aaa0:" + getBirthday("412724198711195435"));
+        System.out.println("aaa01:" + isEqualMonth(getBirthday("412724198701195435")));
+        System.out.println("aaa1:" + UUID.randomUUID().toString().replaceAll("-", ""));
+        System.out.println("aaa2:" + AESCommonUrlSafeUtil.getUserIdDesUrlSafe("88"));
 
         String s2 = "1";
-        System.out.println(s==s2);
+        System.out.println(s == s2);
 
-        if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+        if (QI_YAO_HUI_2_CARD_ALL.contains("a")) {
             System.out.println("a111111");
-        }else if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+        } else if (QI_YAO_HUI_2_CARD_ALL.contains("a")) {
             System.out.println("a222");
         }
 
-        if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+        if (QI_YAO_HUI_2_CARD_ALL.contains("a")) {
             System.out.println("a111111");
-        }else if(QI_YAO_HUI_2_CARD_ALL.contains("a")){
+        } else if (QI_YAO_HUI_2_CARD_ALL.contains("a")) {
             System.out.println("a222");
         }
-
-
-
-
-
 
 
         String s3 = new String("1") + new String("1");
         s3.intern();
         String s4 = "11";
-        System.out.println(s3==s4);
+        System.out.println(s3 == s4);
 
         System.out.println("\n\n");
         System.out.println("\n\n\n开始");
-        Byte a=Byte.parseByte("2");
-        System.out.println(""+a);
+        Byte a = Byte.parseByte("2");
+        System.out.println("" + a);
         System.out.println("SHARED_UNIT:" + (1 << 16));
         Integer t = Integer.valueOf("10000000000000000", 2);
         System.out.println("SHARED_UNIT2 :" + t);
-        System.out.println("SHARED_UNIT65535 :" +5);
+        System.out.println("SHARED_UNIT65535 :" + 5);
         System.out.println("SHARED_UNIT2 :" + (1 & 65535));
         System.out.println("SHARED_UNIT2 :" + (0 & 65535));
         System.out.println("SHARED_UNIT2 :" + (3 & 65535));
-        System.out.println("SHARED_UNIT3 :" + (1 >>>16));
-        System.out.println("SHARED_UNIT4 0:" + (0>>>16));
-        System.out.println("SHARED_UNIT4 1:" + (1>>>16));
-        System.out.println("SHARED_UNIT4 2:" + (2>>>16));
-        binaryToDecimal ( 65536);
-        binaryToDecimal ( 65535);
+        System.out.println("SHARED_UNIT3 :" + (1 >>> 16));
+        System.out.println("SHARED_UNIT4 0:" + (0 >>> 16));
+        System.out.println("SHARED_UNIT4 1:" + (1 >>> 16));
+        System.out.println("SHARED_UNIT4 2:" + (2 >>> 16));
+        binaryToDecimal(65536);
+        binaryToDecimal(65535);
     }
+
+
+    public static String getBirthday(String certificateNo) {
+        String birthday = null;
+        try {
+            if(certificateNo==null){
+                return birthday;
+            }
+
+            if (certificateNo.length() == 15) {
+                birthday = "19" + certificateNo.substring(6, 8) + "-" + certificateNo.substring(8, 10) + "-"
+                        + certificateNo.substring(10, 12);
+            } else if (certificateNo.length() == 18) {
+                birthday = certificateNo.substring(6, 10) + "-" + certificateNo.substring(10, 12) + "-"
+                        + certificateNo.substring(12, 14);
+            }
+        } catch (Exception e) {
+
+        }
+        return birthday;
+    }
+
+    public static boolean isEqualMonth(String birthday) {
+        try {
+            if (birthday == null) {
+                return false;
+            }
+            LocalDate userBirthday = LocalDate.parse(birthday);
+            return LocalDate.now().getMonth().equals(userBirthday.getMonth());
+        } catch (Exception e) {
+
+        }
+        return false;
+    }
+
 
     public static void binaryToDecimal(int n) {
         String result = Integer.toBinaryString(n);
 
-             System.out.println(result);
+        System.out.println(result);
     }
 
     public static void t() {

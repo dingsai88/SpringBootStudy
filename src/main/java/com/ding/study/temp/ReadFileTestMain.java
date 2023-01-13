@@ -17,7 +17,7 @@ public class ReadFileTestMain {
 
     public static void main(String[] args) throws Exception {
 
-        toArrayByFileReader1("C:\\Users\\Administrator\\Desktop\\test.txt");
+        toArrayByFileReader1("D:\\DingSai\\data\\aa.txt");
 
     }
 
@@ -34,7 +34,9 @@ public class ReadFileTestMain {
             // 按行读取字符串
             while ((str = bf.readLine()) != null) {
                // System.out.println(str+"   解密后:"+ AESUtil.aesDecrypt(URLDecoder.decode(str, "UTF-8"), "DmhzsbcNSDingSaizaMDRz5EJcZPQ=="));
-                System.out.println(AESUtil.aesDecrypt(URLDecoder.decode(str, "UTF-8"), "123456"));
+                System.out.println(""+str);
+
+              //  System.out.println(AESUtil.aesDecrypt(URLDecoder.decode(str, "UTF-8"), "123456"));
           /*           String[] array = str.split("\\s+");
                 for (String s : array) {
                     System.out.println("输出:"+s+";");

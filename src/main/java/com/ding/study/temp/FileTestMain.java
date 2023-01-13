@@ -1,6 +1,7 @@
 package com.ding.study.temp;
 
 import com.ding.study.util.JsonUtils;
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,16 +28,19 @@ public class FileTestMain {
         FileInputStream inputStream = null;
         Scanner sc = null;
         try {
-            inputStream = new FileInputStream("D:\\xxx.txt");
+            inputStream = new FileInputStream("D:\\DingSai\\data\\aa.txt");
             sc = new Scanner(inputStream, "UTF-8");
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
-
+                if(Strings.isNullOrEmpty(line)){
+                    continue;
+                }
+                System.out.println("a"+line);
                 FileStatusInfo fileStatusInfo = JsonUtils.convertJsonStringToObj(line, FileStatusInfo.class);
                 List<CreateGenerateGuaranteeBean> cggList = new Gson().fromJson(fileStatusInfo.getFileData(), new TypeToken<List<CreateGenerateGuaranteeBean>>() {
                 }.getType());
 
-                File file = new File("D:\\xxx\\data.txt");
+                File file = new File("D:\\DingSai\\data\\bb.txt");
                 FileOutputStream fos = null;
                 if (!file.exists()) {
                     file.createNewFile();//如果文件不存在，就创建该文件
