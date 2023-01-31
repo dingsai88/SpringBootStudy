@@ -25,10 +25,10 @@ import java.util.concurrent.TimeUnit;
  *
  *
  *
- * 下边走
+ * 下边走 :poll 移除并返回队列头部的元素 ,队列空返回null
  * workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS)
  *
- * 等于fasle时
+ * 等于fasle时 take 移除并返回队列头部的元素 ,队列空阻塞
  * 下边走
  * workQueue.take();
  *
