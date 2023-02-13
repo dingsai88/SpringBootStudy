@@ -1944,10 +1944,53 @@ POST scrm-user-trace/_doc
 
 
 
+------------------------------------------------------------------------------------------------------
+
+
+查看索引
+GET /_cat/indices?v
+
+查看索引字段
+GET xxx_data_20230211/_mapping
+
+
+
+/usr/bin/curl http://xxxx:9200/_cluster/health
+/usr/bin/curl http://xxxx:9200/_cat/indices?v
 
 
 
 
+
+索引 返回值 最大行等查询
+
+GET xxx_data_20230211/_settings
+
+
+
+ 查询节点信息
+
+GET /_cat/nodes?v&h=http,version,jdk,disk.total,disk.used,disk.avail,disk.used_percent,heap.current,heap.percent,heap.max,ram.current,ram.percent,ram.max,master
+
+
+GET /_cat/nodes?v
+
+
+
+
+POST /_sql?format=txt
+{
+"query": "select user_id ,birthdaygift_xhk01,chongciji_duihuan,supergift_xhk01  from yxcf_import_user where  user_id='1026785605'"
+}
+
+POST /_sql?format=txt
+{
+"query": "select *  from xxx_tag_data_20230211 where yxh_regflag=0 limit 11"
+}
+
+/usr/bin/curl  xxx:9200/_sql?format=txt -X POST  -H 'Content-Type:application/json'   -d '{"query":"select phone from xxxxa20210429 "}'  
+
+ 
 
 
 

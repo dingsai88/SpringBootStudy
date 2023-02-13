@@ -1,5 +1,7 @@
 package com.ding.study.nowcoder.a7Array_findKth;
 
+import java.util.Arrays;
+
 /**
  * 题目描述
  * 有一个整数数组，请你根据快速排序的思路，找出数组中第K大的数。
@@ -11,7 +13,7 @@ public class SolutionErrorPao {
     public static void main(String[] args) {
         int[] i = {1, 3, 5, 2, 2};
         System.out.println(new SolutionErrorPao().findKth(i,5, 3));
-
+        Arrays.sort(i);
     }
 
     public int findKth(int[] a, int n, int K) {
