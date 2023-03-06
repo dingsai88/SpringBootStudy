@@ -157,7 +157,7 @@ public class AESUtil {
 		try {
 			return Strings.isNullOrEmpty(encryptStr) ? null : aesDecryptByBytes(base64Decode(encryptStr), decryptKey);
 		}catch (Exception e){
-			e.printStackTrace();
+
 		}
 		return null;
 	}
