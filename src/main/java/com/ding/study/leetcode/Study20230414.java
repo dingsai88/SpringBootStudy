@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
+/**https://leetcode.cn/problems/valid-parentheses/submissions/
+ *
+ * 汉鹏给
  * @author daniel
  * @date 2023/4/14 11:14
  **/
@@ -22,6 +24,12 @@ public class Study20230414 {
     private char[] left = {'{', '(', '['};
     private char[] right = {'}', ')', ']'};
 
+    /**
+     * 判断是否在数组中
+     * @param arr
+     * @param c
+     * @return
+     */
     private int charContains(char[] arr, char c) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == c) {
@@ -31,6 +39,11 @@ public class Study20230414 {
         return -1;
     }
 
+    /**
+     * 判断是否是匹配的括号集合
+     * @param s
+     * @return
+     */
     public boolean isValid(String s) {
         char[] arr = s.toCharArray();
         List<Character> list = new ArrayList<>();
