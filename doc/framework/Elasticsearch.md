@@ -83,6 +83,10 @@ https://www.elastic.co/cn/downloads/past-releases/
 https://www.elastic.co/cn/downloads/past-releases#elasticsearch
 https://www.elastic.co/cn/downloads/past-releases/elasticsearch-6-8-14
 
+https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.11.2-windows-x86_64.zip
+
+
+
 https://www.elastic.co/cn/downloads/past-releases/kibana-6-8-14
 JDK支持
 https://www.elastic.co/cn/support/matrix#matrix_jvm
@@ -116,6 +120,7 @@ xpack.ml.enabled: false
 https://www.elastic.co/cn/downloads/past-releases/kibana-7-11-2
 https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-linux-x86_64.tar.gz
 
+https://artifacts.elastic.co/downloads/kibana/kibana-7.11.2-windows-x86_64.zip
 
 F:\DingSaiElastic\kibana\kibana-6.8.14-windows-x86_64\bin
 
@@ -196,6 +201,24 @@ set JAVA_TYPE=JAVA_HOME
 
 
 http://localhost:9200
+
+只能本机访问
+config\elasticsearch.yml
+
+
+node.name: node-1
+network.host: 0.0.0.0
+cluster.initial_master_nodes: ["node-1"]
+
+
+
+
+
+
+
+
+
+
 
 
 Kibana:
