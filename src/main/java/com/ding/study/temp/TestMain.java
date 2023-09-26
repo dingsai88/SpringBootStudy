@@ -1,8 +1,5 @@
 package com.ding.study.temp;
 
-import com.ding.study.leetcode.Study1;
-import com.sun.corba.se.impl.orbutil.StackImpl;
-
 /**
  * @author daniel 2018-8-17 0017.
  */

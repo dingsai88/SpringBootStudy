@@ -1,3 +1,4 @@
+/*
 package com.ding.study.util;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.io.*;
 
+*/
 /**pdf加水印  pdf下载
  * @author daniel
  * @date 2022/11/21 19:20
- **/
+ **//*
+
 @Slf4j
 public class WaterMarkUtil {
     public static void main(String[] args) {
@@ -97,12 +100,14 @@ public class WaterMarkUtil {
         return null;
     }
 
-    /**
+    */
+/**
      * 将MultipartFile转换为File
      *
      * @param multiFile
      * @return
-     */
+     *//*
+
     public static File multipartFileToFile(MultipartFile multiFile) {
         // 获取文件名
         String fileName = multiFile.getOriginalFilename();
@@ -120,7 +125,8 @@ public class WaterMarkUtil {
         return null;
     }
 
-    /**
+    */
+/**
      * @return void
      * @Author czc
      * @Description 为pdf文件添加水印
@@ -132,7 +138,8 @@ public class WaterMarkUtil {
      * color        字体颜色{r,g,b}
      * rowSpace     行间距，大中小分别对应150/100/50
      * colSpace     列间距，大中小分别对应150/100/50
-     **/
+     **//*
+
 
     public static File pdfWaterMark(File tempFile, String waterMark, float fontSize, int[] color, int rowSpace, int colSpace) throws Exception {
         PDDocument document = PDDocument.load(tempFile);
@@ -185,3 +192,4 @@ public class WaterMarkUtil {
 
 
 }
+*/

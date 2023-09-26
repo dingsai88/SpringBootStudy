@@ -1,12 +1,15 @@
+/*
 package com.ding.study.spring.asm;
 
 import jdk.internal.org.objectweb.asm.*;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.ASM4;
 
+*/
 /**
  * @author daniel 2021-4-2 0002.
- */
+ *//*
+
 public class ClassPrinter extends ClassVisitor {
     public ClassPrinter() {
         super(ASM4);
@@ -70,3 +73,4 @@ public class ClassPrinter extends ClassVisitor {
         System.out.println("}");
     }
 }
+*/

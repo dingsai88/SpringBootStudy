@@ -1,13 +1,16 @@
+/*
 package com.ding.study.jvm;
 
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
 
+*/
 /**直接内存direct
  * VM args:-Xmx2M -XX:MaxDirectMemorySize=1M
  * @author daniel 2018-1-8 0008.
- */
+ *//*
+
 public class Study7DirectMemoryOOM {
 
     private static final int _1BM=1024*1024;
@@ -23,3 +26,4 @@ public class Study7DirectMemoryOOM {
 
     }
 }
+*/
