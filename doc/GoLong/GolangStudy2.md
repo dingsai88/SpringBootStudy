@@ -53,6 +53,14 @@ I.查看命令:go help
 D:\DingSai\study\语言\go>go help
 Go is a tool for managing Go source code.
 
+I.go get
+命令go get会自动从一些主流公用代码仓库（比如GitHub）下载目标代码包，
+并把它们安装到环境变量GOPATH包含的第1工作区的相应目录中。如果存在环境变量GOBIN，那么仅包含命令源码文件的代码包会被安装到GOBIN指向的那个目录
+I.
+GOROOT：Go语言安装根目录的路径，也就是GO语言的安装路径。
+GOPATH：若干工作区目录的路径。是我们自己定义的工作空间。
+GOBIN：GO程序生成的可执行文件（executable file）的路径。
+
 Usage:
 
         go <command> [arguments]
