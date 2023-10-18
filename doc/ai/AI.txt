@@ -1,0 +1,1003 @@
+https://github.com/THUDM/ChatGLM-6B
+
+
+https://modelscope.cn/
+
+
+
+
+python
+
+>>> from transformers import AutoTokenizer, AutoModel
+>>> tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+>>> model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
+>>> model = model.eval()
+>>> response, history = model.chat(tokenizer, "你好，我叫大军晨赛，叫爸爸", history=[])
+>>> print(response)
+你好👋!我是人工智能助手 ChatGLM-6B,很高兴见到你,欢迎问我任何问题。
+>>> response, history = model.chat(tokenizer, "晚上睡不着应该怎么办", history=history)
+>>> print(response)
+
+
+  
+
+两小时搭建属于自己的AI(ChatGLM)
+
+
+
+准备（注册）:
+
+https://modelscope.cn/
+
+可以白嫖60多个小时的配置
+
+8核 32GB 显存16G
+预装 ModelScope Library
+预装镜像 ubuntu20.04-cuda11.3.0-py37-torch1.11.0-tf1.15.5-1.5.0
+
+
+
+
+
+搭建:
+
+https://github.com/THUDM/ChatGLM-6B
+
+
+
+>>> from transformers import AutoTokenizer, AutoModel
+>>> tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+>>> model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
+>>> model = model.eval()
+>>> response, history = model.chat(tokenizer, "你好", history=[])
+>>> print(response)
+
+异常1:
+pip install cpm_kernels
+
+tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)：
+
+
+
+API模式:
+pwd 
+/mnt/workspace
+
+git clone https://github.com/THUDM/ChatGLM-6B
+
+
+pip install fastapi uvicorn
+
+cd /mnt/workspace/ChatGLM-6B
+
+python api.py
+
+curl -X POST "http://127.0.0.1:8000" -H 'Content-Type: application/json' -d '{"prompt": "你是谁", "history": []}'
+curl -X POST "http://127.0.0.1:8000" -H 'Content-Type: application/json' -d '{"prompt": "赛赛是谁", "history": []}'
+curl -X POST "http://127.0.0.1:8000" -H 'Content-Type: application/json' -d '{"prompt": "晨晨是谁", "history": []}'
+
+
+response, history = model.chat(tokenizer, "你好给我写本书", history=[])
+
+
+echo "evaluate" | sudo dd of=/mnt/workspace/ChatGLM-6B/ptuning/evaluate.sh
+
+
+
+I.微调
+cd /mnt/workspace/ChatGLM-6B/ptuning
+
+
+II.准备训练的数据:下载地址会变
+从 Google Drive 或者 Tsinghua Cloud 下载处理好的 ADGEN 数据集，将解压后的 AdvertiseGen 目录放到本目录下。
+https://github.com/THUDM/ChatGLM-6B/blob/main/ptuning/README.md
+https://cloud.tsinghua.edu.cn/f/b3f119a008264b1cabd1/?dl=1
+
+
+ 
+curl   -O https://cloud.tsinghua.edu.cn/seafhttp/files/8e027752-3322-43d7-9e22-13c9a78a233e/AdvertiseGen.tar.gz
+
+tar -zxvf AdvertiseGen.tar.gz
+
+cd /mnt/workspace/
+上传自己的训练数据
+
+cp   /mnt/workspace/dev.json /mnt/workspace/ChatGLM-6B/ptuning/AdvertiseGen/dev.json
+cp   /mnt/workspace/train.json /mnt/workspace/ChatGLM-6B/ptuning/AdvertiseGen/train.json
+dev.json  train.json
+
+安装依赖:
+pip install rouge_chinese nltk jieba datasets
+
+
+
+cd /mnt/workspace/ChatGLM-6B/ptuning
+bash train.sh
+
+异常2：
+
+root@eais-bjtryzm9xivr28qvprxr-7c8cfdfd44-2j4rx:/mnt/workspace/ChatGLM-6B/ptuning# bash train.sh
+Traceback (most recent call last):
+  File "main.py", line 29, in <module>
+    from rouge_chinese import Rouge
+ModuleNotFoundError: No module named 'rouge_chinese'
+
+ 安装依赖解决 ： pip install rouge_chinese nltk jieba datasets
+
+异常3: 
+ RuntimeError: CUDA Error: no kernel image is available for execution on the device
+“调整 quantization_bit 来被原始模型的量化等级，不加此选项则为 FP16 精度加载”
+
+bash train.sh
+cp   train.sh train_bak.sh
+
+vi train.sh
+删除   --quantization_bit 4
+
+
+
+
+
+
+
+
+
+
+PRE_SEQ_LEN  : soft prompt 长度
+LR :学习率
+quantization_bit 
+THUDM/chatglm-6b
+
+------------------------------
+
+
+PRE_SEQ_LEN=128
+LR=2e-2
+
+CUDA_VISIBLE_DEVICES=0 python3 main.py \
+    --do_train \
+    --train_file AdvertiseGen/train.json \
+    --validation_file AdvertiseGen/dev.json \
+    --prompt_column content \
+    --response_column summary \
+    --overwrite_cache \
+    --model_name_or_path THUDM/chatglm-6b \
+    --output_dir output/adgen-chatglm-6b-pt-$PRE_SEQ_LEN-$LR \
+    --overwrite_output_dir \
+    --max_source_length 64 \
+    --max_target_length 64 \
+    --per_device_train_batch_size 1 \
+    --per_device_eval_batch_size 1 \
+    --gradient_accumulation_steps 16 \
+    --predict_with_generate \
+    --max_steps 3000 \
+    --logging_steps 10 \
+    --save_steps 1000 \
+    --learning_rate $LR \
+    --pre_seq_len $PRE_SEQ_LEN \
+    --quantization_bit 4
+
+---------------------------------------
+
+GPU使用
+
+watch -n 0.5 nvidia-smi
+
+
+
+
+bash train.sh
+cp   train.sh train_bak.sh
+
+vi train.sh
+删除   --quantization_bit 4
+
+
+约等于30分钟一条记录：
+
+
+300 8
+120 5
+
+显卡GPU配置 Tesla P100：16G
+Every 0.5s: nvidia-smi                                                                                                                                    eais-bjtryzm9xivr28qvprxr-7c8cfdfd44-2j4rx: Mon May 15 12:05:33 2023
+
+Mon May 15 12:05:33 2023
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 470.57.02    Driver Version: 470.57.02    CUDA Version: 11.4     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  Tesla P100-PCIE...  On   | 00000000:00:08.0 Off |                  Off |
+| N/A   51C    P0   140W / 250W |  13843MiB / 16280MiB |     96%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
+
+ 
+
+
+cp   evaluate.sh evaluate_bak.sh
+
+vi evaluate.sh 
+
+删除      --quantization_bit 4
+
+
+
+PRE_SEQ_LEN=128
+CHECKPOINT=adgen-chatglm-6b-pt-128-2e-2
+STEP=3000
+
+CUDA_VISIBLE_DEVICES=0 python3 main.py \
+    --do_predict \
+    --validation_file AdvertiseGen/dev.json \
+    --test_file AdvertiseGen/dev.json \
+    --overwrite_cache \
+    --prompt_column content \
+    --response_column summary \
+    --model_name_or_path THUDM/chatglm-6b \
+    --ptuning_checkpoint ./output/$CHECKPOINT/checkpoint-$STEP \
+    --output_dir ./output/$CHECKPOINT \
+    --overwrite_output_dir \
+    --max_source_length 64 \
+    --max_target_length 64 \
+    --per_device_eval_batch_size 1 \
+    --predict_with_generate \
+    --pre_seq_len $PRE_SEQ_LEN \
+    --quantization_bit 4
+
+
+--model_name_or_path THUDM/chatglm-6b
+--ptuning_checkpoint $CHECKPOINT_PATH
+
+/mnt/workspace/ChatGLM-6B/ptuning
+
+bash evaluate.sh
+
+
+cp   api.py api_bak.py
+tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+
+
+tokenizer = AutoTokenizer.from_pretrained("/mnt/workspace/ChatGLM-6B", trust_remote_code=True)
+
+
+config = AutoConfig.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True, pre_seq_len=128)
+model = AutoModel.from_pretrained("THUDM/chatglm-6b", config=config, trust_remote_code=True)
+prefix_state_dict = torch.load(os.path.join(CHECKPOINT_PATH, "pytorch_model.bin"))
+new_prefix_state_dict = {}
+for k, v in prefix_state_dict.items():
+    if k.startswith("transformer.prefix_encoder."):
+        new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
+model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
+
+
+model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+
+此处需要修改
+
+model = model.quantize(128)
+model = model.half().cuda()
+model.transformer.prefix_encoder.float()
+model = model.eval()
+
+response, history = model.chat(tokenizer, "你是谁", history=[])
+
+print(response)
+
+
+cp   web_demo.py web_demo_bak.py
+
+/root/.cache/huggingface/modules/transformers_modules/THUDM/chatglm-6b
+
+
+
+du -h –max-depth=1 *
+
+
+
+I.
+
+https://github.com/xusenlinzy/api-for-open-llm
+
+
+
+
+
+curl "http://localhost/console/api/installed-apps/1014949b-123d-4b43-9aee-030a46f67308/chat-messages" ^
+
+
+
+
+
+curl "http://localhost/console/api/installed-apps/1014949b-123d-4b43-9aee-030a46f67308/chat-messages" ^
+
+
+
+
+
+prompt =f"已知信息:\n宜信晨晨最帅\n根据已知信息回答问题:\n宜信谁最帅"
+
+
+prompt =f"已知信息:\n宜信产品有，类固收、基金、保险等\n根据已知信息回答问题:\n宜信产品都有什么"
+
+
+response, history = model.chat(tokenizer, prompt, history=[])
+
+
+
+>>> from transformers import AutoTokenizer, AutoModel
+>>> tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True)
+>>> model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
+>>> model = model.eval()
+>>> response, history = model.chat(tokenizer, "你好", history=[])
+>>> print(response)
+你好👋!我是人工智能助手 ChatGLM-6B,很高兴见到你,欢迎问我任何问题。
+>>> response, history = model.chat(tokenizer, "晚上睡不着应该怎么办", history=history)
+>>> print(response)
+晚上睡不着可能会让你感到焦虑或不舒服,但以下是一些可以帮助你入睡的方法:
+ 
+1. 制定规律的睡眠时间表:保持规律的睡眠时间表可以帮助你建立健康的睡眠习惯,使你更容易入睡。尽量在每天的相同时间上床,并在同一时间起床。
+2. 创造一个舒适的睡眠环境:确保睡眠环境舒适,安静,黑暗且温度适宜。可以使用舒适的床上用品,并保持房间通风。
+3. 放松身心:在睡前做些放松的活动,例如泡个热水澡,听些轻柔的音乐,阅读一些有趣的书籍等,有助于缓解紧张和焦虑,使你更容易入睡。
+4. 避免饮用含有咖啡因的饮料:咖啡因是一种刺激性物质,会影响你的睡眠质量。尽量避免在睡前饮用含有咖啡因的饮料,例如咖啡,茶和可乐。
+5. 避免在床上做与睡眠无关的事情:在床上做些与睡眠无关的事情,例如看电影,玩游戏或工作等,可能会干扰你的睡眠。
+6. 尝试呼吸技巧:深呼吸是一种放松技巧,可以帮助你缓解紧张和焦虑,使你更容易入睡。试着慢慢吸气,保持几秒钟,然后缓慢呼气。
+ 
+如果这些方法无法帮助你入睡,你可以考虑咨询医生或睡眠专家,寻求进一步的建议。
+
+
+
+
+
+
+
+修改脚本web_demo.py
+#model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().cuda()
+model = AutoModel.from_pretrained("THUDM/chatglm-6b", trust_remote_code=True).half().quantize(8).cuda()
+
+
+I.GPT的全称，
+是Generative生成式 Pre-Trained预训练 Transformer转换器（生成式预训练转换器 Transformer模型）
+
+是一种基于互联网的、可用数据来训练的、文本生成的深度学习模型
+
+
+GPT-3 175B模型
+billion的缩写,1B=10亿
+
+
+1750亿参数
+
+
+II.向量（有大小有方向）
+
+
+1.标量 (Scalar)标量是一个单一的数值，它表示某种量的大小。它没有方向，只有大小。
+例如，温度、质量和距离都可以用标量表示
+
+2.向量 (Vector) : 向量是一组有序的数值，表示某种量的大小和方向
+
+3.张量 (Tensor) :张量是标量和向量的泛化它是一个多维数组，可以表示多种复杂的数据结构。
+张量的阶表示张量的维数。
+例如，零阶张量就是标量，一阶张量就是向量。二阶张量可以表示为一个矩阵。
+
+
+
+
+II.词向量(词和词的距离)
+词向量就是词的向量化，赋子一个(词/字)一系列的取值，每个值代表了在这个维度/方向上的取值/分。
+
+
+
+狗 >>>  [1名词，0.1形容词....., 0植物,-1猫]
+
+你太狗了(形容词)
+
+GTP-3 175B版本模型中，词向量长度为12288
+
+一个词，在12288维度的意思
+
+
+为什么要词向量？让语言文字“可计算”
+
+
+II.token 意思是子词
+token 意思是子词， 比单词小一圈，约等于0.75个单词
+
+
+token表数量:50257
+
+好处：
+1.应对新词罕见字
+2.共享单词间的相同语义结构
+3.多语言
+
+
+
+II.最基本的计算过程是
+预测下一个字，如此迭代，直至输出完成
+
+
+
+
+II.transformer 变压器转换器
+
+
+
+
+输入文本>>编码器部分(编码器1、编码器2)>>输入文本的语义向量>>解码器部分(解码器1、解码器2)
+
+
+II.超参数
+超参数是事先设定的
+参数是训练过程中自动学习到的
+
+1.词汇表大小/token数量
+50257
+
+2.词向量大小
+12288
+
+3.输入序列的最大长度(token)
+2048
+
+4.位置向量大小
+12288
+和词向量不一样，在0-2047个输入序列，有2048个位置，每个位置有12288个含义取值
+
+5.解码器层数:
+编码器、解码器都有多层。
+96层
+
+6.解码器层/隐藏层大小
+12288
+
+7.自主力头数
+在每一层解码器捕捉注意力的头数
+96个
+
+
+8.注意力维度数
+12288/96 =128
+解码器层/自主力头数=注意力维度数
+
+
+
+
+II.参数
+
+GPT模型中的参数大多表示为一个或多个权重矩阵。
+
+参数很大程度上决定了一个模型，模型的不同就表现在参数的不同上。
+
+
+----------------------------------------------------------------
+第四节详细
+
+
+I.详细解释
+
+II.总体结构
+1.输入文本序列
+2.输入处理(预处理、[分词、分token]、向量嵌入/向量化)
+3.解码器栈(多层(96层、深度神经网络、与原始transformer解码器有所变化))
+4.输出处理。(最终任务处理、迭代循环)
+5.输出文本序列
+
+
+
+
+输入文本序列>输入处理>解码器栈>输出处理>输出文本序列
+
+
+II.输入处理
+1.分词/token
+2.向量嵌入(矩阵相加)
+3.词向量+位置向量
+
+例:我是一个
+
+分词、形成token序列
+token:"我" 、 "是"  、 "一个"
+
+
+查找token对应的词向量、位置对应的位置向量，“嵌入”到序列中
+
+词向量矩阵:3*12288
+我:词向量12288
+是:词向量12288
+一个:词向量12288
+
+位置向量矩阵: 3*12288
+我:位置向量12288
+是:位置向量12288
+一个:位置向量12288
+
+
+"词向量+位置向量" (矩阵加法) 形成输入部分的： 数据矩阵/张量
+
+矩阵相加：行列一致才能相加 两个3*12288(线性代数)
+
+
+矩阵相乘矩阵乘法：
+1.A矩阵乘B矩阵条件：A的列数  =B行数
+2.M行N列的矩阵 只能和 N行K列的矩阵相乘。
+3.不符合交换律:A矩阵*B矩阵，不代表B*A也可以
+4.A的第一行(竖过来)与B的第一列一对一相乘，然后相加，形成第一个元素。
+5.A(3,2)*B(2,3) = C(2,2)
+
+
+
+
+
+
+II.解码器栈
+
+解码器栈:(解码器1>>解码器2>>解码器3)
+
+
+III.自注意力子层
+自注意力头1、自注意力头2、自注意力头N:(96个)   注意力的计算和处理
+多头向量拼接       多头注意力输出拼在一起
+全连接线性层       线性转换(矩阵相乘)  y=Wx+B
+激活函数           引入非线性化； 激活函数(GRLU、RELU)
+残差连接           输出+输入， 避免信息丢失(拿原始信息+计算后的信息)
+归一化层           避免值过大过小，提高稳定性和性能。均值为0，标准差为1。大部分值落在-1到1之间
+
+III.前馈神经网络子层
+全连接扩张线性层
+激活函数
+全连接收缩线性层
+残差连接
+归一化层
+
+-----------------------
+
+标准的transformer结构
+I.解码器N
+II.自注意力层
+II.编码器-解码器注意力层
+II.前馈神经网络层
+
+GPT没有编码器，所以没这一层
+
+
+
+------------------------
+
+1.注意力机制：输入序列和输出序列之间的注意力
+
+2.自注意力机制：输入序列自身
+
+
+
+
+
+------------------------
+
+多头自回归自注意力机制
+
+
+
+自注意力头N
+Q矩阵计算  K矩阵计算  V矩阵计算
+QK转置相乘/点积计算(矩阵相乘压缩维度)
+缩放
+掩码矩阵相乘
+softmax
+与V矩阵相乘
+
+
+1.注意力机制：输入序列和输出序列之间的注意力(输入和输出之间的关系)
+ AI 可以提高模型的性能和准确度，使其更好地完成各种任务。
+在处理输入数据时对不同部分进行加权，以便更集中地关注那些被认为最有意义或最相关的信息。
+类似于人类大脑对重要信息的选择性处理方式。
+图像识别中，注意力机制可以帮助模型更好地理解图片中哪些部分与目标相关
+语音识别中，注意力机制可以使模型更好地理解说话者说的是哪些单词
+
+
+2.自注意力机制:输入序列自身
+
+3.自回归/单向/因果：只能看到自己左边的字
+
+4.多头：分成多个头，分别取注意不同的语义表示
+
+
+GPT没有输出序列，只能关注输入序列，自己猜测输出序列
+
+
+
+I.输入序列的 q、k、v 矩阵计算
+
+输入:3*12288
+
+每个权重矩阵都有自己的12288*128的矩阵
+
+Q矩阵(问题矩阵):12288*128
+K矩阵(索引矩阵):12288*128
+V矩阵(答案矩阵):12288*128
+
+
+query:当前计算的字当成问题提给K矩阵
+key:是面对Q矩阵问题，答案索引的K矩阵
+value:答案的内容是V矩阵
+
+
+>Q问题矩阵(权重矩阵)  计算后，当成问题提给K索引矩阵，k索引矩阵计算后，计算V答案矩阵
+
+
+I.计算各词之间的注意力权重/距离
+
+I.统一做个除法，避免值过大
+词嵌入维度的平方根
+
+I.自回归处理，避免“剧透”影响
+
+I.概率化，形成真正的权重
+
+I.得到答案注意力最终结果
+
+
+
+每层输出一个 3 *128 的矩阵一共96层
+
+
+
+多头向量拼接:(上一步得到96个3*128的矩阵，本层进行连接得到3*12288矩阵)
+
+3*12288
+
+
+12288*12288
+
+
+---------------------
+
+
+前馈神经网络子层
+
+I.全连接扩张线性层
+I.激活函数
+I.全连接收缩线性层
+I.残差连接
+I.归一化层
+
+
+I.全连接扩张线性层
+语义标识拓展到更高纬度空间(扩张4倍)
+3*12288的输入矩阵
+乘以本层12288*4*12288
+得到3*(4*12288)
+
+
+
+
+I.激活函数
+I.全连接收缩线性层
+把扩了4倍的缩小
+
+上一步的结果：3*(4*12288)
+乘以本层(4*12288)*12288
+
+得到：3*12288
+学习到了更多，更高纬度的输入序列的语义表示
+
+
+I.残差连接
+
+I.归一化层
+
+根据自注意力子层和前馈神经网络子层
+
+得到
+和输入序列完全相关的
+捕获过深层语义的
+这样的一个语义表达
+
+---
+前馈 捕捉更深层的关系
+
+自注意 关注 token之间的关系
+
+
+每一层有96个头，一共有96层
+
+
+
+
+20230720
+
+第四节详细
+
+
+全连接线性层 线性转化(矩阵相乘) y=Wx+B
+
+
+
+
+
+对于输入向量 x 和权重矩阵 W，全连接线性层的输出 y 可以表示为 y = Wx + b，其中 b 是偏置向量。
+
+
+
+
+捕捉，输入序列之间相互关系
+
+
+
+
+更深层的，
+
+
+I.输出处理部分
+
+线性层
+Softmax
+采样策略处理
+迭代输出
+
+
+II.线性层
+计算输出概率值
+
+输入 3*12288
+
+权重参数:12288*50257
+12288(词向量大小)*50257(token数量、词汇表大小)
+
+计算输出概率值
+
+3*12288  * 12288*50257
+
+得到：3*50257
+
+
+“我是一个”
+
+"我"后边出现那个词的概率最大。
+"我是"后边出现那个词的概率最大。
+
+
+II.Softmax
+调整概率权重，总和为1
+
+
+
+II.采样策略处理
+确定下一个字
+"几个字概览都一样时，选那个"
+
+随机数等方法确定下一个字
+
+
+II.迭代输出
+迭代处理
+
+放入解码器尾端，再进行下一个一部分处理，输出下下个字。
+
+
+
+
+I.从输入(词向量矩阵)到输出(概率权重矩阵)
+
+“我是一个”
+
+
+
+
+20230720
+
+第四节详细 40：00
+
+
+
+I.输入处理
+
+词向量矩阵：12288
+词位置向量矩阵： 12288
+相加
+
+
+
+
+I.解码器96层：
+
+II。自注意力子层：
+III。自注意力头96个
+IIII。qkv矩阵 问题索引答案矩阵三个  128
+III.多头向量拼接96层拼接
+III.全连接(降维)
+III.激活函数：引入非线性化
+III.残差链接：避免和输入有较大出入
+III.Softmax归一化层(0,1)(避免值过大过小)
+
+
+
+II.前馈神经网络层
+III.全连接 拓张 线性层 升维 12288*12288*4
+III.激活函数：引入非线性化
+III.全连接 搜索 线性层 降维 (4*12288)*12288
+III.残差链接：避免和输入有较大出入
+III.softmax归一化(0,1)(避免值过大过小)
+
+
+I.输出处理
+II.线性层
+50257 词向量矩阵》》概率权重矩阵
+II.归一化处理(避免值过大过小)
+II.采样策略  ：确定下一个字
+II.迭代输出： 把下一个字放入输入序列
+
+
+
+
+
+20230802第五部分
+
+
+算法过程是公开的
+
+模型性能，答案是否准确取决于参数是否正确。
+
+
+训练过程-从0到1
+
+
+1.模型的初始参数为随机取得
+超参数是人为设置的。
+参数是随机取得。
+
+
+
+I.第五部分 训练过程
+
+1.模型的初始参数为随机取得
+
+2.计算模型输出与真实数据的差距(损失值和梯度)
+
+3.根据损失值，反向逐层调整权重参数
+
+4.推理是训练的前半部分
+
+5.相比推理，训练所需的计算资源更大
+
+
+
+II.损失值和梯度如何计算
+
+预测结果(矩阵)
+
+目标、one-hot编码(矩阵)
+
+
+
+1.损失值loss:用于衡量模型的性能
+交叉熵损失(cross-entropy loss):
+
+预测结果取对数>与目标矩阵逐位置相乘>求和
+>取反数>除序列长度>训练集求和取平均数>平均损失值
+
+2.起始梯度：参数调整反向传播的起点，表现为一个矩阵、每个参数应该调整的值(加减、正负)
+
+目标矩阵减去预测结果矩阵，就是该训练过程的起始梯度。
+
+
+
+II.梯度如何反向传播-链式法则
+
+链式法则chain rule是微积分中的一种基本规则，用于计算负荷函数的导数。
+在神经网络和深度学习中，链式法则经常用于求解损失函数关于模型参数的梯度，
+从而实现梯度下降和发现传播算法。
+
+
+起始地图来自预测结果与目标的差值矩阵，后续来着下一层的输入矩阵梯度。
+
+激活函数、softmax、归一化操作等的梯度计算，与具体操作函数相关。
+
+
+偏执向量梯度等于逐列求和输出矩阵梯度。
+
+参数矩阵梯度等于输入矩阵转置乘输出矩阵梯度
+
+输入矩阵梯度等于输出矩阵梯度乘参数矩阵的转置
+
+
+
+
+II.参数如何调整--学习率
+
+参数更新算法有很多、例如随机梯度下降、小批量梯度下降等，GPT用的是Adam算法 (Adaptive moment estimation)
+
+
+最基本的更新算法就是将参数矩阵减去梯度矩阵，形成新的参数矩阵。偏执向量也一样，减去梯度向量。
+
+
+
+学习率是一个超参数，一般会将学习率与梯度矩阵相乘，再去
+与参数矩阵、偏执向量相减，减小参数调整的步长，避免过拟合。
+
+
+
+Adam算法会更复杂，会计算梯度的均值和方差，同时会动态的调整学习率，从而使模型更快的
+收敛和提高稳定性。
+
+
+
+
+II.最终训练过程--训练集(批次)
+
+训练时，每一个输入序列都会取最大的序列长度，比如GPT3 175B 是2048个 token
+
+多个训练序列会合在一起，形成一个训练集或训练批次，GPT3 175的批次大小是3.2M token
+
+学习率是一个超参数，一般会将学习率与梯度矩阵相乘，再去与参数矩阵、偏执向量相减，
+减小参数调整的步长，避免过拟合。GPT3 175B的初始学习率是 0.6*10-4
+
+
+每一个训练批次中，每一个输入序列会执行前向计算和反向传播过程，记录下各个
+参数矩阵的梯度。当所有的输入序列都执行完成后，会对每个序列形成的梯度进行
+求和，并除以序列数量，得到平均梯度值，然后进行一次统一的参数调整。
+
+
+
+
+II.总结  参数的全生命周期
+参数是核心，参数的规模，
+
+1.参数的产生--训练
+随机初始化
+多次迭代训练，最终逼近准确值
+
+2.参数的使用--推理
+大量的矩阵相乘
+
+3.参数的微调
+todo
+
+
+
+
+I.后续
+
+II.模型的微调过程
+出厂前 ： SFT、 RM  、PPO
+出厂后 ： 各种FT 、 embedding
+
+II.模型的ROL 、功耗
+为什么阿尔特曼说，大模型已经走到了尽头?
+模型的门槛和天花板
+
+II.prompt 、涌现、顿悟、激发
+
+II.跨模态模型
+
+II.深度神经网络与生物神经网络
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
