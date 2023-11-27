@@ -1,15 +1,18 @@
 package com.ding.study.test;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.ding.study.temp.ExcelDataVO;
+
+import com.ding.study.util.AESUtil;
 import com.ding.study.util.JsonUtils;
-import com.google.common.base.Strings;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
+import java.net.URLEncoder;
+
+import java.util.*;
 
 /**
  * 两个有序链表排序：
@@ -17,7 +20,25 @@ import java.util.List;
 @Slf4j
 public class TestMain {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws  Exception{
+
+
+
+        String str="{\n" +
+                "\t\"2023CX\": \"2023CX2xxxx\",\n" +
+                "\t\"forecastlnfo\": 333,\n" +
+                "\t\"istMaxSize\": 1000,\n" +
+                "\t\"previousMonthHideDay\": 21,\n" +
+                "\t\"listPageSize\": 1\n" +
+                "}";
+        JSONObject jsonObject = JSONObject.parseObject(str);
+
+
+        String yearMonthConf = jsonObject.getString("2023CX");
+
+        log.info("2023CX: {}", yearMonthConf);
+
+
         String userInputContent = "营销组:1234556789";
 
         ExcelDataVO [] arry=new ExcelDataVO[10];
