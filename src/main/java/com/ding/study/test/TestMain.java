@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 
 import java.util.*;
@@ -19,10 +21,31 @@ import java.util.*;
  */
 @Slf4j
 public class TestMain {
+    public static int isProtocolSupported(String domain, String protocol) {
+        try {
+            URL url = new URL(protocol + "://" + domain);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            // 如果返回的状态码为 101，则表示该域名支持指定的协议
+            return responseCode ;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // 发生异常时，表示该域名不支持指定的协议
+            return 0;
+        }
+    }
 
     public static void main(String args[]) throws  Exception{
 
+        int result=isProtocolSupported("sobotceshi.yixin.com","wss");
+        log.info("测试域名返回状态码 : {}",result);
+        result=isProtocolSupported("sobotceshi.yixin.com","wss");
+        log.info("生产域名返回状态码 : {}",result);
 
+        if(1!=2){
+            return;
+        }
 
         String str="{\n" +
                 "\t\"2023CX\": \"2023CX2xxxx\",\n" +
