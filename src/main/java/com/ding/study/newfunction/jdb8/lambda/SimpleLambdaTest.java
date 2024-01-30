@@ -42,6 +42,12 @@ public class SimpleLambdaTest {
         red.setWeight(20);
         list.add(red);
 
+        //只取一个字段
+        List<String> colorList = list.stream()
+                .map(s->s.getColor())
+                .collect(Collectors.toList());
+
+
         SimpleLambdaTest test = new SimpleLambdaTest();
         System.out.println("3.获取苹果颜色" + JsonUtils.convertObjToJsonString(test.getAppleByColor("red")));
 
