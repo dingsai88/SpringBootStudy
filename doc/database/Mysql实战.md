@@ -382,6 +382,7 @@ current read
 select k from t where id lock in share mode ;
 select k form t where id=1 for update;
 
+
 再往前异步，假设事务C不是马上提交，而是变成下面的事务C 会曾阳呢。
 
 事务C是不同是，更新后没有马上提交，在提交前，事务B的更新语句先发起来。
