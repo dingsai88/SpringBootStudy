@@ -1,8 +1,14 @@
 package com.ding.study.temp;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author daniel 2018-8-17 0017.
  */
+@Slf4j
 public class TestMain {
     public static void main1(String[] args) {
 
@@ -119,10 +125,7 @@ public class TestMain {
         return bean;
 
     }
-    public static void main(String[] args) {
-        System.out.println("2222222222222-sss.pdf");
-        System.out.println(getContractName("2222222222222"));
-    }
+
     public static String getContractName(String path) {
         if (path == null || path.trim().equals(""))
             return "";
@@ -131,6 +134,35 @@ public class TestMain {
             String fileName = splits[splits.length - 1];
             return fileName.substring(0, fileName.lastIndexOf("."));
         }
+    }
+
+    public static void main(String[] args) {
+            log.info(" main {}", test("aa"));
+
+    }
+
+    public static  String test(String i){
+        try {
+            log.info(" test {}",i);
+
+            try {
+                if(1!=2){
+                    log.info(" test throw {}",i);
+                    throw new Exception("sss");
+                }
+            } catch (Exception e) {
+                log.error("==调用资产中心查询当月收益分配异常！！！", e);
+            }
+
+
+            return i+" success haharesult";
+        }catch (Exception e){
+
+        }finally {
+            log.info(" finally {}",i);
+
+        }
+        return i+" error haharesult";
     }
 
 
