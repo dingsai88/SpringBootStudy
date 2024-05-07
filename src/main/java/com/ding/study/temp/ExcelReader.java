@@ -1,7 +1,8 @@
 package com.ding.study.temp;
-/**
 
 
+
+import com.ding.study.util.JsonUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -56,6 +57,7 @@ public class ExcelReader {
             // 获取Excel工作簿
             inputStream = new FileInputStream(excelFile);
             workbook = getWorkbook(inputStream, fileType);
+            logger.info("开始  ！");
 
             // 读取excel中的数据
             List<ExcelDataVO> resultDataList = parseExcel(workbook);
@@ -129,6 +131,10 @@ public class ExcelReader {
         return df.format(doubleValue);
     }
 
+    //数字抹零
+    public static String getStringDelZero(String str) {
+        return str.replace(".0", "");
+    }
 
     private static String convertCellValueToString(Cell cell) {
         if (cell == null) {
@@ -169,12 +175,15 @@ public class ExcelReader {
         ExcelDataVO resultData = new ExcelDataVO();
 
         Cell cell;
+       // logger.info("convertRowToData  row : " + JsonUtils.convertObjToJsonString(row));
 
 
         for (int i = 0; i < 10; i++) {
             try {
                 cell = row.getCell(i);
                 Method method = resultData.getClass().getMethod("setData" + (i + 1), String.class);
+                logger.info("convertRowToData  cell : " + convertCellValueToString(cell));
+
                 method.invoke(resultData, convertCellValueToString(cell));
 
             } catch (Exception e) {
@@ -187,5 +196,3 @@ public class ExcelReader {
         return resultData;
     }
 }
- *
- */

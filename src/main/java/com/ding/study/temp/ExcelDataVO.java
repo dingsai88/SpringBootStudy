@@ -16,6 +16,9 @@ public class ExcelDataVO {
     private String data8;
     private String data9;
     private String data10;
+    private String data11;
+    private String data12;
+    private String data13;
 
     public String getData1() {
         return data1;
@@ -97,20 +100,46 @@ public class ExcelDataVO {
         this.data10 = data10;
     }
 
+    public String getData11() {
+        return data11 == null ? "" : data11;
+    }
+
+    public void setData11(String data11) {
+        this.data11 = data11;
+    }
+
+    public String getData12() {
+        return data12 == null ? "" : data12;
+    }
+
+    public void setData12(String data12) {
+        this.data12 = data12;
+    }
+
+    public String getData13() {
+        return data13 == null ? "" : data13;
+    }
+
+    public void setData13(String data13) {
+        this.data13 = data13;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ExcelDataVO{");
-        sb.append("data1='").append(data1).append('\'');
-        sb.append(", data2='").append(data2).append('\'');
-        sb.append(", data3='").append(data3).append('\'');
-        sb.append(", data4='").append(data4).append('\'');
-        sb.append(", data5='").append(data5).append('\'');
-        sb.append(", data6='").append(data6).append('\'');
-        sb.append(", data7='").append(data7).append('\'');
-        sb.append(", data8='").append(data8).append('\'');
-        sb.append(", data9='").append(data9).append('\'');
-        sb.append(", data10='").append(data10).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "ExcelDataVO{" +
+                "data1='" + data1 + '\'' +
+                ", data2='" + data2 + '\'' +
+                ", data3='" + data3 + '\'' +
+                ", data4='" + data4 + '\'' +
+                ", data5='" + data5 + '\'' +
+                ", data6='" + data6 + '\'' +
+                ", data7='" + data7 + '\'' +
+                ", data8='" + data8 + '\'' +
+                ", data9='" + data9 + '\'' +
+                ", data10='" + data10 + '\'' +
+                ", data11='" + data11 + '\'' +
+                ", data12='" + data12 + '\'' +
+                ", data13='" + data13 + '\'' +
+                '}';
     }
 }
