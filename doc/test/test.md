@@ -365,6 +365,71 @@ ResponseResult<TActivityAward> result=new ObjectMapper().readValue(resultJson,ne
 
 
 
+junit4
 
 
+/**
 
+@Slf4j
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = MainApplication.class)
+public class PushControllerTest   {
+@Autowired
+private PushController controller;
+@Test
+public void testPushSearch() {
+
+        try {
+            /**
+             * {"currPage":1,"tagId":"1","pageSize":10,"userId":11046257,"channelCode":"PUSH_LCS"}
+             */
+            log.info(" 开始 1 testPushSearch");
+            assertNotNull("功能测试非单元测试");
+            PushQueryVO req=new PushQueryVO();
+            req.setChannelCode("PUSH_LCS");
+            req.setCurrPage(1);
+            req.setPageSize(10);
+            req.setUserId("11046257");
+            req.setTagId("1");
+
+            req.setTitleContent("");
+            Object result = controller.pushSearch(req);
+            log.info(" 返回 :{} ", JSON.toJSONString(result));
+        } catch (Exception e) {
+            log.error("testPushSearch", e);
+        }
+    }
+}
+**/
+
+
+junit 5
+@ExtendWith(SpringExtension.class) 是 JUnit 5 中的一个注解，用于将 Spring 的测试功能集成到 JUnit 5 测试中。
+它相当于在 JUnit 4 中使用 @RunWith(SpringRunner.class)。
+
+/**
+@Slf4j
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = RcServerApplication.class)
+public class LoginSliderControllerTest {
+
+    @Autowired
+    private LoginSliderController loginSliderController;
+
+    @Test
+    public void getSlider(){
+        try{
+            assertNotNull("功能测试非单元测试");
+            GetSliderRequest sliderRequest = new GetSliderRequest ();
+            sliderRequest.setRequestId(System.currentTimeMillis() + "");
+            RespResult<SliderInfoResp> result = loginSliderController.getSlider(sliderRequest);
+            assertNotNull(result.getData().getLno());
+            log.info(" 返回 :{} ", JSONUtil.toJsonStr(result));
+
+        }catch (Exception e){
+            log.error("getSlider error",e);
+        }
+
+    }
+
+*/
