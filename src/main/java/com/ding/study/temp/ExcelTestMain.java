@@ -17,7 +17,7 @@ public class ExcelTestMain {
 
     public static void main(String[] args) {
 
-        String junzhengFileName = "C:\\Users\\Administrator\\Desktop\\lcs.xls";
+        String junzhengFileName = "C:\\Users\\Administrator\\Desktop\\2024Guoqing.xls";
         // 读取Excel文件内容
         List<ExcelDataVO> junzhengResult = ExcelReader.readExcel(junzhengFileName);
         // System.out.println("最终返回君正:" + JsonUtils.convertObjToJsonString(junzhengResult)+"\n\n 测试");
@@ -35,8 +35,8 @@ public class ExcelTestMain {
                     "INSERT INTO fso_product_valuation_data \n" +
                     "(first_product_id,second_product_id,option_name,option_value,cycle_disclosure,system_product_name,second_product_name,\n" +
                     "product_id,batch_no,disclosure_month,is_hide) VALUES \n" +
-                    "('"+getStringDelZero(jun.getData1())+"','"+getStringDelZero(jun.getData2())+"','"+jun.getData3()+"','"+jun.getData9()+"','2024-03-31 00:00:00','"+ jun.getData4()+"','"+jun.getData5()+"',\n" +
-                    "'ZMA"+getStringDelZero(jun.getData1())+"_"+getStringDelZero(jun.getData2())+"','202403','2024-03',0);";
+                    "('"+getStringDelZero(jun.getData1())+"','"+getStringDelZero(jun.getData2())+"','"+jun.getData3()+"','"+jun.getData9()+"','2024-06-30 00:00:00','"+ jun.getData4()+"','"+jun.getData5()+"',\n" +
+                    "'ZMA"+getStringDelZero(jun.getData1())+"_"+getStringDelZero(jun.getData2())+"','202406','2024-06',0);";
 
 
             System.out.println(sql);
