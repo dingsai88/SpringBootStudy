@@ -25,7 +25,7 @@ public class TestMain {
             }
         }
         end = System.currentTimeMillis();
-        System.out.println("Time spent is " + (end - start) + "ms \n\n");
+        System.out.println("Time spent is正式开始 " + (end - start) + "ms \n\n");
 
 
 
