@@ -24,7 +24,7 @@ import java.io.IOException;
 public class FileTxtTestMain {
 
     public static void main(String[] args) throws Exception {
-        String filePath = "C:\\live.txt"; // 文件路径
+        String filePath = "C:\\livePro.txt"; // 文件路径
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -41,7 +41,7 @@ public class FileTxtTestMain {
 
 
     public static void openSokcet(String userId){
-        String url = "ws://rc-server-dev133.server-offline.paas.test/rc-server/ws?userId="+userId+"&liveId=1539346436";
+        String url = "ws://neirong.ruichengfamily.com/rc-server/ws?userId="+userId+"&liveId=2";
 
         try {
             // 创建 WebSocket 客户端实例
