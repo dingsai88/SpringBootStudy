@@ -1,0 +1,268 @@
+app:
+  description: 对用户提交的证件进行类型判断，包括 护照 台湾 香港 港澳通行证，出生证明
+  icon: female-doctor
+  icon_background: '#D3F8DF'
+  mode: workflow
+  name: 证件类型识别
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.24@2266d6adfeafd3a161ba4a033553f4ff8a8b1d07be54f4b11ce9e68032889ac3
+    version: null
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 150
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    scheduled_task:
+      day_of_month: '*'
+      day_of_week: '*'
+      enabled: false
+      hour: '*'
+      minute: '*'
+      month_of_year: '*'
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1764124622760-source-1764124743430-target
+      source: '1764124622760'
+      sourceHandle: source
+      target: '1764124743430'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1764124743430-source-1764124779164-target
+      source: '1764124743430'
+      sourceHandle: source
+      target: '1764124779164'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: ''
+          hint: ''
+          label: cerFileUrl
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: file
+          variable: cerFileUrl
+        - default: ''
+          hint: ''
+          label: inputType
+          max_length: 48
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: inputType
+      height: 113
+      id: '1764124622760'
+      position:
+        x: 150
+        y: 271
+      positionAbsolute:
+        x: 150
+        y: 271
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3-max
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: 3c4b19a1-6c8f-4b4c-8d77-4ae702e0323a
+          role: system
+          text: '你是一名文件类型分析助理。请按照以下要求对文件进行分析判断：
+
+            任务描述
+
+            接收用户提供的文件图片综合分析后判断文件类型，并将判断结果与用户输入的预判类型进行对比。
+
+            判定逻辑
+
+            通过分析图片中的视觉特征（如版式、签章、标识、文本内容等）进行推断。
+
+            输出内容
+
+            请清晰陈述以下三项信息：
+
+            实际文件类型 (FileType)：最终判定得出的文件类型全称，需注明判断依据（来自PDF规则或图像特征）；
+
+            用户输入准确性（AgreeType）：用户提供的预判类型与实际判定类型是否一致。
+
+
+            '
+        - id: aba54e2e-5974-43dc-91c2-198fe360fbda
+          role: user
+          text: '以下是你需要分析的图片内容：
+
+            {{#1764124622760.cerFileUrl#}}
+
+            对用户输入的类型
+
+            {{#1764124622760.inputType#}}进行对比。
+
+
+            请按照以下步骤完成任务：
+
+            - 对识别的类型直接输出 JSON 内容，无需任何额外的文本或说明。
+
+            -FileType :需要做到替换前面的值是识别到含义一致的类型后面是真实返回的
+
+            1.身份证 返回 身份证
+
+            2.带有中华民国和passport的证件 返回台湾护照
+
+            3.出生医学证明返回 出生证
+
+            4.带有中华民国国民的身份证 返回中国台湾身份证
+
+            5.台湾居民来往大陆通行证 返回 台胞证
+
+            6.来往香港签注 返回 港澳通行证
+
+            7.来往澳门签注 返回 港澳通行证
+
+            8.来往港澳通行证 返回 港澳通行证
+
+            9.香港居民身份证 返回香港非永久居民身份证
+
+            10.香港永久居民身份证 返回 香港永久居民身份证
+
+            11.涉及到居住地证明的文件 返回 居住证明
+
+            12.涉及到户口本，派出所公章 返回 关系证明
+
+            13.涉及到职务公司信息的 返回 职务证明
+
+            -AgreeType的结果是true和false
+
+            - json体格式：
+
+            {“TypeExist”:" ",“AgreeType”:“”}'
+        selected: false
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - '1764124622760'
+            - cerFileUrl
+          enabled: true
+      height: 87
+      id: '1764124743430'
+      position:
+        x: 570.9432715338376
+        y: 59.763852724451965
+      positionAbsolute:
+        x: 570.9432715338376
+        y: 59.763852724451965
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1764124743430'
+          - text
+          value_type: string
+          variable: usage
+        selected: false
+        title: 结束
+        type: end
+      height: 87
+      id: '1764124779164'
+      position:
+        x: 1083.7341142684477
+        y: 265.4926205355215
+      positionAbsolute:
+        x: 1083.7341142684477
+        y: 265.4926205355215
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    viewport:
+      x: 100.69002260791882
+      y: 138.1734232812794
+      zoom: 0.3149802624737182
+  rag_pipeline_variables: []

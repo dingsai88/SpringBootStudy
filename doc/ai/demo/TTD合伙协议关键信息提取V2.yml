@@ -1,0 +1,495 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: TTD合伙协议关键信息提取V2
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/openai_api_compatible:0.0.24@2266d6adfeafd3a161ba4a033553f4ff8a8b1d07be54f4b11ce9e68032889ac3
+    version: null
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 150
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    scheduled_task:
+      day_of_month: '*'
+      day_of_week: '*'
+      enabled: false
+      hour: '*'
+      minute: '*'
+      month_of_year: '*'
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: end
+      id: 1762767344057-source-1754632427154-target
+      selected: false
+      source: '1762767344057'
+      sourceHandle: source
+      target: '1754632427154'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1754630746608-source-1762767344057-target
+      source: '1754630746608'
+      sourceHandle: source
+      target: '1762767344057'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: end
+      id: 1762855409185-source-1762855618023-target
+      source: '1762855409185'
+      sourceHandle: source
+      target: '1762855618023'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1754630690236-source-1754630746608-target
+      source: '1754630690236'
+      sourceHandle: source
+      target: '1754630746608'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1762767344057-fail-branch-1762855409185-target
+      source: '1762767344057'
+      sourceHandle: fail-branch
+      target: '1762855409185'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          label: 文本内容
+          max_length: 600000
+          options: []
+          required: true
+          type: paragraph
+          variable: content
+        - label: 客户名称
+          max_length: 48
+          options: []
+          required: true
+          type: text-input
+          variable: customer_name
+      height: 113
+      id: '1754630690236'
+      position:
+        x: 636.9338137622575
+        y: 166.11972320632145
+      positionAbsolute:
+        x: 636.9338137622575
+        y: 166.11972320632145
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: qwen3-ultra
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: f9ce608a-f77a-4e0a-ab84-be60fb45fba1
+          role: system
+          text: '你是一名文本内容分析师。你的任务是分析给定的文本内容，并提取特定客户的具体财务信息，必须切换为字符串处理模式。你需要提取的信息包括：
+
+
+            1. 认缴出资额 (Subscribed Capital)
+
+            2. 账号 (Account Number)
+
+            3. 开户行 (Bank Branch)
+
+
+            '
+        - id: 3fd55db5-4a7d-48ee-b913-59568f67a29d
+          role: user
+          text: '以下是你需要分析的文本内容：
+
+
+            <text_content>
+
+            {{#1754630690236.content#}}
+
+            </text_content>
+
+
+            你需要搜索的客户名称是：
+
+
+            <customer_name>
+
+            {{#1754630690236.customer_name#}}
+
+            </customer_name>
+
+
+            请按照以下步骤完成任务：
+
+
+            1. 在文本内容中搜索客户名称。
+
+            2. 找到客户名称后，查找以下相关信息：
+
+            a. 认缴出资额 (Subscribed Capital)：通常是带有货币符号或单位的数值。输出中请勿包含货币单位。
+
+            b. 账号 (Account Number)：输出带原始格式包含如空格，制表符，字符串位置，不要进行任何截取，我我后续代码需要其他处理。
+
+            c. 开户行 (Bank Branch)：银行名称，可能包含具体分行信息,务必去除空格换行和制表符。
+
+            4. 提取以上信息并准备输出。
+
+            5. 如果在文本中找不到所需信息，请在相应字段中填充空字符串 ""。
+
+            6. 确保 JSON 对象中的账号为原始数据。
+
+            7.认缴出资额，开户行均为字符串类型，即使原始数据为数字，账号为原始数据。
+
+
+            直接输出 JSON 内容，无需任何额外的文本或说明。'
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              account:
+                type: string
+              bankBranch:
+                type: string
+              subscribedCapital:
+                type: string
+            required: []
+            type: object
+        structured_output_enabled: true
+        title: LLM
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - '1754630690236'
+            - file
+          enabled: false
+      height: 87
+      id: '1754630746608'
+      position:
+        x: 1102.779495243594
+        y: 166.11972320632145
+      positionAbsolute:
+        x: 1102.779495243594
+        y: 166.11972320632145
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1762767344057'
+          - result
+          value_type: object
+          variable: text
+        selected: false
+        title: 结束
+        type: end
+      height: 87
+      id: '1754632427154'
+      position:
+        x: 2139.8786315711613
+        y: 166.11972320632145
+      positionAbsolute:
+        x: 2139.8786315711613
+        y: 166.11972320632145
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        code: "import json\ndef main(arg1):\n    arg1['account'] = ''.join(char for\
+          \ char in arg1['account'].replace(' ', '') if char.isdigit())\n    return\
+          \ {\n        \"result\": arg1\n    }"
+        code_language: python3
+        error_strategy: fail-branch
+        outputs:
+          result:
+            children: null
+            type: object
+        selected: false
+        title: 代码执行
+        type: code
+        variables:
+        - value_selector:
+          - '1754630746608'
+          - structured_output
+          value_type: object
+          variable: arg1
+      height: 87
+      id: '1762767344057'
+      position:
+        x: 1594.811094602756
+        y: 166.11972320632145
+      positionAbsolute:
+        x: 1594.811094602756
+        y: 166.11972320632145
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: deepseek-chat
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - id: 9297da40-2aab-4db4-9859-3d4397230591
+          role: system
+          text: '你是一名文本内容分析助理。你的任务是分析给定的文本内容，并提取特定客户的具体财务信息，必须切换为字符串处理模式。你需要提取的信息包括：
+
+
+            1. 认缴出资额 (Subscribed Capital)
+
+            2. 账号 (Account Number)
+
+            3. 开户行 (Bank Branch)
+
+
+            '
+        - id: 581f8f56-0616-4e04-afd7-80a6ca520d98
+          role: user
+          text: 'You are a text content analysis assistant. Your task is to analyze
+            the given text content and extract specific financial information for
+            a particular customer.
+
+
+            Here is the text content to analyze:
+
+            <text_content>
+
+            {{#1754630690236.content#}}
+
+            </text_content>
+
+
+            Here is the customer name you need to search for:
+
+            <customer_name>
+
+            {{#1754630690236.customer_name#}}
+
+            </customer_name>
+
+
+            You need to extract the following three pieces of information for this
+            customer:
+
+            1. 认缴出资额 (Subscribed Capital) - usually a numerical value with currency
+            symbols or units
+
+            2. 账号 (Account Number) - typically a string of digits, usually 16-19 digits
+            long
+
+            3. 开户行 (Bank Branch) - bank name, may include specific branch information
+
+
+            Follow these steps to complete the task:
+
+
+            1. Search for the customer name within the text content
+
+            2. Once you locate the customer name, look for the three required pieces
+            of information in the surrounding text:
+
+            - For subscribed capital: Look for numerical values with currency indicators.
+            Do NOT include currency units in your output.
+
+            - For account number: Look for long sequences of digits (typically 16-19
+            digits)
+
+            - For bank branch: Look for bank names and branch information
+
+            3. Extract the information and prepare it for output
+
+            4. Format your response as a JSON object with this exact structure:
+
+            {
+
+            "subscribedCapital": "value",
+
+            "account": "value",
+
+            "bankBranch": "value"
+
+            }
+
+
+            Important formatting requirements:
+
+            - If you cannot find any of the required information in the text, use
+            an empty string "" for that field
+
+            - All values in the JSON object must be strings, even if the original
+            data appears to be numerical
+
+            - For subscribed capital, exclude any currency symbols or units from the
+            output value
+
+            - Output only the JSON object with no additional text, explanations, or
+            formatting
+
+
+            If the input data is empty or invalid, return an empty JSON object:
+
+            {
+
+            "subscribedCapital": "",
+
+            "account": "",
+
+            "bankBranch": ""
+
+            }
+
+
+            Provide your response immediately without any preamble.'
+        selected: false
+        title: LLM 2
+        type: llm
+        vision:
+          enabled: false
+      height: 87
+      id: '1762855409185'
+      position:
+        x: 1831.6008478193025
+        y: 420.42566435471826
+      positionAbsolute:
+        x: 1831.6008478193025
+        y: 420.42566435471826
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    - data:
+        outputs:
+        - value_selector:
+          - '1762855409185'
+          - text
+          value_type: string
+          variable: text
+        selected: false
+        title: 结束 2
+        type: end
+      height: 87
+      id: '1762855618023'
+      position:
+        x: 2150.325238330715
+        y: 413.4612598483492
+      positionAbsolute:
+        x: 2150.325238330715
+        y: 413.4612598483492
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 241
+    viewport:
+      x: -233.09465789279034
+      y: 252.09506919841965
+      zoom: 0.25
+  rag_pipeline_variables: []

@@ -1,0 +1,328 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: 丁赛交易call款通知单人_bak备份
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.4.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 150
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    scheduled_task:
+      day_of_month: '*'
+      day_of_week: '*'
+      enabled: false
+      hour: '*'
+      minute: '*'
+      month_of_year: '*'
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1761620640205-source-1761620653215-target
+      source: '1761620640205'
+      sourceHandle: source
+      target: '1761620653215'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: template-transform
+      id: 1761638770423-source-1761638847438-target
+      source: '1761638770423'
+      sourceHandle: source
+      target: '1761638847438'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1761620653215-source-1761638770423-target
+      source: '1761620653215'
+      sourceHandle: source
+      target: '1761638770423'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: template-transform
+        targetType: http-request
+      id: 1761638847438-source-1761650495534-target
+      source: '1761638847438'
+      sourceHandle: source
+      target: '1761650495534'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1761650495534-source-1761650601563-target
+      source: '1761650495534'
+      sourceHandle: source
+      target: '1761650601563'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - default: ''
+          hint: ''
+          label: empNo
+          max_length: 128
+          options: []
+          placeholder: ''
+          required: true
+          type: text-input
+          variable: empNo
+      height: 88
+      id: '1761620640205'
+      position:
+        x: 80
+        y: 282
+      positionAbsolute:
+        x: 80
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data: []
+          type: none
+        headers: ''
+        method: get
+        params: empNo:{{#1761620640205.empNo#}}
+        retry_config:
+          max_retries: '1'
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: HTTP 请求获取理财师收益分配记录
+        type: http-request
+        url: http://xxxxxxxxxx/nuggets/aiDifyController/transaction/callKuan.do
+        variables: []
+      height: 124
+      id: '1761620653215'
+      position:
+        x: 404.0453259116216
+        y: 282
+      positionAbsolute:
+        x: 404.0453259116216
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        code: "from datetime import datetime\ndef main(response_a: str) -> dict:\n\
+          \    import json\n    dataTest = json.loads(response_a)\n    today = datetime.now().strftime(\"\
+          %Y%m%d\")\n\n    return {\n        'parsed_data': dataTest['data']\n   \
+          \     ,        \"noticeTime\": today\n\n    }\n"
+        code_language: python3
+        outputs:
+          noticeTime:
+            children: null
+            type: string
+          parsed_data:
+            children: null
+            type: array[object]
+        selected: false
+        title: 代码执行 格式化返回值
+        type: code
+        variables:
+        - value_selector:
+          - '1761620653215'
+          - body
+          value_type: string
+          variable: response_a
+      height: 52
+      id: '1761638770423'
+      position:
+        x: 711.7249664689425
+        y: 282
+      positionAbsolute:
+        x: 711.7249664689425
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        selected: true
+        template: "{\r\n  \"empNo\": {{ empNo }},\r\n  \"noticeType\": \"shouYiFenPei\"\
+          ,\r\n \"noticeTime\": \"{{ noticeTime }}\",\r\n  \"shouYiFenPeiList\": {{\
+          \ parsed_data }}\r\n}"
+        title: 模板转换 拼接入参
+        type: template-transform
+        variables:
+        - value_selector:
+          - '1761638770423'
+          - parsed_data
+          value_type: object
+          variable: parsed_data
+        - value_selector:
+          - '1761620640205'
+          - empNo
+          variable: empNo
+        - value_selector:
+          - '1761638770423'
+          - noticeTime
+          value_type: string
+          variable: noticeTime
+      height: 52
+      id: '1761638847438'
+      position:
+        x: 986.7249664689425
+        y: 282
+      positionAbsolute:
+        x: 986.7249664689425
+        y: 282
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-46
+            key: ''
+            type: text
+            value: '{{#1761638847438.output#}}}'
+          type: json
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: false
+          retry_interval: 100
+        selected: false
+        ssl_verify: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: HTTP 请求 2
+        type: http-request
+        url: http://xxxxxxxxxx/nuggets/aiDifyController/transaction/noticeSave.do
+        variables: []
+      height: 124
+      id: '1761650495534'
+      position:
+        x: 1282.0778433439255
+        y: 409
+      positionAbsolute:
+        x: 1282.0778433439255
+        y: 409
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    - data:
+        outputs:
+        - value_selector:
+          - '1761650495534'
+          - body
+          value_type: string
+          variable: body
+        selected: false
+        title: 结束
+        type: end
+      height: 88
+      id: '1761650601563'
+      position:
+        x: 1584.0778433439255
+        y: 409
+      positionAbsolute:
+        x: 1584.0778433439255
+        y: 409
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 242
+    viewport:
+      x: -205.03039316759862
+      y: 62.25304222705472
+      zoom: 0.7842630951422652
+  rag_pipeline_variables: []
