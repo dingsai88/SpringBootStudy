@@ -7,3 +7,46 @@ https://www.icourse163.org/learn/PKU-1002188003?tid=1472399493#/learn/announce
 
 
 
+Part I.Basics
+
+
+哲学
+数学
+经济学
+神经科学
+心理学
+计算机工程
+控制理论和控制论
+语言学
+
+
+
+
+II.数学
+
+1.逻辑学
+命题逻辑：布尔逻辑
+
+一阶逻辑：对象和关系
+
+指称理论，揭示了将逻辑中的对象与对象相关联
+
+2.计算：
+什么是可计算的
+计算的易处理性
+NP完全性理论：NP-completeness
+P：Polynomial time 多项式时间
+NP: Non-deterministic Polynomial time 不确定性多项式时间
+NP-complete: both in Np and NP-hard.  NP与NP难的交集
+
+
+
+
+
+
+
+
+
+使用大型语言模型的生成式人工智能
+
+
