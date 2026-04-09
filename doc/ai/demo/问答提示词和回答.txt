@@ -1,0 +1,99 @@
+
+
+
+
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] ExamAiScoringService             [AI评分] 开始评分, 题目: 简述保险经纪人在为客户提供服务时应遵守的基本执业守则。
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] ExamAiScoringService             [AI评分] 考生回答: 金记保险经纪人在为客户提供服务时应遵守的执业守则。一遵守法律法规，诚实守信。二。维护投保人被保险人合法权益。 客观介绍产品三不隐瞒重要内容，不误导客户。四不挪用侵占保费理赔款不串通，损害他人利益。五保
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] CustomOpenAiClient               httpEntity: {"headers":{"Content-Type":["application/json"],"Authorization":["Bearer sk-aaaa"]},"body":{"model":"qwen-plus","messages":[{"role":"user","content":"你是一名专业、严格的保险经纪考试阅卷老师。请根据以下试卷和标准答案，对考生提交的答案进行逐题批改、评分，并给出总分。\n一、考试题目与分值\n单选题共 5 题，每题 10 分，共 50 分\n多选题共 3 题，每题 10 分，共 30 分（多选、少选、错选均不得分）\n简答题共 2 题，每题 10 分，共 20 分\n二、标准答案\n（一）单选题\nB\nC\nB\nC\nC\n（二）多选题\nABCD\nABC\nABC\n（三）简答题\n保险经纪人与保险代理人的核心区别：①立场不同：经纪人代表投保人 / 被保险人利益；代理人代表保险公司利益。②服务对象不同：经纪人服务投保方，代理人服务承保方。③法律责任不同：经纪人过错自行担责；代理人行为后果由保险公司承担。④产品范围不同：经纪人可对比多家公司产品，代理人一般只卖所属公司产品。\n保险经纪人基本执业守则：①遵守法律法规，诚实守信。②维护投保人、被保险人合法权益，客观介绍产品。③不隐瞒重要内容，不误导客户。④不挪用侵占保费、理赔款，不串通损害他人利益。⑤保守客户隐私与商业秘密。\n三、评分规则\n单选题：答对得 10 分，答错 0 分。\n多选题：完全正确得 10 分，多选、少选、错选均 0 分。\n简答题：踩点给分，答到 1 个核心点得 2–3 分，要点完整、表述清晰得满分 10 分；要点缺失酌情扣分。\n四、输出格式要求\n请按以下结构输出：\n逐题批改：题号 + 考生答案 + 判定（正确 / 错误 / 部分正确）+ 本题得分\n题型得分小计\n总分\n简要评语\n\n---\n\n【题目】\n简述保险经纪人在为客户提供服务时应遵守的基本执业守则。\n\n【标准答案】\n① 遵守法律法规与行业自律规范，诚实守信。\n② 维护投保人、被保险人合法权益，客观公正介绍产品。\n③ 不得隐瞒合同重要内容，不得误导客户。\n④ 不得串通一方损害另一方利益，不得挪用侵占保费或理赔款。⑤ 保守客户商业秘密与个人隐私。\n\n【评分标准】\n0. 踩点给分，答到 1 个核心点得 2-3 分（分值: 0分）\n1. 要点完整、表述清晰得满分 10 分（分值: 10分）\n2. 要点缺失酌情扣分（分值: 0分）\n\n【考生回答】\n金记保险经纪人在为客户提供服务时应遵守的执业守则。一遵守法律法规，诚实守信。二。维护投保人被保险人合法权益。 客观介绍产品三不隐瞒重要内容，不误导客户。四不挪用侵占保费理赔款不串通，损害他人利益。五保首客户隐私与商业秘密。\n\n请逐项评判考生回答是否语义命中每个评分项，严格返回JSON：\n{\"results\":[{\"index\":0,\"hit\":true/false,\"reason\":\"简要理由\"},...]}"}],"temperature":0.1,"max_tokens":1024}}
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672]DEBUG 8 [0-exec-3] HttpLogging                      HTTP POST http://xxxxxxxxxxx/v1/chat/completions
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672]DEBUG 8 [0-exec-3] HttpLogging                      Accept=[text/plain, application/json, application/x-jackson-smile, application/cbor, application/*+json, */*]
+2026-04-09 11:06:04.900 [d6c74fb0277f4e39aa60eb476ced6672]DEBUG 8 [0-exec-3] HttpLogging                      Writing [AiAnalysisParams(model=qwen-plus, messages=[Message(role=user, content=你是一名专业、严格的保险经纪考试阅卷老师。请根据以下试卷和标准答案，对考生提交的答案进行逐题批改、评分，并给出总分。
+一、考试题目与分值
+单选题共 5 题，每题 10 分，共 50 分
+多选题共 3 题，每题 10 分，共 30 分（多选、少选、错选均不得分）
+简答题共 2 题，每题 10 分，共 20 分
+二、标准答案
+（一）单选题
+B
+C
+B
+C
+C
+（二）多选题
+ABCD
+ABC
+ABC
+（三）简答题
+保险经纪人与保险代理人的核心区别：①立场不同：经纪人代表投保人 / 被保险人利益；代理人代表保险公司利益。②服务对象不同：经纪人服务投保方，代理人服务承保方。③法律责任不同：经纪人过错自行担责；代理人行为后果由保险公司承担。④产品范围不同：经纪人可对比多家公司产品，代理人一般只卖所属公司产品。
+保险经纪人基本执业守则：①遵守法律法规，诚实守信。②维护投保人、被保险人合法权益，客观介绍产品。③不隐瞒重要内容，不误导客户。④不挪用侵占保费、理赔款，不串通损害他人利益。⑤保守客户隐私与商业秘密。
+三、评分规则
+单选题：答对得 10 分，答错 0 分。
+多选题：完全正确得 10 分，多选、少选、错选均 0 分。
+简答题：踩点给分，答到 1 个核心点得 2–3 分，要点完整、表述清晰得满分 10 分；要点缺失酌情扣分。
+四、输出格式要求
+请按以下结构输出：
+逐题批改：题号 + 考生答案 + 判定（正确 / 错误 / 部分正确）+ 本题得分
+题型得分小计
+总分
+简要评语
+
+---
+
+【题目】
+简述保险经纪人在为客户提供服务时应遵守的基本执业守则。
+
+【标准答案】
+① 遵守法律法规与行业自律规范，诚实守信。
+② 维护投保人、被保险人合法权益，客观公正介绍产品。
+③ 不得隐瞒合同重要内容，不得误导客户。
+④ 不得串通一方损害另一方利益，不得挪用侵占保费或理赔款。⑤ 保守客户商业秘密与个人隐私。
+
+【评分标准】
+0. 踩点给分，答到 1 个核心点得 2-3 分（分值: 0分）
+1. 要点完整、表述清晰得满分 10 分（分值: 10分）
+2. 要点缺失酌情扣分（分值: 0分）
+
+【考生回答】
+金记保险经纪人在为客户提供服务时应遵守的执业守则。一遵守法律法规，诚实守信。二。维护投保人被保险人合法权益。 客观介绍产品三不隐瞒重要内容，不误导客户。四不挪用侵占保费理赔款不串通，损害他人利益。五保首客户隐私与商业秘密。
+
+请逐项评判考生回答是否语义命中每个评分项，严格返回JSON：
+{"results":[{"index":0,"hit":true/false,"reason":"简要理由"},...]}, name=null)], temperature=0.1, topP=null, stream=null, maxTokens=1024, functions=null, functionCall=null, n=null, stop=null, presencePenalty=null, frequencyPenalty=null, logitBias=null, user=null)] as "application/json"
+
+
+
+
+
+
+
+
+
+2026-04-09 11:06:45.142 [d6c74fb0277f4e39aa60eb476ced6672]DEBUG 8 [0-exec-3] HttpLogging                      Response 200 OK
+2026-04-09 11:06:45.142 [d6c74fb0277f4e39aa60eb476ced6672]DEBUG 8 [0-exec-3] HttpLogging                      Reading to [java.lang.String] as "application/json"
+2026-04-09 11:06:45.142 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] CustomOpenAiClient               response body:{"id":"chatcmpl-82987261771910b6","object":"chat.completion","created":1775703964,"model":"Qwen3.5-27B-FP8","choices":[{"index":0,"message":{"role":"assistant","content":"```json\n{\n  \"results\": [\n    {\n      \"index\": 0,\n      \"hit\": true,\n      \"reason\": \"考生回答包含'遵守法律法规，诚实守信'，与标准答案第①点核心语义完全一致。\"\n    },\n    {\n      \"index\": 1,\n      \"hit\": true,\n      \"reason\": \"考生回答包含'维护投保人被保险人合法权益，客观介绍产品'，与标准答案第②点核心语义完全一致。\"\n    },\n    {\n      \"index\": 2,\n      \"hit\": true,\n      \"reason\": \"考生回答包含'不隐瞒重要内容，不误导客户'，与标准答案第③点核心语义完全一致。\"\n    },\n    {\n      \"index\": 3,\n      \"hit\": true,\n      \"reason\": \"考生回答包含'不挪用侵占保费理赔款不串通，损害他人利益'，虽语序略有调整，但完整覆盖了标准答案第④点关于挪用侵占及串通损害利益的核心要求。\"\n    },\n    {\n      \"index\": 4,\n      \"hit\": true,\n      \"reason\": \"考生回答包含'保首客户隐私与商业秘密'（'保首'应为'保守'的笔误），但核心语义'保守客户隐私与商业秘密'与标准答案第⑤点一致，不影响得分判定。\"\n    }\n  ]\n}\n```","refusal":null,"annotations":null,"audio":null,"function_call":null,"tool_calls":[],"reasoning":null,"reasoning_content":null},"logprobs":null,"finish_reason":"stop","stop_reason":null,"token_ids":null}],"service_tier":null,"system_fingerprint":null,"usage":{"prompt_tokens":726,"total_tokens":1051,"completion_tokens":325,"prompt_tokens_details":null},"prompt_logprobs":null,"prompt_token_ids":null,"kv_transfer_params":null}
+2026-04-09 11:06:45.142 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] ExamAiScoringService             [AI评分] AI 返回: ```json
+{
+  "results": [
+    {
+      "index": 0,
+      "hit": true,
+      "reason": "考生回答包含'遵守法律法规，诚实守信'，与标准答案第①点核心语义完全一致。"
+    },
+    {
+      "index": 1,
+      "hit": true,
+      "reason": "考生回答包含'维护投保人被保险人合法权益，客观介绍产品'，与标准答案第②点核心语义完全一致。"
+    },
+    {
+      "index": 2,
+      "hit": true,
+      "reason": "考生回答包含'不隐瞒重要内容，不误导客户'，与标准答案第③点核心语义完全一致。"
+    },
+    {
+      "index": 3,
+      "hit": true,
+      "reason": "考生回答包含'不挪用侵占保费理赔款不串通，损害他人利益'，虽语序略有调整，但完整覆盖了标准答案第④点关于挪用侵占及串通损害利益的核心要求。"
+    },
+    {
+  
+2026-04-09 11:06:45.143 [d6c74fb0277f4e39aa60eb476ced6672] INFO 8 [0-exec-3] ExamAiScoringService             [AI评分] 评分完成, 得分: 10/10
+
